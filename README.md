@@ -20,6 +20,7 @@ Powered by **Google Gemini 3.0 Pro**, it goes beyond simple visualization by per
 
 ### 🧠 Advanced AI Intelligence
 *   **Gemini 3.0 Integration:** Uses the latest `gemini-3-pro-preview` model for multimodal audio analysis.
+*   **Smart Gap Detection:** Automatically detects silence between tracks (e.g., when a song ends). Once the music resumes, it **instantly triggers** the AI to identify the new song, ensuring lyrics and info are always up to date.
 *   **Search Grounding:** The AI listens to audio, transcribes lyrics, and performs real-time **Google Searches** to verify track titles and artists. This drastically improves recognition rates for obscure tracks, remixes, and non-English songs (Chinese, Japanese, Korean, etc.).
 *   **Source Verification:** Provides a clickable "Source (Google)" link to verify the identified song.
 *   **Lyrics & Mood:** Automatically fetches official lyrics (or chorus) and detects the vibe (e.g., "Energetic", "Melancholic") to subtly adjust the UI.
@@ -34,7 +35,7 @@ SonicVision AI features 8 distinct, mathematically generated visualization engin
 *   **Geometric Tunnel:** A hypnotic 3D tunnel that reacts to the track's energy.
 *   **Plasma Flow:** Liquid, organic color gradients that flash and pulse with the beat.
 *   **Abstract Shapes:** Dancing geometric primitives reacting to specific frequency bands.
-*   **Ethereal Smoke:** Realistic smoke simulation affected by audio "wind".
+*   **Ethereal Smoke:** Dual-stream smoke flowing slowly from top and bottom, converging at the center to create a mystical atmosphere.
 *   **Water Ripples:** Raindrop effects triggered by bass kicks.
 
 ### 🎛️ Deep Customization
@@ -113,7 +114,7 @@ SonicVision AI features 8 distinct, mathematically generated visualization engin
     
 3.  **AI Recognition:**
     *   Play music in the background. The "Listening" indicator will pulse.
-    *   Every ~30 seconds, the app records a short clip and sends it to Gemini.
+    *   Every ~30 seconds (or immediately when a song change is detected), the app records a short clip and sends it to Gemini.
     *   The model "listens," transcribes lyrics, Google Searches them, and returns the result.
 
 ---

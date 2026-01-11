@@ -87,6 +87,8 @@ const App: React.FC = () => {
   }, [language, region]);
 
   const identificationTimeoutRef = useRef<number | null>(null);
+  const silenceDurationRef = useRef<number>(0);
+  const songChangeArmedRef = useRef<boolean>(false);
 
   // Initialize Audio Logic
   const startAudio = async () => {
@@ -148,6 +150,10 @@ const App: React.FC = () => {
     setRecorder(null);
     setIsListening(false);
     setIsIdentifying(false);
+    
+    // Reset detection logic
+    silenceDurationRef.current = 0;
+    songChangeArmedRef.current = false;
   };
 
   const setupRecorder = (stream: MediaStream) => {
@@ -175,6 +181,67 @@ const App: React.FC = () => {
     }
   };
 
+  // Enhanced Song Change Detection Logic
+  // Monitors audio energy to detect silence gaps between songs
+  useEffect(() => {
+    if (!analyser || !isListening) return;
+
+    const interval = setInterval(() => {
+      // Don't interfere if we are currently recording/identifying
+      if (isIdentifying) return;
+
+      const bufferLength = analyser.frequencyBinCount;
+      const dataArray = new Uint8Array(bufferLength);
+      analyser.getByteFrequencyData(dataArray);
+
+      // Calculate approximate average volume from a few sample points
+      let sum = 0;
+      // We check every 10th bin to save CPU, covering full spectrum
+      const step = 10;
+      for (let i = 0; i < bufferLength; i += step) {
+          sum += dataArray[i];
+      }
+      const average = sum / (bufferLength / step);
+
+      // Thresholds (0-255 scale)
+      const SILENCE_THRESHOLD = 8;  // Very quiet background noise
+      const MUSIC_THRESHOLD = 20;   // Definite audio signal
+      const GAP_DURATION_REQ = 2000; // 2 seconds of silence implies a break
+
+      if (average < SILENCE_THRESHOLD) {
+          silenceDurationRef.current += 200; // Interval is 200ms
+          
+          if (silenceDurationRef.current >= GAP_DURATION_REQ) {
+              songChangeArmedRef.current = true;
+          }
+      } else if (average > MUSIC_THRESHOLD) {
+          // Audio detected
+          if (songChangeArmedRef.current) {
+              console.log("🎵 Gap detected followed by audio. Triggering Song ID...");
+              
+              // We found a new song!
+              // 1. Reset trigger
+              songChangeArmedRef.current = false;
+              
+              // 2. Clear existing schedule
+              if (identificationTimeoutRef.current) {
+                  clearTimeout(identificationTimeoutRef.current);
+              }
+              
+              // 3. Schedule immediate ID (wait 2s for song to establish)
+              if (recorder && recorder.state !== 'recording') {
+                  scheduleIdentificationLoop(recorder, 2000);
+              }
+          }
+          
+          // Reset silence counter as audio is playing
+          silenceDurationRef.current = 0;
+      }
+    }, 200);
+
+    return () => clearInterval(interval);
+  }, [analyser, isListening, isIdentifying, recorder]);
+
   const scheduleIdentificationLoop = (rec: MediaRecorder, delay: number, isRetry: boolean = false) => {
     if (identificationTimeoutRef.current) clearTimeout(identificationTimeoutRef.current);
 
@@ -193,8 +260,8 @@ const App: React.FC = () => {
 
         if (result && result.identified) {
            setCurrentSong(result);
-           // Success! Wait 30s before next check
-           scheduleIdentificationLoop(rec, 30000, false);
+           // Success! Wait 35s before next check (extended slightly since we have gap detection now)
+           scheduleIdentificationLoop(rec, 35000, false);
         } else {
            if (!isRetry) {
              // Failed? Retry quickly with a longer clip

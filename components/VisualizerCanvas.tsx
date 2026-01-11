@@ -762,8 +762,8 @@ function drawSmoke(
             
             const color = colors[Math.floor(Math.random() * colors.length)];
             const size = 50 + Math.random() * 60; 
-            // Increase max life because they move slower now
-            const maxLife = 400 + Math.random() * 200; 
+            // INCREASED max life to ensure they can reach the center at slow speeds
+            const maxLife = 800 + Math.random() * 400; 
             
             smokeParticles.push({
                 x,
@@ -809,16 +809,20 @@ function drawSmoke(
         }
 
         // Physics: 
-        // 1. Vertical motion (p.vy) - now directional
-        // 2. Swirl/Swirl effect: Pull slightly towards center + rotate
+        // 1. Vertical motion (p.vy) - towards center Y
+        // 2. Horizontal attraction - towards center X
         
-        // Swirl force - simplified to just pull gently towards center
-        const swirlStrength = 0.3 * settings.speed;
-        
-        // Calculate vector to center
+        // Horizontal Attraction
+        // This force creates the "converge to central part" effect
         const dx = centerX - p.x;
-        // Tangential force (rotate)
-        p.vx += (dx * 0.0005) * swirlStrength; 
+        
+        // Stronger pull towards center X (creates a funnel/hourglass shape)
+        // Damped by settings.speed
+        p.vx += (dx * 0.0015) * settings.speed; 
+        
+        // Damping/Friction to prevent perpetual oscillation
+        // Without this, they would just orbit the center indefinitely
+        p.vx *= 0.96;
         
         // Turbulence noise
         // Ensure noise doesn't completely overpower slow flow
