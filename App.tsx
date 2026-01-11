@@ -528,6 +528,7 @@ const App: React.FC = () => {
       <Controls
         currentMode={mode}
         setMode={setMode}
+        colorTheme={colorTheme}
         setColorTheme={setColorTheme}
         toggleMicrophone={toggleMicrophone}
         isListening={isListening}

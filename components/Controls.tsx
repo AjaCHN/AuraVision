@@ -7,6 +7,7 @@ import HelpModal from './HelpModal';
 interface ControlsProps {
   currentMode: VisualizerMode;
   setMode: (mode: VisualizerMode) => void;
+  colorTheme: string[];
   setColorTheme: (theme: string[]) => void;
   toggleMicrophone: () => void;
   isListening: boolean;
@@ -31,6 +32,7 @@ interface ControlsProps {
 const Controls: React.FC<ControlsProps> = ({
   currentMode,
   setMode,
+  colorTheme,
   setColorTheme,
   toggleMicrophone,
   isListening,
@@ -90,6 +92,78 @@ const Controls: React.FC<ControlsProps> = ({
     };
   }, []);
 
+  // Keyboard Shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Avoid triggering if active element is an input
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLSelectElement) return;
+
+      const key = e.key.toLowerCase();
+
+      switch (key) {
+        case 'r':
+          randomizeSettings();
+          break;
+        case ' ': // Spacebar
+          e.preventDefault(); // Prevent scrolling
+          toggleMicrophone();
+          break;
+        case 'l':
+          setShowLyrics(!showLyrics);
+          break;
+        case 'f':
+          if (!document.fullscreenElement) {
+              document.documentElement.requestFullscreen().catch(err => console.log(err));
+          } else {
+              document.exitFullscreen();
+          }
+          break;
+        case 'h':
+          setIsExpanded(prev => !prev);
+          break;
+        case 'g':
+          updateSetting('glow', !settings.glow);
+          break;
+        case 't':
+          updateSetting('trails', !settings.trails);
+          break;
+        case 'arrowright':
+        case 'arrowleft': {
+          const modes = Object.values(VisualizerMode);
+          const currentIndex = modes.indexOf(currentMode);
+          let nextIndex = key === 'arrowright' ? currentIndex + 1 : currentIndex - 1;
+          
+          if (nextIndex >= modes.length) nextIndex = 0;
+          if (nextIndex < 0) nextIndex = modes.length - 1;
+          
+          setMode(modes[nextIndex]);
+          break;
+        }
+        case 'arrowup':
+        case 'arrowdown': {
+           // Find current theme index based on value comparison (JSON stringify is safe for string arrays)
+           const currentThemeStr = JSON.stringify(colorTheme);
+           const themeIndex = COLOR_THEMES.findIndex(t => JSON.stringify(t) === currentThemeStr);
+           
+           let nextThemeIdx = key === 'arrowup' ? themeIndex + 1 : themeIndex - 1;
+           if (nextThemeIdx >= COLOR_THEMES.length) nextThemeIdx = 0;
+           if (nextThemeIdx < 0) nextThemeIdx = COLOR_THEMES.length - 1;
+           
+           setColorTheme(COLOR_THEMES[nextThemeIdx]);
+           e.preventDefault(); // Prevent page scrolling
+           break;
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [
+    randomizeSettings, toggleMicrophone, showLyrics, settings, 
+    currentMode, setMode, setShowLyrics, updateSetting, setIsExpanded, 
+    colorTheme, setColorTheme
+  ]);
+
   return (
     <>
       {/* Fixed Help Button - Top Right */}
@@ -107,7 +181,7 @@ const Controls: React.FC<ControlsProps> = ({
       {!isExpanded ? (
         <div className="fixed bottom-6 left-0 w-full z-30 flex justify-center items-center pointer-events-none">
           <div className={`pointer-events-auto flex items-center gap-4 bg-black/60 backdrop-blur-xl border border-white/10 rounded-full p-2 pl-3 pr-4 shadow-2xl animate-fade-in-up transition-opacity duration-1000 ${isUserInactive ? 'opacity-30 hover:opacity-100' : 'opacity-100'}`}>
-             {/* Randomize Button (Replaced Mic Toggle) */}
+             {/* Randomize Button */}
              <button
                 onClick={randomizeSettings}
                 title={t.randomizeTooltip}
@@ -123,7 +197,7 @@ const Controls: React.FC<ControlsProps> = ({
               {/* Expand Button */}
               <button 
                 onClick={() => setIsExpanded(true)}
-                title={t.showOptions}
+                title={`${t.showOptions} (H)`}
                 className="flex items-center gap-2 text-sm font-medium text-white/90 hover:text-white transition-colors"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -153,7 +227,7 @@ const Controls: React.FC<ControlsProps> = ({
                <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
                </svg>
-               <span>{t.randomize}</span>
+               <span>{t.randomize} (R)</span>
              </button>
 
              <button 
@@ -169,7 +243,7 @@ const Controls: React.FC<ControlsProps> = ({
 
              <button 
                onClick={() => setIsExpanded(false)}
-               title={t.hideOptions}
+               title={`${t.hideOptions} (H)`}
                className="bg-black/50 hover:bg-black/70 backdrop-blur-md border border-white/10 text-white/60 hover:text-white rounded-full px-4 py-1 flex items-center gap-2 text-xs transition-all mb-2"
              >
                <span>{t.hideOptions}</span>
@@ -188,7 +262,7 @@ const Controls: React.FC<ControlsProps> = ({
                <div className="flex-shrink-0 flex flex-col items-center">
                   <button
                     onClick={toggleMicrophone}
-                    title={isListening ? t.stopMic : t.startMic}
+                    title={`${isListening ? t.stopMic : t.startMic} (Space)`}
                     className={`h-16 w-16 rounded-2xl flex items-center justify-center transition-all duration-500 shadow-xl border border-white/10
                       ${isListening 
                         ? 'bg-gradient-to-br from-red-500 to-pink-600 text-white shadow-red-500/30' 
@@ -216,7 +290,7 @@ const Controls: React.FC<ControlsProps> = ({
                {/* 2. Visualizer Modes (Wrapped) */}
                <div className="flex-1 w-full">
                   <div className="flex items-center justify-between mb-2 px-1">
-                     <h3 className="text-white/50 text-xs uppercase tracking-widest font-bold">{t.visualizerMode}</h3>
+                     <h3 className="text-white/50 text-xs uppercase tracking-widest font-bold">{t.visualizerMode} (←/→)</h3>
                   </div>
                   {/* Container - Wrap */}
                   <div className="flex flex-wrap gap-2 pb-2">
@@ -306,7 +380,7 @@ const Controls: React.FC<ControlsProps> = ({
                       <div className="flex flex-col justify-center gap-2">
                           <button 
                             onClick={() => updateSetting('glow', !settings.glow)}
-                            title={t.toggleGlow}
+                            title={`${t.toggleGlow} (G)`}
                             className={`flex items-center justify-between px-3 py-2 rounded-lg border transition-all ${settings.glow ? 'bg-blue-500/20 border-blue-500/50' : 'bg-black/20 border-white/10'}`}
                           >
                             <span className="text-xs text-white/80">{t.glow}</span>
@@ -315,7 +389,7 @@ const Controls: React.FC<ControlsProps> = ({
 
                           <button 
                             onClick={() => updateSetting('trails', !settings.trails)}
-                            title={t.toggleTrails}
+                            title={`${t.toggleTrails} (T)`}
                             className={`flex items-center justify-between px-3 py-2 rounded-lg border transition-all ${settings.trails ? 'bg-purple-500/20 border-purple-500/50' : 'bg-black/20 border-white/10'}`}
                           >
                             <span className="text-xs text-white/80">{t.trails}</span>
@@ -337,7 +411,7 @@ const Controls: React.FC<ControlsProps> = ({
                {/* Style & Language Card */}
                <div className="bg-white/5 border border-white/10 rounded-2xl p-4 flex flex-col gap-4">
                    <div className="flex justify-between items-center">
-                      <h3 className="text-white/50 text-xs uppercase tracking-widest font-bold">{t.styleTheme}</h3>
+                      <h3 className="text-white/50 text-xs uppercase tracking-widest font-bold">{t.styleTheme} (↑/↓)</h3>
                       <div className="flex flex-wrap gap-2">
                           {COLOR_THEMES.map((theme, idx) => (
                               <button
@@ -384,7 +458,7 @@ const Controls: React.FC<ControlsProps> = ({
 
                        <button 
                          onClick={() => setShowLyrics(!showLyrics)}
-                         title={`${t.showLyrics} (${t.betaDisclaimer})`}
+                         title={`${t.showLyrics} (L)`}
                          className={`h-[34px] w-[34px] rounded-lg border flex items-center justify-center transition-all flex-shrink-0 relative
                            ${showLyrics ? 'bg-green-500/20 border-green-500/50 text-green-300' : 'bg-black/40 border-white/20 text-white/40'}`}
                        >

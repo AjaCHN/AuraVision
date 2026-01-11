@@ -31,16 +31,16 @@ export const TRANSLATIONS = {
     betaDisclaimer: 'Beta feature. Accuracy is being improved.',
     wrongSong: 'Wrong Song? Retry',
     // Tooltips
-    randomizeTooltip: 'Randomize all visual settings',
+    randomizeTooltip: 'Randomize all visual settings (Press R)',
     resetTooltip: 'Reset to default settings',
     helpTooltip: 'View guide and information',
-    selectMode: 'Select mode',
-    changeTheme: 'Change color theme',
+    selectMode: 'Select mode (←/→)',
+    changeTheme: 'Change color theme (↑/↓)',
     selectLyricsStyle: 'Change lyrics display style',
     selectRegion: 'Select music region for better identification',
     toggleLanguage: 'Switch Language',
-    toggleGlow: 'Toggle neon glow effect',
-    toggleTrails: 'Toggle motion trails',
+    toggleGlow: 'Toggle neon glow effect (Press G)',
+    toggleTrails: 'Toggle motion trails (Press T)',
     toggleAutoRotate: 'Toggle automatic mode switching',
     modes: {
       [VisualizerMode.PLASMA]: 'Plasma Flow',
@@ -74,6 +74,18 @@ export const TRANSLATIONS = {
     helpModal: {
       title: 'About SonicVision AI',
       intro: 'SonicVision AI is an immersive audio-visual experience that uses your device\'s microphone to create real-time generative art synchronized with music.',
+      shortcutsTitle: 'Keyboard Shortcuts',
+      shortcutItems: {
+        toggleMic: 'Start / Stop Mic',
+        fullscreen: 'Toggle Fullscreen',
+        randomize: 'Randomize Settings',
+        lyrics: 'Show / Hide Lyrics',
+        hideUi: 'Show / Hide Controls',
+        glow: 'Toggle Glow',
+        trails: 'Toggle Trails',
+        changeMode: 'Change Mode',
+        changeTheme: 'Change Theme'
+      },
       howItWorksTitle: 'How It Works',
       howItWorksSteps: [
         '1. Enable your microphone.',
@@ -88,6 +100,8 @@ export const TRANSLATIONS = {
         glow: 'Adds a neon bloom effect (performance heavy).',
         trails: 'Creates a motion blur effect for smoother visuals.'
       },
+      projectInfoTitle: 'Project & Tech Stack',
+      projectInfoText: 'Powered by Google Gemini 3.0 Pro, React 19, Three.js (WebGL), and Tailwind CSS. This project demonstrates multimodal AI capabilities by combining real-time audio signal processing with generative language models.',
       privacyTitle: 'Privacy',
       privacyText: 'Audio is processed locally for visualization. Short clips are sent to Google Gemini temporarily solely for song identification and are not stored.'
     }
@@ -122,16 +136,16 @@ export const TRANSLATIONS = {
     betaDisclaimer: 'Beta 功能，准确性持续优化中。',
     wrongSong: '识别错误？重试',
     // Tooltips
-    randomizeTooltip: '随机生成所有视觉设置',
+    randomizeTooltip: '随机生成所有视觉设置 (按 R 键)',
     resetTooltip: '重置为默认设置',
     helpTooltip: '查看指南和信息',
-    selectMode: '选择模式',
-    changeTheme: '更改颜色主题',
+    selectMode: '选择模式 (←/→)',
+    changeTheme: '更改颜色主题 (↑/↓)',
     selectLyricsStyle: '更改歌词显示风格',
     selectRegion: '选择音乐地区以提高识别率',
     toggleLanguage: '切换语言',
-    toggleGlow: '开关霓虹光晕效果',
-    toggleTrails: '开关动态拖尾效果',
+    toggleGlow: '开关霓虹光晕效果 (按 G 键)',
+    toggleTrails: '开关动态拖尾效果 (按 T 键)',
     toggleAutoRotate: '开关自动切换模式功能',
     modes: {
       [VisualizerMode.PLASMA]: '流体等离子',
@@ -165,6 +179,18 @@ export const TRANSLATIONS = {
     helpModal: {
       title: '关于 SonicVision AI',
       intro: 'SonicVision AI 是一种沉浸式视听体验，利用您的设备麦克风创建与音乐同步的实时生成艺术。',
+      shortcutsTitle: '快捷键指南',
+      shortcutItems: {
+        toggleMic: '开启 / 关闭 麦克风',
+        fullscreen: '切换全屏模式',
+        randomize: '随机生成设置',
+        lyrics: '显示 / 隐藏歌词',
+        hideUi: '显示 / 隐藏控制栏',
+        glow: '开关霓虹光晕',
+        trails: '开关动态拖尾',
+        changeMode: '切换可视化模式',
+        changeTheme: '切换颜色主题'
+      },
       howItWorksTitle: '如何使用',
       howItWorksSteps: [
         '1. 开启麦克风权限。',
@@ -179,6 +205,8 @@ export const TRANSLATIONS = {
         glow: '添加霓虹泛光效果（较消耗性能）。',
         trails: '创建动态模糊拖尾，使视觉更流畅。'
       },
+      projectInfoTitle: '项目信息与技术栈',
+      projectInfoText: '由 Google Gemini 3.0 Pro, React 19, Three.js (WebGL) 和 Tailwind CSS 强力驱动。本项目展示了多模态 AI 能力，将实时音频信号处理与生成式语言模型完美结合。',
       privacyTitle: '隐私说明',
       privacyText: '音频在本地处理以进行可视化。短片段仅临时发送至 Google Gemini 用于歌曲识别，不会被存储。'
     }

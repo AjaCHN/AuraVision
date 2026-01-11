@@ -14,6 +14,19 @@ const HelpModal: React.FC<HelpModalProps> = ({ isOpen, onClose, language }) => {
   const t = TRANSLATIONS[language];
   const h = t.helpModal;
 
+  // Shortcut configuration map
+  const shortcuts = [
+    { keys: ['Space'], labelKey: 'toggleMic' },
+    { keys: ['F'], labelKey: 'fullscreen' },
+    { keys: ['R'], labelKey: 'randomize' },
+    { keys: ['L'], labelKey: 'lyrics' },
+    { keys: ['H'], labelKey: 'hideUi' },
+    { keys: ['G'], labelKey: 'glow' },
+    { keys: ['T'], labelKey: 'trails' },
+    { keys: ['←', '→'], labelKey: 'changeMode' },
+    { keys: ['↑', '↓'], labelKey: 'changeTheme' },
+  ];
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       {/* Backdrop */}
@@ -47,6 +60,34 @@ const HelpModal: React.FC<HelpModalProps> = ({ isOpen, onClose, language }) => {
           <p className="text-gray-300 leading-relaxed text-lg">
             {h.intro}
           </p>
+
+          {/* Keyboard Shortcuts Section (NEW) */}
+          <section>
+            <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
+               <span className="w-8 h-8 rounded-full bg-indigo-500/20 text-indigo-400 flex items-center justify-center">
+                 <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122" />
+                 </svg>
+               </span>
+               {h.shortcutsTitle}
+            </h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {shortcuts.map((s, idx) => (
+                <div key={idx} className="flex items-center justify-between bg-white/5 px-3 py-2 rounded-lg border border-white/5">
+                   <span className="text-sm text-gray-300">
+                     {(h.shortcutItems as any)[s.labelKey]}
+                   </span>
+                   <div className="flex gap-1">
+                      {s.keys.map(k => (
+                        <kbd key={k} className="px-2 py-0.5 bg-white/10 rounded text-xs font-mono text-white/90 border border-white/10 shadow-sm min-w-[24px] text-center">
+                          {k}
+                        </kbd>
+                      ))}
+                   </div>
+                </div>
+              ))}
+            </div>
+          </section>
 
           {/* How It Works */}
           <section>
@@ -90,10 +131,23 @@ const HelpModal: React.FC<HelpModalProps> = ({ isOpen, onClose, language }) => {
             </div>
           </section>
 
+          {/* Project Info (NEW) */}
+          <section className="bg-gradient-to-br from-gray-900 to-black border border-white/10 p-5 rounded-xl">
+             <h4 className="text-white font-bold mb-3 text-sm uppercase tracking-wider flex items-center gap-2">
+               <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+               </svg>
+               {h.projectInfoTitle}
+             </h4>
+             <p className="text-gray-400 text-sm leading-relaxed">
+               {h.projectInfoText}
+             </p>
+          </section>
+
           {/* Privacy */}
-          <section className="bg-blue-900/20 border border-blue-500/20 p-4 rounded-xl">
+          <section className="bg-blue-900/10 border border-blue-500/10 p-4 rounded-xl">
              <h4 className="text-blue-300 font-bold mb-2 text-sm uppercase tracking-wider">{h.privacyTitle}</h4>
-             <p className="text-blue-100/80 text-sm">
+             <p className="text-blue-100/70 text-sm">
                {h.privacyText}
              </p>
           </section>
