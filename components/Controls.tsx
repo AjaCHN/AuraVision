@@ -84,60 +84,71 @@ const Controls: React.FC<ControlsProps> = ({
     };
   }, []);
 
-  // --- MINIMIZED VIEW ---
-  if (!isExpanded) {
-    return (
-      <div className="fixed bottom-6 left-0 w-full z-30 flex justify-center items-center pointer-events-none">
-        <div className={`pointer-events-auto flex items-center gap-4 bg-black/60 backdrop-blur-xl border border-white/10 rounded-full p-2 pl-3 pr-4 shadow-2xl animate-fade-in-up transition-opacity duration-1000 ${isUserInactive ? 'opacity-30 hover:opacity-100' : 'opacity-100'}`}>
-           {/* Mic Toggle */}
-           <button
-              onClick={toggleMicrophone}
-              title={isListening ? t.stopMic : t.startMic}
-              className={`h-10 w-10 rounded-full flex items-center justify-center transition-all duration-300 shadow-lg
-                ${isListening 
-                  ? 'bg-red-500 hover:bg-red-600 text-white' 
-                  : 'bg-white hover:bg-gray-200 text-black'}`}
-            >
-              {isListening ? (
-                <div className="flex gap-0.5 items-end h-3">
-                   <div className="w-1 h-2 bg-white animate-bounce" style={{animationDelay: '0ms'}}></div>
-                   <div className="w-1 h-3 bg-white animate-bounce" style={{animationDelay: '100ms'}}></div>
-                   <div className="w-1 h-2 bg-white animate-bounce" style={{animationDelay: '200ms'}}></div>
-                </div>
-              ) : (
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 ml-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
-                </svg>
-              )}
-            </button>
-
-            <div className="h-6 w-px bg-white/20"></div>
-
-            {/* Expand Button */}
-            <button 
-              onClick={() => setIsExpanded(true)}
-              title={t.showOptions}
-              className="flex items-center gap-2 text-sm font-medium text-white/90 hover:text-white transition-colors"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd" />
-              </svg>
-              <span>{t.showOptions}</span>
-            </button>
-        </div>
-      </div>
-    );
-  }
-
-  // --- EXPANDED VIEW ---
   return (
     <>
+      {/* Fixed Help Button - Top Right */}
+      <button 
+         onClick={() => setShowHelp(true)}
+         title={t.helpTooltip}
+         className="fixed top-6 right-6 z-40 bg-black/30 hover:bg-black/60 backdrop-blur-md border border-white/10 text-white/60 hover:text-white rounded-full p-2 transition-all hover:scale-110 shadow-lg"
+      >
+         <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+         </svg>
+      </button>
+
+      {/* MINIMIZED VIEW */}
+      {!isExpanded ? (
+        <div className="fixed bottom-6 left-0 w-full z-30 flex justify-center items-center pointer-events-none">
+          <div className={`pointer-events-auto flex items-center gap-4 bg-black/60 backdrop-blur-xl border border-white/10 rounded-full p-2 pl-3 pr-4 shadow-2xl animate-fade-in-up transition-opacity duration-1000 ${isUserInactive ? 'opacity-30 hover:opacity-100' : 'opacity-100'}`}>
+             {/* Mic Toggle */}
+             <button
+                onClick={toggleMicrophone}
+                title={isListening ? t.stopMic : t.startMic}
+                className={`h-10 w-10 rounded-full flex items-center justify-center transition-all duration-300 shadow-lg
+                  ${isListening 
+                    ? 'bg-red-500 hover:bg-red-600 text-white' 
+                    : 'bg-white hover:bg-gray-200 text-black'}`}
+              >
+                {isListening ? (
+                  <div className="flex gap-0.5 items-end h-3">
+                     <div className="w-1 h-2 bg-white animate-bounce" style={{animationDelay: '0ms'}}></div>
+                     <div className="w-1 h-3 bg-white animate-bounce" style={{animationDelay: '100ms'}}></div>
+                     <div className="w-1 h-2 bg-white animate-bounce" style={{animationDelay: '200ms'}}></div>
+                  </div>
+                ) : (
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 ml-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                  </svg>
+                )}
+              </button>
+
+              <div className="h-6 w-px bg-white/20"></div>
+
+              {/* Expand Button */}
+              <button 
+                onClick={() => setIsExpanded(true)}
+                title={t.showOptions}
+                className="flex items-center gap-2 text-sm font-medium text-white/90 hover:text-white transition-colors"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd" />
+                </svg>
+                <span>{t.showOptions}</span>
+              </button>
+          </div>
+        </div>
+      ) : (
+      /* EXPANDED VIEW */
       <div className="fixed bottom-0 left-0 w-full z-30 flex flex-col justify-end pointer-events-none">
         
-        {/* Main Panel Container */}
-        <div className="pointer-events-auto w-full bg-gradient-to-t from-black via-black/95 to-transparent pt-8 pb-6 px-4 md:px-8 backdrop-blur-sm transition-transform duration-300 ease-out">
+        {/* Main Panel Container - Added hover opacity logic */}
+        <div 
+           className={`pointer-events-auto w-full bg-gradient-to-t from-black via-black/95 to-transparent pt-8 pb-6 px-4 md:px-8 backdrop-blur-sm transition-all duration-500 ease-out transform
+           ${isUserInactive ? 'opacity-60 hover:opacity-100 translate-y-2 hover:translate-y-0' : 'opacity-100'}`}
+        >
           
-          {/* Header Row: Random, Reset, Help, Hide */}
+          {/* Header Row: Random, Reset, Hide */}
           <div className="flex justify-center items-center gap-2 md:gap-3 -mt-6 mb-2 flex-wrap">
              <button 
                onClick={randomizeSettings}
@@ -160,17 +171,6 @@ const Controls: React.FC<ControlsProps> = ({
                </svg>
                <span>{t.reset}</span>
              </button>
-             
-             {/* Help Button */}
-             <button 
-               onClick={() => setShowHelp(true)}
-               title={t.helpTooltip}
-               className="bg-black/50 hover:bg-black/70 backdrop-blur-md border border-white/10 text-white/60 hover:text-white rounded-full px-3 py-1 flex items-center gap-2 text-xs transition-all mb-2"
-             >
-               <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-               </svg>
-             </button>
 
              <button 
                onClick={() => setIsExpanded(false)}
@@ -189,7 +189,7 @@ const Controls: React.FC<ControlsProps> = ({
             {/* Top Section: Modes & Play Button */}
             <div className="flex flex-col md:flex-row gap-6 items-center md:items-start">
                
-               {/* 1. Mic Button (Mobile: Center, Desktop: Left) */}
+               {/* 1. Mic Button */}
                <div className="flex-shrink-0 flex flex-col items-center">
                   <button
                     onClick={toggleMicrophone}
@@ -249,7 +249,7 @@ const Controls: React.FC<ControlsProps> = ({
                <div className="bg-white/5 border border-white/10 rounded-2xl p-4 flex flex-col justify-center">
                   <div className="grid grid-cols-2 gap-x-6 gap-y-4">
                       {/* Sliders */}
-                      <div className="space-y-4">
+                      <div className="space-y-3">
                          <div className="space-y-1">
                             <div className="flex justify-between text-[10px] text-white/60 uppercase font-bold">
                               <span>{t.sensitivity}</span> <span>{settings.sensitivity.toFixed(1)}</span>
@@ -258,7 +258,6 @@ const Controls: React.FC<ControlsProps> = ({
                                 type="range" min="0.5" max="3.0" step="0.1"
                                 value={settings.sensitivity}
                                 onChange={(e) => updateSetting('sensitivity', parseFloat(e.target.value))}
-                                title={`${t.sensitivity}: ${settings.sensitivity}`}
                                 className="w-full accent-blue-500 h-1 bg-white/20 rounded-lg appearance-none cursor-pointer"
                              />
                          </div>
@@ -270,14 +269,27 @@ const Controls: React.FC<ControlsProps> = ({
                                 type="range" min="0.1" max="2.0" step="0.1"
                                 value={settings.speed}
                                 onChange={(e) => updateSetting('speed', parseFloat(e.target.value))}
-                                title={`${t.speed}: ${settings.speed}`}
                                 className="w-full accent-purple-500 h-1 bg-white/20 rounded-lg appearance-none cursor-pointer"
                              />
                          </div>
+                         {/* Auto Rotate Interval */}
+                         {settings.autoRotate && (
+                            <div className="space-y-1 animate-fade-in-up">
+                                <div className="flex justify-between text-[10px] text-yellow-400/80 uppercase font-bold">
+                                  <span>{t.rotateInterval}</span> <span>{settings.rotateInterval}s</span>
+                                </div>
+                                <input 
+                                    type="range" min="10" max="120" step="5"
+                                    value={settings.rotateInterval}
+                                    onChange={(e) => updateSetting('rotateInterval', parseInt(e.target.value))}
+                                    className="w-full accent-yellow-400 h-1 bg-white/20 rounded-lg appearance-none cursor-pointer"
+                                />
+                            </div>
+                         )}
                       </div>
 
                       {/* Toggles */}
-                      <div className="flex flex-col justify-center gap-3">
+                      <div className="flex flex-col justify-center gap-2">
                           <button 
                             onClick={() => updateSetting('glow', !settings.glow)}
                             title={t.toggleGlow}
@@ -294,6 +306,15 @@ const Controls: React.FC<ControlsProps> = ({
                           >
                             <span className="text-xs text-white/80">{t.trails}</span>
                             <div className={`w-2 h-2 rounded-full ${settings.trails ? 'bg-purple-400 shadow-[0_0_8px_rgba(168,85,247,0.8)]' : 'bg-white/20'}`} />
+                          </button>
+
+                          <button 
+                            onClick={() => updateSetting('autoRotate', !settings.autoRotate)}
+                            title={t.toggleAutoRotate}
+                            className={`flex items-center justify-between px-3 py-2 rounded-lg border transition-all ${settings.autoRotate ? 'bg-yellow-500/20 border-yellow-500/50' : 'bg-black/20 border-white/10'}`}
+                          >
+                            <span className="text-xs text-white/80">{t.autoRotate}</span>
+                            <div className={`w-2 h-2 rounded-full ${settings.autoRotate ? 'bg-yellow-400 shadow-[0_0_8px_rgba(250,204,21,0.8)]' : 'bg-white/20'}`} />
                           </button>
                       </div>
                   </div>
@@ -374,6 +395,7 @@ const Controls: React.FC<ControlsProps> = ({
           </div>
         </div>
       </div>
+      )}
       
       {/* Help Modal Integration */}
       <HelpModal 

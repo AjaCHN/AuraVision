@@ -4,15 +4,14 @@ export type Language = 'en' | 'zh';
 export type Region = 'global' | 'US' | 'CN' | 'JP' | 'KR' | 'EU' | 'LATAM';
 
 export enum VisualizerMode {
+  PLASMA = 'PLASMA',
   BARS = 'BARS',
   PARTICLES = 'PARTICLES',
-  RINGS = 'RINGS',
   TUNNEL = 'TUNNEL',
-  PLASMA = 'PLASMA',
   SHAPES = 'SHAPES',
+  RINGS = 'RINGS',
   SMOKE = 'SMOKE',
-  RIPPLE = 'RIPPLE',
-  ORB = 'ORB'
+  RIPPLE = 'RIPPLE'
 }
 
 export enum LyricsStyle {
@@ -36,6 +35,8 @@ export interface VisualizerSettings {
   speed: number;       // 0.5 to 2.0
   glow: boolean;       // Enable shadowBlur
   trails: boolean;     // Enable transparency clearing
+  autoRotate: boolean; // Automatically switch modes
+  rotateInterval: number; // Seconds between rotation
 }
 
 export interface VisualizerConfig {

@@ -1,4 +1,3 @@
-
 import { GoogleGenAI, Type } from "@google/genai";
 import { GEMINI_MODEL, REGION_NAMES } from '../constants';
 import { SongInfo, Language, Region } from '../types';
@@ -15,8 +14,8 @@ const getGenAI = () => {
 
 export const identifySongFromAudio = async (base64Audio: string, mimeType: string, language: Language = 'en', region: Region = 'global'): Promise<SongInfo | null> => {
   
-  // Helper to run identification via Gemini
-  const callGemini = async (): Promise<SongInfo | null> => {
+  // Helper to run identification via Gemini with retry logic
+  const callGemini = async (retryCount = 0): Promise<SongInfo | null> => {
     try {
         const ai = getGenAI();
         
@@ -119,7 +118,21 @@ export const identifySongFromAudio = async (base64Audio: string, mimeType: strin
         songInfo.matchSource = 'AI';
         return songInfo;
 
-    } catch (error) {
+    } catch (error: any) {
+        // Handle common transport errors (like code 6 XHR) with retry
+        // Code 6 typically usually network reset or timeout
+        const isTransportError = error.message && (
+          error.message.includes('error code: 6') || 
+          error.message.includes('Rpc failed') ||
+          error.message.includes('xhr error')
+        );
+
+        if (isTransportError && retryCount < 2) {
+             console.warn(`Gemini transport error (attempt ${retryCount + 1}), retrying...`, error);
+             await new Promise(r => setTimeout(r, 1500 * (retryCount + 1))); // Exponential backoff
+             return callGemini(retryCount + 1);
+        }
+
         console.error("Gemini identification failed:", error);
         return null;
     }

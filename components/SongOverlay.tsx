@@ -1,20 +1,25 @@
 import React from 'react';
-import { SongInfo, LyricsStyle } from '../types';
+import { SongInfo, LyricsStyle, Language } from '../types';
+import { TRANSLATIONS } from '../translations';
 
 interface SongOverlayProps {
   song: SongInfo | null;
   lyricsStyle: LyricsStyle;
   showLyrics: boolean;
+  language: Language;
+  onRetry: () => void;
 }
 
-const SongOverlay: React.FC<SongOverlayProps> = ({ song, lyricsStyle, showLyrics }) => {
+const SongOverlay: React.FC<SongOverlayProps> = ({ song, lyricsStyle, showLyrics, language, onRetry }) => {
   // If lyrics are hidden or no song is identified, hide the entire overlay
   if (!showLyrics || !song || !song.identified) return null;
+
+  const t = TRANSLATIONS[language];
 
   return (
     <div className="pointer-events-none fixed inset-0 z-20 overflow-hidden">
       {/* Song Info Badge */}
-      <div className="absolute top-8 left-8 bg-black/40 backdrop-blur-md border-l-4 border-blue-500 pl-4 py-3 rounded-r-xl max-w-xs md:max-w-md transition-all duration-700 transform translate-y-0 opacity-100 shadow-[0_4px_10px_rgba(0,0,0,0.5)]">
+      <div className="absolute top-8 left-8 bg-black/40 backdrop-blur-md border-l-4 border-blue-500 pl-4 py-3 pr-4 rounded-r-xl max-w-xs md:max-w-md transition-all duration-700 transform translate-y-0 opacity-100 shadow-[0_4px_10px_rgba(0,0,0,0.5)] pointer-events-auto group">
         <h2 className="text-white font-bold text-xl md:text-2xl truncate tracking-tight">{song.title}</h2>
         <p className="text-blue-300 text-sm md:text-base truncate font-medium">{song.artist}</p>
         
@@ -31,16 +36,28 @@ const SongOverlay: React.FC<SongOverlayProps> = ({ song, lyricsStyle, showLyrics
           </div>
         )}
 
-        {song.searchUrl && (
-          <div className="mt-2 pointer-events-auto">
-             <a href={song.searchUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-[10px] text-white/50 hover:text-blue-300 transition-colors">
-               <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
-               </svg>
-               <span>Source (Google)</span>
-             </a>
-          </div>
-        )}
+        {/* Footer Actions Row */}
+        <div className="flex items-center gap-4 mt-3 pt-2 border-t border-white/10 opacity-60 group-hover:opacity-100 transition-opacity duration-300">
+            {song.searchUrl && (
+                <a href={song.searchUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-[10px] text-white/70 hover:text-blue-300 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+                </svg>
+                <span>Google</span>
+                </a>
+            )}
+
+            <button 
+                onClick={onRetry}
+                className="flex items-center gap-1 text-[10px] text-white/70 hover:text-orange-400 transition-colors"
+                title={t.wrongSong}
+            >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+                <span>{t.wrongSong}</span>
+            </button>
+        </div>
       </div>
     </div>
   );

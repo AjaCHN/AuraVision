@@ -14,7 +14,9 @@ const DEFAULT_SETTINGS: VisualizerSettings = {
   sensitivity: 1.5,
   speed: 1.0,
   glow: true,
-  trails: true
+  trails: true,
+  autoRotate: false,
+  rotateInterval: 30
 };
 const DEFAULT_LYRICS_STYLE = LyricsStyle.KARAOKE; // User requested KARAOKE as default
 const DEFAULT_SHOW_LYRICS = true;
@@ -33,7 +35,12 @@ const App: React.FC = () => {
     const saved = localStorage.getItem(key);
     if (saved) {
       try {
-        return JSON.parse(saved);
+        const parsed = JSON.parse(saved);
+        // Ensure merged with defaults to handle new keys (like autoRotate)
+        if (typeof fallback === 'object' && fallback !== null) {
+            return { ...fallback, ...parsed };
+        }
+        return parsed;
       } catch (e) {
         return fallback;
       }
@@ -53,10 +60,10 @@ const App: React.FC = () => {
   };
 
   // Visualizer State with Persistence
-  // Note: changing keys to v3 to force update defaults for user
+  // Note: changing keys to v4 to force update defaults if schema changed significantly
   const [mode, setMode] = useState<VisualizerMode>(() => getStorage('sv_mode_v3', DEFAULT_MODE));
   const [colorTheme, setColorTheme] = useState<string[]>(() => getStorage('sv_theme', COLOR_THEMES[DEFAULT_THEME_INDEX]));
-  const [settings, setSettings] = useState<VisualizerSettings>(() => getStorage('sv_settings', DEFAULT_SETTINGS));
+  const [settings, setSettings] = useState<VisualizerSettings>(() => getStorage('sv_settings_v2', DEFAULT_SETTINGS));
   
   // Song/AI State with Persistence where appropriate
   const [isIdentifying, setIsIdentifying] = useState(false);
@@ -74,7 +81,7 @@ const App: React.FC = () => {
   // Persistence Effects
   useEffect(() => localStorage.setItem('sv_mode_v3', JSON.stringify(mode)), [mode]);
   useEffect(() => localStorage.setItem('sv_theme', JSON.stringify(colorTheme)), [colorTheme]);
-  useEffect(() => localStorage.setItem('sv_settings', JSON.stringify(settings)), [settings]);
+  useEffect(() => localStorage.setItem('sv_settings_v2', JSON.stringify(settings)), [settings]);
   useEffect(() => localStorage.setItem('sv_lyrics_style_v3', JSON.stringify(lyricsStyle)), [lyricsStyle]);
   useEffect(() => localStorage.setItem('sv_show_lyrics', JSON.stringify(showLyrics)), [showLyrics]);
   useEffect(() => localStorage.setItem('sv_language', JSON.stringify(language)), [language]);
@@ -85,6 +92,23 @@ const App: React.FC = () => {
     languageRef.current = language;
     regionRef.current = region;
   }, [language, region]);
+
+  // --- Auto Rotate Logic ---
+  useEffect(() => {
+    if (!settings.autoRotate) return;
+
+    const intervalId = setInterval(() => {
+        setMode((prevMode) => {
+            const modes = Object.values(VisualizerMode);
+            // Filter out current mode to ensure change
+            const availableModes = modes.filter(m => m !== prevMode);
+            const nextMode = availableModes[Math.floor(Math.random() * availableModes.length)];
+            return nextMode;
+        });
+    }, settings.rotateInterval * 1000);
+
+    return () => clearInterval(intervalId);
+  }, [settings.autoRotate, settings.rotateInterval]);
 
   const identificationTimeoutRef = useRef<number | null>(null);
   const silenceDurationRef = useRef<number>(0);
@@ -363,6 +387,23 @@ const App: React.FC = () => {
     }
   };
 
+  const handleSongRetry = () => {
+      // 1. Clear current result to visually indicate something is happening
+      setCurrentSong(null);
+      
+      // 2. Clear any pending schedule
+      if (identificationTimeoutRef.current) {
+          clearTimeout(identificationTimeoutRef.current);
+      }
+
+      // 3. Trigger immediate recording with "Retry" mode (longer duration)
+      if (recorder && recorder.state !== 'recording') {
+          console.log("Manual Retry Triggered");
+          // Use a very short delay (200ms) and set isRetry=true for 12s duration
+          scheduleIdentificationLoop(recorder, 200, true);
+      }
+  };
+
   const resetSettings = () => {
     setMode(DEFAULT_MODE);
     setColorTheme(COLOR_THEMES[DEFAULT_THEME_INDEX]);
@@ -384,7 +425,9 @@ const App: React.FC = () => {
        sensitivity: parseFloat((Math.random() * 1.5 + 1.0).toFixed(1)), 
        speed: parseFloat((Math.random() * 1.0 + 0.5).toFixed(1)),
        glow: Math.random() > 0.4, 
-       trails: Math.random() > 0.3 
+       trails: Math.random() > 0.3,
+       autoRotate: false,
+       rotateInterval: 30
     };
 
     setMode(randomMode);
@@ -421,6 +464,8 @@ const App: React.FC = () => {
         song={currentSong} 
         lyricsStyle={lyricsStyle} 
         showLyrics={showLyrics}
+        language={language}
+        onRetry={handleSongRetry}
       />
 
       {/* Start Prompt if not listening */}

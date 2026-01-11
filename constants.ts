@@ -4,13 +4,13 @@ import { VisualizerMode, Region } from './types';
 export const GEMINI_MODEL = 'gemini-3-pro-preview';
 
 export const VISUALIZER_PRESETS = {
+  [VisualizerMode.PLASMA]: {
+    name: 'Plasma Flow',
+    description: 'Fluid liquid color gradients'
+  },
   [VisualizerMode.BARS]: {
     name: 'Frequency Bars',
     description: 'Classic spectrum analyzer'
-  },
-  [VisualizerMode.RINGS]: {
-    name: 'Neon Rings',
-    description: 'Concentric circles reactive to mids'
   },
   [VisualizerMode.PARTICLES]: {
     name: 'Starfield',
@@ -20,13 +20,13 @@ export const VISUALIZER_PRESETS = {
     name: 'Geometric Tunnel',
     description: '3D deep space tunnel'
   },
-  [VisualizerMode.PLASMA]: {
-    name: 'Plasma Flow',
-    description: 'Fluid liquid color gradients'
-  },
   [VisualizerMode.SHAPES]: {
     name: 'Abstract Shapes',
     description: 'Dancing geometric primitives'
+  },
+  [VisualizerMode.RINGS]: {
+    name: 'Neon Rings',
+    description: 'Concentric circles reactive to mids'
   },
   [VisualizerMode.SMOKE]: {
     name: 'Ethereal Smoke',
@@ -35,10 +35,6 @@ export const VISUALIZER_PRESETS = {
   [VisualizerMode.RIPPLE]: {
     name: 'Water Ripples',
     description: 'Raindrops reactive to beats'
-  },
-  [VisualizerMode.ORB]: {
-    name: 'Bass Orb',
-    description: 'Dynamic sphere reactive to bass'
   }
 };
 

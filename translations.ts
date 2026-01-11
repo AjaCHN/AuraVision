@@ -9,6 +9,8 @@ export const TRANSLATIONS = {
     speed: 'Speed',
     glow: 'Glow',
     trails: 'Trails',
+    autoRotate: 'Auto Rotate',
+    rotateInterval: 'Interval (s)',
     lyrics: 'Lyrics',
     showLyrics: 'Show Lyrics (Beta)',
     region: 'Music Region',
@@ -26,6 +28,7 @@ export const TRANSLATIONS = {
     help: 'Help / About',
     close: 'Close',
     betaDisclaimer: 'Beta feature. Accuracy is being improved.',
+    wrongSong: 'Wrong Song? Retry',
     // Tooltips
     randomizeTooltip: 'Randomize all visual settings',
     resetTooltip: 'Reset to default settings',
@@ -37,16 +40,16 @@ export const TRANSLATIONS = {
     toggleLanguage: 'Switch Language',
     toggleGlow: 'Toggle neon glow effect',
     toggleTrails: 'Toggle motion trails',
+    toggleAutoRotate: 'Toggle automatic mode switching',
     modes: {
+      [VisualizerMode.PLASMA]: 'Plasma Flow',
       [VisualizerMode.BARS]: 'Frequency Bars',
-      [VisualizerMode.RINGS]: 'Neon Rings',
       [VisualizerMode.PARTICLES]: 'Starfield',
       [VisualizerMode.TUNNEL]: 'Geometric Tunnel',
-      [VisualizerMode.PLASMA]: 'Plasma Flow',
       [VisualizerMode.SHAPES]: 'Abstract Shapes',
+      [VisualizerMode.RINGS]: 'Neon Rings',
       [VisualizerMode.SMOKE]: 'Ethereal Smoke',
-      [VisualizerMode.RIPPLE]: 'Water Ripples',
-      [VisualizerMode.ORB]: 'Bass Orb'
+      [VisualizerMode.RIPPLE]: 'Water Ripples'
     },
     lyricsStyles: {
       [LyricsStyle.STANDARD]: 'Standard',
@@ -93,6 +96,8 @@ export const TRANSLATIONS = {
     speed: '速度',
     glow: '霓虹光晕',
     trails: '动态拖尾',
+    autoRotate: '自动切换',
+    rotateInterval: '切换间隔 (秒)',
     lyrics: '歌词',
     showLyrics: '显示歌词 (Beta)',
     region: '音乐地区',
@@ -110,6 +115,7 @@ export const TRANSLATIONS = {
     help: '帮助 / 关于',
     close: '关闭',
     betaDisclaimer: 'Beta 功能，准确性持续优化中。',
+    wrongSong: '识别错误？重试',
     // Tooltips
     randomizeTooltip: '随机生成所有视觉设置',
     resetTooltip: '重置为默认设置',
@@ -121,16 +127,16 @@ export const TRANSLATIONS = {
     toggleLanguage: '切换语言',
     toggleGlow: '开关霓虹光晕效果',
     toggleTrails: '开关动态拖尾效果',
+    toggleAutoRotate: '开关自动切换模式功能',
     modes: {
+      [VisualizerMode.PLASMA]: '流体等离子',
       [VisualizerMode.BARS]: '镜像频谱',
-      [VisualizerMode.RINGS]: '霓虹光环',
       [VisualizerMode.PARTICLES]: '星空粒子',
       [VisualizerMode.TUNNEL]: '几何隧道',
-      [VisualizerMode.PLASMA]: '流体等离子',
       [VisualizerMode.SHAPES]: '抽象几何',
+      [VisualizerMode.RINGS]: '霓虹光环',
       [VisualizerMode.SMOKE]: '烟雾特效',
-      [VisualizerMode.RIPPLE]: '水波纹',
-      [VisualizerMode.ORB]: '低音光球'
+      [VisualizerMode.RIPPLE]: '水波纹'
     },
     lyricsStyles: {
       [LyricsStyle.STANDARD]: '标准',

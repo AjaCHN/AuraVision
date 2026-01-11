@@ -88,9 +88,6 @@ const VisualizerCanvas: React.FC<VisualizerCanvasProps> = ({
     // Ripple looks better with a dark watery fade
     if (mode === VisualizerMode.RIPPLE) alpha = 0.2;
     
-    // Orb looks nice with standard fade
-    if (mode === VisualizerMode.ORB) alpha = 0.25;
-
     if (settings.trails) {
         if (mode === VisualizerMode.RIPPLE) {
            // Deep blue fade for water effect
@@ -149,9 +146,6 @@ const VisualizerCanvas: React.FC<VisualizerCanvasProps> = ({
         break;
       case VisualizerMode.RIPPLE:
         drawRipples(ctx, dataArray, width, height, colors, bufferLength, ripplesRef.current, settings);
-        break;
-      case VisualizerMode.ORB:
-        drawBassOrb(ctx, dataArray, width, height, colors, bufferLength, settings, rotationRef.current);
         break;
     }
 
@@ -289,18 +283,34 @@ function drawLyrics(
   }
 
   // Word Wrapping
-  const maxWidth = w * 0.8;
+  // If text is long (> 20 chars), constrain width significantly to force wrap (max 600px or 80% of width)
+  const maxWidth = text.length > 20 ? Math.min(w * 0.8, 600) : w * 0.9;
   const lineHeight = style === LyricsStyle.KARAOKE ? 70 : 50;
-  const words = text.split(' ');
+  
+  // Pre-process: insert spaces after punctuation to allow wrapping if missing
+  const processedText = text.replace(/([,.;:!?])/g, '$1 ');
+
+  // Split strategy:
+  // 1. If contains spaces, assume words (English/European).
+  // 2. If no spaces and likely CJK, split by characters.
+  let words: string[];
+  if (processedText.includes(' ')) {
+      words = processedText.split(/\s+/);
+  } else {
+      words = processedText.split('');
+  }
+
   let line = '';
   const lines = [];
 
   for (let n = 0; n < words.length; n++) {
-    const testLine = line + words[n] + ' ';
+    // If splitting by space, add space; if splitting by char (CJK), don't add extra space
+    const spacer = processedText.includes(' ') ? ' ' : '';
+    const testLine = line + words[n] + spacer;
     const metrics = ctx.measureText(testLine);
     if (metrics.width > maxWidth && n > 0) {
       lines.push(line);
-      line = words[n] + ' ';
+      line = words[n] + spacer;
     } else {
       line = testLine;
     }
@@ -499,7 +509,8 @@ function drawParticles(
         const prevSx = centerX + rotX * prevScale;
         const prevSy = centerY + rotY * prevScale;
 
-        const size = p.size * scale;
+        // MULTIPLY SIZE BY 5 as requested
+        const size = p.size * scale * 5;
 
         let alpha = 1;
         if (p.life > w * 0.8) alpha = (w - p.life) / (w * 0.2); 
@@ -671,65 +682,93 @@ function drawAbstractShapes(
     const centerX = w / 2;
     const centerY = h / 2;
 
-    const bass = getAverage(data, 0, 10) * settings.sensitivity;
-    const mids = getAverage(data, 10, 50) * settings.sensitivity;
-    const treble = getAverage(data, 50, 100) * settings.sensitivity;
+    // Freq Analysis
+    let bass = 0; for(let i=0; i<10; i++) bass += data[i];
+    bass = (bass / 10) * settings.sensitivity;
+    
+    let mids = 0; for(let i=10; i<40; i++) mids += data[i];
+    mids = (mids / 30) * settings.sensitivity;
 
-    ctx.lineWidth = 4;
+    // Clearer lines
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
 
-    // 1. Central Bass Triangle
     ctx.save();
     ctx.translate(centerX, centerY);
-    ctx.rotate(rotation); 
-    const triSize = 50 + bass * 1.5;
-    ctx.strokeStyle = colors[0];
-    ctx.beginPath();
-    ctx.moveTo(0, -triSize);
-    ctx.lineTo(triSize * 0.866, triSize * 0.5);
-    ctx.lineTo(-triSize * 0.866, triSize * 0.5);
-    ctx.closePath();
-    ctx.stroke();
-    ctx.restore();
 
-    // 2. Orbiting Mids Squares
-    const orbitCount = 4;
-    for(let i=0; i<orbitCount; i++) {
-        ctx.save();
-        ctx.translate(centerX, centerY);
-        const orbitAngle = rotation * -0.5 + (i * (Math.PI * 2 / orbitCount));
-        const orbitRadius = 150 + mids * 0.5;
+    // Number of concentric shapes
+    const layers = 8;
+    
+    for (let i = 0; i < layers; i++) {
+        // Dynamic properties based on layer index
         
-        const x = Math.cos(orbitAngle) * orbitRadius;
-        const y = Math.sin(orbitAngle) * orbitRadius;
-        
-        ctx.translate(x, y);
-        ctx.rotate(rotation * 2 + i); 
-        
-        const sqSize = 20 + mids * 0.4;
-        ctx.strokeStyle = colors[1];
-        ctx.strokeRect(-sqSize/2, -sqSize/2, sqSize, sqSize);
-        ctx.restore();
-    }
+        // 1. Determine Shape (Sides)
+        // Outer layers have more sides, or cycle 3->4->5->6...
+        // Add variation based on time (rotation)
+        const baseSides = 3 + i;
+        const morph = Math.floor(rotation * 0.5) % 3; // 0, 1, 2
+        const sides = baseSides + morph;
 
-    // 3. Treble Circles 
-    const circCount = 8;
-    for(let i=0; i<circCount; i++) {
-        ctx.save();
-        ctx.translate(centerX, centerY);
-        const angle = rotation * 0.2 + (i * (Math.PI * 2 / circCount));
-        const dist = 250 + treble * 0.2 + (i%2 * 50); 
+        // 2. Determine Radius
+        // Base size + Audio reaction
+        const baseRadius = (Math.min(w, h) * 0.05 * (i + 1));
+        const expansion = (bass / 255) * (Math.min(w,h) * 0.1);
+        // Mids wobble
+        const wobble = Math.sin(rotation * 5 + i) * (mids * 0.1);
         
-        const x = Math.cos(angle) * dist;
-        const y = Math.sin(angle) * dist;
+        const radius = baseRadius + expansion + wobble;
+
+        // 3. Rotation
+        // Alternate direction per layer
+        const dir = i % 2 === 0 ? 1 : -1;
+        const speed = 0.5 + (i * 0.1);
+        const angleOffset = rotation * speed * dir;
+
+        // 4. Color
+        ctx.strokeStyle = colors[i % colors.length];
+        ctx.lineWidth = 2 + ((bass/255) * 3);
         
-        const r = 5 + treble * 0.2;
-        
-        ctx.fillStyle = colors[2];
+        // Draw Polygon
         ctx.beginPath();
-        ctx.arc(x, y, r, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.restore();
+        for (let j = 0; j <= sides; j++) {
+            const angle = (j / sides) * Math.PI * 2 + angleOffset;
+            const px = Math.cos(angle) * radius;
+            const py = Math.sin(angle) * radius;
+            if (j === 0) ctx.moveTo(px, py);
+            else ctx.lineTo(px, py);
+        }
+        ctx.closePath();
+        ctx.stroke();
+
+        // 5. Connect to previous layer (Web effect)
+        // Only if loud enough
+        if (bass > 150 && i > 0) {
+             // Simplification: Just draw a line to the center if it's a "beat"
+             if (i % 2 === 0) {
+                 ctx.beginPath();
+                 const angle = angleOffset; 
+                 ctx.moveTo(Math.cos(angle)*radius, Math.sin(angle)*radius);
+                 ctx.globalAlpha = 0.2;
+                 ctx.lineTo(0, 0);
+                 ctx.stroke();
+                 ctx.globalAlpha = 1.0;
+             }
+        }
     }
+    
+    // Floating geometric particles in background
+    const particles = 6;
+    for(let k=0; k<particles; k++) {
+         const r = (Math.min(w,h) * 0.4) + (mids * 0.5);
+         const a = rotation * 0.5 + (k / particles) * Math.PI * 2;
+         const px = Math.cos(a) * r;
+         const py = Math.sin(a) * r;
+         
+         ctx.fillStyle = colors[k % colors.length];
+         ctx.fillRect(px - 5, py - 5, 10 + (bass/20), 10 + (bass/20));
+    }
+
+    ctx.restore();
 }
 
 function drawSmoke(
@@ -994,133 +1033,6 @@ function drawRipples(
         }
     }
     ctx.globalAlpha = 1.0;
-}
-
-function drawBassOrb(
-    ctx: CanvasRenderingContext2D,
-    data: Uint8Array,
-    w: number,
-    h: number,
-    colors: string[],
-    bufferLength: number,
-    settings: VisualizerSettings,
-    rotation: number
-) {
-    const centerX = w / 2;
-    const centerY = h / 2;
-    
-    // 1. Refined Frequency Extraction
-    // Kick: Deep sub-bass (0-6)
-    let kick = getAverage(data, 0, 6) * settings.sensitivity;
-    
-    // Bass: Melodic bass (6-20)
-    let bass = getAverage(data, 6, 20) * settings.sensitivity;
-    
-    // Texture: Low-mids (20-50)
-    let texture = getAverage(data, 20, 50) * settings.sensitivity;
-
-    // Normalization (soft clamp at 1.0 but allow temporary peaks)
-    const kickNorm = Math.min(kick / 255, 1.2);
-    const bassNorm = Math.min(bass / 255, 1.2);
-    const textureNorm = Math.min(texture / 255, 1.2);
-    
-    const minDim = Math.min(w, h);
-    // Base radius pulses with overall bass
-    const baseRadius = minDim * 0.18 + (bassNorm * minDim * 0.05); 
-    
-    // Rotate entire coordinate system slowly
-    ctx.save();
-    ctx.translate(centerX, centerY);
-    ctx.rotate(rotation * 0.2); // Slower, deeper rotation
-
-    ctx.beginPath();
-    
-    const points = 200; // Smoother
-    
-    // Wave Layers Configuration
-    
-    // Layer 1: Kick (Major deformation)
-    // Low frequency (3, 4, or 5 lobes)
-    // Amplitude reacts explosively to kick
-    const layer1Freq = 3; 
-    const layer1Amp = Math.pow(kickNorm, 2) * (minDim * 0.15); // Exponential response for "punch"
-    
-    // Layer 2: Bassline (Rhythm)
-    // Higher frequency (varies with bass intensity)
-    const layer2Freq = 6 + Math.round(bassNorm * 4); // 6 to 10 lobes
-    const layer2Amp = bassNorm * (minDim * 0.08);
-
-    // Layer 3: Organic Jitter (Texture)
-    // Very high frequency, creates the "fuzzy" or "liquid" edge
-    // Modulate phase with time strongly
-    const jitterFreq = 20;
-    const jitterAmp = textureNorm * (minDim * 0.03);
-    
-    // Time factor for wave movement (flowing)
-    const time = rotation * 4;
-
-    for (let i = 0; i <= points; i++) {
-        // Angle covers 0 to 2PI
-        const angle = (i / points) * Math.PI * 2;
-        
-        // 1. Primary Kick Wave (Sine)
-        const w1 = Math.sin(angle * layer1Freq + time) * layer1Amp;
-        
-        // 2. Secondary Bass Wave (Cosine, different phase/speed)
-        // Adding a slight offset to frequency based on angle makes it less perfect
-        const w2 = Math.cos(angle * layer2Freq - time * 1.5) * layer2Amp;
-        
-        // 3. Jitter/Noise
-        // Mixing two high frequencies creates an organic "interference" pattern
-        const noise = Math.sin(angle * jitterFreq + time * 3) * 
-                      Math.cos(angle * (jitterFreq + 5) - time) * jitterAmp;
-        
-        // Combine
-        // We add a subtle "breathing" effect to the radius using a per-point index for localized swelling
-        const breathing = Math.sin(i * 0.1 + time) * (bassNorm * 5);
-
-        const r = baseRadius + w1 + w2 + noise + breathing;
-        
-        // Clamp radius to avoid negative (inverted) shapes in extreme cases
-        const finalR = Math.max(minDim * 0.05, r);
-        
-        const x = Math.cos(angle) * finalR;
-        const y = Math.sin(angle) * finalR;
-        
-        if (i === 0) ctx.moveTo(x, y);
-        else ctx.lineTo(x, y);
-    }
-    
-    ctx.closePath();
-    
-    // Styling: "Ethereal" look
-    const gradient = ctx.createRadialGradient(0, 0, baseRadius * 0.2, 0, 0, baseRadius * 1.5);
-    gradient.addColorStop(0, '#ffffff'); // Hot core
-    gradient.addColorStop(0.2, colors[0]); // Primary
-    gradient.addColorStop(0.6, colors[1]); // Secondary
-    gradient.addColorStop(1, 'transparent'); // Fade out
-    
-    ctx.fillStyle = gradient;
-    ctx.fill();
-    
-    // Add a double stroke for depth
-    // Outer glow
-    ctx.shadowBlur = 30 * kickNorm; // Glow pulses with kick
-    ctx.shadowColor = colors[0];
-    ctx.strokeStyle = colors[2] || '#ffffff';
-    ctx.lineWidth = 2 + (bassNorm * 3);
-    ctx.stroke();
-    
-    // Inner detail ring (High frequency reactive)
-    ctx.beginPath();
-    const innerR = baseRadius * 0.6;
-    ctx.arc(0, 0, innerR, 0, Math.PI * 2);
-    ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
-    ctx.lineWidth = 1;
-    ctx.shadowBlur = 0;
-    ctx.stroke();
-
-    ctx.restore();
 }
 
 function getAverage(data: Uint8Array, start: number, end: number) {
