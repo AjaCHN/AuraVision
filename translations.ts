@@ -43,6 +43,7 @@ export const TRANSLATIONS = {
     toggleTrails: 'Toggle motion trails',
     toggleAutoRotate: 'Toggle automatic mode switching',
     modes: {
+      [VisualizerMode.SYNTHWAVE]: 'Synthwave Grid',
       [VisualizerMode.PLASMA]: 'Plasma Flow',
       [VisualizerMode.BARS]: 'Frequency Bars',
       [VisualizerMode.PARTICLES]: 'Starfield',
@@ -131,6 +132,7 @@ export const TRANSLATIONS = {
     toggleTrails: '开关动态拖尾效果',
     toggleAutoRotate: '开关自动切换模式功能',
     modes: {
+      [VisualizerMode.SYNTHWAVE]: '合成波网格',
       [VisualizerMode.PLASMA]: '流体等离子',
       [VisualizerMode.BARS]: '镜像频谱',
       [VisualizerMode.PARTICLES]: '星空粒子',

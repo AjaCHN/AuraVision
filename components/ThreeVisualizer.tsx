@@ -1,11 +1,28 @@
 import React, { useRef, useMemo, useEffect } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { EffectComposer, Bloom, ChromaticAberration } from '@react-three/drei';
+import { EffectComposer, Bloom, ChromaticAberration } from '@react-three/postprocessing';
 import * as THREE from 'three';
 import { VisualizerSettings } from '../types';
 
 // Fix for missing JSX types in this environment
+// We augment both global JSX and React.JSX to cover different TS/React versions
 declare global {
+  namespace JSX {
+    interface IntrinsicElements {
+      color: any;
+      fog: any;
+      mesh: any;
+      circleGeometry: any;
+      meshBasicMaterial: any;
+      pointLight: any;
+      primitive: any;
+      meshStandardMaterial: any;
+      ambientLight: any;
+    }
+  }
+}
+
+declare module 'react' {
   namespace JSX {
     interface IntrinsicElements {
       color: any;
@@ -64,8 +81,6 @@ const SynthwaveScene: React.FC<{ analyser: AnalyserNode; colors: string[]; setti
     const time = clock.getElapsedTime() * settings.speed;
 
     // We want the grid to move towards camera (y axis in plane geometry space implies z in world if rotated)
-    // Actually, let's keep geometry static X/Y and scroll noise? 
-    // Easier: Map frequency data to Z height based on Y position (distance)
     
     for (let i = 0; i < count; i++) {
         // Plane is defined in x, y. We modify z (height).
@@ -73,7 +88,7 @@ const SynthwaveScene: React.FC<{ analyser: AnalyserNode; colors: string[]; setti
         const y = positions.getY(i);
         
         // Simplex-ish movement
-        const movement = (y + time * 20) % 100;
+        // const movement = (y + time * 20) % 100;
         
         // Map audio freq to x position
         // Map x (-50 to 50) to freq index (0 to ~100)
@@ -98,9 +113,6 @@ const SynthwaveScene: React.FC<{ analyser: AnalyserNode; colors: string[]; setti
     }
     
     positions.needsUpdate = true;
-    
-    // Move Mesh to simulate infinite scrolling? 
-    // Instead we scrolled the noise above.
   });
 
   return (

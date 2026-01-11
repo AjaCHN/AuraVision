@@ -87,26 +87,21 @@ export const identifySongFromAudio = async (base64Audio: string, mimeType: strin
           config: {
             tools: [{ googleSearch: {} }],
             systemInstruction: systemInstruction,
-            responseMimeType: "application/json",
-            responseSchema: {
-              type: Type.OBJECT,
-              properties: {
-                title: { type: Type.STRING },
-                artist: { type: Type.STRING },
-                lyricsSnippet: { type: Type.STRING },
-                mood: { type: Type.STRING },
-                identified: { type: Type.BOOLEAN }
-              },
-              required: ["title", "artist", "identified", "lyricsSnippet"]
-            }
+            // Removed responseMimeType/responseSchema as they can conflict with Search Grounding
           }
         });
 
         const text = response.text;
         if (!text) return null;
         
-        const cleanedText = text.replace(/```json\n?|```/g, '').trim();
-        const songInfo = JSON.parse(cleanedText) as SongInfo;
+        // Robust JSON extraction
+        let jsonStr = text;
+        const jsonMatch = text.match(/\{[\s\S]*\}/);
+        if (jsonMatch) {
+            jsonStr = jsonMatch[0];
+        }
+        
+        const songInfo = JSON.parse(jsonStr) as SongInfo;
 
         const groundingChunks = response.candidates?.[0]?.groundingMetadata?.groundingChunks;
         if (groundingChunks) {
