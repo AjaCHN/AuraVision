@@ -44,3 +44,23 @@ export interface VisualizerConfig {
   sensitivity: number;
   colorTheme: string[];
 }
+
+// Strategy Pattern Interface for Visualizers
+export interface IVisualizerRenderer {
+  init(canvas: HTMLCanvasElement): void;
+  draw(
+    ctx: CanvasRenderingContext2D, 
+    data: Uint8Array, 
+    width: number, 
+    height: number, 
+    colors: string[], 
+    settings: VisualizerSettings,
+    rotation: number
+  ): void;
+  cleanup?(): void;
+}
+
+export interface AudioDevice {
+  deviceId: string;
+  label: string;
+}

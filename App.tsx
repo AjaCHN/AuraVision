@@ -2,14 +2,14 @@ import React, { useState, useEffect, useRef } from 'react';
 import VisualizerCanvas from './components/VisualizerCanvas';
 import Controls from './components/Controls';
 import SongOverlay from './components/SongOverlay';
-import { VisualizerMode, SongInfo, LyricsStyle, Language, VisualizerSettings, Region } from './types';
+import { VisualizerMode, SongInfo, LyricsStyle, Language, VisualizerSettings, Region, AudioDevice } from './types';
 import { COLOR_THEMES } from './constants';
 import { identifySongFromAudio } from './services/geminiService';
 import { TRANSLATIONS } from './translations';
 
 // Default Constants
-const DEFAULT_MODE = VisualizerMode.PLASMA; // User requested PLASMA as default
-const DEFAULT_THEME_INDEX = 1; // Cyberpunk
+const DEFAULT_MODE = VisualizerMode.PLASMA; 
+const DEFAULT_THEME_INDEX = 1; 
 const DEFAULT_SETTINGS: VisualizerSettings = {
   sensitivity: 1.5,
   speed: 1.0,
@@ -18,7 +18,7 @@ const DEFAULT_SETTINGS: VisualizerSettings = {
   autoRotate: false,
   rotateInterval: 30
 };
-const DEFAULT_LYRICS_STYLE = LyricsStyle.KARAOKE; // User requested KARAOKE as default
+const DEFAULT_LYRICS_STYLE = LyricsStyle.KARAOKE; 
 const DEFAULT_SHOW_LYRICS = true;
 const DEFAULT_LANGUAGE: Language = 'zh';
 
@@ -29,6 +29,13 @@ const App: React.FC = () => {
   const [mediaStream, setMediaStream] = useState<MediaStream | null>(null);
   const [recorder, setRecorder] = useState<MediaRecorder | null>(null);
   
+  // Audio Input State
+  const [audioDevices, setAudioDevices] = useState<AudioDevice[]>([]);
+  const [selectedDeviceId, setSelectedDeviceId] = useState<string>('');
+
+  // Wake Lock Ref
+  const wakeLockRef = useRef<any>(null);
+
   // Helper for localStorage
   const getStorage = <T,>(key: string, fallback: T): T => {
     if (typeof window === 'undefined') return fallback;
@@ -36,7 +43,6 @@ const App: React.FC = () => {
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
-        // Ensure merged with defaults to handle new keys (like autoRotate)
         if (typeof fallback === 'object' && fallback !== null) {
             return { ...fallback, ...parsed };
         }
@@ -48,37 +54,29 @@ const App: React.FC = () => {
     return fallback;
   };
 
-  // Helper to detect default region based on browser language
   const detectDefaultRegion = (): Region => {
     const lang = navigator.language.toLowerCase();
     if (lang.includes('zh')) return 'CN';
     if (lang.includes('ja')) return 'JP';
     if (lang.includes('ko')) return 'KR';
-    if (lang.includes('es') || lang.includes('pt')) return 'LATAM'; // Rough approximation
+    if (lang.includes('es') || lang.includes('pt')) return 'LATAM';
     if (lang.includes('en-us')) return 'US';
     return 'global';
   };
 
-  // Visualizer State with Persistence
-  // Note: changing keys to v4 to force update defaults if schema changed significantly
   const [mode, setMode] = useState<VisualizerMode>(() => getStorage('sv_mode_v3', DEFAULT_MODE));
   const [colorTheme, setColorTheme] = useState<string[]>(() => getStorage('sv_theme', COLOR_THEMES[DEFAULT_THEME_INDEX]));
   const [settings, setSettings] = useState<VisualizerSettings>(() => getStorage('sv_settings_v2', DEFAULT_SETTINGS));
-  
-  // Song/AI State with Persistence where appropriate
   const [isIdentifying, setIsIdentifying] = useState(false);
   const [currentSong, setCurrentSong] = useState<SongInfo | null>(null);
   const [lyricsStyle, setLyricsStyle] = useState<LyricsStyle>(() => getStorage('sv_lyrics_style_v3', DEFAULT_LYRICS_STYLE));
   const [showLyrics, setShowLyrics] = useState<boolean>(() => getStorage('sv_show_lyrics', DEFAULT_SHOW_LYRICS));
-  
-  // Language & Region State with Persistence
   const [language, setLanguage] = useState<Language>(() => getStorage('sv_language', DEFAULT_LANGUAGE));
   const [region, setRegion] = useState<Region>(() => getStorage('sv_region', detectDefaultRegion()));
 
   const languageRef = useRef(language);
   const regionRef = useRef(region);
 
-  // Persistence Effects
   useEffect(() => localStorage.setItem('sv_mode_v3', JSON.stringify(mode)), [mode]);
   useEffect(() => localStorage.setItem('sv_theme', JSON.stringify(colorTheme)), [colorTheme]);
   useEffect(() => localStorage.setItem('sv_settings_v2', JSON.stringify(settings)), [settings]);
@@ -87,20 +85,66 @@ const App: React.FC = () => {
   useEffect(() => localStorage.setItem('sv_language', JSON.stringify(language)), [language]);
   useEffect(() => localStorage.setItem('sv_region', JSON.stringify(region)), [region]);
 
-  // Update ref when language/region changes to ensure async loops access current value
   useEffect(() => {
     languageRef.current = language;
     regionRef.current = region;
   }, [language, region]);
 
-  // --- Auto Rotate Logic ---
+  // Load Audio Devices
+  useEffect(() => {
+    const getDevices = async () => {
+      try {
+        // Need to ask for permission first to get labels
+        await navigator.mediaDevices.getUserMedia({ audio: true });
+        
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        const inputs = devices
+          .filter(d => d.kind === 'audioinput')
+          .map(d => ({ deviceId: d.deviceId, label: d.label || `Microphone ${d.deviceId.slice(0, 5)}...` }));
+        
+        setAudioDevices(inputs);
+        // Default to first if none selected, or keep selection if exists
+        if (!selectedDeviceId && inputs.length > 0) {
+             // Try to find "default" or just take first
+             const defaultDevice = inputs.find(d => d.deviceId === 'default') || inputs[0];
+             setSelectedDeviceId(defaultDevice.deviceId);
+        }
+      } catch (e) {
+        console.warn("Could not enumerate devices", e);
+      }
+    };
+    getDevices();
+  }, []);
+
+  // Request Wake Lock
+  const requestWakeLock = async () => {
+    try {
+      if ('wakeLock' in navigator) {
+        wakeLockRef.current = await (navigator as any).wakeLock.request('screen');
+      }
+    } catch (err) {
+      console.log(`Wake Lock error: ${err}`);
+    }
+  };
+
+  const releaseWakeLock = async () => {
+    if (wakeLockRef.current) {
+      try {
+        await wakeLockRef.current.release();
+        wakeLockRef.current = null;
+      } catch (err) {
+        console.log(`Wake Lock release error: ${err}`);
+      }
+    }
+  };
+
+  // Auto Rotate Logic
   useEffect(() => {
     if (!settings.autoRotate) return;
 
     const intervalId = setInterval(() => {
         setMode((prevMode) => {
             const modes = Object.values(VisualizerMode);
-            // Filter out current mode to ensure change
             const availableModes = modes.filter(m => m !== prevMode);
             const nextMode = availableModes[Math.floor(Math.random() * availableModes.length)];
             return nextMode;
@@ -115,31 +159,30 @@ const App: React.FC = () => {
   const songChangeArmedRef = useRef<boolean>(false);
 
   // Initialize Audio Logic
-  const startAudio = async () => {
+  const startAudio = async (deviceId?: string) => {
+    // Release any previous wake lock first
+    releaseWakeLock();
+    // Stop previous stream if any
+    if (isListening) stopAudio();
+
     try {
-      // CRITICAL: Disable echo cancellation and noise suppression for MUSIC.
-      // Default browser behavior is optimized for VOICE, which kills music frequencies.
-      const stream = await navigator.mediaDevices.getUserMedia({ 
+      const constraints: MediaStreamConstraints = { 
         audio: {
+          deviceId: deviceId ? { exact: deviceId } : undefined,
           echoCancellation: false,
           autoGainControl: false,
           noiseSuppression: false,
-          channelCount: 2 // Try to request stereo
+          channelCount: 2 
         } 
-      });
+      };
 
+      const stream = await navigator.mediaDevices.getUserMedia(constraints);
       const ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
-      
-      // Ensure context is running
-      if (ctx.state === 'suspended') {
-        await ctx.resume();
-      }
+      if (ctx.state === 'suspended') await ctx.resume();
 
       const src = ctx.createMediaStreamSource(stream);
       const ana = ctx.createAnalyser();
-      
       ana.fftSize = 2048;
-      // Higher smoothing for smoother visuals
       ana.smoothingTimeConstant = 0.85; 
       src.connect(ana);
       
@@ -148,18 +191,12 @@ const App: React.FC = () => {
       setMediaStream(stream);
       setIsListening(true);
       
-      // Initialize MediaRecorder for identifying songs
       setupRecorder(stream);
+      requestWakeLock(); // Keep screen on!
+
     } catch (err) {
       console.error("Error accessing microphone:", err);
-      // Fallback to default audio settings if constraints fail
-      try {
-        const fallbackStream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        // ... repeat setup (simplified for brevity, realistically would refactor)
-        alert("High-fidelity audio failed. Falling back to standard audio. Music recognition may be less accurate.");
-      } catch (e) {
-        alert("Could not access microphone. Please allow permissions.");
-      }
+      alert("Could not access audio device. Please check permissions.");
     }
   };
 
@@ -175,27 +212,34 @@ const App: React.FC = () => {
     setIsListening(false);
     setIsIdentifying(false);
     
-    // Reset detection logic
+    releaseWakeLock();
+    
     silenceDurationRef.current = 0;
     songChangeArmedRef.current = false;
   };
 
+  // Change Device Handler
+  const handleDeviceChange = (deviceId: string) => {
+      setSelectedDeviceId(deviceId);
+      if (isListening) {
+          // Restart with new device
+          startAudio(deviceId);
+      }
+  };
+
   const setupRecorder = (stream: MediaStream) => {
-    // We need a separate MediaRecorder to capture chunks for Gemini
-    // INCREASE BITRATE for better accuracy (128kbps)
     const mimeType = MediaRecorder.isTypeSupported('audio/webm;codecs=opus') 
       ? 'audio/webm;codecs=opus' 
       : 'audio/webm';
 
     const options: MediaRecorderOptions = { 
        mimeType,
-       audioBitsPerSecond: 128000 // 128kbps provides much better spectral detail than 32kbps
+       audioBitsPerSecond: 128000 
     };
       
     try {
       const rec = new MediaRecorder(stream, options);
       setRecorder(rec);
-      // Start identification loop with initial delay
       scheduleIdentificationLoop(rec, 3000);
     } catch (e) {
       console.error("MediaRecorder init failed", e);
@@ -205,60 +249,41 @@ const App: React.FC = () => {
     }
   };
 
-  // Enhanced Song Change Detection Logic
-  // Monitors audio energy to detect silence gaps between songs
   useEffect(() => {
     if (!analyser || !isListening) return;
 
     const interval = setInterval(() => {
-      // Don't interfere if we are currently recording/identifying
       if (isIdentifying) return;
 
       const bufferLength = analyser.frequencyBinCount;
       const dataArray = new Uint8Array(bufferLength);
       analyser.getByteFrequencyData(dataArray);
 
-      // Calculate approximate average volume from a few sample points
       let sum = 0;
-      // We check every 10th bin to save CPU, covering full spectrum
       const step = 10;
       for (let i = 0; i < bufferLength; i += step) {
           sum += dataArray[i];
       }
       const average = sum / (bufferLength / step);
 
-      // Thresholds (0-255 scale)
-      const SILENCE_THRESHOLD = 8;  // Very quiet background noise
-      const MUSIC_THRESHOLD = 20;   // Definite audio signal
-      const GAP_DURATION_REQ = 2000; // 2 seconds of silence implies a break
+      const SILENCE_THRESHOLD = 8;  
+      const MUSIC_THRESHOLD = 20;   
+      const GAP_DURATION_REQ = 2000; 
 
       if (average < SILENCE_THRESHOLD) {
-          silenceDurationRef.current += 200; // Interval is 200ms
-          
+          silenceDurationRef.current += 200; 
           if (silenceDurationRef.current >= GAP_DURATION_REQ) {
               songChangeArmedRef.current = true;
           }
       } else if (average > MUSIC_THRESHOLD) {
-          // Audio detected
           if (songChangeArmedRef.current) {
               console.log("🎵 Gap detected followed by audio. Triggering Song ID...");
-              
-              // We found a new song!
-              // 1. Reset trigger
               songChangeArmedRef.current = false;
-              
-              // 2. Clear existing schedule
-              if (identificationTimeoutRef.current) {
-                  clearTimeout(identificationTimeoutRef.current);
-              }
-              
-              // 3. Schedule immediate ID (wait 2s for song to establish)
+              if (identificationTimeoutRef.current) clearTimeout(identificationTimeoutRef.current);
               if (recorder && recorder.state !== 'recording') {
                   scheduleIdentificationLoop(recorder, 2000);
               }
           }
-          
-          // Reset silence counter as audio is playing
           silenceDurationRef.current = 0;
       }
     }, 200);
@@ -270,13 +295,9 @@ const App: React.FC = () => {
     if (identificationTimeoutRef.current) clearTimeout(identificationTimeoutRef.current);
 
     identificationTimeoutRef.current = window.setTimeout(async () => {
-      // Check if stream tracks are still live.
       if (!rec.stream.active && rec.stream.getTracks().every(t => t.readyState === 'ended')) {
           return;
       }
-
-      // INCREASE DURATION: 8s for normal, 12s for retry. 
-      // 6s is often too short for ambient music recognition.
       const duration = isRetry ? 12000 : 8000;
       
       try {
@@ -284,14 +305,11 @@ const App: React.FC = () => {
 
         if (result && result.identified) {
            setCurrentSong(result);
-           // Success! Wait 35s before next check (extended slightly since we have gap detection now)
            scheduleIdentificationLoop(rec, 35000, false);
         } else {
            if (!isRetry) {
-             // Failed? Retry quickly with a longer clip
              scheduleIdentificationLoop(rec, 1000, true);
            } else {
-             // Retry failed? Wait 15s
              scheduleIdentificationLoop(rec, 15000, false);
            }
         }
@@ -383,23 +401,15 @@ const App: React.FC = () => {
     if (isListening) {
       stopAudio();
     } else {
-      startAudio();
+      startAudio(selectedDeviceId);
     }
   };
 
   const handleSongRetry = () => {
-      // 1. Clear current result to visually indicate something is happening
       setCurrentSong(null);
-      
-      // 2. Clear any pending schedule
-      if (identificationTimeoutRef.current) {
-          clearTimeout(identificationTimeoutRef.current);
-      }
-
-      // 3. Trigger immediate recording with "Retry" mode (longer duration)
+      if (identificationTimeoutRef.current) clearTimeout(identificationTimeoutRef.current);
       if (recorder && recorder.state !== 'recording') {
           console.log("Manual Retry Triggered");
-          // Use a very short delay (200ms) and set isRetry=true for 12s duration
           scheduleIdentificationLoop(recorder, 200, true);
       }
   };
@@ -440,6 +450,7 @@ const App: React.FC = () => {
   useEffect(() => {
     return () => {
       stopAudio();
+      releaseWakeLock();
     };
   }, []);
 
@@ -479,7 +490,7 @@ const App: React.FC = () => {
                 {t.welcomeText}
               </p>
               <button 
-                onClick={startAudio}
+                onClick={() => startAudio(selectedDeviceId)}
                 className="px-8 py-4 bg-white text-black font-bold rounded-full hover:scale-105 transition-transform shadow-[0_0_20px_rgba(255,255,255,0.4)]"
               >
                 {t.startExperience}
@@ -508,6 +519,9 @@ const App: React.FC = () => {
         setSettings={setSettings}
         resetSettings={resetSettings}
         randomizeSettings={randomizeSettings}
+        audioDevices={audioDevices}
+        selectedDeviceId={selectedDeviceId}
+        onDeviceChange={handleDeviceChange}
       />
     </div>
   );

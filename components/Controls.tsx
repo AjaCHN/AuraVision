@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { VisualizerMode, LyricsStyle, Language, VisualizerSettings, Region } from '../types';
+import { VisualizerMode, LyricsStyle, Language, VisualizerSettings, Region, AudioDevice } from '../types';
 import { VISUALIZER_PRESETS, COLOR_THEMES, REGION_NAMES } from '../constants';
 import { TRANSLATIONS } from '../translations';
 import HelpModal from './HelpModal';
@@ -23,6 +23,9 @@ interface ControlsProps {
   setSettings: (settings: VisualizerSettings) => void;
   resetSettings: () => void;
   randomizeSettings: () => void;
+  audioDevices: AudioDevice[];
+  selectedDeviceId: string;
+  onDeviceChange: (id: string) => void;
 }
 
 const Controls: React.FC<ControlsProps> = ({
@@ -43,7 +46,10 @@ const Controls: React.FC<ControlsProps> = ({
   settings,
   setSettings,
   resetSettings,
-  randomizeSettings
+  randomizeSettings,
+  audioDevices,
+  selectedDeviceId,
+  onDeviceChange
 }) => {
   const [isExpanded, setIsExpanded] = useState(true);
   const [showHelp, setShowHelp] = useState(false);
@@ -142,7 +148,7 @@ const Controls: React.FC<ControlsProps> = ({
       /* EXPANDED VIEW */
       <div className="fixed bottom-0 left-0 w-full z-30 flex flex-col justify-end pointer-events-none">
         
-        {/* Main Panel Container - Added hover opacity logic */}
+        {/* Main Panel Container */}
         <div 
            className={`pointer-events-auto w-full bg-gradient-to-t from-black via-black/95 to-transparent pt-8 pb-6 px-4 md:px-8 backdrop-blur-sm transition-all duration-500 ease-out transform
            ${isUserInactive ? 'opacity-60 hover:opacity-100 translate-y-2 hover:translate-y-0' : 'opacity-100'}`}
@@ -250,6 +256,25 @@ const Controls: React.FC<ControlsProps> = ({
                   <div className="grid grid-cols-2 gap-x-6 gap-y-4">
                       {/* Sliders */}
                       <div className="space-y-3">
+                         {/* Audio Device Selector - NEW */}
+                         <div className="space-y-1">
+                            <div className="flex justify-between text-[10px] text-white/60 uppercase font-bold">
+                              <span>{t.audioInput}</span>
+                            </div>
+                            <select
+                                value={selectedDeviceId}
+                                onChange={(e) => onDeviceChange(e.target.value)}
+                                className="w-full bg-black/40 text-white text-xs border border-white/10 rounded-lg px-2 py-1 outline-none focus:border-white/30 truncate"
+                            >
+                                {audioDevices.length === 0 && <option value="">Default Microphone</option>}
+                                {audioDevices.map((device) => (
+                                    <option key={device.deviceId} value={device.deviceId}>
+                                        {device.label}
+                                    </option>
+                                ))}
+                            </select>
+                         </div>
+
                          <div className="space-y-1">
                             <div className="flex justify-between text-[10px] text-white/60 uppercase font-bold">
                               <span>{t.sensitivity}</span> <span>{settings.sensitivity.toFixed(1)}</span>

@@ -38,17 +38,17 @@ export const identifySongFromAudio = async (base64Audio: string, mimeType: strin
         CRITICAL INSTRUCTION:
         - You have access to a **Google Search** tool.
         - You **MUST** transcribe any lyrics you hear and **SEARCH** them to verify the Song Title and Artist.
+        - If vocals are unclear, search for the melody description or instrumentation style.
         
         PROCESS:
         1. **Listen Deeply**: Analyze the melody, chord progression, and vocal timbre.
         2. **Transcribe & Search**: If there are vocals, phonetically transcribe exactly what you hear and SEARCH for it.
         3. **Decision**: Only return a match if you are confident.
 
-        RULES:
-        - If you hear distinct lyrics, use them as the primary identification key via Search.
-        - If instrumental, focus on the beat and production style.
-        - If the song is NOT identifiable, set 'identified' to false.
-        - 'lyricsSnippet': If you identify the song, provide the **official lyrics** corresponding to the audio clip. If unsure which part, provide the Chorus.
+        LYRICS FORMATTING:
+        - When providing 'lyricsSnippet', try to structure it naturally.
+        - If possible, provide the [Chorus] or the specific section heard in the clip.
+        - Do not include timestamps in the output text, just the lyrics.
         `;
 
         const response = await ai.models.generateContent({
@@ -75,8 +75,8 @@ export const identifySongFromAudio = async (base64Audio: string, mimeType: strin
                        {
                          "title": "Song Title",
                          "artist": "Artist Name",
-                         "lyricsSnippet": "Lyrics matching the audio OR the Chorus",
-                         "mood": "Vibe description",
+                         "lyricsSnippet": "Lyrics matching the audio OR the Chorus (max 4 lines)",
+                         "mood": "Vibe description (e.g., Energetic, Melancholic)",
                          "identified": true/false
                        }`
               }
