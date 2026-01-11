@@ -293,7 +293,7 @@ const Controls: React.FC<ControlsProps> = ({
                           value={lyricsStyle}
                           onChange={(e) => setLyricsStyle(e.target.value as LyricsStyle)}
                           title={t.selectLyricsStyle}
-                          className="flex-grow bg-black/40 text-white text-xs border border-white/10 rounded-lg px-2 py-2 outline-none focus:border-white/30 appearance-none cursor-pointer hover:bg-white/5 transition-colors min-w-[80px]"
+                          className="w-[120px] bg-black/40 text-white text-xs border border-white/10 rounded-lg px-2 py-2 outline-none focus:border-white/30 appearance-none cursor-pointer hover:bg-white/5 transition-colors"
                        >
                            {Object.values(LyricsStyle).map((style) => (
                                <option key={style} value={style} className="bg-gray-900 text-white py-1">

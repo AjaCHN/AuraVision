@@ -27,6 +27,7 @@ const VisualizerCanvas: React.FC<VisualizerCanvasProps> = ({
   // State Refs for specific modes
   const particlesRef = useRef<Array<{x: number, y: number, vx: number, vy: number, life: number, size: number}>>([]);
   const rotationRef = useRef<number>(0); // For rotating elements
+  const lyricsScaleRef = useRef<number>(1.0); // Smooths out lyrics jumping
   
   // New Refs for added modes
   const smokeParticlesRef = useRef<Array<{
@@ -38,7 +39,7 @@ const VisualizerCanvas: React.FC<VisualizerCanvasProps> = ({
     alpha: number, 
     color: string, 
     life: number, 
-    maxLife: number,
+    maxLife: number, 
     angle: number, 
     angleSpeed: number,
     initialX: number // Track origin for swirl
@@ -148,7 +149,7 @@ const VisualizerCanvas: React.FC<VisualizerCanvasProps> = ({
 
     // Draw Lyrics (Centered and reactive)
     if (showLyrics && song && (song.lyricsSnippet || song.identified)) {
-       drawLyrics(ctx, dataArray, width, height, colors, song, lyricsStyle, settings);
+       drawLyrics(ctx, dataArray, width, height, colors, song, lyricsStyle, settings, lyricsScaleRef);
     }
 
     // Draw Session Timer (Subtle)
@@ -202,7 +203,8 @@ function drawLyrics(
   colors: string[],
   song: SongInfo,
   style: LyricsStyle,
-  settings: VisualizerSettings
+  settings: VisualizerSettings,
+  scaleRef: React.MutableRefObject<number>
 ) {
   const text = song.lyricsSnippet || (song.identified ? "..." : "");
   if (!text) return;
@@ -222,16 +224,24 @@ function drawLyrics(
   let rotation = 0;
 
   if (style === LyricsStyle.KARAOKE) {
-    // Big jump
-    scale = 1.0 + (bassNormalized * 0.4 * settings.sensitivity);
+    // Smoother jump using Linear Interpolation (Lerp)
+    // Target is smaller (0.25) to be less aggressive than before
+    const targetScale = 1.0 + (bassNormalized * 0.25 * settings.sensitivity);
+    
+    // Lerp factor 0.1 makes it follow the beat with a slight delay/smoothness
+    scaleRef.current += (targetScale - scaleRef.current) * 0.1;
+    scale = scaleRef.current;
+
     // Slight tilt on beat
     rotation = (bassNormalized * 0.05) * (Math.random() > 0.5 ? 1 : -1);
   } else if (style === LyricsStyle.MINIMAL) {
     // Subtle breathing
     scale = 1.0 + (bassNormalized * 0.1 * settings.sensitivity);
+    scaleRef.current = scale; // Sync ref for mode switching
   } else {
     // Standard pulse
     scale = 1.0 + (bassNormalized * 0.2 * settings.sensitivity);
+    scaleRef.current = scale; // Sync ref for mode switching
   }
 
   ctx.scale(scale, scale);
@@ -742,7 +752,7 @@ function drawSmoke(
 
     // Continuous spawn logic based on volume
     const spawnCount = 1 + Math.floor(volume / 20);
-    const maxSmoke = 150; 
+    const maxSmoke = 250; // Increased max particles to fill screen better
 
     if (smokeParticles.length < maxSmoke) {
         for(let i=0; i<spawnCount; i++) {
@@ -761,14 +771,14 @@ function drawSmoke(
             const vy = spawnFromTop ? baseSpeed : -baseSpeed;
             
             const color = colors[Math.floor(Math.random() * colors.length)];
-            const size = 50 + Math.random() * 60; 
+            const size = 60 + Math.random() * 80; // Larger initial puffs
             // INCREASED max life to ensure they can reach the center at slow speeds
             const maxLife = 800 + Math.random() * 400; 
             
             smokeParticles.push({
                 x,
                 y,
-                vx: (Math.random() - 0.5) * 0.5, // Subtle horizontal drift
+                vx: (Math.random() - 0.5) * 1.5, // Increased lateral momentum
                 vy: vy,
                 size,
                 alpha: 0,
@@ -800,7 +810,7 @@ function drawSmoke(
         const fadeInDur = 80;
         const fadeOutDur = 120;
         
-        let targetAlpha = 0.3; // Max opacity per puff
+        let targetAlpha = 0.25; // Slightly lower max opacity to handle overlap
 
         if (p.life < fadeInDur) {
              p.alpha = (p.life / fadeInDur) * targetAlpha;
@@ -809,28 +819,23 @@ function drawSmoke(
         }
 
         // Physics: 
-        // 1. Vertical motion (p.vy) - towards center Y
-        // 2. Horizontal attraction - towards center X
         
-        // Horizontal Attraction
-        // This force creates the "converge to central part" effect
+        // Horizontal Attraction - REDUCED SIGNIFICANTLY to allow spreading
         const dx = centerX - p.x;
         
-        // Stronger pull towards center X (creates a funnel/hourglass shape)
-        // Damped by settings.speed
-        p.vx += (dx * 0.0015) * settings.speed; 
+        // Much weaker pull, just to gently bias towards screen center over very long time
+        p.vx += (dx * 0.0002) * settings.speed; 
         
-        // Damping/Friction to prevent perpetual oscillation
-        // Without this, they would just orbit the center indefinitely
-        p.vx *= 0.96;
+        // Reduced friction to allow them to drift further
+        p.vx *= 0.99;
         
         // Turbulence noise
         // Ensure noise doesn't completely overpower slow flow
-        const noise = Math.sin(p.y * 0.005 + time * 0.2) * (0.5 + turbulence * 0.5);
+        const noise = Math.sin(p.y * 0.005 + time * 0.2) * (0.8 + turbulence * 0.8); // Increased noise amplitude
         
         p.x += p.vx + noise;
         p.y += p.vy;
-        p.size += 0.1 * settings.speed; // Expand slowly
+        p.size += 0.25 * settings.speed; // Expand faster to fill gaps
 
         // Cleanup conditions (off screen top OR bottom, or dead)
         if (p.life >= p.maxLife || p.y < -p.size * 2 || p.y > h + p.size * 2 || p.alpha <= 0.001) {
