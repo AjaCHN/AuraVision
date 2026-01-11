@@ -50,8 +50,9 @@ interface ThreeVisualizerProps {
 const SilkWavesScene: React.FC<{ analyser: AnalyserNode; colors: string[]; settings: VisualizerSettings }> = ({ analyser, colors, settings }) => {
   const meshRef = useRef<THREE.Mesh>(null);
   const dataArray = useMemo(() => new Uint8Array(analyser.frequencyBinCount), [analyser]);
-  // Increased segment count for smoother high-res waves
-  const geometry = useMemo(() => new THREE.PlaneGeometry(50, 50, 180, 180), []);
+  // OPTIMIZATION: Reduced segments from 180x180 to 64x64. 
+  // Updating 4000 vertices per frame is much faster than 32000.
+  const geometry = useMemo(() => new THREE.PlaneGeometry(50, 50, 64, 64), []);
 
   useFrame((state) => {
     if (!meshRef.current) return;
@@ -129,7 +130,8 @@ const SilkWavesScene: React.FC<{ analyser: AnalyserNode; colors: string[]; setti
 const LiquidSphereScene: React.FC<{ analyser: AnalyserNode; colors: string[]; settings: VisualizerSettings }> = ({ analyser, colors, settings }) => {
   const meshRef = useRef<THREE.Mesh>(null);
   const dataArray = useMemo(() => new Uint8Array(analyser.frequencyBinCount), [analyser]);
-  const geometry = useMemo(() => new THREE.IcosahedronGeometry(4, 4), []);
+  // OPTIMIZATION: Reduced subdivision from 4 to 3 (or 2) to reduce vertex count.
+  const geometry = useMemo(() => new THREE.IcosahedronGeometry(4, 3), []);
   
   const originalPositions = useMemo(() => {
      const pos = geometry.attributes.position;

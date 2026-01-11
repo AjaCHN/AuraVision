@@ -277,10 +277,14 @@ export class PlasmaRenderer implements IVisualizerRenderer {
         const rawRadius = minDim * (0.2 + (i % 3) * 0.05 + breathing + intensity * 0.4);
         const radius = Math.max(minDim * 0.05, rawRadius); 
         
+        // PERFORMANCE: Creating RadialGradient every frame is expensive. 
+        // We still use it here but only for 6 blobs, which is acceptable.
+        // Optimization: Ensure radius is positive
+        if (radius <= 0) continue;
+
         const gradient = ctx.createRadialGradient(x, y, 0, x, y, radius);
         const alpha = Math.min(1.0, 0.2 + intensity * 0.8);
         
-        // Core becomes larger/brighter when glow is enabled
         const coreBase = 0.05 + intensity * 0.5;
         const whiteCoreRadius = Math.min(0.8, settings.glow ? coreBase * 1.3 : coreBase);
         
@@ -388,16 +392,17 @@ export class NebulaRenderer implements IVisualizerRenderer {
     const mid = getAverage(data, 20, 100) / 255; // Mids for flow
     const high = getAverage(data, 100, 200) / 255; // Highs for sparks
     
-    // Config
-    const smokeCount = 300; 
-    const sparkCount = 50;
+    // OPTIMIZATION: Reduced particle counts significantly for better performance.
+    // The visual density is maintained by size and movement, not just count.
+    const smokeCount = 120; // Was 300
+    const sparkCount = 30; // Was 50
 
     // Spawn Nebula (Smoke)
     if (this.particles.filter(p => p.type === 'smoke').length < smokeCount) {
-       for (let k = 0; k < 5; k++) {
+       for (let k = 0; k < 2; k++) { // Spawn fewer per frame
          if (this.particles.length >= smokeCount + sparkCount) break;
 
-         const isInitialFill = this.particles.length < 150;
+         const isInitialFill = this.particles.length < 50;
          const startY = isInitialFill ? Math.random() * h : h + 50;
          const startX = Math.random() * w;
 
@@ -440,12 +445,10 @@ export class NebulaRenderer implements IVisualizerRenderer {
         const ny = p.y * 0.003;
         
         // TURBULENCE: Use bass to distort the flow field angle
-        // This makes the smoke "twist" when the bass hits
         const turbulence = bass * 1.5 * settings.sensitivity;
         const angle = Math.sin(nx + time * 0.5 + turbulence) * Math.cos(ny + time * 0.5) * Math.PI * 2;
         
-        // SPEED: Base speed + Massive Bass Boost
-        // smoke: 0.8 base (faster than before) + up to 4x multiplier on bass
+        // SPEED
         const speed = p.type === 'smoke' 
             ? settings.speed * (0.8 + (bass * 4.0)) 
             : 3.0 * settings.speed * (1 + high * 3);
@@ -487,16 +490,16 @@ export class NebulaRenderer implements IVisualizerRenderer {
         
         if (p.type === 'smoke') {
             const dynamicColor = colors[p.colorIndex % colors.length]; 
-            const gradient = ctx.createRadialGradient(0, 0, 0, 0, 0, p.size);
             
-            // PULSE: Add bass intensity to alpha for "lightning" flash effect
-            // Base alpha 0.12, adds up to 0.15 more on heavy bass
+            // OPTIMIZATION: Removed createRadialGradient.
+            // Using gradient per particle is extremely expensive.
+            // Using a simple arc with low alpha creates a similar "soft" feel when stacked.
+            
             const beatPulse = bass * 0.25; 
-            const finalAlpha = Math.min(1, (0.12 + beatPulse) * alpha);
+            // Lower base alpha because solid fills stack up faster than gradients
+            const finalAlpha = Math.min(1, (0.05 + beatPulse * 0.5) * alpha);
             
-            gradient.addColorStop(0, hexToRgba(dynamicColor, finalAlpha));
-            gradient.addColorStop(1, 'transparent');
-            ctx.fillStyle = gradient;
+            ctx.fillStyle = hexToRgba(dynamicColor, finalAlpha);
             ctx.beginPath();
             ctx.arc(0, 0, p.size, 0, Math.PI * 2);
             ctx.fill();
