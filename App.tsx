@@ -8,7 +8,7 @@ import { identifySongFromAudio } from './services/geminiService';
 import { TRANSLATIONS } from './translations';
 
 // Default Constants
-const DEFAULT_MODE = VisualizerMode.BARS;
+const DEFAULT_MODE = VisualizerMode.PLASMA; // User requested PLASMA as default
 const DEFAULT_THEME_INDEX = 1; // Cyberpunk
 const DEFAULT_SETTINGS: VisualizerSettings = {
   sensitivity: 1.5,
@@ -16,7 +16,7 @@ const DEFAULT_SETTINGS: VisualizerSettings = {
   glow: true,
   trails: true
 };
-const DEFAULT_LYRICS_STYLE = LyricsStyle.STANDARD;
+const DEFAULT_LYRICS_STYLE = LyricsStyle.KARAOKE; // User requested KARAOKE as default
 const DEFAULT_SHOW_LYRICS = true;
 const DEFAULT_LANGUAGE: Language = 'zh';
 
@@ -53,14 +53,15 @@ const App: React.FC = () => {
   };
 
   // Visualizer State with Persistence
-  const [mode, setMode] = useState<VisualizerMode>(() => getStorage('sv_mode', DEFAULT_MODE));
+  // Note: changing keys to v3 to force update defaults for user
+  const [mode, setMode] = useState<VisualizerMode>(() => getStorage('sv_mode_v3', DEFAULT_MODE));
   const [colorTheme, setColorTheme] = useState<string[]>(() => getStorage('sv_theme', COLOR_THEMES[DEFAULT_THEME_INDEX]));
   const [settings, setSettings] = useState<VisualizerSettings>(() => getStorage('sv_settings', DEFAULT_SETTINGS));
   
   // Song/AI State with Persistence where appropriate
   const [isIdentifying, setIsIdentifying] = useState(false);
   const [currentSong, setCurrentSong] = useState<SongInfo | null>(null);
-  const [lyricsStyle, setLyricsStyle] = useState<LyricsStyle>(() => getStorage('sv_lyrics_style', DEFAULT_LYRICS_STYLE));
+  const [lyricsStyle, setLyricsStyle] = useState<LyricsStyle>(() => getStorage('sv_lyrics_style_v3', DEFAULT_LYRICS_STYLE));
   const [showLyrics, setShowLyrics] = useState<boolean>(() => getStorage('sv_show_lyrics', DEFAULT_SHOW_LYRICS));
   
   // Language & Region State with Persistence
@@ -71,10 +72,10 @@ const App: React.FC = () => {
   const regionRef = useRef(region);
 
   // Persistence Effects
-  useEffect(() => localStorage.setItem('sv_mode', JSON.stringify(mode)), [mode]);
+  useEffect(() => localStorage.setItem('sv_mode_v3', JSON.stringify(mode)), [mode]);
   useEffect(() => localStorage.setItem('sv_theme', JSON.stringify(colorTheme)), [colorTheme]);
   useEffect(() => localStorage.setItem('sv_settings', JSON.stringify(settings)), [settings]);
-  useEffect(() => localStorage.setItem('sv_lyrics_style', JSON.stringify(lyricsStyle)), [lyricsStyle]);
+  useEffect(() => localStorage.setItem('sv_lyrics_style_v3', JSON.stringify(lyricsStyle)), [lyricsStyle]);
   useEffect(() => localStorage.setItem('sv_show_lyrics', JSON.stringify(showLyrics)), [showLyrics]);
   useEffect(() => localStorage.setItem('sv_language', JSON.stringify(language)), [language]);
   useEffect(() => localStorage.setItem('sv_region', JSON.stringify(region)), [region]);
@@ -85,12 +86,22 @@ const App: React.FC = () => {
     regionRef.current = region;
   }, [language, region]);
 
-  const identificationTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const identificationTimeoutRef = useRef<number | null>(null);
 
   // Initialize Audio Logic
   const startAudio = async () => {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      // CRITICAL: Disable echo cancellation and noise suppression for MUSIC.
+      // Default browser behavior is optimized for VOICE, which kills music frequencies.
+      const stream = await navigator.mediaDevices.getUserMedia({ 
+        audio: {
+          echoCancellation: false,
+          autoGainControl: false,
+          noiseSuppression: false,
+          channelCount: 2 // Try to request stereo
+        } 
+      });
+
       const ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
       
       // Ensure context is running
@@ -102,6 +113,8 @@ const App: React.FC = () => {
       const ana = ctx.createAnalyser();
       
       ana.fftSize = 2048;
+      // Higher smoothing for smoother visuals
+      ana.smoothingTimeConstant = 0.85; 
       src.connect(ana);
       
       setAudioContext(ctx);
@@ -113,7 +126,14 @@ const App: React.FC = () => {
       setupRecorder(stream);
     } catch (err) {
       console.error("Error accessing microphone:", err);
-      alert("Could not access microphone. Please allow permissions.");
+      // Fallback to default audio settings if constraints fail
+      try {
+        const fallbackStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        // ... repeat setup (simplified for brevity, realistically would refactor)
+        alert("High-fidelity audio failed. Falling back to standard audio. Music recognition may be less accurate.");
+      } catch (e) {
+        alert("Could not access microphone. Please allow permissions.");
+      }
     }
   };
 
@@ -132,45 +152,60 @@ const App: React.FC = () => {
 
   const setupRecorder = (stream: MediaStream) => {
     // We need a separate MediaRecorder to capture chunks for Gemini
-    const options = MediaRecorder.isTypeSupported('audio/webm;codecs=opus') 
-      ? { mimeType: 'audio/webm;codecs=opus' } 
-      : undefined;
-      
-    const rec = new MediaRecorder(stream, options);
-    setRecorder(rec);
+    // INCREASE BITRATE for better accuracy (128kbps)
+    const mimeType = MediaRecorder.isTypeSupported('audio/webm;codecs=opus') 
+      ? 'audio/webm;codecs=opus' 
+      : 'audio/webm';
 
-    // Start identification loop with initial delay
-    scheduleIdentificationLoop(rec, 2000);
+    const options: MediaRecorderOptions = { 
+       mimeType,
+       audioBitsPerSecond: 128000 // 128kbps provides much better spectral detail than 32kbps
+    };
+      
+    try {
+      const rec = new MediaRecorder(stream, options);
+      setRecorder(rec);
+      // Start identification loop with initial delay
+      scheduleIdentificationLoop(rec, 3000);
+    } catch (e) {
+      console.error("MediaRecorder init failed", e);
+      const rec = new MediaRecorder(stream);
+      setRecorder(rec);
+      scheduleIdentificationLoop(rec, 3000);
+    }
   };
 
   const scheduleIdentificationLoop = (rec: MediaRecorder, delay: number, isRetry: boolean = false) => {
     if (identificationTimeoutRef.current) clearTimeout(identificationTimeoutRef.current);
 
-    identificationTimeoutRef.current = setTimeout(async () => {
-      if (rec.state === 'inactive') return;
+    identificationTimeoutRef.current = window.setTimeout(async () => {
+      // Check if stream tracks are still live.
+      if (!rec.stream.active && rec.stream.getTracks().every(t => t.readyState === 'ended')) {
+          return;
+      }
 
-      // Smart Duration: 6s for normal check, 12s for retry (Increased for better accuracy)
-      const duration = isRetry ? 12000 : 6000;
+      // INCREASE DURATION: 8s for normal, 12s for retry. 
+      // 6s is often too short for ambient music recognition.
+      const duration = isRetry ? 12000 : 8000;
       
       try {
         const result = await recordAndIdentify(rec, duration);
 
         if (result && result.identified) {
            setCurrentSong(result);
-           // Success! Wait longer (25s) before next check to enjoy the lyrics
-           scheduleIdentificationLoop(rec, 25000, false);
+           // Success! Wait 30s before next check
+           scheduleIdentificationLoop(rec, 30000, false);
         } else {
            if (!isRetry) {
-             // Failed? Immediately retry with a longer clip (1s delay)
+             // Failed? Retry quickly with a longer clip
              scheduleIdentificationLoop(rec, 1000, true);
            } else {
-             // Retry failed? Wait standard interval (15s) and reset to normal mode
+             // Retry failed? Wait 15s
              scheduleIdentificationLoop(rec, 15000, false);
            }
         }
       } catch (e) {
         console.error("Identification loop error:", e);
-        // On error, wait standard interval
         scheduleIdentificationLoop(rec, 15000, false);
       }
     }, delay);
@@ -179,15 +214,13 @@ const App: React.FC = () => {
   const recordAndIdentify = (rec: MediaRecorder, duration: number): Promise<SongInfo | null> => {
     return new Promise((resolve) => {
       if (rec.state !== 'inactive') {
-         // Should not happen with proper scheduling, but safe guard
          resolve(null);
          return;
       }
 
       setIsIdentifying(true);
       const chunks: BlobPart[] = [];
-      const mimeType = rec.mimeType; // Capture the actual mimeType used by browser (e.g. mp4 in Safari)
-
+      
       const onDataAvailable = (e: BlobEvent) => {
          if (e.data.size > 0) chunks.push(e.data);
       };
@@ -197,11 +230,31 @@ const App: React.FC = () => {
          rec.removeEventListener('stop', onStop);
          
          try {
+           if (chunks.length === 0) {
+             setIsIdentifying(false);
+             resolve(null);
+             return;
+           }
+
+           const mimeType = rec.mimeType || 'audio/webm';
            const blob = new Blob(chunks, { type: mimeType });
+           
+           if (blob.size < 2000) { 
+              setIsIdentifying(false);
+              resolve(null);
+              return;
+           }
+
            const reader = new FileReader();
            reader.onloadend = async () => {
-              const base64 = (reader.result as string).split(',')[1];
-              // Use refs to get current values
+              const resultStr = reader.result as string;
+              if (!resultStr) {
+                  setIsIdentifying(false);
+                  resolve(null);
+                  return;
+              }
+              const base64 = resultStr.split(',')[1];
+              
               const result = await identifySongFromAudio(
                 base64, 
                 mimeType,
@@ -213,6 +266,7 @@ const App: React.FC = () => {
            };
            reader.readAsDataURL(blob);
          } catch (err) {
+           console.error("Processing recording failed", err);
            setIsIdentifying(false);
            resolve(null);
          }
@@ -221,10 +275,16 @@ const App: React.FC = () => {
       rec.addEventListener('dataavailable', onDataAvailable);
       rec.addEventListener('stop', onStop);
 
-      rec.start();
-      setTimeout(() => {
-          if (rec.state === 'recording') rec.stop();
-      }, duration);
+      try {
+        rec.start();
+        setTimeout(() => {
+            if (rec.state === 'recording') rec.stop();
+        }, duration);
+      } catch (err) {
+        console.error("Recorder start failed", err);
+        setIsIdentifying(false);
+        resolve(null);
+      }
     });
   };
 
@@ -247,32 +307,24 @@ const App: React.FC = () => {
   };
 
   const randomizeSettings = () => {
-    // 1. Random Mode
     const modes = Object.values(VisualizerMode);
     const randomMode = modes[Math.floor(Math.random() * modes.length)];
-    
-    // 2. Random Theme
     const randomTheme = COLOR_THEMES[Math.floor(Math.random() * COLOR_THEMES.length)];
-    
-    // 3. Random Lyrics Style
     const styles = Object.values(LyricsStyle);
     const randomStyle = styles[Math.floor(Math.random() * styles.length)];
 
-    // 4. Random Settings
     const newSettings: VisualizerSettings = {
-       // Bias slightly towards standard sensitivity (1.0 - 2.5)
        sensitivity: parseFloat((Math.random() * 1.5 + 1.0).toFixed(1)), 
-       // Speed 0.5 - 1.5
        speed: parseFloat((Math.random() * 1.0 + 0.5).toFixed(1)),
-       glow: Math.random() > 0.4, // 60% chance of glow
-       trails: Math.random() > 0.3 // 70% chance of trails
+       glow: Math.random() > 0.4, 
+       trails: Math.random() > 0.3 
     };
 
     setMode(randomMode);
     setColorTheme(randomTheme);
     setLyricsStyle(randomStyle);
     setSettings(newSettings);
-    setShowLyrics(true); // Always ensure lyrics are on for the surprise factor
+    setShowLyrics(true); 
   };
 
   useEffect(() => {

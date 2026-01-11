@@ -11,14 +11,45 @@ interface VisualizerCanvasProps {
 const VisualizerCanvas: React.FC<VisualizerCanvasProps> = ({ analyser, mode, colors, settings }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const requestRef = useRef<number>(0);
+  const startTimeRef = useRef<number>(Date.now());
   
   // State Refs for specific modes
   const particlesRef = useRef<Array<{x: number, y: number, vx: number, vy: number, life: number, size: number}>>([]);
   const rotationRef = useRef<number>(0); // For rotating elements
   
   // New Refs for added modes
-  const smokeParticlesRef = useRef<Array<{x: number, y: number, vx: number, vy: number, size: number, alpha: number, color: string, life: number, maxLife: number}>>([]);
-  const ripplesRef = useRef<Array<{x: number, y: number, radius: number, maxRadius: number, alpha: number, speed: number, color: string}>>([]);
+  const smokeParticlesRef = useRef<Array<{
+    x: number, 
+    y: number, 
+    vx: number, 
+    vy: number, 
+    size: number, 
+    alpha: number, 
+    color: string, 
+    life: number, 
+    maxLife: number,
+    angle: number,
+    angleSpeed: number,
+    initialX: number // Track origin for swirl
+  }>>([]);
+
+  const ripplesRef = useRef<Array<{
+    x: number, 
+    y: number, 
+    radius: number, 
+    maxRadius: number, 
+    alpha: number, 
+    speed: number, 
+    color: string,
+    lineWidth: number
+  }>>([]);
+
+  // Reset timer when analyser (session) changes
+  useEffect(() => {
+    if (analyser) {
+      startTimeRef.current = Date.now();
+    }
+  }, [analyser]);
 
   const draw = () => {
     if (!analyser || !canvasRef.current) return;
@@ -37,13 +68,28 @@ const VisualizerCanvas: React.FC<VisualizerCanvasProps> = ({ analyser, mode, col
     let alpha = 0.2;
     if (mode === VisualizerMode.PLASMA) alpha = 0.1; 
     if (mode === VisualizerMode.PARTICLES) alpha = 0.3; 
-    if (mode === VisualizerMode.SMOKE) alpha = 0.1; // Slightly higher alpha to allow smoke to blend naturally without becoming too thick too fast
+    
+    // Smoke needs very high transparency for accumulation effect
+    if (mode === VisualizerMode.SMOKE) alpha = 0.05; 
+    
+    // Ripple looks better with a dark watery fade
+    if (mode === VisualizerMode.RIPPLE) alpha = 0.2;
 
     if (settings.trails) {
-        ctx.fillStyle = `rgba(0, 0, 0, ${alpha})`; 
+        if (mode === VisualizerMode.RIPPLE) {
+           // Deep blue fade for water effect
+           ctx.fillStyle = `rgba(5, 10, 20, ${alpha})`;
+        } else {
+           ctx.fillStyle = `rgba(0, 0, 0, ${alpha})`; 
+        }
         ctx.fillRect(0, 0, width, height);
     } else {
         ctx.clearRect(0, 0, width, height);
+        if (mode === VisualizerMode.RIPPLE) {
+           // Background fill if trails off
+           ctx.fillStyle = '#050a14';
+           ctx.fillRect(0, 0, width, height);
+        }
     }
     
     // Handle Glow
@@ -82,12 +128,29 @@ const VisualizerCanvas: React.FC<VisualizerCanvasProps> = ({ analyser, mode, col
         drawAbstractShapes(ctx, dataArray, width, height, colors, bufferLength, settings, rotationRef.current);
         break;
       case VisualizerMode.SMOKE:
-        drawSmoke(ctx, dataArray, width, height, colors, bufferLength, smokeParticlesRef.current, settings);
+        drawSmoke(ctx, dataArray, width, height, colors, bufferLength, smokeParticlesRef.current, settings, rotationRef.current);
         break;
       case VisualizerMode.RIPPLE:
         drawRipples(ctx, dataArray, width, height, colors, bufferLength, ripplesRef.current, settings);
         break;
     }
+
+    // Draw Session Timer (Subtle)
+    const now = Date.now();
+    const elapsed = now - startTimeRef.current;
+    const m = Math.floor(elapsed / 60000);
+    const s = Math.floor((elapsed % 60000) / 1000);
+    const timeStr = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+    
+    ctx.save();
+    // Reset shadow for text to ensure crispness
+    ctx.shadowBlur = 0;
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+    ctx.font = '12px "Inter", sans-serif';
+    ctx.textAlign = 'right';
+    ctx.textBaseline = 'top';
+    ctx.fillText(timeStr, width - 24, 24);
+    ctx.restore();
 
     requestRef.current = requestAnimationFrame(draw);
   };
@@ -121,7 +184,7 @@ function drawMirroredBars(
   w: number, 
   h: number, 
   colors: string[], 
-  bufferLength: number,
+  bufferLength: number, 
   settings: VisualizerSettings
 ) {
   const barCount = 64; 
@@ -527,8 +590,14 @@ function drawSmoke(
     h: number,
     colors: string[],
     bufferLength: number,
-    smokeParticles: Array<{x: number, y: number, vx: number, vy: number, size: number, alpha: number, color: string, life: number, maxLife: number}>,
-    settings: VisualizerSettings
+    smokeParticles: Array<{
+      x: number, y: number, vx: number, vy: number, 
+      size: number, alpha: number, color: string, 
+      life: number, maxLife: number,
+      angle: number, angleSpeed: number, initialX: number
+    }>,
+    settings: VisualizerSettings,
+    rotation: number
 ) {
     // Volume determines spawn rate
     let volume = 0;
@@ -541,30 +610,32 @@ function drawSmoke(
     turbulence /= 100;
 
     // Continuous spawn logic based on volume
-    // Always spawn some, spawn more on loud volume
-    const spawnCount = 1 + Math.floor(volume / 30);
-    const maxSmoke = 120; // Limit total particles
+    const spawnCount = 1 + Math.floor(volume / 20);
+    const maxSmoke = 150; // Increased limit
 
     if (smokeParticles.length < maxSmoke) {
         for(let i=0; i<spawnCount; i++) {
+            // Spawn spread across bottom
             const x = Math.random() * w;
-            const y = h + 20; // Start below screen
+            const y = h + 50; 
             
-            // Color variation based on theme
             const color = colors[Math.floor(Math.random() * colors.length)];
-            const size = 30 + Math.random() * 40;
-            const maxLife = 200 + Math.random() * 100;
+            const size = 50 + Math.random() * 60; // Larger puffs
+            const maxLife = 300 + Math.random() * 100; // Longer life
             
             smokeParticles.push({
                 x,
                 y,
-                vx: (Math.random() - 0.5) * 1.5, // Slight drift
-                vy: -0.5 - (Math.random() * 1.5) * settings.speed, // Slower, varied rise
+                vx: (Math.random() - 0.5) * 1.0, 
+                vy: -0.3 - (Math.random() * 1.0) * settings.speed,
                 size,
-                alpha: 0, // Start invisible and fade in
+                alpha: 0,
                 color,
                 life: 0,
-                maxLife
+                maxLife,
+                angle: Math.random() * Math.PI * 2,
+                angleSpeed: (Math.random() - 0.5) * 0.01,
+                initialX: x
             });
         }
     }
@@ -572,46 +643,75 @@ function drawSmoke(
     // Use Screen blending for ethereal light effect
     ctx.globalCompositeOperation = 'screen';
 
+    const time = rotation * 10; // Use rotation as simple time counter
+    
+    // Global swirling effect center
+    const centerX = w / 2;
+
     for (let i = smokeParticles.length - 1; i >= 0; i--) {
         const p = smokeParticles[i];
         
         p.life++;
+        p.angle += p.angleSpeed;
         
         // Fade In / Out Logic
-        const fadeInDur = 50;
-        const fadeOutDur = 50;
+        const fadeInDur = 60;
+        const fadeOutDur = 80;
         
+        let targetAlpha = 0.3; // Max opacity per puff
+
         if (p.life < fadeInDur) {
-             p.alpha = (p.life / fadeInDur) * 0.4; // Max opacity 0.4
+             p.alpha = (p.life / fadeInDur) * targetAlpha;
         } else if (p.life > p.maxLife - fadeOutDur) {
-             p.alpha = ((p.maxLife - p.life) / fadeOutDur) * 0.4;
+             p.alpha = ((p.maxLife - p.life) / fadeOutDur) * targetAlpha;
         }
 
-        // Physics
-        // Add sinusoidal drift based on Y height to simulate wind currents
-        // Turbulence adds noise to the sine wave frequency
-        const wind = Math.sin(p.y * 0.01 + performance.now() * 0.001) * (0.5 + turbulence/50);
+        // Physics: 
+        // 1. Upward motion (p.vy)
+        // 2. Sine wave drift (wind)
+        // 3. Spiral/Swirl effect: Pull slightly towards center + rotate
         
-        p.x += p.vx + wind;
+        // Swirl force depends on height (more swirl higher up)
+        const heightFactor = (h - p.y) / h;
+        const swirlStrength = 0.5 * settings.speed * heightFactor;
+        
+        // Calculate vector to center
+        const dx = centerX - p.x;
+        // Tangential force (rotate)
+        p.vx += (dx * 0.001) * swirlStrength; 
+        
+        // Turbulence noise
+        const noise = Math.sin(p.y * 0.005 + time * 0.2) * (1 + turbulence);
+        
+        p.x += p.vx + noise;
         p.y += p.vy;
-        p.size += 0.3 * settings.speed; // Expand as it rises
+        p.size += 0.2 * settings.speed; // Expand
 
-        if (p.life >= p.maxLife || p.y < -p.size || p.alpha <= 0.01) {
+        if (p.life >= p.maxLife || p.y < -p.size || p.alpha <= 0.001) {
             smokeParticles.splice(i, 1);
             continue;
         }
 
         ctx.globalAlpha = Math.max(0, p.alpha);
         
-        // Draw soft gradient "puff"
-        const gradient = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.size);
-        gradient.addColorStop(0, p.color); // Core color
+        ctx.save();
+        ctx.translate(p.x, p.y);
+        ctx.rotate(p.angle);
+        
+        // Draw soft gradient "puff" - squashed slightly for volume
+        const gradient = ctx.createRadialGradient(0, 0, 0, 0, 0, p.size);
+        gradient.addColorStop(0, p.color);
+        gradient.addColorStop(0.4, p.color); // Core
         gradient.addColorStop(1, 'transparent'); // Soft edge
         
         ctx.fillStyle = gradient;
+        
+        // Draw slightly distorted circle
         ctx.beginPath();
-        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.ellipse(0, 0, p.size, p.size * 0.8, 0, 0, Math.PI * 2);
         ctx.fill();
+        
+        ctx.restore();
     }
     
     // Reset context
@@ -626,7 +726,10 @@ function drawRipples(
     h: number,
     colors: string[],
     bufferLength: number,
-    ripples: Array<{x: number, y: number, radius: number, maxRadius: number, alpha: number, speed: number, color: string}>,
+    ripples: Array<{
+      x: number, y: number, radius: number, maxRadius: number, 
+      alpha: number, speed: number, color: string, lineWidth: number
+    }>,
     settings: VisualizerSettings
 ) {
     // Detect Bass Kick
@@ -634,10 +737,11 @@ function drawRipples(
     for(let i=0; i<10; i++) bass += data[i];
     bass /= 10;
     
+    const bassNormalized = bass / 255;
+    
     // Threshold for spawning ripple
-    if (bass > 180 / settings.sensitivity) {
-        // Don't spawn too many
-        if (ripples.length < 15 && Math.random() > 0.5) {
+    if (bass > 160 / settings.sensitivity) {
+        if (ripples.length < 15 && Math.random() > 0.4) {
              const x = Math.random() * w;
              const y = Math.random() * h;
              const color = colors[Math.floor(Math.random() * colors.length)];
@@ -645,48 +749,83 @@ function drawRipples(
              ripples.push({
                  x,
                  y,
-                 radius: 1,
-                 maxRadius: Math.min(w, h) * (0.2 + (bass/255) * 0.3),
+                 radius: 0,
+                 maxRadius: Math.max(w, h) * (0.3 + bassNormalized * 0.5),
                  alpha: 1.0,
-                 speed: 2 * settings.speed + (bass/50),
-                 color
+                 speed: (2 + bassNormalized * 5) * settings.speed,
+                 color,
+                 lineWidth: (2 + bassNormalized * 10)
              });
         }
     }
     
-    // Center ripple for continuous sound
+    // Center ripple for loud continuous sound
     if (bass > 100) {
-       if (ripples.length < 20 && Math.random() > 0.9) {
+       if (ripples.length < 20 && Math.random() > 0.85) {
           ripples.push({
                x: w/2,
                y: h/2,
-               radius: 1,
-               maxRadius: Math.min(w, h) * 0.5,
+               radius: 0,
+               maxRadius: Math.max(w, h) * 0.6,
                alpha: 0.8,
-               speed: 3 * settings.speed,
-               color: colors[0]
+               speed: 5 * settings.speed,
+               color: colors[0],
+               lineWidth: 5
            });
        }
     }
 
-    ctx.lineWidth = 2;
+    ctx.lineCap = 'round';
 
     for (let i = ripples.length - 1; i >= 0; i--) {
         const r = ripples[i];
         
         r.radius += r.speed;
-        r.alpha -= 0.01;
+        
+        // Decay speed slightly for drag effect
+        r.speed *= 0.98;
+        
+        // Fade out
+        r.alpha -= 0.008;
 
         if (r.alpha <= 0 || r.radius > r.maxRadius) {
             ripples.splice(i, 1);
             continue;
         }
 
-        ctx.strokeStyle = r.color;
-        ctx.globalAlpha = r.alpha;
-        ctx.beginPath();
-        ctx.arc(r.x, r.y, r.radius, 0, Math.PI * 2);
-        ctx.stroke();
+        // Draw Multiple Concentric Rings for "Water" effect
+        const ringCount = 3;
+        const ringGap = 30; // Gap between wave peaks
+        
+        for (let j = 0; j < ringCount; j++) {
+             const currentRadius = r.radius - (j * ringGap);
+             
+             if (currentRadius > 0) {
+                 // Inner rings fade out faster
+                 const ringAlpha = r.alpha * (1 - (j * 0.3));
+                 if (ringAlpha <= 0) continue;
+                 
+                 // Inner rings are thinner
+                 const lw = Math.max(0.5, r.lineWidth * (1 - (j * 0.2)));
+                 ctx.lineWidth = lw;
+                 
+                 // 1. Draw "Specular Highlight" (Offset white/bright line)
+                 // This simulates light hitting the crest of the wave
+                 ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+                 ctx.globalAlpha = ringAlpha * 0.6;
+                 ctx.beginPath();
+                 // Slight offset to top-left
+                 ctx.arc(r.x - 2, r.y - 2, currentRadius, 0, Math.PI * 2);
+                 ctx.stroke();
+
+                 // 2. Draw Main Color
+                 ctx.strokeStyle = r.color;
+                 ctx.globalAlpha = ringAlpha;
+                 ctx.beginPath();
+                 ctx.arc(r.x, r.y, currentRadius, 0, Math.PI * 2);
+                 ctx.stroke();
+             }
+        }
     }
     ctx.globalAlpha = 1.0;
 }

@@ -22,6 +22,8 @@ export const TRANSLATIONS = {
     showOptions: 'Show Options',
     reset: 'Reset Defaults',
     randomize: 'Randomize',
+    help: 'Help / About',
+    close: 'Close',
     modes: {
       [VisualizerMode.BARS]: 'Frequency Bars',
       [VisualizerMode.RINGS]: 'Neon Rings',
@@ -50,7 +52,27 @@ export const TRANSLATIONS = {
       LATAM: 'LatAm'
     },
     unknownSong: 'Unknown',
-    ambientNoise: 'Ambient Noise'
+    ambientNoise: 'Ambient Noise',
+    helpModal: {
+      title: 'About SonicVision AI',
+      intro: 'SonicVision AI is an immersive audio-visual experience that uses your device\'s microphone to create real-time generative art synchronized with music.',
+      howItWorksTitle: 'How It Works',
+      howItWorksSteps: [
+        '1. Enable your microphone.',
+        '2. Play music in the background (or sing!).',
+        '3. The visuals react instantly to frequencies and beats.',
+        '4. Every ~30 seconds, the AI listens to a snippet to identify the song and fetch lyrics.'
+      ],
+      settingsTitle: 'Understanding Settings',
+      settingsDesc: {
+        sensitivity: 'Adjusts how reactive the visuals are to volume.',
+        speed: 'Controls the movement speed of animations.',
+        glow: 'Adds a neon bloom effect (performance heavy).',
+        trails: 'Creates a motion blur effect for smoother visuals.'
+      },
+      privacyTitle: 'Privacy',
+      privacyText: 'Audio is processed locally for visualization. Short clips are sent to Google Gemini temporarily solely for song identification and are not stored.'
+    }
   },
   zh: {
     visualizerMode: '可视化模式',
@@ -73,6 +95,8 @@ export const TRANSLATIONS = {
     showOptions: '显示选项',
     reset: '重置默认',
     randomize: '随机组合',
+    help: '帮助 / 关于',
+    close: '关闭',
     modes: {
       [VisualizerMode.BARS]: '镜像频谱',
       [VisualizerMode.RINGS]: '霓虹光环',
@@ -101,6 +125,26 @@ export const TRANSLATIONS = {
       LATAM: '拉美'
     },
     unknownSong: '未知歌曲',
-    ambientNoise: '环境噪音'
+    ambientNoise: '环境噪音',
+    helpModal: {
+      title: '关于 SonicVision AI',
+      intro: 'SonicVision AI 是一种沉浸式视听体验，利用您的设备麦克风创建与音乐同步的实时生成艺术。',
+      howItWorksTitle: '如何使用',
+      howItWorksSteps: [
+        '1. 开启麦克风权限。',
+        '2. 在背景中播放音乐（或唱歌！）。',
+        '3. 视觉效果会根据频率和节拍即时反应。',
+        '4. AI 每隔约 30 秒会听取片段以识别歌曲并获取歌词。'
+      ],
+      settingsTitle: '设置说明',
+      settingsDesc: {
+        sensitivity: '调节视觉效果对音量的反应灵敏度。',
+        speed: '控制动画的运动速度。',
+        glow: '添加霓虹泛光效果（较消耗性能）。',
+        trails: '创建动态模糊拖尾，使视觉更流畅。'
+      },
+      privacyTitle: '隐私说明',
+      privacyText: '音频在本地处理以进行可视化。短片段仅临时发送至 Google Gemini 用于歌曲识别，不会被存储。'
+    }
   }
 };

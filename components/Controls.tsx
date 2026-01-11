@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { VisualizerMode, LyricsStyle, Language, VisualizerSettings, Region } from '../types';
 import { VISUALIZER_PRESETS, COLOR_THEMES, REGION_NAMES } from '../constants';
 import { TRANSLATIONS } from '../translations';
+import HelpModal from './HelpModal';
 
 interface ControlsProps {
   currentMode: VisualizerMode;
@@ -45,6 +46,7 @@ const Controls: React.FC<ControlsProps> = ({
   randomizeSettings
 }) => {
   const [isExpanded, setIsExpanded] = useState(true);
+  const [showHelp, setShowHelp] = useState(false);
   const t = TRANSLATIONS[language];
 
   const updateSetting = <K extends keyof VisualizerSettings>(key: K, value: VisualizerSettings[K]) => {
@@ -96,219 +98,239 @@ const Controls: React.FC<ControlsProps> = ({
 
   // --- EXPANDED VIEW ---
   return (
-    <div className="fixed bottom-0 left-0 w-full z-30 flex flex-col justify-end pointer-events-none">
-      
-      {/* Main Panel Container */}
-      <div className="pointer-events-auto w-full bg-gradient-to-t from-black via-black/95 to-transparent pt-8 pb-6 px-4 md:px-8 backdrop-blur-sm transition-transform duration-300 ease-out">
+    <>
+      <div className="fixed bottom-0 left-0 w-full z-30 flex flex-col justify-end pointer-events-none">
         
-        {/* Header Row: Random, Reset, Hide */}
-        <div className="flex justify-center items-center gap-3 -mt-6 mb-2">
-           <button 
-             onClick={randomizeSettings}
-             className="bg-indigo-500/80 hover:bg-indigo-600/90 backdrop-blur-md text-white shadow-[0_0_10px_rgba(99,102,241,0.5)] rounded-full px-4 py-1 flex items-center gap-2 text-xs transition-all mb-2 font-medium"
-           >
-             <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
-             </svg>
-             <span>{t.randomize}</span>
-           </button>
-
-           <button 
-             onClick={resetSettings}
-             className="bg-black/50 hover:bg-black/70 backdrop-blur-md border border-white/10 text-white/60 hover:text-white rounded-full px-4 py-1 flex items-center gap-2 text-xs transition-all mb-2"
-           >
-             <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-             </svg>
-             <span>{t.reset}</span>
-           </button>
-
-           <button 
-             onClick={() => setIsExpanded(false)}
-             className="bg-black/50 hover:bg-black/70 backdrop-blur-md border border-white/10 text-white/60 hover:text-white rounded-full px-4 py-1 flex items-center gap-2 text-xs transition-all mb-2"
-           >
-             <span>{t.hideOptions}</span>
-             <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-             </svg>
-           </button>
-        </div>
-
-        <div className="max-w-7xl mx-auto flex flex-col gap-6">
+        {/* Main Panel Container */}
+        <div className="pointer-events-auto w-full bg-gradient-to-t from-black via-black/95 to-transparent pt-8 pb-6 px-4 md:px-8 backdrop-blur-sm transition-transform duration-300 ease-out">
           
-          {/* Top Section: Modes & Play Button */}
-          <div className="flex flex-col md:flex-row gap-6 items-center md:items-start">
-             
-             {/* 1. Mic Button (Mobile: Center, Desktop: Left) */}
-             <div className="flex-shrink-0">
-                <button
-                  onClick={toggleMicrophone}
-                  className={`h-16 w-16 rounded-2xl flex items-center justify-center transition-all duration-500 shadow-xl border border-white/10
-                    ${isListening 
-                      ? 'bg-gradient-to-br from-red-500 to-pink-600 text-white shadow-red-500/30' 
-                      : 'bg-white/10 hover:bg-white/20 text-white backdrop-blur-md'}`}
-                >
-                  {isListening ? (
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 animate-pulse" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
-                    </svg>
-                  ) : (
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
-                    </svg>
-                  )}
-                </button>
-                <div className="text-center mt-2 text-[10px] uppercase tracking-wider font-bold text-white/40">
-                   {isIdentifying ? <span className="text-blue-400 animate-pulse">{t.identifying}</span> : t.listening}
-                </div>
-             </div>
+          {/* Header Row: Random, Reset, Help, Hide */}
+          <div className="flex justify-center items-center gap-2 md:gap-3 -mt-6 mb-2 flex-wrap">
+             <button 
+               onClick={randomizeSettings}
+               className="bg-indigo-500/80 hover:bg-indigo-600/90 backdrop-blur-md text-white shadow-[0_0_10px_rgba(99,102,241,0.5)] rounded-full px-4 py-1 flex items-center gap-2 text-xs transition-all mb-2 font-medium"
+             >
+               <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+               </svg>
+               <span>{t.randomize}</span>
+             </button>
 
-             {/* 2. Visualizer Modes (Horizontal Scroll) */}
-             <div className="flex-1 w-full overflow-hidden">
-                <div className="flex items-center justify-between mb-2 px-1">
-                   <h3 className="text-white/50 text-xs uppercase tracking-widest font-bold">{t.visualizerMode}</h3>
-                </div>
-                {/* Scroll container */}
-                <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide mask-fade-right">
-                  {Object.entries(VISUALIZER_PRESETS).map(([mode, _]) => (
-                    <button
-                      key={mode}
-                      onClick={() => setMode(mode as VisualizerMode)}
-                      className={`flex-shrink-0 px-4 py-2 rounded-xl border transition-all duration-300 text-xs font-medium whitespace-nowrap
-                        ${currentMode === mode 
-                          ? 'bg-white/20 border-white/40 text-white shadow-[0_0_15px_rgba(255,255,255,0.2)]' 
-                          : 'bg-white/5 border-white/5 text-white/60 hover:bg-white/10'}`}
-                    >
-                      {t.modes[mode as VisualizerMode]}
-                    </button>
-                  ))}
-                </div>
-             </div>
+             <button 
+               onClick={resetSettings}
+               className="bg-black/50 hover:bg-black/70 backdrop-blur-md border border-white/10 text-white/60 hover:text-white rounded-full px-4 py-1 flex items-center gap-2 text-xs transition-all mb-2"
+             >
+               <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+               </svg>
+               <span>{t.reset}</span>
+             </button>
+             
+             {/* Help Button */}
+             <button 
+               onClick={() => setShowHelp(true)}
+               className="bg-black/50 hover:bg-black/70 backdrop-blur-md border border-white/10 text-white/60 hover:text-white rounded-full px-3 py-1 flex items-center gap-2 text-xs transition-all mb-2"
+               title={t.help}
+             >
+               <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+               </svg>
+             </button>
+
+             <button 
+               onClick={() => setIsExpanded(false)}
+               className="bg-black/50 hover:bg-black/70 backdrop-blur-md border border-white/10 text-white/60 hover:text-white rounded-full px-4 py-1 flex items-center gap-2 text-xs transition-all mb-2"
+             >
+               <span>{t.hideOptions}</span>
+               <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+               </svg>
+             </button>
           </div>
 
-          {/* Bottom Section: Settings & Theme */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-             
-             {/* Settings Card */}
-             <div className="bg-white/5 border border-white/10 rounded-2xl p-4 flex flex-col justify-center">
-                <div className="grid grid-cols-2 gap-x-6 gap-y-4">
-                    {/* Sliders */}
-                    <div className="space-y-4">
-                       <div className="space-y-1">
-                          <div className="flex justify-between text-[10px] text-white/60 uppercase font-bold">
-                            <span>{t.sensitivity}</span> <span>{settings.sensitivity.toFixed(1)}</span>
-                          </div>
-                          <input 
-                              type="range" min="0.5" max="3.0" step="0.1"
-                              value={settings.sensitivity}
-                              onChange={(e) => updateSetting('sensitivity', parseFloat(e.target.value))}
-                              className="w-full accent-blue-500 h-1 bg-white/20 rounded-lg appearance-none cursor-pointer"
-                           />
-                       </div>
-                       <div className="space-y-1">
-                          <div className="flex justify-between text-[10px] text-white/60 uppercase font-bold">
-                            <span>{t.speed}</span> <span>{settings.speed.toFixed(1)}</span>
-                          </div>
-                          <input 
-                              type="range" min="0.1" max="2.0" step="0.1"
-                              value={settings.speed}
-                              onChange={(e) => updateSetting('speed', parseFloat(e.target.value))}
-                              className="w-full accent-purple-500 h-1 bg-white/20 rounded-lg appearance-none cursor-pointer"
-                           />
-                       </div>
-                    </div>
+          <div className="max-w-7xl mx-auto flex flex-col gap-6">
+            
+            {/* Top Section: Modes & Play Button */}
+            <div className="flex flex-col md:flex-row gap-6 items-center md:items-start">
+               
+               {/* 1. Mic Button (Mobile: Center, Desktop: Left) */}
+               <div className="flex-shrink-0">
+                  <button
+                    onClick={toggleMicrophone}
+                    className={`h-16 w-16 rounded-2xl flex items-center justify-center transition-all duration-500 shadow-xl border border-white/10
+                      ${isListening 
+                        ? 'bg-gradient-to-br from-red-500 to-pink-600 text-white shadow-red-500/30' 
+                        : 'bg-white/10 hover:bg-white/20 text-white backdrop-blur-md'}`}
+                  >
+                    {isListening ? (
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 animate-pulse" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
+                      </svg>
+                    ) : (
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                      </svg>
+                    )}
+                  </button>
+                  <div className="text-center mt-2 text-[10px] uppercase tracking-wider font-bold text-white/40">
+                     {isIdentifying ? <span className="text-blue-400 animate-pulse">{t.identifying}</span> : t.listening}
+                  </div>
+               </div>
 
-                    {/* Toggles */}
-                    <div className="flex flex-col justify-center gap-3">
-                        <button 
-                          onClick={() => updateSetting('glow', !settings.glow)}
-                          className={`flex items-center justify-between px-3 py-2 rounded-lg border transition-all ${settings.glow ? 'bg-blue-500/20 border-blue-500/50' : 'bg-black/20 border-white/10'}`}
-                        >
-                          <span className="text-xs text-white/80">{t.glow}</span>
-                          <div className={`w-2 h-2 rounded-full ${settings.glow ? 'bg-blue-400 shadow-[0_0_8px_rgba(59,130,246,0.8)]' : 'bg-white/20'}`} />
-                        </button>
-
-                        <button 
-                          onClick={() => updateSetting('trails', !settings.trails)}
-                          className={`flex items-center justify-between px-3 py-2 rounded-lg border transition-all ${settings.trails ? 'bg-purple-500/20 border-purple-500/50' : 'bg-black/20 border-white/10'}`}
-                        >
-                          <span className="text-xs text-white/80">{t.trails}</span>
-                          <div className={`w-2 h-2 rounded-full ${settings.trails ? 'bg-purple-400 shadow-[0_0_8px_rgba(168,85,247,0.8)]' : 'bg-white/20'}`} />
-                        </button>
-                    </div>
-                </div>
-             </div>
-
-             {/* Style & Language Card */}
-             <div className="bg-white/5 border border-white/10 rounded-2xl p-4 flex flex-col gap-4">
-                 <div className="flex justify-between items-center">
-                    <h3 className="text-white/50 text-xs uppercase tracking-widest font-bold">{t.styleTheme}</h3>
-                    <div className="flex flex-wrap gap-2">
-                        {COLOR_THEMES.map((theme, idx) => (
-                            <button
-                                key={idx}
-                                onClick={() => setColorTheme(theme)}
-                                className="w-6 h-6 rounded-full border border-white/20 hover:scale-110 transition-transform shadow-lg"
-                                style={{ background: `linear-gradient(135deg, ${theme[0]}, ${theme[1]})` }}
-                            />
-                        ))}
-                    </div>
-                 </div>
-
-                 <div className="h-px bg-white/10 w-full"></div>
-
-                 {/* Lyrics / Lang / Region Controls Row */}
-                 <div className="flex flex-wrap items-center gap-2">
-                     <select 
-                        value={lyricsStyle}
-                        onChange={(e) => setLyricsStyle(e.target.value as LyricsStyle)}
-                        className="flex-grow bg-black/40 text-white text-xs border border-white/10 rounded-lg px-2 py-2 outline-none focus:border-white/30 appearance-none cursor-pointer hover:bg-white/5 transition-colors min-w-[80px]"
-                     >
-                         {Object.values(LyricsStyle).map((style) => (
-                             <option key={style} value={style} className="bg-gray-900 text-white py-1">
-                                 {t.lyrics}: {t.lyricsStyles[style]}
-                             </option>
-                         ))}
-                     </select>
-                     
-                     {/* Region Selector */}
-                     <select
-                        value={region}
-                        onChange={(e) => setRegion(e.target.value as Region)}
-                        className="bg-black/40 text-white text-xs border border-white/10 rounded-lg px-2 py-2 outline-none focus:border-white/30 appearance-none cursor-pointer hover:bg-white/5 transition-colors max-w-[90px]"
-                        title={t.region}
-                     >
-                        {Object.entries(REGION_NAMES).map(([key, name]) => (
-                           <option key={key} value={key} className="bg-gray-900 text-white py-1">
-                               {t.regions[key as Region]}
-                           </option>
-                        ))}
-                     </select>
-
-                     <button 
-                       onClick={() => setShowLyrics(!showLyrics)}
-                       className={`h-[34px] w-[34px] rounded-lg border flex items-center justify-center transition-all flex-shrink-0
-                         ${showLyrics ? 'bg-green-500/20 border-green-500/50 text-green-300' : 'bg-black/40 border-white/20 text-white/40'}`}
-                       title={t.showLyrics}
-                     >
-                       <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                       </svg>
-                     </button>
-                     
-                     <button 
-                        onClick={() => setLanguage(language === 'en' ? 'zh' : 'en')}
-                        className="h-[34px] w-[34px] text-[10px] font-bold text-white/60 hover:text-white border border-white/20 rounded-lg bg-black/40 hover:bg-white/5 transition-colors flex-shrink-0"
+               {/* 2. Visualizer Modes (Horizontal Scroll) */}
+               <div className="flex-1 w-full overflow-hidden">
+                  <div className="flex items-center justify-between mb-2 px-1">
+                     <h3 className="text-white/50 text-xs uppercase tracking-widest font-bold">{t.visualizerMode}</h3>
+                  </div>
+                  {/* Scroll container */}
+                  <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide mask-fade-right">
+                    {Object.entries(VISUALIZER_PRESETS).map(([mode, _]) => (
+                      <button
+                        key={mode}
+                        onClick={() => setMode(mode as VisualizerMode)}
+                        className={`flex-shrink-0 px-4 py-2 rounded-xl border transition-all duration-300 text-xs font-medium whitespace-nowrap
+                          ${currentMode === mode 
+                            ? 'bg-white/20 border-white/40 text-white shadow-[0_0_15px_rgba(255,255,255,0.2)]' 
+                            : 'bg-white/5 border-white/5 text-white/60 hover:bg-white/10'}`}
                       >
-                        {language === 'en' ? 'ZH' : 'EN'}
+                        {t.modes[mode as VisualizerMode]}
                       </button>
-                 </div>
-             </div>
-          </div>
+                    ))}
+                  </div>
+               </div>
+            </div>
 
+            {/* Bottom Section: Settings & Theme */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+               
+               {/* Settings Card */}
+               <div className="bg-white/5 border border-white/10 rounded-2xl p-4 flex flex-col justify-center">
+                  <div className="grid grid-cols-2 gap-x-6 gap-y-4">
+                      {/* Sliders */}
+                      <div className="space-y-4">
+                         <div className="space-y-1">
+                            <div className="flex justify-between text-[10px] text-white/60 uppercase font-bold">
+                              <span>{t.sensitivity}</span> <span>{settings.sensitivity.toFixed(1)}</span>
+                            </div>
+                            <input 
+                                type="range" min="0.5" max="3.0" step="0.1"
+                                value={settings.sensitivity}
+                                onChange={(e) => updateSetting('sensitivity', parseFloat(e.target.value))}
+                                className="w-full accent-blue-500 h-1 bg-white/20 rounded-lg appearance-none cursor-pointer"
+                             />
+                         </div>
+                         <div className="space-y-1">
+                            <div className="flex justify-between text-[10px] text-white/60 uppercase font-bold">
+                              <span>{t.speed}</span> <span>{settings.speed.toFixed(1)}</span>
+                            </div>
+                            <input 
+                                type="range" min="0.1" max="2.0" step="0.1"
+                                value={settings.speed}
+                                onChange={(e) => updateSetting('speed', parseFloat(e.target.value))}
+                                className="w-full accent-purple-500 h-1 bg-white/20 rounded-lg appearance-none cursor-pointer"
+                             />
+                         </div>
+                      </div>
+
+                      {/* Toggles */}
+                      <div className="flex flex-col justify-center gap-3">
+                          <button 
+                            onClick={() => updateSetting('glow', !settings.glow)}
+                            className={`flex items-center justify-between px-3 py-2 rounded-lg border transition-all ${settings.glow ? 'bg-blue-500/20 border-blue-500/50' : 'bg-black/20 border-white/10'}`}
+                          >
+                            <span className="text-xs text-white/80">{t.glow}</span>
+                            <div className={`w-2 h-2 rounded-full ${settings.glow ? 'bg-blue-400 shadow-[0_0_8px_rgba(59,130,246,0.8)]' : 'bg-white/20'}`} />
+                          </button>
+
+                          <button 
+                            onClick={() => updateSetting('trails', !settings.trails)}
+                            className={`flex items-center justify-between px-3 py-2 rounded-lg border transition-all ${settings.trails ? 'bg-purple-500/20 border-purple-500/50' : 'bg-black/20 border-white/10'}`}
+                          >
+                            <span className="text-xs text-white/80">{t.trails}</span>
+                            <div className={`w-2 h-2 rounded-full ${settings.trails ? 'bg-purple-400 shadow-[0_0_8px_rgba(168,85,247,0.8)]' : 'bg-white/20'}`} />
+                          </button>
+                      </div>
+                  </div>
+               </div>
+
+               {/* Style & Language Card */}
+               <div className="bg-white/5 border border-white/10 rounded-2xl p-4 flex flex-col gap-4">
+                   <div className="flex justify-between items-center">
+                      <h3 className="text-white/50 text-xs uppercase tracking-widest font-bold">{t.styleTheme}</h3>
+                      <div className="flex flex-wrap gap-2">
+                          {COLOR_THEMES.map((theme, idx) => (
+                              <button
+                                  key={idx}
+                                  onClick={() => setColorTheme(theme)}
+                                  className="w-6 h-6 rounded-full border border-white/20 hover:scale-110 transition-transform shadow-lg"
+                                  style={{ background: `linear-gradient(135deg, ${theme[0]}, ${theme[1]})` }}
+                              />
+                          ))}
+                      </div>
+                   </div>
+
+                   <div className="h-px bg-white/10 w-full"></div>
+
+                   {/* Lyrics / Lang / Region Controls Row */}
+                   <div className="flex flex-wrap items-center gap-2">
+                       <select 
+                          value={lyricsStyle}
+                          onChange={(e) => setLyricsStyle(e.target.value as LyricsStyle)}
+                          className="flex-grow bg-black/40 text-white text-xs border border-white/10 rounded-lg px-2 py-2 outline-none focus:border-white/30 appearance-none cursor-pointer hover:bg-white/5 transition-colors min-w-[80px]"
+                       >
+                           {Object.values(LyricsStyle).map((style) => (
+                               <option key={style} value={style} className="bg-gray-900 text-white py-1">
+                                   {t.lyrics}: {t.lyricsStyles[style]}
+                               </option>
+                           ))}
+                       </select>
+                       
+                       {/* Region Selector */}
+                       <select
+                          value={region}
+                          onChange={(e) => setRegion(e.target.value as Region)}
+                          className="bg-black/40 text-white text-xs border border-white/10 rounded-lg px-2 py-2 outline-none focus:border-white/30 appearance-none cursor-pointer hover:bg-white/5 transition-colors max-w-[90px]"
+                          title={t.region}
+                       >
+                          {Object.entries(REGION_NAMES).map(([key, name]) => (
+                             <option key={key} value={key} className="bg-gray-900 text-white py-1">
+                                 {t.regions[key as Region]}
+                             </option>
+                          ))}
+                       </select>
+
+                       <button 
+                         onClick={() => setShowLyrics(!showLyrics)}
+                         className={`h-[34px] w-[34px] rounded-lg border flex items-center justify-center transition-all flex-shrink-0
+                           ${showLyrics ? 'bg-green-500/20 border-green-500/50 text-green-300' : 'bg-black/40 border-white/20 text-white/40'}`}
+                         title={t.showLyrics}
+                       >
+                         <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                         </svg>
+                       </button>
+                       
+                       <button 
+                          onClick={() => setLanguage(language === 'en' ? 'zh' : 'en')}
+                          className="h-[34px] w-[34px] text-[10px] font-bold text-white/60 hover:text-white border border-white/20 rounded-lg bg-black/40 hover:bg-white/5 transition-colors flex-shrink-0"
+                        >
+                          {language === 'en' ? 'ZH' : 'EN'}
+                        </button>
+                   </div>
+               </div>
+            </div>
+
+          </div>
         </div>
       </div>
-    </div>
+      
+      {/* Help Modal Integration */}
+      <HelpModal 
+        isOpen={showHelp} 
+        onClose={() => setShowHelp(false)} 
+        language={language}
+      />
+    </>
   );
 };
 
