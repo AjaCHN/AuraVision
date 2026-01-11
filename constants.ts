@@ -1,5 +1,7 @@
 import { VisualizerMode, Region } from './types';
 
+export const APP_VERSION = '1.2.0';
+
 // Using Pro model for maximum accuracy in audio analysis
 export const GEMINI_MODEL = 'gemini-3-pro-preview';
 

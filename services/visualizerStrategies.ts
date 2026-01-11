@@ -379,11 +379,58 @@ export class NebulaRenderer implements IVisualizerRenderer {
     life: number; maxLife: number; 
     size: number; 
     colorIndex: number; 
-    type: 'smoke' | 'spark'
+    type: 'smoke' | 'spark';
+    rotation: number;
+    rotationSpeed: number;
   }> = [];
+
+  // Cache generated sprites to avoid expensive canvas operations per frame
+  private spriteCache: Record<string, HTMLCanvasElement> = {};
 
   init() {
     this.particles = [];
+    this.spriteCache = {};
+  }
+
+  // Generates a soft, irregular cloud-like sprite tinted with the given color
+  private getSprite(color: string): HTMLCanvasElement {
+    if (this.spriteCache[color]) return this.spriteCache[color];
+
+    const size = 128; // Sprite resolution
+    const canvas = document.createElement('canvas');
+    canvas.width = size;
+    canvas.height = size;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return canvas;
+
+    // 1. Draw Cloud Shape (Alpha Mask)
+    // We draw multiple overlapping radial gradients to create an irregular blob
+    const drawPuff = (x: number, y: number, rad: number, op: number) => {
+        const g = ctx.createRadialGradient(x, y, 0, x, y, rad);
+        g.addColorStop(0, `rgba(255,255,255,${op})`);
+        g.addColorStop(1, 'rgba(255,255,255,0)');
+        ctx.fillStyle = g;
+        ctx.beginPath();
+        ctx.arc(x, y, rad, 0, Math.PI*2);
+        ctx.fill();
+    };
+    
+    // Main body
+    drawPuff(size/2, size/2, size/2, 1);
+    // Lumps
+    drawPuff(size/2 - 20, size/2 - 10, size/3, 0.6);
+    drawPuff(size/2 + 20, size/2 + 10, size/3, 0.6);
+    drawPuff(size/2 + 10, size/2 - 20, size/3.5, 0.5);
+    drawPuff(size/2 - 15, size/2 + 20, size/3.5, 0.5);
+
+    // 2. Tint using Composite Operation
+    // This keeps the alpha channel but changes the color to the target
+    ctx.globalCompositeOperation = 'source-in';
+    ctx.fillStyle = color;
+    ctx.fillRect(0, 0, size, size);
+
+    this.spriteCache[color] = canvas;
+    return canvas;
   }
 
   draw(ctx: CanvasRenderingContext2D, data: Uint8Array, w: number, h: number, colors: string[], settings: VisualizerSettings, rotation: number) {
@@ -392,18 +439,16 @@ export class NebulaRenderer implements IVisualizerRenderer {
     const mid = getAverage(data, 20, 100) / 255; // Mids for flow
     const high = getAverage(data, 100, 200) / 255; // Highs for sparks
     
-    // OPTIMIZATION: Reduced particle counts significantly for better performance.
-    // The visual density is maintained by size and movement, not just count.
-    const smokeCount = 120; // Was 300
-    const sparkCount = 30; // Was 50
+    const smokeCount = 120;
+    const sparkCount = 30;
 
     // Spawn Nebula (Smoke)
     if (this.particles.filter(p => p.type === 'smoke').length < smokeCount) {
-       for (let k = 0; k < 2; k++) { // Spawn fewer per frame
+       for (let k = 0; k < 2; k++) {
          if (this.particles.length >= smokeCount + sparkCount) break;
 
          const isInitialFill = this.particles.length < 50;
-         const startY = isInitialFill ? Math.random() * h : h + 50;
+         const startY = isInitialFill ? Math.random() * h : h + 100;
          const startX = Math.random() * w;
 
          this.particles.push({
@@ -412,9 +457,11 @@ export class NebulaRenderer implements IVisualizerRenderer {
            vx: 0, vy: 0,
            life: isInitialFill ? Math.random() * 800 : 0, 
            maxLife: 800 + Math.random() * 400,
-           size: (50 + Math.random() * 100) * 1.732,
+           size: (80 + Math.random() * 150) * 2, // Larger size for sprites
            colorIndex: Math.floor(Math.random() * colors.length), 
-           type: 'smoke'
+           type: 'smoke',
+           rotation: Math.random() * Math.PI * 2,
+           rotationSpeed: (Math.random() - 0.5) * 0.02
          });
        }
     }
@@ -428,45 +475,48 @@ export class NebulaRenderer implements IVisualizerRenderer {
             life: 0, maxLife: 100,
             size: 2 + Math.random() * 3,
             colorIndex: 0, 
-            type: 'spark'
+            type: 'spark',
+            rotation: 0,
+            rotationSpeed: 0
         });
     }
 
     const time = rotation;
     
+    // Screen blending makes the overlapping smoke glow
     ctx.globalCompositeOperation = 'screen'; 
 
     for (let i = this.particles.length - 1; i >= 0; i--) {
         const p = this.particles[i];
         p.life++;
         
-        // Flow Field Math
+        // Physics
         const nx = p.x * 0.003;
         const ny = p.y * 0.003;
-        
-        // TURBULENCE: Use bass to distort the flow field angle
         const turbulence = bass * 1.5 * settings.sensitivity;
         const angle = Math.sin(nx + time * 0.5 + turbulence) * Math.cos(ny + time * 0.5) * Math.PI * 2;
         
-        // SPEED
         const speed = p.type === 'smoke' 
             ? settings.speed * (0.8 + (bass * 4.0)) 
             : 3.0 * settings.speed * (1 + high * 3);
 
         p.vx += Math.cos(angle) * 0.05;
         p.vy += Math.sin(angle) * 0.05 - 0.05; 
-        
         p.vx *= 0.95;
         p.vy *= 0.95;
 
         p.x += p.vx * speed;
         p.y += p.vy * speed;
+        
+        // Update rotation
+        p.rotation += p.rotationSpeed * settings.speed;
 
+        // Wrap around screen
         if (p.y < -300) p.y = h + 300;
         if (p.x < -300) p.x = w + 300;
         if (p.x > w + 300) p.x = -300;
 
-        // Alpha calculation
+        // Alpha / Fade logic
         let alpha = 0;
         const fadeIn = 150;
         const fadeOut = 200;
@@ -479,40 +529,42 @@ export class NebulaRenderer implements IVisualizerRenderer {
             alpha = 1;
         }
 
+        // Reset if dead
         if (p.life > p.maxLife) {
              p.life = 0;
              p.x = Math.random() * w;
              p.y = h + 100;
+             p.rotation = Math.random() * Math.PI * 2;
         }
 
-        ctx.save();
-        ctx.translate(p.x, p.y);
-        
         if (p.type === 'smoke') {
-            const dynamicColor = colors[p.colorIndex % colors.length]; 
+            const colorKey = colors[p.colorIndex % colors.length];
+            const sprite = this.getSprite(colorKey);
             
-            // OPTIMIZATION: Removed createRadialGradient.
-            // Using gradient per particle is extremely expensive.
-            // Using a simple arc with low alpha creates a similar "soft" feel when stacked.
+            // Pulse opacity with beat
+            const beatPulse = bass * 0.3; 
+            const finalAlpha = Math.min(1, (0.15 + beatPulse * 0.5) * alpha); // Higher base alpha for sprites
+
+            ctx.globalAlpha = finalAlpha;
             
-            const beatPulse = bass * 0.25; 
-            // Lower base alpha because solid fills stack up faster than gradients
-            const finalAlpha = Math.min(1, (0.05 + beatPulse * 0.5) * alpha);
-            
-            ctx.fillStyle = hexToRgba(dynamicColor, finalAlpha);
-            ctx.beginPath();
-            ctx.arc(0, 0, p.size, 0, Math.PI * 2);
-            ctx.fill();
+            ctx.save();
+            ctx.translate(p.x, p.y);
+            ctx.rotate(p.rotation);
+            // Draw sprite centered
+            ctx.drawImage(sprite, -p.size/2, -p.size/2, p.size, p.size);
+            ctx.restore();
+
         } else {
             // Sparks
             ctx.fillStyle = `rgba(255, 255, 255, ${alpha * 0.8})`;
+            ctx.globalAlpha = 1.0;
             ctx.beginPath();
-            ctx.arc(0, 0, p.size, 0, Math.PI * 2);
+            ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
             ctx.fill();
         }
-        
-        ctx.restore();
     }
+    
+    ctx.globalAlpha = 1.0;
     ctx.globalCompositeOperation = 'source-over';
   }
 }

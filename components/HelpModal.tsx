@@ -1,6 +1,7 @@
 import React from 'react';
 import { Language } from '../types';
 import { TRANSLATIONS } from '../translations';
+import { APP_VERSION } from '../constants';
 
 interface HelpModalProps {
   isOpen: boolean;
@@ -154,8 +155,11 @@ const HelpModal: React.FC<HelpModalProps> = ({ isOpen, onClose, language }) => {
 
         </div>
 
-        {/* Footer */}
-        <div className="p-4 border-t border-white/10 bg-black/40 flex justify-end">
+        {/* Footer with Version */}
+        <div className="p-4 border-t border-white/10 bg-black/40 flex justify-between items-center">
+          <div className="text-white/30 text-xs font-mono ml-2">
+            {h.version} {APP_VERSION}
+          </div>
           <button 
             onClick={onClose}
             className="px-6 py-2 bg-white text-black font-bold rounded-full hover:scale-105 transition-transform"

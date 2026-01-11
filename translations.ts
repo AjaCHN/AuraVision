@@ -103,7 +103,8 @@ export const TRANSLATIONS = {
       projectInfoTitle: 'Project & Tech Stack',
       projectInfoText: 'Powered by Google Gemini 3.0 Pro, React 19, Three.js (WebGL), and Tailwind CSS. This project demonstrates multimodal AI capabilities by combining real-time audio signal processing with generative language models.',
       privacyTitle: 'Privacy',
-      privacyText: 'Audio is processed locally for visualization. Short clips are sent to Google Gemini temporarily solely for song identification and are not stored.'
+      privacyText: 'Audio is processed locally for visualization. Short clips are sent to Google Gemini temporarily solely for song identification and are not stored.',
+      version: 'Version'
     }
   },
   zh: {
@@ -208,7 +209,8 @@ export const TRANSLATIONS = {
       projectInfoTitle: '项目信息与技术栈',
       projectInfoText: '由 Google Gemini 3.0 Pro, React 19, Three.js (WebGL) 和 Tailwind CSS 强力驱动。本项目展示了多模态 AI 能力，将实时音频信号处理与生成式语言模型完美结合。',
       privacyTitle: '隐私说明',
-      privacyText: '音频在本地处理以进行可视化。短片段仅临时发送至 Google Gemini 用于歌曲识别，不会被存储。'
+      privacyText: '音频在本地处理以进行可视化。短片段仅临时发送至 Google Gemini 用于歌曲识别，不会被存储。',
+      version: '版本'
     }
   }
 };
