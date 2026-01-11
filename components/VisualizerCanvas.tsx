@@ -26,7 +26,6 @@ const VisualizerCanvas: React.FC<VisualizerCanvasProps> = ({
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const requestRef = useRef<number>(0);
-  const startTimeRef = useRef<number>(Date.now());
   const rotationRef = useRef<number>(0);
   const lyricsScaleRef = useRef<number>(1.0);
   
@@ -50,13 +49,6 @@ const VisualizerCanvas: React.FC<VisualizerCanvasProps> = ({
       if (canvasRef.current) r.init(canvasRef.current);
     });
   }, []);
-
-  // Reset timer when analyser changes
-  useEffect(() => {
-    if (analyser) {
-      startTimeRef.current = Date.now();
-    }
-  }, [analyser]);
 
   const draw = () => {
     if (!analyser || !canvasRef.current) return;
@@ -113,22 +105,6 @@ const VisualizerCanvas: React.FC<VisualizerCanvasProps> = ({
     if (showLyrics && song && (song.lyricsSnippet || song.identified)) {
        drawLyrics(ctx, dataArray, width, height, colors, song, lyricsStyle, settings, lyricsScaleRef);
     }
-
-    // --- Timer ---
-    const now = Date.now();
-    const elapsed = now - startTimeRef.current;
-    const m = Math.floor(elapsed / 60000);
-    const s = Math.floor((elapsed % 60000) / 1000);
-    const timeStr = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
-    
-    ctx.save();
-    ctx.shadowBlur = 0;
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
-    ctx.font = '12px "Inter", sans-serif';
-    ctx.textAlign = 'right';
-    ctx.textBaseline = 'top';
-    ctx.fillText(timeStr, width - 24, 24);
-    ctx.restore();
 
     requestRef.current = requestAnimationFrame(draw);
   };

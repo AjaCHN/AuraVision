@@ -8,9 +8,10 @@ interface SongOverlayProps {
   showLyrics: boolean;
   language: Language;
   onRetry: () => void;
+  onClose: () => void;
 }
 
-const SongOverlay: React.FC<SongOverlayProps> = ({ song, lyricsStyle, showLyrics, language, onRetry }) => {
+const SongOverlay: React.FC<SongOverlayProps> = ({ song, lyricsStyle, showLyrics, language, onRetry, onClose }) => {
   // If lyrics are hidden or no song is identified, hide the entire overlay
   if (!showLyrics || !song || !song.identified) return null;
 
@@ -20,8 +21,20 @@ const SongOverlay: React.FC<SongOverlayProps> = ({ song, lyricsStyle, showLyrics
     <div className="pointer-events-none fixed inset-0 z-20 overflow-hidden">
       {/* Song Info Badge */}
       <div className="absolute top-8 left-8 bg-black/40 backdrop-blur-md border-l-4 border-blue-500 pl-4 py-3 pr-4 rounded-r-xl max-w-xs md:max-w-md transition-all duration-700 transform translate-y-0 opacity-100 shadow-[0_4px_10px_rgba(0,0,0,0.5)] pointer-events-auto group">
-        <h2 className="text-white font-bold text-xl md:text-2xl truncate tracking-tight">{song.title}</h2>
-        <p className="text-blue-300 text-sm md:text-base truncate font-medium">{song.artist}</p>
+        
+        {/* Close Button (Visible on Hover) */}
+        <button 
+          onClick={(e) => { e.stopPropagation(); onClose(); }}
+          className="absolute top-2 right-2 p-1 rounded-full bg-black/20 hover:bg-white/20 text-white/40 hover:text-white opacity-0 group-hover:opacity-100 transition-all duration-300"
+          title={t.close}
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+
+        <h2 className="text-white font-bold text-xl md:text-2xl truncate tracking-tight pr-6">{song.title}</h2>
+        <p className="text-blue-300 text-sm md:text-base truncate font-medium pr-6">{song.artist}</p>
         
         {song.mood && (
           <div className="flex items-center gap-2 mt-2">

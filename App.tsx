@@ -477,6 +477,7 @@ const App: React.FC = () => {
         showLyrics={showLyrics}
         language={language}
         onRetry={handleSongRetry}
+        onClose={() => setCurrentSong(null)}
       />
 
       {/* Start Prompt if not listening */}
