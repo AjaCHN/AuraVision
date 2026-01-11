@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import VisualizerCanvas from './components/VisualizerCanvas';
+import ThreeVisualizer from './components/ThreeVisualizer'; // New WebGL Component
 import Controls from './components/Controls';
 import SongOverlay from './components/SongOverlay';
 import { VisualizerMode, SongInfo, LyricsStyle, Language, VisualizerSettings, Region, AudioDevice } from './types';
@@ -8,7 +9,7 @@ import { identifySongFromAudio } from './services/geminiService';
 import { TRANSLATIONS } from './translations';
 
 // Default Constants
-const DEFAULT_MODE = VisualizerMode.PLASMA; 
+const DEFAULT_MODE = VisualizerMode.SYNTHWAVE; // Updated default to new 3D mode
 const DEFAULT_THEME_INDEX = 1; 
 const DEFAULT_SETTINGS: VisualizerSettings = {
   sensitivity: 1.5,
@@ -456,19 +457,30 @@ const App: React.FC = () => {
 
   const t = TRANSLATIONS[language];
 
+  // Determine which Renderer to use
+  const isWebGLMode = mode === VisualizerMode.SYNTHWAVE;
+
   return (
     <div className="relative w-screen h-screen overflow-hidden text-white select-none">
       
-      {/* Background Visualizer */}
-      <VisualizerCanvas 
-        analyser={analyser} 
-        mode={mode} 
-        colors={colorTheme}
-        settings={settings}
-        song={currentSong}
-        showLyrics={showLyrics}
-        lyricsStyle={lyricsStyle}
-      />
+      {/* Background Visualizer - Switches between 2D and 3D */}
+      {isWebGLMode ? (
+         <ThreeVisualizer 
+           analyser={analyser} 
+           colors={colorTheme}
+           settings={settings}
+         />
+      ) : (
+         <VisualizerCanvas 
+           analyser={analyser} 
+           mode={mode} 
+           colors={colorTheme}
+           settings={settings}
+           song={currentSong}
+           showLyrics={showLyrics}
+           lyricsStyle={lyricsStyle}
+         />
+      )}
 
       {/* Main Overlay Content */}
       <SongOverlay 

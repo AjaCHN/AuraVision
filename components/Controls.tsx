@@ -107,26 +107,15 @@ const Controls: React.FC<ControlsProps> = ({
       {!isExpanded ? (
         <div className="fixed bottom-6 left-0 w-full z-30 flex justify-center items-center pointer-events-none">
           <div className={`pointer-events-auto flex items-center gap-4 bg-black/60 backdrop-blur-xl border border-white/10 rounded-full p-2 pl-3 pr-4 shadow-2xl animate-fade-in-up transition-opacity duration-1000 ${isUserInactive ? 'opacity-30 hover:opacity-100' : 'opacity-100'}`}>
-             {/* Mic Toggle */}
+             {/* Randomize Button (Replaced Mic Toggle) */}
              <button
-                onClick={toggleMicrophone}
-                title={isListening ? t.stopMic : t.startMic}
-                className={`h-10 w-10 rounded-full flex items-center justify-center transition-all duration-300 shadow-lg
-                  ${isListening 
-                    ? 'bg-red-500 hover:bg-red-600 text-white' 
-                    : 'bg-white hover:bg-gray-200 text-black'}`}
+                onClick={randomizeSettings}
+                title={t.randomizeTooltip}
+                className="h-10 w-10 rounded-full flex items-center justify-center transition-all duration-300 shadow-lg bg-indigo-500 hover:bg-indigo-600 text-white shadow-[0_0_10px_rgba(99,102,241,0.5)]"
               >
-                {isListening ? (
-                  <div className="flex gap-0.5 items-end h-3">
-                     <div className="w-1 h-2 bg-white animate-bounce" style={{animationDelay: '0ms'}}></div>
-                     <div className="w-1 h-3 bg-white animate-bounce" style={{animationDelay: '100ms'}}></div>
-                     <div className="w-1 h-2 bg-white animate-bounce" style={{animationDelay: '200ms'}}></div>
-                  </div>
-                ) : (
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 ml-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
-                  </svg>
-                )}
+                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+                 </svg>
               </button>
 
               <div className="h-6 w-px bg-white/20"></div>

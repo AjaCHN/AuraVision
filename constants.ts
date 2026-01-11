@@ -4,6 +4,10 @@ import { VisualizerMode, Region } from './types';
 export const GEMINI_MODEL = 'gemini-3-pro-preview';
 
 export const VISUALIZER_PRESETS = {
+  [VisualizerMode.SYNTHWAVE]: {
+    name: 'Synthwave Grid',
+    description: '3D retro-futuristic landscape (WebGL)'
+  },
   [VisualizerMode.PLASMA]: {
     name: 'Plasma Flow',
     description: 'Fluid liquid color gradients'

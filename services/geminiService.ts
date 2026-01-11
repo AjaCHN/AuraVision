@@ -46,9 +46,11 @@ export const identifySongFromAudio = async (base64Audio: string, mimeType: strin
         3. **Decision**: Only return a match if you are confident.
 
         LYRICS FORMATTING:
-        - When providing 'lyricsSnippet', try to structure it naturally.
-        - If possible, provide the [Chorus] or the specific section heard in the clip.
-        - Do not include timestamps in the output text, just the lyrics.
+        - Return the lyrics with approximate timestamps relative to the start of the song if known, or just line by line.
+        - **IMPORTANT**: If you can identify the song, try to fetch the *full* lyrics for the current section (Chorus/Verse) and include timestamps in [mm:ss] format at the start of lines.
+        - Example:
+          [01:12] Just a small town girl
+          [01:15] Living in a lonely world
         `;
 
         const response = await ai.models.generateContent({
@@ -75,7 +77,7 @@ export const identifySongFromAudio = async (base64Audio: string, mimeType: strin
                        {
                          "title": "Song Title",
                          "artist": "Artist Name",
-                         "lyricsSnippet": "Lyrics matching the audio OR the Chorus (max 4 lines)",
+                         "lyricsSnippet": "Lyrics with [mm:ss] timestamps if possible. Max 6 lines.",
                          "mood": "Vibe description (e.g., Energetic, Melancholic)",
                          "identified": true/false
                        }`
@@ -120,7 +122,6 @@ export const identifySongFromAudio = async (base64Audio: string, mimeType: strin
 
     } catch (error: any) {
         // Handle common transport errors (like code 6 XHR) with retry
-        // Code 6 typically usually network reset or timeout
         const isTransportError = error.message && (
           error.message.includes('error code: 6') || 
           error.message.includes('Rpc failed') ||
@@ -145,15 +146,13 @@ export const identifySongFromAudio = async (base64Audio: string, mimeType: strin
 
   // 2. If Gemini succeeded, save fingerprint for future (Optimization)
   if (aiResult && aiResult.identified) {
-      // Run fingerprinting in background (don't block return)
       generateFingerprint(base64Audio).then(features => {
           saveToLocalCache(features, aiResult);
       });
       return aiResult;
   }
 
-  // 3. Fallback: If Gemini failed or didn't identify, check local cache
-  // console.log("Gemini failed or unidentified, checking local cache...");
+  // 3. Fallback: Check local cache
   try {
       const features = await generateFingerprint(base64Audio);
       const localMatch = findLocalMatch(features);
@@ -165,6 +164,5 @@ export const identifySongFromAudio = async (base64Audio: string, mimeType: strin
       console.error("Fallback failed", e);
   }
 
-  // 4. Return original failure/unidentified result
   return aiResult;
 };

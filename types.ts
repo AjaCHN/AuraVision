@@ -4,6 +4,7 @@ export type Language = 'en' | 'zh';
 export type Region = 'global' | 'US' | 'CN' | 'JP' | 'KR' | 'EU' | 'LATAM';
 
 export enum VisualizerMode {
+  SYNTHWAVE = 'SYNTHWAVE', // New WebGL Mode
   PLASMA = 'PLASMA',
   BARS = 'BARS',
   PARTICLES = 'PARTICLES',

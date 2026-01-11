@@ -30,7 +30,8 @@ const VisualizerCanvas: React.FC<VisualizerCanvasProps> = ({
   const lyricsScaleRef = useRef<number>(1.0);
   
   // Strategy Pattern: Store initialized renderers
-  const renderersRef = useRef<Record<VisualizerMode, IVisualizerRenderer>>({
+  // Using Partial because SYNTHWAVE mode is handled by a different component
+  const renderersRef = useRef<Partial<Record<VisualizerMode, IVisualizerRenderer>>>({
     [VisualizerMode.BARS]: new BarsRenderer(),
     [VisualizerMode.RINGS]: new RingsRenderer(),
     [VisualizerMode.PARTICLES]: new ParticlesRenderer(),
@@ -46,7 +47,7 @@ const VisualizerCanvas: React.FC<VisualizerCanvasProps> = ({
     // Some renderers might need initial canvas sizing if they cache it, 
     // but our current strategies use 'w' and 'h' passed in draw()
     Object.values(renderersRef.current).forEach(r => {
-      if (canvasRef.current) r.init(canvasRef.current);
+      if (r && canvasRef.current) r.init(canvasRef.current);
     });
   }, []);
 
