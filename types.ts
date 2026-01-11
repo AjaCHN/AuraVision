@@ -10,13 +10,9 @@ export enum VisualizerMode {
   TUNNEL = 'TUNNEL',
   SHAPES = 'SHAPES',
   RINGS = 'RINGS',
-  SMOKE = 'SMOKE',
-  // New 2D Modes
-  RAIN = 'RAIN',
+  NEBULA = 'NEBULA', // Renamed from SMOKE
   KALEIDOSCOPE = 'KALEIDOSCOPE',
-  CITY = 'CITY',
   // WebGL Modes
-  SINGULARITY = 'SINGULARITY',
   SILK = 'SILK',
   LIQUID = 'LIQUID',
   TERRAIN = 'TERRAIN'

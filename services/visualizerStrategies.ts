@@ -142,30 +142,38 @@ export class ParticlesRenderer implements IVisualizerRenderer {
         
         if (Math.abs(p.x) > w * 2 || Math.abs(p.y) > h * 2) { p.life = -1; }
 
-        const prevZ = p.life;
-        p.vx = prevZ; 
+        // Move particle "towards" camera (life represents Z depth)
         p.life -= warpSpeed;
 
         if (p.life <= 10 || p.x === 0 || p.y === 0) {
             p.x = (Math.random() - 0.5) * w * 2;
             p.y = (Math.random() - 0.5) * h * 2;
             p.life = w;
-            p.vx = w;
             p.size = Math.random() * 2 + 0.5;
             continue;
         }
 
         const fov = 250;
         const scale = fov / p.life;
-        const prevScale = fov / p.vx;
+        
+        // --- Dynamic Trail Logic ---
+        // Instead of using just the previous frame, we calculate a "tail" position
+        // that is effectively further back in Z-space based on speed.
+        // Factor 5.0 dramatically lengthens trails at high speed.
+        const trailFactor = 5.0; 
+        const tailZ = p.life + (warpSpeed * trailFactor);
+        const tailScale = fov / tailZ;
         
         const rotX = p.x * cosR - p.y * sinR;
         const rotY = p.x * sinR + p.y * cosR;
 
+        // Head of the streak
         const sx = centerX + rotX * scale;
         const sy = centerY + rotY * scale;
-        const prevSx = centerX + rotX * prevScale;
-        const prevSy = centerY + rotY * prevScale;
+
+        // Tail of the streak
+        const tailSx = centerX + rotX * tailScale;
+        const tailSy = centerY + rotY * tailScale;
         
         const size = p.size * scale * 5;
 
@@ -180,12 +188,14 @@ export class ParticlesRenderer implements IVisualizerRenderer {
         ctx.beginPath();
         
         // Star streaks (warp effect)
-        const dist = Math.sqrt(Math.pow(sx - prevSx, 2) + Math.pow(sy - prevSy, 2));
-        if (dist > size * 2 && settings.trails) {
+        const dist = Math.sqrt(Math.pow(sx - tailSx, 2) + Math.pow(sy - tailSy, 2));
+        
+        // Threshold adjusted slightly to trigger trails more easily
+        if (dist > size * 1.5 && settings.trails) {
             ctx.strokeStyle = ctx.fillStyle;
             ctx.lineWidth = size;
             ctx.lineCap = 'round';
-            ctx.moveTo(prevSx, prevSy);
+            ctx.moveTo(tailSx, tailSy);
             ctx.lineTo(sx, sy);
             ctx.stroke();
         } else {
@@ -353,12 +363,13 @@ export class ShapesRenderer implements IVisualizerRenderer {
   }
 }
 
-export class SmokeRenderer implements IVisualizerRenderer {
+export class NebulaRenderer implements IVisualizerRenderer {
   private particles: Array<{
     x: number; y: number; 
     vx: number; vy: number; 
     life: number; maxLife: number; 
-    size: number; color: string; 
+    size: number; 
+    colorIndex: number; 
     type: 'smoke' | 'spark'
   }> = [];
 
@@ -367,25 +378,35 @@ export class SmokeRenderer implements IVisualizerRenderer {
   }
 
   draw(ctx: CanvasRenderingContext2D, data: Uint8Array, w: number, h: number, colors: string[], settings: VisualizerSettings, rotation: number) {
-    const vol = getAverage(data, 0, 100) / 255;
-    const high = getAverage(data, 100, 200) / 255;
+    // Separate frequencies
+    const bass = getAverage(data, 0, 14) / 255; // Deep bass for rhythm
+    const mid = getAverage(data, 20, 100) / 255; // Mids for flow
+    const high = getAverage(data, 100, 200) / 255; // Highs for sparks
     
     // Config
-    const smokeCount = 100; // Active particles target
+    const smokeCount = 300; 
     const sparkCount = 50;
 
-    // Spawn Smoke
+    // Spawn Nebula (Smoke)
     if (this.particles.filter(p => p.type === 'smoke').length < smokeCount) {
-       // Spawn from bottom and random locations to keep density high
-       this.particles.push({
-         x: Math.random() * w,
-         y: h + 50,
-         vx: 0, vy: 0,
-         life: 0, maxLife: 300 + Math.random() * 200,
-         size: 50 + Math.random() * 100,
-         color: colors[Math.floor(Math.random() * 2)], // Base colors
-         type: 'smoke'
-       });
+       for (let k = 0; k < 5; k++) {
+         if (this.particles.length >= smokeCount + sparkCount) break;
+
+         const isInitialFill = this.particles.length < 150;
+         const startY = isInitialFill ? Math.random() * h : h + 50;
+         const startX = Math.random() * w;
+
+         this.particles.push({
+           x: startX,
+           y: startY,
+           vx: 0, vy: 0,
+           life: isInitialFill ? Math.random() * 800 : 0, 
+           maxLife: 800 + Math.random() * 400,
+           size: (50 + Math.random() * 100) * 1.732,
+           colorIndex: Math.floor(Math.random() * colors.length), 
+           type: 'smoke'
+         });
+       }
     }
 
     // Spawn Sparks on Highs
@@ -396,57 +417,61 @@ export class SmokeRenderer implements IVisualizerRenderer {
             vx: 0, vy: 0,
             life: 0, maxLife: 100,
             size: 2 + Math.random() * 3,
-            color: '#ffffff',
+            colorIndex: 0, 
             type: 'spark'
         });
     }
 
-    // Physics & Draw
-    // Flow field based on rotation/time
     const time = rotation;
     
-    ctx.globalCompositeOperation = 'screen'; // Additive blending for smoke
+    ctx.globalCompositeOperation = 'screen'; 
 
     for (let i = this.particles.length - 1; i >= 0; i--) {
         const p = this.particles[i];
         p.life++;
         
         // Flow Field Math
-        // Scale coords for noise
         const nx = p.x * 0.003;
         const ny = p.y * 0.003;
         
-        // Simple trigonometric noise flow field
-        const angle = Math.sin(nx + time * 0.5) * Math.cos(ny + time * 0.5) * Math.PI * 2;
+        // TURBULENCE: Use bass to distort the flow field angle
+        // This makes the smoke "twist" when the bass hits
+        const turbulence = bass * 1.5 * settings.sensitivity;
+        const angle = Math.sin(nx + time * 0.5 + turbulence) * Math.cos(ny + time * 0.5) * Math.PI * 2;
         
-        // Audio influence on velocity
+        // SPEED: Base speed + Massive Bass Boost
+        // smoke: 0.8 base (faster than before) + up to 4x multiplier on bass
         const speed = p.type === 'smoke' 
-            ? 0.5 * settings.speed * (1 + vol)
-            : 2.0 * settings.speed * (1 + high * 2);
+            ? settings.speed * (0.8 + (bass * 4.0)) 
+            : 3.0 * settings.speed * (1 + high * 3);
 
         p.vx += Math.cos(angle) * 0.05;
-        p.vy += Math.sin(angle) * 0.05 - 0.05; // Slight upward bias
+        p.vy += Math.sin(angle) * 0.05 - 0.05; 
         
-        // Damping
         p.vx *= 0.95;
         p.vy *= 0.95;
 
         p.x += p.vx * speed;
         p.y += p.vy * speed;
 
-        // Wrap around logic for continuous flow
-        if (p.y < -150) p.y = h + 150;
-        if (p.x < -150) p.x = w + 150;
-        if (p.x > w + 150) p.x = -150;
+        if (p.y < -300) p.y = h + 300;
+        if (p.x < -300) p.x = w + 300;
+        if (p.x > w + 300) p.x = -300;
 
         // Alpha calculation
         let alpha = 0;
-        if (p.life < 50) alpha = p.life / 50;
-        else if (p.life > p.maxLife - 50) alpha = (p.maxLife - p.life) / 50;
-        else alpha = 1;
+        const fadeIn = 150;
+        const fadeOut = 200;
+
+        if (p.life < fadeIn) {
+            alpha = p.life / fadeIn;
+        } else if (p.life > p.maxLife - fadeOut) {
+            alpha = (p.maxLife - p.life) / fadeOut;
+        } else {
+            alpha = 1;
+        }
 
         if (p.life > p.maxLife) {
-             // Reset to bottom instead of killing to maintain flow density
              p.life = 0;
              p.x = Math.random() * w;
              p.y = h + 100;
@@ -456,15 +481,22 @@ export class SmokeRenderer implements IVisualizerRenderer {
         ctx.translate(p.x, p.y);
         
         if (p.type === 'smoke') {
+            const dynamicColor = colors[p.colorIndex % colors.length]; 
             const gradient = ctx.createRadialGradient(0, 0, 0, 0, 0, p.size);
-            // Very low opacity for smoke accumulation
-            gradient.addColorStop(0, hexToRgba(p.color, 0.08 * alpha));
+            
+            // PULSE: Add bass intensity to alpha for "lightning" flash effect
+            // Base alpha 0.12, adds up to 0.15 more on heavy bass
+            const beatPulse = bass * 0.25; 
+            const finalAlpha = Math.min(1, (0.12 + beatPulse) * alpha);
+            
+            gradient.addColorStop(0, hexToRgba(dynamicColor, finalAlpha));
             gradient.addColorStop(1, 'transparent');
             ctx.fillStyle = gradient;
             ctx.beginPath();
             ctx.arc(0, 0, p.size, 0, Math.PI * 2);
             ctx.fill();
         } else {
+            // Sparks
             ctx.fillStyle = `rgba(255, 255, 255, ${alpha * 0.8})`;
             ctx.beginPath();
             ctx.arc(0, 0, p.size, 0, Math.PI * 2);
@@ -475,73 +507,6 @@ export class SmokeRenderer implements IVisualizerRenderer {
     }
     ctx.globalCompositeOperation = 'source-over';
   }
-}
-
-export class RainRenderer implements IVisualizerRenderer {
-    private drops: number[] = [];
-    private fontSize = 16;
-    private chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZアイウエオカキクケコサシスセソ';
-  
-    init(canvas: HTMLCanvasElement) {
-        const columns = Math.ceil(canvas.width / this.fontSize);
-        this.drops = new Array(columns).fill(0).map(() => Math.random() * -100);
-    }
-  
-    draw(ctx: CanvasRenderingContext2D, data: Uint8Array, w: number, h: number, colors: string[], settings: VisualizerSettings, rotation: number) {
-        // Fade effect is handled by the main draw loop's trail setting, 
-        // but Rain looks best with a specific fade. We can force it here slightly if trails are off,
-        // but relying on global settings is better for consistency.
-        
-        // Analyze Audio
-        let vol = getAverage(data, 0, 50);
-        let highs = getAverage(data, 100, 150);
-        
-        const speedMultiplier = (0.5 + (vol / 255) * 1.5) * settings.speed;
-        const isFlash = highs > 150 * (1.5 / settings.sensitivity); // Bright flash threshold
-
-        ctx.font = `${this.fontSize}px monospace`;
-        ctx.textAlign = 'center';
-
-        // Re-init drops if width changed
-        const columns = Math.ceil(w / this.fontSize);
-        if (this.drops.length !== columns) {
-             this.drops = new Array(columns).fill(0).map(() => Math.random() * -100);
-        }
-
-        for (let i = 0; i < this.drops.length; i++) {
-            // Random char
-            const char = this.chars[Math.floor(Math.random() * this.chars.length)];
-            const x = i * this.fontSize;
-            const y = this.drops[i] * this.fontSize;
-
-            // Audio reactive color
-            // Flash white on high hats
-            if (isFlash && Math.random() > 0.8) {
-                 ctx.fillStyle = '#fff';
-                 ctx.shadowBlur = 10;
-                 ctx.shadowColor = '#fff';
-            } else {
-                 // Use theme color
-                 ctx.fillStyle = colors[1];
-                 ctx.shadowBlur = 0;
-            }
-
-            // Draw
-            // Bass Kick Glitch: Shift x slightly
-            let xOffset = 0;
-            if (vol > 200 && Math.random() > 0.9) xOffset = (Math.random() - 0.5) * 10;
-
-            ctx.fillText(char, x + xOffset, y);
-
-            // Reset drop
-            if (y > h && Math.random() > 0.975) {
-                this.drops[i] = 0;
-            }
-
-            // Move drop
-            this.drops[i] += 0.5 * speedMultiplier;
-        }
-    }
 }
 
 export class KaleidoscopeRenderer implements IVisualizerRenderer {
@@ -598,97 +563,6 @@ export class KaleidoscopeRenderer implements IVisualizerRenderer {
 
             ctx.restore();
         }
-        ctx.restore();
-    }
-}
-
-export class CityRenderer implements IVisualizerRenderer {
-    init() {}
-  
-    draw(ctx: CanvasRenderingContext2D, data: Uint8Array, w: number, h: number, colors: string[], settings: VisualizerSettings, rotation: number) {
-        // Sky gradient
-        const gradient = ctx.createLinearGradient(0, 0, 0, h);
-        gradient.addColorStop(0, '#000010'); // Deep space
-        gradient.addColorStop(1, '#1a1a2e'); // City smog
-        
-        // We only draw bg if trails are off, otherwise the main loop handles fade.
-        // But for city, we usually want a clean redraw to avoid messy buildings.
-        // Let's rely on standard clearing, but maybe enforce it for this mode if we wanted.
-        // For now, adhere to trails setting but draw sky behind buildings.
-
-        const barCount = 32;
-        const buildingWidth = w / barCount;
-        
-        // Draw Moon
-        ctx.save();
-        ctx.fillStyle = '#fffae3';
-        ctx.shadowBlur = 20;
-        ctx.shadowColor = '#fffae3';
-        const moonY = h * 0.2;
-        const moonX = w * 0.8;
-        ctx.beginPath();
-        ctx.arc(moonX, moonY, 40, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.restore();
-
-        // Draw Buildings
-        const step = Math.floor(data.length / barCount);
-
-        for (let i = 0; i < barCount; i++) {
-            const val = data[i * step] * settings.sensitivity;
-            // Base height + audio reactivity
-            const buildingHeight = (h * 0.2) + (val / 255) * (h * 0.6);
-            
-            const x = i * buildingWidth;
-            const y = h - buildingHeight;
-
-            // Building Body
-            ctx.fillStyle = '#0f0f1a';
-            ctx.fillRect(x, y, buildingWidth + 1, buildingHeight); // +1 to overlap gaps
-
-            // Building Edge Highlight (Neon)
-            ctx.strokeStyle = colors[i % colors.length];
-            ctx.lineWidth = 2;
-            ctx.strokeRect(x, y, buildingWidth, buildingHeight);
-
-            // Windows
-            const rows = 10;
-            const cols = 4;
-            const winW = (buildingWidth * 0.6) / cols;
-            const winH = (buildingHeight * 0.8) / rows;
-            const gapX = (buildingWidth * 0.4) / (cols + 1);
-            const gapY = (buildingHeight * 0.2) / (rows + 1);
-
-            ctx.fillStyle = colors[1]; // Window color
-            
-            for(let r=0; r<rows; r++) {
-                for(let c=0; c<cols; c++) {
-                    // Randomly lit windows, but heavily influenced by volume of this bar
-                    const threshold = 0.9 - ((val/255) * 0.8); // Higher vol = lower threshold = more lights
-                    if (Math.random() > threshold) {
-                         const wx = x + gapX + c * (winW + gapX);
-                         const wy = y + gapY + r * (winH + gapY);
-                         
-                         // Occasional different color window
-                         ctx.fillStyle = Math.random() > 0.9 ? colors[0] : colors[2] || '#ffeba7';
-                         ctx.fillRect(wx, wy, winW, winH);
-                    }
-                }
-            }
-        }
-        
-        // Reflection (Water)
-        ctx.save();
-        ctx.globalAlpha = 0.3;
-        ctx.translate(0, h);
-        ctx.scale(1, -1);
-        // We could redraw everything, but that's expensive. 
-        // Simple gradient overlay to simulate reflection falloff
-        const reflectGrad = ctx.createLinearGradient(0, 0, 0, h * 0.3);
-        reflectGrad.addColorStop(0, colors[0]);
-        reflectGrad.addColorStop(1, 'transparent');
-        ctx.fillStyle = reflectGrad;
-        ctx.fillRect(0, 0, w, h * 0.3);
         ctx.restore();
     }
 }

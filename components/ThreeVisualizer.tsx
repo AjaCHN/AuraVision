@@ -1,8 +1,12 @@
 import React, { useRef, useMemo, useState, useEffect } from 'react';
-import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { EffectComposer, Bloom, ChromaticAberration } from '@react-three/postprocessing';
+import { Canvas, useFrame, useThree, extend } from '@react-three/fiber';
+import { EffectComposer, Bloom, ChromaticAberration, TiltShift } from '@react-three/postprocessing';
+import { AfterimagePass } from 'three/examples/jsm/postprocessing/AfterimagePass.js';
 import * as THREE from 'three';
 import { VisualizerMode, VisualizerSettings } from '../types';
+
+// Register standard Three.js shader pass if not available in R3F postprocessing automatically
+extend({ AfterimagePass });
 
 // Augment JSX types
 declare global {
@@ -28,33 +32,9 @@ declare global {
       group: any;
       planeGeometry: any;
       meshPhysicalMaterial: any;
-    }
-  }
-}
-
-declare module 'react' {
-  namespace JSX {
-    interface IntrinsicElements {
-      color: any;
-      fog: any;
-      mesh: any;
-      circleGeometry: any;
-      meshBasicMaterial: any;
-      pointLight: any;
-      primitive: any;
-      meshStandardMaterial: any;
-      ambientLight: any;
-      sphereGeometry: any;
-      icosahedronGeometry: any;
-      points: any;
-      pointsMaterial: any;
-      lineSegments: any;
-      lineBasicMaterial: any;
-      bufferGeometry: any;
-      bufferAttribute: any;
-      group: any;
-      planeGeometry: any;
-      meshPhysicalMaterial: any;
+      directionalLight: any;
+      spotLight: any;
+      afterimagePass: any; // Add custom pass
     }
   }
 }
@@ -63,128 +43,84 @@ interface ThreeVisualizerProps {
   analyser: AnalyserNode | null;
   colors: string[];
   settings: VisualizerSettings;
-  mode: VisualizerMode; // Added mode prop
+  mode: VisualizerMode; 
 }
 
-// ================= SCENE: THE SINGULARITY =================
-const SingularityScene: React.FC<{ analyser: AnalyserNode; colors: string[]; settings: VisualizerSettings }> = ({ analyser, colors, settings }) => {
-  const pointsRef = useRef<THREE.Points>(null);
-  const dataArray = useMemo(() => new Uint8Array(analyser.frequencyBinCount), [analyser]);
-  const particleCount = 2000;
-  
-  const particles = useMemo(() => {
-    const temp = new Float32Array(particleCount * 3);
-    for (let i = 0; i < particleCount; i++) {
-        const angle = Math.random() * Math.PI * 2;
-        const r = 6 + Math.random() * 9; 
-        temp[i * 3] = Math.cos(angle) * r;
-        temp[i * 3 + 1] = (Math.random() - 0.5) * 0.5; // Flattened y
-        temp[i * 3 + 2] = Math.sin(angle) * r;
-    }
-    return temp;
-  }, []);
-
-  useFrame((state) => {
-    if (!pointsRef.current) return;
-    analyser.getByteFrequencyData(dataArray);
-
-    let lowEnd = 0;
-    for (let i = 0; i < 20; i++) lowEnd += dataArray[i];
-    lowEnd = (lowEnd / 20) * settings.sensitivity;
-
-    const positions = pointsRef.current.geometry.attributes.position;
-    const time = state.clock.getElapsedTime();
-    const speed = settings.speed * (0.2 + (lowEnd / 255));
-
-    pointsRef.current.rotation.y += 0.005 * settings.speed;
-
-    for (let i = 0; i < particleCount; i++) {
-        const ix = i * 3;
-        const iy = i * 3 + 1;
-        const iz = i * 3 + 2;
-
-        const x = particles[ix];
-        const z = particles[iz];
-        
-        const angle = Math.atan2(z, x) + speed * (10 / Math.sqrt(x*x + z*z));
-        const radiusBase = Math.sqrt(x*x + z*z);
-        
-        const expansion = (lowEnd / 255) * 2;
-        const radius = radiusBase + (Math.sin(time * 5 + i) * expansion);
-
-        positions.setXYZ(i, Math.cos(angle) * radius, particles[iy] + Math.sin(time + i) * (lowEnd/500), Math.sin(angle) * radius);
-    }
-    positions.needsUpdate = true;
-  });
-
-  return (
-    <>
-      <color attach="background" args={['#000000']} />
-      <mesh position={[0,0,0]}>
-        <sphereGeometry args={[4, 64, 64]} />
-        <meshBasicMaterial color="#000000" />
-      </mesh>
-      <pointLight position={[0, 2, 0]} intensity={1.5} color={colors[0]} distance={20} />
-      <pointLight position={[0, -2, 0]} intensity={1.5} color={colors[1]} distance={20} />
-      
-      <points ref={pointsRef}>
-        <bufferGeometry>
-            <bufferAttribute attach="attributes-position" count={particleCount} array={particles} itemSize={3} />
-        </bufferGeometry>
-        <pointsMaterial size={0.15} color={colors[0]} transparent opacity={0.8} blending={THREE.AdditiveBlending} />
-      </points>
-      <ambientLight intensity={0.2} />
-    </>
-  );
-};
-
-// ================= SCENE: SILK WAVES =================
+// ================= SCENE: SILK WAVES (Contrast Reduced) =================
 const SilkWavesScene: React.FC<{ analyser: AnalyserNode; colors: string[]; settings: VisualizerSettings }> = ({ analyser, colors, settings }) => {
   const meshRef = useRef<THREE.Mesh>(null);
   const dataArray = useMemo(() => new Uint8Array(analyser.frequencyBinCount), [analyser]);
-  const geometry = useMemo(() => new THREE.PlaneGeometry(30, 30, 128, 128), []);
+  // Increased segment count for smoother high-res waves
+  const geometry = useMemo(() => new THREE.PlaneGeometry(50, 50, 180, 180), []);
 
   useFrame((state) => {
     if (!meshRef.current) return;
     analyser.getByteFrequencyData(dataArray);
 
     let vol = 0;
-    for(let i=0; i<30; i++) vol += dataArray[i];
-    vol = (vol / 30) * settings.sensitivity;
+    for(let i=0; i<40; i++) vol += dataArray[i];
+    vol = (vol / 40) * settings.sensitivity;
 
     const positions = meshRef.current.geometry.attributes.position;
-    const time = state.clock.getElapsedTime() * settings.speed * 0.5;
+    const time = state.clock.getElapsedTime() * settings.speed * 0.4;
 
     for (let i = 0; i < positions.count; i++) {
         const x = positions.getX(i);
         const y = positions.getY(i);
-        const z = Math.sin(x * 0.5 + time) * Math.cos(y * 0.3 + time * 1.5) * 2;
-        const ripple = Math.sin(Math.sqrt(x*x + y*y) * 2 - time * 3) * (vol / 255) * 1.5;
-        positions.setZ(i, z + ripple);
+        
+        // More dramatic wave math
+        const z1 = Math.sin(x * 0.2 + time) * Math.cos(y * 0.2 + time * 0.8) * 4.5;
+        const z2 = Math.sin(x * 0.6 - time * 1.5) * Math.sin(y * 0.6 + time) * 2.0;
+        
+        // Higher base reactivity
+        const audioAmp = 1 + (vol / 255) * 3.0; 
+        
+        const dist = Math.sqrt(x*x + y*y);
+        // Sharper ripples
+        const ripple = Math.sin(dist * 1.5 - time * 5) * (vol / 255) * 1.5;
+
+        positions.setZ(i, (z1 + z2) * audioAmp + ripple);
     }
     positions.needsUpdate = true;
+    meshRef.current.geometry.computeVertexNormals();
     
-    meshRef.current.rotation.x = -Math.PI / 3;
-    meshRef.current.rotation.z = time * 0.1;
+    meshRef.current.rotation.x = -Math.PI / 2.2; // Tilted slightly more up
+    meshRef.current.rotation.z = time * 0.08;
   });
 
   return (
     <>
-      <color attach="background" args={['#000000']} />
-      <pointLight position={[10, 10, 10]} intensity={2} color={colors[0]} />
-      <pointLight position={[-10, -10, 10]} intensity={2} color={colors[1]} />
+      {/* Slightly lighter background to reduce harsh contrast against black */}
+      <color attach="background" args={['#050510']} /> 
+      
+      {/* Intensity reduced by ~50% from previous high values */}
+      <pointLight position={[20, 30, 20]} intensity={9.0} color={colors[0]} distance={120} />
+      <pointLight position={[-20, 15, 20]} intensity={6.0} color={colors[1]} distance={120} />
+      <spotLight 
+        position={[0, -30, 20]} 
+        angle={0.8} 
+        penumbra={0.5} // Softer edge
+        intensity={20.0} 
+        color={colors[2] || '#ffffff'} 
+        distance={100}
+      />
+      <ambientLight intensity={1.5} /> {/* Higher ambient light fills shadows, reducing contrast */}
+
       <mesh ref={meshRef}>
          <primitive object={geometry} attach="geometry" />
-         <meshStandardMaterial 
-            color="#222" 
-            emissive={colors[0]} 
-            emissiveIntensity={0.2}
-            metalness={0.9} 
-            roughness={0.2} 
+         <meshPhysicalMaterial 
+            color={colors[0]} 
+            emissive={colors[1]} 
+            emissiveIntensity={0.6} // Reduced from 1.2
+            metalness={0.6} // Reduced from 0.95 (less mirror-like, softer highlights)
+            roughness={0.25} // Increased from 0.05 (more diffused light)
+            clearcoat={0.8}
+            clearcoatRoughness={0.2}
+            sheen={0.8}
+            sheenColor={new THREE.Color(colors[2] || '#ffffff')}
             side={THREE.DoubleSide}
          />
       </mesh>
-      <ambientLight intensity={0.2} />
     </>
   );
 };
@@ -193,8 +129,19 @@ const SilkWavesScene: React.FC<{ analyser: AnalyserNode; colors: string[]; setti
 const LiquidSphereScene: React.FC<{ analyser: AnalyserNode; colors: string[]; settings: VisualizerSettings }> = ({ analyser, colors, settings }) => {
   const meshRef = useRef<THREE.Mesh>(null);
   const dataArray = useMemo(() => new Uint8Array(analyser.frequencyBinCount), [analyser]);
-  // Use higher detail icosahedron for smoother displacement
-  const geometry = useMemo(() => new THREE.IcosahedronGeometry(4, 10), []);
+  const geometry = useMemo(() => new THREE.IcosahedronGeometry(4, 4), []);
+  
+  const originalPositions = useMemo(() => {
+     const pos = geometry.attributes.position;
+     const count = pos.count;
+     const array = new Float32Array(count * 3);
+     for(let i=0; i<count; i++) {
+         array[i*3] = pos.getX(i);
+         array[i*3+1] = pos.getY(i);
+         array[i*3+2] = pos.getZ(i);
+     }
+     return array;
+  }, [geometry]);
 
   useFrame(({ clock }) => {
     if (!meshRef.current) return;
@@ -204,42 +151,49 @@ const LiquidSphereScene: React.FC<{ analyser: AnalyserNode; colors: string[]; se
     for(let i=0; i<30; i++) lowEnd += dataArray[i];
     lowEnd = (lowEnd / 30) * settings.sensitivity;
 
-    const time = clock.getElapsedTime() * settings.speed;
+    const time = clock.getElapsedTime() * settings.speed * 0.4;
     const positions = meshRef.current.geometry.attributes.position;
-    const originalPositions = geometry.attributes.position;
 
     for (let i = 0; i < positions.count; i++) {
-        const ox = originalPositions.getX(i);
-        const oy = originalPositions.getY(i);
-        const oz = originalPositions.getZ(i);
+        const ox = originalPositions[i*3];
+        const oy = originalPositions[i*3+1];
+        const oz = originalPositions[i*3+2];
 
-        // Simple noise simulation using sin/cos
-        const noise = Math.sin(ox * 0.5 + time) * Math.cos(oy * 0.5 + time) * Math.sin(oz * 0.5 + time);
-        const displacement = 1 + (noise * 0.3) + ((lowEnd/255) * noise * 0.5);
+        const noise = Math.sin(ox * 0.4 + time) * 
+                      Math.cos(oy * 0.3 + time * 0.8) * 
+                      Math.sin(oz * 0.4 + time * 1.2);
+        
+        const reactivity = (lowEnd/255) * 0.5;
+        const displacement = 1 + (noise * 0.3) + (reactivity * noise);
 
         positions.setXYZ(i, ox * displacement, oy * displacement, oz * displacement);
     }
+    
     positions.needsUpdate = true;
-    meshRef.current.rotation.y = time * 0.2;
+    meshRef.current.geometry.computeVertexNormals();
+
+    meshRef.current.rotation.y = time * 0.1;
   });
 
   return (
     <>
       <color attach="background" args={['#000000']} />
-      <ambientLight intensity={0.5} />
-      <pointLight position={[10, 10, 10]} intensity={2} color={colors[0]} />
-      <pointLight position={[-10, -10, 10]} intensity={2} color={colors[1]} />
+      <ambientLight intensity={0.4} />
+      <pointLight position={[15, 15, 15]} intensity={3} color={colors[0]} />
+      <pointLight position={[-15, -15, -5]} intensity={2} color={colors[1]} />
+      <directionalLight position={[0, 10, 5]} intensity={1} color="#ffffff" />
       
       <mesh ref={meshRef}>
          <primitive object={geometry} attach="geometry" />
          <meshPhysicalMaterial 
             color={colors[0]}
             emissive={colors[1]}
-            emissiveIntensity={0.2}
-            metalness={0.9}
-            roughness={0.1}
+            emissiveIntensity={0.3}
+            metalness={0.6}
+            roughness={0.2}
             clearcoat={1.0}
-            clearcoatRoughness={0.1}
+            clearcoatRoughness={0.2}
+            reflectivity={1.0}
          />
       </mesh>
     </>
@@ -267,14 +221,11 @@ const LowPolyTerrainScene: React.FC<{ analyser: AnalyserNode; colors: string[]; 
          const x = positions.getX(i);
          const y = positions.getY(i);
          
-         // Terrain generation
-         // Move 'y' input by time to simulate flying forward
          const noiseY = y + time * 5;
          
          const h = Math.sin(x * 0.2) * Math.cos(noiseY * 0.2) * 2 
                  + Math.sin(x * 0.5 + noiseY * 0.5) * 1;
          
-         // Audio reactivity: scale height
          const audioH = h * (1 + bass/100);
          
          positions.setZ(i, audioH);
@@ -287,7 +238,6 @@ const LowPolyTerrainScene: React.FC<{ analyser: AnalyserNode; colors: string[]; 
         <color attach="background" args={[colors[2] || '#1a1a2e']} />
         <fog attach="fog" args={[colors[2] || '#1a1a2e', 10, 40]} />
         
-        {/* Sun */}
         <mesh position={[0, 10, -30]}>
             <circleGeometry args={[8, 32]} />
             <meshBasicMaterial color={colors[0]} />
@@ -317,8 +267,6 @@ const ThreeVisualizer: React.FC<ThreeVisualizerProps> = ({ analyser, colors, set
 
   const renderScene = () => {
     switch (mode) {
-        case VisualizerMode.SINGULARITY:
-            return <SingularityScene analyser={analyser} colors={colors} settings={settings} />;
         case VisualizerMode.SILK:
             return <SilkWavesScene analyser={analyser} colors={colors} settings={settings} />;
         case VisualizerMode.LIQUID:
@@ -330,27 +278,37 @@ const ThreeVisualizer: React.FC<ThreeVisualizerProps> = ({ analyser, colors, set
     }
   };
 
+  // Determine Bloom Intensity
+  const getBloomIntensity = () => {
+      if (mode === VisualizerMode.SILK) return 1.8; // Reduced Bloom intensity for lower contrast
+      if (mode === VisualizerMode.LIQUID) return 2.5;
+      return 2.0;
+  };
+
   return (
     <div className="absolute inset-0 z-0">
       <Canvas 
         camera={{ position: [0, 2, 15], fov: 60 }} 
         dpr={[1, 2]} 
-        gl={{ antialias: false, toneMapping: THREE.ReinhardToneMapping }}
+        gl={{ antialias: false, toneMapping: THREE.ReinhardToneMapping, preserveDrawingBuffer: true, autoClear: true }}
       >
         {renderScene()}
         
         {/* Global Post Processing */}
         {settings.glow && (
-            <EffectComposer>
+            <EffectComposer enableNormalPass={false}>
                 <Bloom 
-                    luminanceThreshold={0.2} 
-                    luminanceSmoothing={0.9} 
+                    luminanceThreshold={0.2} // Increased threshold so only very bright parts bloom
+                    luminanceSmoothing={0.85} 
                     height={300} 
-                    intensity={1.5} 
+                    intensity={getBloomIntensity()} 
                 />
                 <ChromaticAberration 
                     offset={new THREE.Vector2(0.002 * settings.sensitivity, 0.002)}
                 />
+                {(mode === VisualizerMode.LIQUID || mode === VisualizerMode.SILK) && (
+                    <TiltShift blur={0.1} />
+                )}
             </EffectComposer>
         )}
       </Canvas>

@@ -2,8 +2,8 @@ import React, { useEffect, useRef } from 'react';
 import { VisualizerMode, VisualizerSettings, SongInfo, LyricsStyle, IVisualizerRenderer } from '../types';
 import { 
   BarsRenderer, RingsRenderer, ParticlesRenderer, TunnelRenderer, 
-  PlasmaRenderer, ShapesRenderer, SmokeRenderer,
-  RainRenderer, KaleidoscopeRenderer, CityRenderer
+  PlasmaRenderer, ShapesRenderer, NebulaRenderer, // Updated Import
+  KaleidoscopeRenderer
 } from '../services/visualizerStrategies';
 
 interface VisualizerCanvasProps {
@@ -39,10 +39,8 @@ const VisualizerCanvas: React.FC<VisualizerCanvasProps> = ({
     [VisualizerMode.TUNNEL]: new TunnelRenderer(),
     [VisualizerMode.PLASMA]: new PlasmaRenderer(),
     [VisualizerMode.SHAPES]: new ShapesRenderer(),
-    [VisualizerMode.SMOKE]: new SmokeRenderer(),
-    [VisualizerMode.RAIN]: new RainRenderer(),
+    [VisualizerMode.NEBULA]: new NebulaRenderer(), // Updated Key and Class
     [VisualizerMode.KALEIDOSCOPE]: new KaleidoscopeRenderer(),
-    [VisualizerMode.CITY]: new CityRenderer(),
   });
 
   // Initialize all renderers once
@@ -69,12 +67,8 @@ const VisualizerCanvas: React.FC<VisualizerCanvasProps> = ({
     let alpha = 0.2;
     if (mode === VisualizerMode.PLASMA) alpha = 0.15;
     if (mode === VisualizerMode.PARTICLES) alpha = 0.3; 
-    if (mode === VisualizerMode.SMOKE) alpha = 0.05; 
+    if (mode === VisualizerMode.NEBULA) alpha = 0.05; 
     
-    // City and Rain look better with specific trail settings, but we respect the global switch.
-    // However, Rain needs transparency to show "trails" of code, so if trails are ON, we use low alpha.
-    if (mode === VisualizerMode.RAIN && settings.trails) alpha = 0.1;
-
     if (settings.trails) {
         ctx.fillStyle = `rgba(0, 0, 0, ${alpha})`; 
         ctx.fillRect(0, 0, width, height);

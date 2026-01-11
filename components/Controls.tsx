@@ -51,7 +51,7 @@ const Controls: React.FC<ControlsProps> = ({
   selectedDeviceId,
   onDeviceChange
 }) => {
-  const [isExpanded, setIsExpanded] = useState(true);
+  const [isExpanded, setIsExpanded] = useState(false);
   const [showHelp, setShowHelp] = useState(false);
   
   // Idle detection state

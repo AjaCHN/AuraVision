@@ -9,7 +9,7 @@ import { identifySongFromAudio } from './services/geminiService';
 import { TRANSLATIONS } from './translations';
 
 // Default Constants
-const DEFAULT_MODE = VisualizerMode.BARS; 
+const DEFAULT_MODE = VisualizerMode.PLASMA; 
 const DEFAULT_THEME_INDEX = 1; 
 const DEFAULT_SETTINGS: VisualizerSettings = {
   sensitivity: 1.5,
@@ -65,7 +65,7 @@ const App: React.FC = () => {
     return 'global';
   };
 
-  const [mode, setMode] = useState<VisualizerMode>(() => getStorage('sv_mode_v3', DEFAULT_MODE));
+  const [mode, setMode] = useState<VisualizerMode>(() => getStorage('sv_mode_v4', DEFAULT_MODE));
   const [colorTheme, setColorTheme] = useState<string[]>(() => getStorage('sv_theme', COLOR_THEMES[DEFAULT_THEME_INDEX]));
   const [settings, setSettings] = useState<VisualizerSettings>(() => getStorage('sv_settings_v2', DEFAULT_SETTINGS));
   const [isIdentifying, setIsIdentifying] = useState(false);
@@ -78,7 +78,7 @@ const App: React.FC = () => {
   const languageRef = useRef(language);
   const regionRef = useRef(region);
 
-  useEffect(() => localStorage.setItem('sv_mode_v3', JSON.stringify(mode)), [mode]);
+  useEffect(() => localStorage.setItem('sv_mode_v4', JSON.stringify(mode)), [mode]);
   useEffect(() => localStorage.setItem('sv_theme', JSON.stringify(colorTheme)), [colorTheme]);
   useEffect(() => localStorage.setItem('sv_settings_v2', JSON.stringify(settings)), [settings]);
   useEffect(() => localStorage.setItem('sv_lyrics_style_v3', JSON.stringify(lyricsStyle)), [lyricsStyle]);
@@ -466,7 +466,6 @@ const App: React.FC = () => {
   // Determine which Renderer to use
   // Now includes all WebGL modes
   const isWebGLMode = [
-    VisualizerMode.SINGULARITY,
     VisualizerMode.SILK,
     VisualizerMode.LIQUID,
     VisualizerMode.TERRAIN

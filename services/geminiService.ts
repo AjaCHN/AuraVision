@@ -87,7 +87,6 @@ export const identifySongFromAudio = async (base64Audio: string, mimeType: strin
           config: {
             tools: [{ googleSearch: {} }],
             systemInstruction: systemInstruction,
-            // Removed responseMimeType/responseSchema as they can conflict with Search Grounding
           }
         });
 
@@ -116,11 +115,18 @@ export const identifySongFromAudio = async (base64Audio: string, mimeType: strin
         return songInfo;
 
     } catch (error: any) {
+        // Robust error message extraction to handle nested objects (e.g., {error: {code: 500, message: "..."}})
+        const errorMessage = error.message || 
+                             (error.error && error.error.message) || 
+                             JSON.stringify(error);
+
         // Handle 429 Resource Exhausted / Quota Limits specifically
         if (
           error.status === 429 || 
           error.code === 429 ||
-          (error.message && (error.message.includes('429') || error.message.includes('quota') || error.message.includes('RESOURCE_EXHAUSTED')))
+          errorMessage.includes('429') || 
+          errorMessage.includes('quota') || 
+          errorMessage.includes('RESOURCE_EXHAUSTED')
         ) {
           console.warn("Gemini API Quota Exceeded. Backing off identification.");
           // Do NOT retry for quota errors, let the app handle backoff
@@ -128,15 +134,18 @@ export const identifySongFromAudio = async (base64Audio: string, mimeType: strin
         }
 
         // Handle common transport errors (like code 6 XHR) with retry
-        const isTransportError = error.message && (
-          error.message.includes('error code: 6') || 
-          error.message.includes('Rpc failed') ||
-          error.message.includes('xhr error')
+        const isTransportError = (
+          errorMessage.includes('error code: 6') || 
+          errorMessage.includes('Rpc failed') ||
+          errorMessage.includes('xhr error') ||
+          errorMessage.includes('fetch failed') ||
+          errorMessage.includes('503')
         );
 
-        if (isTransportError && retryCount < 2) {
-             console.warn(`Gemini transport error (attempt ${retryCount + 1}), retrying...`, error);
-             await new Promise(r => setTimeout(r, 1500 * (retryCount + 1))); // Exponential backoff
+        if (isTransportError && retryCount < 3) {
+             const delay = 2000 * (retryCount + 1);
+             console.warn(`Gemini transport error (attempt ${retryCount + 1}). Retrying in ${delay}ms...`, errorMessage);
+             await new Promise(r => setTimeout(r, delay)); 
              return callGemini(retryCount + 1);
         }
 

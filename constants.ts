@@ -4,13 +4,13 @@ import { VisualizerMode, Region } from './types';
 export const GEMINI_MODEL = 'gemini-3-pro-preview';
 
 export const VISUALIZER_PRESETS = {
-  [VisualizerMode.BARS]: {
-    name: 'Frequency Bars',
-    description: 'Classic spectrum analyzer'
-  },
   [VisualizerMode.PLASMA]: {
     name: 'Plasma Flow',
     description: 'Fluid liquid color gradients'
+  },
+  [VisualizerMode.BARS]: {
+    name: 'Frequency Bars',
+    description: 'Classic spectrum analyzer'
   },
   [VisualizerMode.PARTICLES]: {
     name: 'Starfield',
@@ -28,25 +28,13 @@ export const VISUALIZER_PRESETS = {
     name: 'Neon Rings',
     description: 'Concentric circles reactive to mids'
   },
-  [VisualizerMode.SMOKE]: {
-    name: 'Ethereal Smoke',
-    description: 'Drifting colorful fog'
-  },
-  [VisualizerMode.RAIN]: {
-    name: 'Digital Rain',
-    description: 'Matrix-style falling code'
+  [VisualizerMode.NEBULA]: {
+    name: 'Cosmic Nebula',
+    description: 'Dense, swirling clouds of color'
   },
   [VisualizerMode.KALEIDOSCOPE]: {
     name: 'Kaleidoscope',
     description: 'Psychedelic mandala patterns'
-  },
-  [VisualizerMode.CITY]: {
-    name: 'EQ City',
-    description: 'Skyline reacting to frequencies'
-  },
-  [VisualizerMode.SINGULARITY]: {
-    name: 'The Singularity',
-    description: 'Event horizon with accretion disk (WebGL)'
   },
   [VisualizerMode.SILK]: {
     name: 'Silk Waves',
