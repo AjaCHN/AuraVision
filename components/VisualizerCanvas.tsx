@@ -59,7 +59,6 @@ const VisualizerCanvas: React.FC<VisualizerCanvasProps> = ({
     const width = canvas.width;
     const height = canvas.height;
 
-    // 针对星云模式调整背景清理策略
     let alpha = 0.2;
     if (mode === VisualizerMode.PLASMA) alpha = 0.15;
     if (mode === VisualizerMode.PARTICLES) alpha = 0.3; 
@@ -135,11 +134,14 @@ function drawLyrics(
   settings: VisualizerSettings,
   scaleRef: React.MutableRefObject<number>
 ) {
-  const text = song.lyricsSnippet || (song.identified ? "..." : "");
+  const rawText = song.lyricsSnippet || (song.identified ? "..." : "");
+  // 正则表达式过滤：移除形如 [01:23] 或 [01:23.45] 的时间戳，并清理多余空格
+  const text = rawText.replace(/\[\d{2}:\d{2}(\.\d{1,3})?\]/g, '').trim();
+  
   if (!text) return;
 
   let bass = 0;
-  for (let i = 0; i < 12; i++) bass += data[i]; // 稍微扩大低音采样范围
+  for (let i = 0; i < 12; i++) bass += data[i];
   bass /= 12;
   const bassNormalized = bass / 255;
   
@@ -150,11 +152,10 @@ function drawLyrics(
   let rotation = 0;
 
   if (style === LyricsStyle.KARAOKE) {
-    // 增加缩放振幅，加快跟随节拍的速度
     const targetScale = 1.0 + (bassNormalized * 0.45 * settings.sensitivity);
     scaleRef.current += (targetScale - scaleRef.current) * 0.2; 
     scale = scaleRef.current;
-    rotation = 0; // 移除左右晃动
+    rotation = 0; 
   } else if (style === LyricsStyle.MINIMAL) {
     scale = 1.0 + (bassNormalized * 0.1 * settings.sensitivity);
     scaleRef.current = scale; 
@@ -177,11 +178,8 @@ function drawLyrics(
     gradient.addColorStop(0.5, '#ffffff');
     gradient.addColorStop(1, c0);
     ctx.fillStyle = gradient;
-    
-    // 强化霓虹发光，取代线框层
     ctx.shadowBlur = 25 * bassNormalized * settings.sensitivity;
     ctx.shadowColor = c0;
-    // 移除 ctx.strokeText
   } else if (style === LyricsStyle.MINIMAL) {
     ctx.font = `300 ${Math.min(w * 0.04, 24)}px monospace`;
     ctx.fillStyle = `rgba(255, 255, 255, ${0.7 + bassNormalized * 0.3})`;
@@ -216,7 +214,6 @@ function drawLyrics(
 
   let startY = -((lines.length * lineHeight) / 2) + (lineHeight / 2);
   lines.forEach((l) => {
-    // 针对卡拉OK模式仅执行填充，不再绘制描边
     ctx.fillText(l, 0, startY);
     startY += lineHeight;
   });
