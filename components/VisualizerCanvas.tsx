@@ -1,5 +1,3 @@
-
-// Fix: Add missing React hooks and type imports
 import React, { useRef, useEffect } from 'react';
 import { 
   VisualizerMode, 
@@ -25,13 +23,7 @@ interface VisualizerCanvasProps {
 }
 
 const VisualizerCanvas: React.FC<VisualizerCanvasProps> = ({ 
-  analyser, 
-  mode, 
-  colors, 
-  settings, 
-  song,
-  showLyrics,
-  lyricsStyle
+  analyser, mode, colors, settings, song, showLyrics, lyricsStyle
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const requestRef = useRef<number>(0);
@@ -63,17 +55,14 @@ const VisualizerCanvas: React.FC<VisualizerCanvasProps> = ({
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    const bufferLength = analyser.frequencyBinCount;
-    const dataArray = new Uint8Array(bufferLength);
+    const dataArray = new Uint8Array(analyser.frequencyBinCount);
     const width = canvas.width;
     const height = canvas.height;
 
     let alpha = 0.2;
     if (mode === VisualizerMode.PLASMA) alpha = 0.15;
-    // Reduced alpha from 0.3 to 0.06 to make trails 5x longer
-    if (mode === VisualizerMode.PARTICLES) alpha = 0.06; 
+    if (mode === VisualizerMode.PARTICLES) alpha = 0.06; // 锁定长拖尾
     if (mode === VisualizerMode.NEBULA) alpha = 0.08;
-    if (mode === VisualizerMode.LASERS) alpha = 0.4;
     
     if (settings.trails) {
         ctx.fillStyle = `rgba(0, 0, 0, ${alpha})`; 
@@ -87,7 +76,6 @@ const VisualizerCanvas: React.FC<VisualizerCanvasProps> = ({
         ctx.shadowColor = colors[0];
     } else {
         ctx.shadowBlur = 0;
-        ctx.shadowColor = 'transparent';
     }
 
     analyser.getByteFrequencyData(dataArray);
@@ -101,7 +89,6 @@ const VisualizerCanvas: React.FC<VisualizerCanvasProps> = ({
     if (showLyrics && song && (song.lyricsSnippet || song.identified)) {
        drawLyrics(ctx, dataArray, width, height, colors, song, lyricsStyle, settings, lyricsScaleRef);
     }
-
     requestRef.current = requestAnimationFrame(draw);
   };
 
@@ -114,116 +101,53 @@ const VisualizerCanvas: React.FC<VisualizerCanvasProps> = ({
     };
     window.addEventListener('resize', handleResize);
     handleResize();
-
     requestRef.current = requestAnimationFrame(draw);
-
     return () => {
       window.removeEventListener('resize', handleResize);
       if (requestRef.current) cancelAnimationFrame(requestRef.current);
     };
   }, [analyser, mode, colors, settings, song, showLyrics, lyricsStyle]); 
 
-  const toggleFullscreen = () => {
-     if (!document.fullscreenElement) {
-         document.documentElement.requestFullscreen().catch(e => console.log(e));
-     } else {
-         document.exitFullscreen();
-     }
-  };
-
-  return <canvas ref={canvasRef} onDoubleClick={toggleFullscreen} className={`absolute top-0 left-0 w-full h-full ${settings.hideCursor ? 'cursor-none' : ''}`} />;
+  return <canvas ref={canvasRef} className={`absolute top-0 left-0 w-full h-full ${settings.hideCursor ? 'cursor-none' : ''}`} />;
 };
 
-function drawLyrics(
-  ctx: CanvasRenderingContext2D,
-  data: Uint8Array,
-  w: number,
-  h: number,
-  colors: string[],
-  song: SongInfo,
-  style: LyricsStyle,
-  settings: VisualizerSettings,
-  scaleRef: React.MutableRefObject<number>
-) {
-  const rawText = song.lyricsSnippet || (song.identified ? "..." : "");
-  const text = rawText.replace(/\[\d{2}:\d{2}(\.\d{1,3})?\]/g, '').trim();
-  
+function drawLyrics(ctx: CanvasRenderingContext2D, data: Uint8Array, w: number, h: number, colors: string[], song: SongInfo, style: LyricsStyle, settings: VisualizerSettings, scaleRef: React.MutableRefObject<number>) {
+  const text = (song.lyricsSnippet || "").replace(/\[\d{2}:\d{2}(\.\d{1,3})?\]/g, '').trim();
   if (!text) return;
 
   let bass = 0;
   for (let i = 0; i < 12; i++) bass += data[i];
-  bass /= 12;
-  const bassNormalized = bass / 255;
+  const bassNormalized = (bass / 12) / 255;
   
   ctx.save();
   ctx.translate(w / 2, h / 2);
 
-  let scale = 1.0;
-  let rotation = 0;
-
-  if (style === LyricsStyle.KARAOKE) {
-    const targetScale = 1.0 + (bassNormalized * 0.45 * settings.sensitivity);
-    scaleRef.current += (targetScale - scaleRef.current) * 0.2; 
-    scale = scaleRef.current;
-    rotation = 0; 
-  } else if (style === LyricsStyle.MINIMAL) {
-    scale = 1.0 + (bassNormalized * 0.1 * settings.sensitivity);
-    scaleRef.current = scale; 
-  } else {
-    scale = 1.0 + (bassNormalized * 0.2 * settings.sensitivity);
-    scaleRef.current = scale;
-  }
-
-  ctx.scale(scale, scale);
-  ctx.rotate(rotation);
+  const targetScale = 1.0 + (bassNormalized * (style === LyricsStyle.KARAOKE ? 0.45 : 0.2) * settings.sensitivity);
+  scaleRef.current += (targetScale - scaleRef.current) * 0.2; 
+  ctx.scale(scaleRef.current, scaleRef.current);
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
 
   if (style === LyricsStyle.KARAOKE) {
     ctx.font = `900 ${Math.min(w * 0.08, 64)}px "Inter", sans-serif`;
     const gradient = ctx.createLinearGradient(-w * 0.3, 0, w * 0.3, 0);
-    const c1 = colors[1] || '#fff';
-    const c0 = colors[0] || '#fff';
-    gradient.addColorStop(0, c1);
-    gradient.addColorStop(0.5, '#ffffff');
-    gradient.addColorStop(1, c0);
+    gradient.addColorStop(0, colors[1] || '#fff');
+    gradient.addColorStop(0.5, '#fff');
+    gradient.addColorStop(1, colors[0] || '#fff');
     ctx.fillStyle = gradient;
-    ctx.shadowBlur = 25 * bassNormalized * settings.sensitivity;
-    ctx.shadowColor = c0;
   } else if (style === LyricsStyle.MINIMAL) {
     ctx.font = `300 ${Math.min(w * 0.04, 24)}px monospace`;
     ctx.fillStyle = `rgba(255, 255, 255, ${0.7 + bassNormalized * 0.3})`;
-    ctx.shadowBlur = 0;
     ctx.letterSpacing = "4px";
   } else {
     ctx.font = `italic ${Math.min(w * 0.06, 40)}px serif`;
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
-    ctx.shadowColor = 'black';
-    ctx.shadowBlur = 4;
+    ctx.fillStyle = 'white';
   }
 
-  const maxWidth = text.length > 20 ? Math.min(w * 0.85, 700) : w * 0.95;
+  const lines = text.split('\n').slice(0, 6);
   const lineHeight = style === LyricsStyle.KARAOKE ? 75 : 55;
-  const processedText = text.replace(/([,.;:!?])/g, '$1 ');
-
-  let words = processedText.includes(' ') ? processedText.split(/\s+/) : processedText.split('');
-  let line = '';
-  const lines = [];
-
-  for (let n = 0; n < words.length; n++) {
-    const spacer = processedText.includes(' ') ? ' ' : '';
-    const testLine = line + words[n] + spacer;
-    if (ctx.measureText(testLine).width > maxWidth && n > 0) {
-      lines.push(line);
-      line = words[n] + spacer;
-    } else {
-      line = testLine;
-    }
-  }
-  lines.push(line);
-
   let startY = -((lines.length * lineHeight) / 2) + (lineHeight / 2);
-  lines.forEach((l) => {
+  lines.forEach(l => {
     ctx.fillText(l, 0, startY);
     startY += lineHeight;
   });

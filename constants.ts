@@ -1,6 +1,7 @@
+
 import { VisualizerMode, Region } from './types';
 
-export const APP_VERSION = '0.1.7';
+export const APP_VERSION = '0.2.0';
 
 export const GEMINI_MODEL = 'gemini-3-flash-preview';
 
@@ -72,6 +73,16 @@ export const COLOR_THEMES = [
   ['#f87171', '#dc2626', '#991b1b'], // 9: Blood Moon
   ['#fcd34d', '#f97316', '#ea580c'], // 10: Magma
   ['#94a3b8', '#e2e8f0', '#f8fafc'], // 11: Silver Frost
+  ['#001219', '#005f73', '#0a9396'], // 12: Deep Sea
+  ['#064e3b', '#059669', '#34d399'], // 13: Emerald Forest
+  ['#4c1d95', '#8b5cf6', '#ddd6fe'], // 14: Lavender Dream
+  ['#78350f', '#f59e0b', '#fef3c7'], // 15: Spicy Mango
+  ['#ecfeff', '#a5f3fc', '#22d3ee'], // 16: Ice Cold
+  ['#9d174d', '#db2777', '#fbcfe8'], // 17: Cherry Blossom
+  ['#84cc16', '#22c55e', '#15803d'], // 18: Lime Punch
+  ['#ffedd5', '#fed7aa', '#fdba74'], // 19: Peachy
+  ['#312e81', '#1e1b4b', '#4c1d95'], // 20: Royal Void
+  ['#f1f5f9', '#94a3b8', '#334155'], // 21: Monotone
 ];
 
 export const REGION_NAMES: Record<Region, string> = {

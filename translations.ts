@@ -1,8 +1,34 @@
 
-import { VisualizerMode, LyricsStyle, Language, Region } from './types';
+import { VisualizerMode, LyricsStyle, Language } from './types';
 
-export const TRANSLATIONS = {
+export const TRANSLATIONS: Record<Language, any> = {
   en: {
+    tabs: {
+      visual: 'Visual',
+      audio: 'Audio',
+      ai: 'AI Recognition',
+      system: 'System'
+    },
+    hints: {
+      mode: 'Choose a mathematical rendering engine for the visuals.',
+      theme: 'Apply a curated color palette to the scene.',
+      speed: 'Adjust the global animation and rotation velocity.',
+      glow: 'Toggle neon bloom effects (may impact performance).',
+      trails: 'Toggle motion blur for smoother visual transitions.',
+      sensitivity: 'Fine-tune how much the visuals react to audio volume.',
+      smoothing: 'Adjust how quickly the bars return to zero (Higher = Smoother).',
+      fftSize: 'Higher values increase detail but require more processing power.',
+      lyrics: 'Enable AI-powered song recognition and lyrics display.',
+      lyricsStyle: 'Change the typography and animation style of the lyrics.',
+      region: 'Filter AI search results based on specific music markets.',
+      autoRotate: 'Automatically cycle through visualizer modes every 30s.',
+      reset: 'Restore all settings to their original factory values.',
+      randomize: 'Generate a surprise combination of mode and colors.',
+      fullscreen: 'Toggle the application to full-screen mode.',
+      help: 'View shortcuts and detailed project documentation.',
+      mic: 'Start or stop listening to the system microphone.',
+      device: 'Select which audio input hardware to use.'
+    },
     visualizerMode: 'Visualizer Mode',
     styleTheme: 'Style & Theme',
     settings: 'Settings',
@@ -15,6 +41,7 @@ export const TRANSLATIONS = {
     audioInput: 'Audio Input',
     lyrics: 'Lyrics',
     showLyrics: 'Show Lyrics (Beta)',
+    language: 'Language',
     region: 'Music Region',
     startMic: 'Start Microphone',
     stopMic: 'Stop Microphone',
@@ -33,19 +60,12 @@ export const TRANSLATIONS = {
     wrongSong: 'Wrong Song? Retry',
     hideCursor: 'Hide Cursor',
     customColor: 'Custom',
-    // Tooltips
     randomizeTooltip: 'Randomize all visual settings (Press R)',
-    resetTooltip: 'Reset to default settings',
-    helpTooltip: 'View guide and information',
-    selectMode: 'Select mode (←/→)',
-    changeTheme: 'Change color theme (↑/↓)',
-    selectLyricsStyle: 'Change lyrics display style',
-    selectRegion: 'Select music region for better identification',
-    toggleLanguage: 'Switch Language',
-    toggleGlow: 'Toggle neon glow effect (Press G)',
-    toggleTrails: 'Toggle motion trails (Press T)',
-    toggleAutoRotate: 'Toggle automatic mode switching',
-    toggleHideCursor: 'Toggle mouse cursor visibility',
+    smoothing: 'Smoothing',
+    fftSize: 'FFT Size / Detail',
+    appInfo: 'App Information',
+    appDescription: 'An immersive music visualization experience powered by real-time audio analysis and AI recognition.',
+    version: 'Version',
     modes: {
       [VisualizerMode.PLASMA]: 'Plasma Flow',
       [VisualizerMode.BARS]: 'Frequency Bars',
@@ -66,17 +86,6 @@ export const TRANSLATIONS = {
       [LyricsStyle.KARAOKE]: 'Karaoke',
       [LyricsStyle.MINIMAL]: 'Minimal'
     },
-    regions: {
-      global: 'Global',
-      US: 'USA/West',
-      CN: 'China',
-      JP: 'Japan',
-      KR: 'Korea',
-      EU: 'Europe',
-      LATAM: 'LatAm'
-    },
-    unknownSong: 'Unknown',
-    ambientNoise: 'Ambient Noise',
     helpModal: {
       title: 'About SonicVision AI',
       intro: 'SonicVision AI is an immersive audio-visual experience that uses your device\'s microphone to create real-time generative art synchronized with music.',
@@ -104,21 +113,49 @@ export const TRANSLATIONS = {
         sensitivity: 'Adjusts how reactive the visuals are to volume.',
         speed: 'Controls the movement speed of animations.',
         glow: 'Adds a neon bloom effect (performance heavy).',
-        trails: 'Creates a motion blur effect for smoother visuals.'
+        trails: 'Creates a motion blur effect for smoother visuals.',
+        smoothing: 'How smoothly the bars react to sound changes.',
+        fftSize: 'Higher values mean more detailed frequency bars.'
       },
       projectInfoTitle: 'Project & Tech Stack',
-      projectInfoText: 'Powered by Google Gemini 3.0 Pro, React 19, Three.js (WebGL), and Tailwind CSS. This project demonstrates multimodal AI capabilities by combining real-time audio signal processing with generative language models.',
+      projectInfoText: 'Powered by Google Gemini 3.0 Pro, React 19, Three.js (WebGL), and Tailwind CSS.',
       privacyTitle: 'Privacy',
       privacyText: 'Audio is processed locally for visualization. Short clips are sent to Google Gemini temporarily solely for song identification and are not stored.',
       version: 'Version'
     }
   },
   zh: {
+    tabs: {
+      visual: '视觉效果',
+      audio: '音频设置',
+      ai: 'AI 识别',
+      system: '系统设置'
+    },
+    hints: {
+      mode: '选择用于渲染视觉效果的数学引擎。',
+      theme: '为当前场景应用预设的颜色配置。',
+      speed: '调整全局动画的运动与旋转速度。',
+      glow: '开启霓虹光晕效果（可能会降低性能）。',
+      trails: '开启动态模糊，使视觉过渡更平滑。',
+      sensitivity: '微调视觉效果对音量的反应强度。',
+      smoothing: '调整数值回落的速度（越高越丝滑）。',
+      fftSize: '数值越高频谱越细腻，但更消耗 CPU/GPU。',
+      lyrics: '开启 AI 歌曲识别和歌词实时展示功能。',
+      lyricsStyle: '更改歌词的字体排版和动画呈现方式。',
+      region: '根据特定音乐市场优化 AI 识别的准确度。',
+      autoRotate: '每隔 30 秒自动循环切换可视化模式。',
+      reset: '将所有设置恢复为出厂默认状态。',
+      randomize: '随机生成一套模式和颜色的惊喜组合。',
+      fullscreen: '切换至沉浸式全屏显示模式。',
+      help: '查看操作快捷键和详细的项目说明文档。',
+      mic: '开启或停止监听系统麦克风。',
+      device: '选择要使用的音频输入硬件。'
+    },
     visualizerMode: '可视化模式',
     styleTheme: '样式与主题',
     settings: '高级设置',
     sensitivity: '灵敏度',
-    speed: '速度',
+    speed: '运动速度',
     glow: '霓虹光晕',
     trails: '动态拖尾',
     autoRotate: '自动切换',
@@ -126,6 +163,7 @@ export const TRANSLATIONS = {
     audioInput: '音频输入设备',
     lyrics: '歌词',
     showLyrics: '显示歌词 (Beta)',
+    language: '界面语言',
     region: '音乐地区',
     startMic: '开启麦克风',
     stopMic: '关闭麦克风',
@@ -143,20 +181,13 @@ export const TRANSLATIONS = {
     betaDisclaimer: 'Beta 功能，准确性持续优化中。',
     wrongSong: '识别错误？重试',
     hideCursor: '隐藏鼠标',
-    customColor: '自定义',
-    // Tooltips
+    customColor: '自定义颜色',
     randomizeTooltip: '随机生成所有视觉设置 (按 R 键)',
-    resetTooltip: '重置为默认设置',
-    helpTooltip: '查看指南和信息',
-    selectMode: '选择模式 (←/→)',
-    changeTheme: '更改颜色主题 (↑/↓)',
-    selectLyricsStyle: '更改歌词显示风格',
-    selectRegion: '选择音乐地区以提高识别率',
-    toggleLanguage: '切换语言',
-    toggleGlow: '开关霓虹光晕效果 (按 G 键)',
-    toggleTrails: '开关动态拖尾效果 (按 T 键)',
-    toggleAutoRotate: '开关自动切换模式功能',
-    toggleHideCursor: '切换鼠标指针可见性',
+    smoothing: '平滑度',
+    fftSize: '采样精度 (FFT)',
+    appInfo: '应用信息',
+    appDescription: '一个结合实时音频分析与 AI 识别的沉浸式音乐可视化体验。',
+    version: '版本',
     modes: {
       [VisualizerMode.PLASMA]: '流体等离子',
       [VisualizerMode.BARS]: '镜像频谱',
@@ -177,17 +208,6 @@ export const TRANSLATIONS = {
       [LyricsStyle.KARAOKE]: '卡拉OK',
       [LyricsStyle.MINIMAL]: '极简'
     },
-    regions: {
-      global: '全球',
-      US: '欧美',
-      CN: '中国大陆',
-      JP: '日本',
-      KR: '韩国',
-      EU: '欧洲',
-      LATAM: '拉美'
-    },
-    unknownSong: '未知歌曲',
-    ambientNoise: '环境噪音',
     helpModal: {
       title: '关于 SonicVision AI',
       intro: 'SonicVision AI 是一种沉浸式视听体验，利用您的设备麦克风创建与音乐同步的实时生成艺术。',
@@ -215,13 +235,141 @@ export const TRANSLATIONS = {
         sensitivity: '调节视觉效果对音量的反应灵敏度。',
         speed: '控制动画的运动速度。',
         glow: '添加霓虹泛光效果（较消耗性能）。',
-        trails: '创建动态模糊拖尾，使视觉更流畅。'
+        trails: '创建动态模糊拖尾，使视觉更流畅。',
+        smoothing: '数值越高，视觉过渡越丝滑。',
+        fftSize: '采样精度，越高则频率条显示越细腻。'
       },
       projectInfoTitle: '项目信息与技术栈',
-      projectInfoText: '由 Google Gemini 3.0 Pro, React 19, Three.js (WebGL) 和 Tailwind CSS 强力驱动。本项目展示了多模态 AI 能力，将实时音频信号处理与生成式语言模型完美结合。',
+      projectInfoText: '由 Google Gemini 3.0 Pro, React 19, Three.js (WebGL) 和 Tailwind CSS 强力驱动。',
       privacyTitle: '隐私说明',
       privacyText: '音频在本地处理以进行可视化。短片段仅临时发送至 Google Gemini 用于歌曲识别，不会被存储。',
       version: '版本'
     }
-  }
+  },
+  ja: {
+    tabs: {
+      visual: 'ビジュアル',
+      audio: 'オーディオ',
+      ai: 'AI識別',
+      system: 'システム'
+    },
+    hints: {
+      mode: 'ビジュアルをレンダリングするための数学的エンジンを選択します。',
+      theme: 'シーンに厳選されたカラーパレットを適用します。',
+      speed: 'グローバルなアニメーションと回転の速度を調整します。',
+      glow: 'ネオンの輝きを切り替えます（パフォーマンスに影響する場合があります）。',
+      trails: 'スムーズな視覚遷移のために残像エフェクトを切り替えます。',
+      sensitivity: '音量に対するビジュアルの反応の強さを微調整します。',
+      smoothing: 'バーがゼロに戻る速度を調整します（高いほどスムーズ）。',
+      fftSize: '値が高いほど詳細になりますが、より多くの処理能力が必要になります。',
+      lyrics: 'AIによる曲識別と歌詞表示を有効にします。',
+      lyricsStyle: '歌詞のタイポグラフィとアニメーションスタイルを変更します。',
+      region: '特定の市場に基づいてAI検索結果を最適化します。',
+      autoRotate: '30秒ごとに自動的にモードを切り替えます。',
+      reset: 'すべての設定を初期値に戻します。',
+      randomize: 'モードと色のサプライズの組み合わせを生成します。',
+      fullscreen: 'フルスクリーンモードに切り替えます。',
+      help: 'ショートカットと詳細なプロジェクトドキュメントを表示します。',
+      mic: 'マイクの試聴を開始または停止します。',
+      device: '使用するオーディオ入力デバイスを選択します。'
+    },
+    visualizerMode: 'ビジュアライザモード',
+    styleTheme: 'スタイルとテーマ',
+    settings: '設定',
+    sensitivity: '感度',
+    speed: '速度',
+    glow: 'ネオングロー',
+    trails: '残像エフェクト',
+    autoRotate: '自動切替',
+    rotateInterval: '間隔 (秒)',
+    audioInput: 'オーディオ入力',
+    lyrics: '歌詞',
+    showLyrics: '歌詞を表示 (Beta)',
+    language: '言語',
+    region: '音楽地域',
+    startMic: 'マイクを開始',
+    stopMic: 'マイクを停止',
+    listening: '試聴中',
+    identifying: '識別中 (Beta)...',
+    startExperience: '体験を開始',
+    welcomeTitle: 'SonicVision AI',
+    welcomeText: 'あなたの環境を視覚的な傑作に変えましょう。マイクを有効にして音を可視化し、AIに音楽を識別させます。',
+    hideOptions: 'オプションを隠す',
+    showOptions: 'オプションを表示',
+    reset: 'リセット',
+    randomize: 'ランダム',
+    help: 'ヘルプ / 詳細',
+    close: '閉じる',
+    betaDisclaimer: 'ベータ版機能。精度は継続的に改善されています。',
+    wrongSong: '違う曲ですか？再試行',
+    hideCursor: 'カーソルを隠す',
+    customColor: 'カスタム',
+    randomizeTooltip: 'すべての設定をランダム化 (Rキー)',
+    smoothing: 'スムージング',
+    fftSize: '解像度 (FFT)',
+    appInfo: 'アプリ情報',
+    appDescription: 'リアルタイムのオーディオ分析とAI認識を活用した没入型の音楽可視化体験。',
+    version: 'バージョン',
+    modes: {
+      [VisualizerMode.PLASMA]: 'プラズマ・フロウ',
+      [VisualizerMode.BARS]: 'スペクトラム・バー',
+      [VisualizerMode.PARTICLES]: 'スターフィールド',
+      [VisualizerMode.TUNNEL]: 'ジオメトリック・トンネル',
+      [VisualizerMode.SHAPES]: 'アブストラクト・シェイプ',
+      [VisualizerMode.RINGS]: 'ネオン・リング',
+      [VisualizerMode.NEBULA]: 'コズミック・ネブラ',
+      [VisualizerMode.KALEIDOSCOPE]: '万華鏡',
+      [VisualizerMode.LASERS]: 'コンサート・レーザー',
+      [VisualizerMode.STROBE]: 'ステージ・ウォール',
+      [VisualizerMode.SILK]: 'シルク・ウェーブ',
+      [VisualizerMode.LIQUID]: 'リキッド・スフィア',
+      [VisualizerMode.TERRAIN]: 'ローポリ・テレイン'
+    },
+    lyricsStyles: {
+      [LyricsStyle.STANDARD]: '標準',
+      [LyricsStyle.KARAOKE]: 'カラオケ',
+      [LyricsStyle.MINIMAL]: 'ミニマル'
+    },
+    helpModal: {
+      title: 'SonicVision AI について',
+      intro: 'SonicVision AIは、デバイスのマイクを使用して音楽と同期したリアルタイムのアートを生成する没入型の視聴覚体験です。',
+      shortcutsTitle: 'キーボードショートカット',
+      shortcutItems: {
+        toggleMic: 'マイク開始 / 停止',
+        fullscreen: '全画面切替',
+        randomize: 'ランダム設定',
+        lyrics: '歌詞 表示 / 非表示',
+        hideUi: 'コントロール 表示 / 非表示',
+        glow: 'グロー切替',
+        trails: '残像切替',
+        changeMode: 'モード変更',
+        changeTheme: 'テーマ変更'
+      },
+      howItWorksTitle: '使い方',
+      howItWorksSteps: [
+        '1. マイクの使用を許可します。',
+        '2. バックグラウンドで音楽を再生します（または歌います！）。',
+        '3. ビジュアルが周波数とビートに即座に反応します。',
+        '4. 約30秒ごとにAIが曲を識別し、歌詞を取得します。'
+      ],
+      settingsTitle: '設定の説明',
+      settingsDesc: {
+        sensitivity: '音量に対する反応의 강도를 조정합니다.',
+        speed: 'アニメーションの動きの速さを制御します。',
+        glow: 'ネオンの輝き効果を追加します（負荷高）。',
+        trails: 'モーションブラー効果で動きを滑らかにします。',
+        smoothing: '反応の滑らかさを調整します。',
+        fftSize: '値が高いほど、スペクトラムの表示が細かくなります。'
+      },
+      projectInfoTitle: 'プロジェクト情報',
+      projectInfoText: 'Google Gemini 3.0 Pro、React 19、Three.js (WebGL)を搭載。',
+      privacyTitle: 'プライバシー',
+      privacyText: 'オーディオは視覚化のためにローカルで処理されます。短いクリップは曲の識別のために一時的にGoogle Geminiに送信されますが、保存はされません。',
+      version: 'バージョン'
+    }
+  },
+  // es, ko, de 同様
+  es: { tabs: { visual: 'Visual', audio: 'Audio', ai: 'IA / Letras', system: 'Sistema' }, hints: { mode: 'Elige un motor matemático...', theme: 'Aplica una paleta de colores...', speed: 'Ajusta la velocidad global...', glow: 'Activa brillo neón...', trails: 'Activa estelas de movimiento...', sensitivity: 'Ajusta la sensibilidad...', smoothing: 'Ajusta el suavizado...', fftSize: 'Más detalle o rendimiento...', lyrics: 'Activa letras por IA...', lyricsStyle: 'Cambia el estilo visual...', region: 'Optimiza por mercado...', autoRotate: 'Ciclo automático...', reset: 'Restablecer ajustes...', randomize: 'Mezcla aleatoria...', fullscreen: 'Modo pantalla completa...', help: 'Atajos y documentos...', mic: 'Activar/Desactivar mic...', device: 'Selecciona dispositivo...' }, visualizerMode: 'Modo Visualizador', styleTheme: 'Estilo y Tema', settings: 'Ajustes', sensitivity: 'Sensibilidad', speed: 'Velocidad', glow: 'Brillo Neon', trails: 'Estela Dinámica', autoRotate: 'Rotación Auto', rotateInterval: 'Intervalo (s)', audioInput: 'Entrada de Audio', lyrics: 'Letras', showLyrics: 'Mostrar Letras (Beta)', language: 'Idioma', region: 'Región Musical', startMic: 'Activar Micrófono', stopMic: 'Detener Micrófono', listening: 'Escuchando', identifying: 'Identificando (Beta)...', startExperience: 'Empezar Experiencia', welcomeTitle: 'SonicVision AI', welcomeText: 'Transforma tu entorno en una obra maestra visual. Activa tu micrófono para visualizar el sonido y deja que la IA identifique la música.', hideOptions: 'Ocultar Opciones', showOptions: 'Mostrar Opciones', reset: 'Restablecer', randomize: 'Aleatorio', help: 'Ayuda / Info', close: 'Cerrar', betaDisclaimer: 'Función Beta. La precisión mejora continuamente.', wrongSong: '¿Canción incorrecta? Reintentar', hideCursor: 'Ocultar Cursor', customColor: 'Color Personalizado', randomizeTooltip: 'Aleatorizar todos los ajustes (Tecla R)', smoothing: 'Suavizado', fftSize: 'Detalle (FFT)', appInfo: 'Información de la App', appDescription: 'Una experiencia audiovisual inmersiva impulsada por análisis de audio en tiempo real y reconocimiento por IA.', version: 'Versión', modes: { [VisualizerMode.PLASMA]: 'Flujo de Plasma', [VisualizerMode.BARS]: 'Barras de Frecuencia', [VisualizerMode.PARTICLES]: 'Campo Estelar', [VisualizerMode.TUNNEL]: 'Túnel Geométrico', [VisualizerMode.SHAPES]: 'Formas Abstractas', [VisualizerMode.RINGS]: 'Anillos Neón', [VisualizerMode.NEBULA]: 'Nebulosa Cósmica', [VisualizerMode.KALEIDOSCOPE]: 'Caleidoscopio', [VisualizerMode.LASERS]: 'Láseres de Concierto', [VisualizerMode.STROBE]: 'Pared de Escenario', [VisualizerMode.SILK]: 'Ondas de Seda', [VisualizerMode.LIQUID]: 'Esfera Líquida', [VisualizerMode.TERRAIN]: 'Terreno Low Poly' }, lyricsStyles: { [LyricsStyle.STANDARD]: 'Estándar', [LyricsStyle.KARAOKE]: 'Karaoke', [LyricsStyle.MINIMAL]: 'Minimalista' }, helpModal: { title: 'Sobre SonicVision AI', intro: 'SonicVision AI es una experiencia audiovisual inmersiva...', shortcutsTitle: 'Atajos de Teclado', shortcutItems: { toggleMic: 'Iniciar / Detener Mic', fullscreen: 'Pantalla Completa', randomize: 'Ajustes Aleatorios', lyrics: 'Mostrar / Ocultar Letras', hideUi: 'Mostrar / Ocultar Controles', glow: 'Alternar Brillo', trails: 'Alternar Estelas', changeMode: 'Cambiar Modo', changeTheme: 'Cambiar Tema' }, howItWorksTitle: 'Cómo Funciona', howItWorksSteps: ['1. Habilita tu micrófono.', '2. Reproduce música de fondo (¡o canta!).', '3. Los visuales reaccionan instantáneamente a las frecuencias.', '4. Cada ~30 segundos, la IA escucha un fragmento para identificar la canción.'], settingsTitle: 'Entendiendo los Ajustes', settingsDesc: { sensitivity: 'Ajusta qué tan reactivos son los visuales al volumen.', speed: 'Controla la velocidad de movimiento de las animaciones.', glow: 'Añade un efecto de resplandor neón (alto consumo).', trails: 'Crea un efecto de desenfoque de movimiento suave.', smoothing: 'Controla la fluidez de la reacción visual.', fftSize: 'Valores altos aumentan el detalle de las barras de frecuencia.' }, projectInfoTitle: 'Información del Proyecto', projectInfoText: 'Impulsado por Google Gemini 3.0 Pro, React 19 y Three.js (WebGL).', privacyTitle: 'Privacidad', privacyText: 'El audio se procesa localmente para la visualización. Los fragmentos se envían a Google Gemini temporalmente solo para identificación y no se guardan.', version: 'Versión' } },
+  ko: { tabs: { visual: '시각화', audio: '오디오', ai: 'AI 인식', system: '시스템' }, hints: { mode: '시각화 렌더링 엔진을 선택합니다.', theme: '색상 테마를 장면에 적용합니다.', speed: '애니메이션과 회전 속도를 조정합니다.', glow: '네온 글로우 효과를 켭니다 (성능에 영향을 줄 수 있음).', trails: '부드러운 시각적 전환을 위해 잔상을 켭니다.', sensitivity: '오디오 볼륨에 대한 반응 정도를 미세 조정합니다.', smoothing: '바가 다시 돌아오는 부드러움을 조절합니다.', fftSize: '값이 클수록 디테일하지만 더 많은 리소스가 필요합니다.', lyrics: 'AI 노래 인식 및 가사 표시를 활성화합니다.', lyricsStyle: '가사의 폰트와 애니메이션 스타일을 변경합니다.', region: '특정 시장을 기반으로 AI 인식 결과를 최적화합니다.', autoRotate: '30초마다 자동으로 모드를 순환합니다.', reset: '모든 설정을 초기 상태로 되돌립니다.', randomize: '모드와 색상의 무작위 조합을 생성합니다.', fullscreen: '전체 화면 모드로 전환합니다.', help: '단축키와 프로젝트 문서를 확인합니다.', mic: '마이크 청취를 시작하거나 중지합니다.', device: '오디오 입력 장치를 선택합니다.' }, visualizerMode: '시각화 모드', styleTheme: '스타일 및 테마', settings: '설정', sensitivity: '감도', speed: '속도', glow: '네온 글로우', trails: '잔상 효과', autoRotate: '자동 전환', rotateInterval: '간격 (초)', audioInput: '오디오 입력', lyrics: '가사', showLyrics: '가사 표시 (Beta)', language: '언어', region: '음악 지역', startMic: '마이크 시작', stopMic: '마이크 중지', listening: '듣는 중', identifying: '식별 중 (Beta)...', startExperience: '체험 시작', welcomeTitle: 'SonicVision AI', welcomeText: '주변 환경을 시각적 걸작으로 바꿔보세요. 마이크를 켜서 소리를 시각화하고 AI가 음악을 식별하도록 하세요.', hideOptions: '옵션 숨기기', showOptions: '옵션 표시', reset: '초기화', randomize: '랜덤', help: '도움말 / 정보', close: '닫기', betaDisclaimer: '베타 기능입니다. 정확도가 지속적으로 개선되고 있습니다.', wrongSong: '다른 곡인가요? 재시도', hideCursor: '커서 숨기기', customColor: '커스텀 색상', randomizeTooltip: '모든 설정 랜덤화 (R 키)', smoothing: '부드러움', fftSize: '해상도 (FFT)', appInfo: '앱 정보', appDescription: '실시간 오디오 분석과 AI 인식을 결합한 몰입형 음악 시각화 환경.', version: '버전', modes: { [VisualizerMode.PLASMA]: '플라즈마 플로우', [VisualizerMode.BARS]: '주파수 바', [VisualizerMode.PARTICLES]: '스타필드', [VisualizerMode.TUNNEL]: '기하학 터널', [VisualizerMode.SHAPES]: '추상 도형', [VisualizerMode.RINGS]: '네온 링', [VisualizerMode.NEBULA]: '코스믹 네뷸라', [VisualizerMode.KALEIDOSCOPE]: '만화경', [VisualizerMode.LASERS]: '콘서트 레이저', [VisualizerMode.STROBE]: '스테이지 월', [VisualizerMode.SILK]: '실크 웨이브', [VisualizerMode.LIQUID]: '리퀴드 스피어', [VisualizerMode.TERRAIN]: '로폴리 터레인' }, lyricsStyles: { [LyricsStyle.STANDARD]: '표준', [LyricsStyle.KARAOKE]: '가라오케', [LyricsStyle.MINIMAL]: '미니멀' }, helpModal: { title: 'SonicVision AI 정보', intro: 'SonicVision AI는 기기의 마이크를 사용하여 음악과 동기화된 실시간 생성 예술을 만드는 몰입형 시청각 경험입니다.', shortcutsTitle: '단축키 안내', shortcutItems: { toggleMic: '마이크 시작 / 중지', fullscreen: '전체 화면 전환', randomize: '설정 랜덤화', lyrics: '가사 표시 / 숨기기', hideUi: '컨트롤 표시 / 숨기기', glow: '글로우 토글', trails: '잔상 토글', changeMode: '모드 변경', changeTheme: '테마 변경' }, howItWorksTitle: '사용 방법', howItWorksSteps: ['1. 마이크 권한을 허용합니다.', '2. 배경에서 음악을 재생합니다(또는 노래를 부르세요!).', '3. 시각 효과가 주파수와 비트에 즉시 반응합니다.', '4. 약 30초마다 AI가 곡을 식별하고 가사를 가져옵니다.'], settingsTitle: '설정 설명', settingsDesc: { sensitivity: '음량에 대한 시각 효과의 반응 정도를 조절합니다.', speed: '애니메이션의 이동 속도를 제어합니다.', glow: '네온 발광 효과를 추가합니다(성능 소모 높음).', trails: '모션 블러 효과로 시각적 부드러움을 더합니다.', smoothing: '반응의 부드러움을 조절합니다.', fftSize: '값이 클수록 주파수 바가 더 세밀하게 표시됩니다.' }, projectInfoTitle: '프로젝트 정보', projectInfoText: 'Google Gemini 3.0 Pro, React 19, Three.js (WebGL)로 제작되었습니다.', privacyTitle: '개인정보 보호', privacyText: '오디오는 시각화를 위해 로컬에서 처리됩니다. 짧은 클립은 곡 식별을 위해 일시적으로 Google Gemini로 전송되며 저장되지 않습니다.', version: '버전' } },
+  de: { tabs: { visual: 'Visuell', audio: 'Audio', ai: 'KI-Erkennung', system: 'System' }, hints: { mode: 'Wählen Sie einen Rendering-Engine...', theme: 'Farben auf die Szene anwenden...', speed: 'Anpassung der Geschwindigkeit...', glow: 'Neon-Glow ein/aus...', trails: 'Bewegungsunschärfe ein/aus...', sensitivity: 'Reaktionsstärke anpassen...', smoothing: 'Glättung anpassen...', fftSize: 'Detailgrad der Bänder...', lyrics: 'AI Songerkennung aktivieren...', lyricsStyle: 'Typografie des Textes ändern...', region: 'Optimierung für Musikmarkt...', autoRotate: 'Modi automatisch wechseln...', reset: 'Alle Einstellungen zurücksetzen...', randomize: 'Überraschungsmischung generieren...', fullscreen: 'Vollbildmodus aktivieren...', help: 'Kürzel und Doku anzeigen...', mic: 'Mikrofon Ein/Aus...', device: 'Audio-Gerät wählen...' }, visualizerMode: 'Visualisierungsmodus', styleTheme: 'Stil & Thema', settings: 'Einstellungen', sensitivity: 'Empfindlichkeit', speed: 'Geschwindigkeit', glow: 'Neon-Glühen', trails: 'Lichtspuren', autoRotate: 'Autom. Wechsel', rotateInterval: 'Intervall (s)', audioInput: 'Audioeingang', lyrics: 'Songtext', showLyrics: 'Songtext anzeigen (Beta)', region: 'Musikregion', startMic: 'Mikrofon starten', stopMic: 'Mikrofon stoppen', listening: 'Hören...', identifying: 'Identifizieren (Beta)...', language: 'Sprache', startExperience: 'Erlebnis starten', welcomeTitle: 'SonicVision AI', welcomeText: 'Verwandeln Sie Ihre Umgebung in ein visuelles Meisterwerk. Aktivieren Sie Ihr Mikrofon, um Ton zu visualisieren und Musik per KI zu erkennen.', hideOptions: 'Optionen ausblenden', showOptions: 'Optionen anzeigen', reset: 'Zurücksetzen', randomize: 'Zufall', help: 'Hilfe / Info', close: 'Schließen', betaDisclaimer: 'Beta-Funktion. Genauigkeit wird stetig verbessert.', wrongSong: 'Falscher Song? Erneut versuchen', hideCursor: 'Maus ausblenden', customColor: 'Farbe anpassen', randomizeTooltip: 'Alle Einstellungen zufällig ändern (Taste R)', smoothing: 'Glättung', fftSize: 'FFT-Größe / Detail', appInfo: 'App-Informationen', appDescription: 'Ein immersives Musikvisualisierungserlebnis, das auf Echtzeit-Audioanalyse und KI-Erkennung basiert.', version: 'Version', modes: { [VisualizerMode.PLASMA]: 'Plasma-Fluss', [VisualizerMode.BARS]: 'Frequenzbalken', [VisualizerMode.PARTICLES]: 'Sternenfeld', [VisualizerMode.TUNNEL]: 'Geometrischer Tunnel', [VisualizerMode.SHAPES]: 'Abstrakte Formen', [VisualizerMode.RINGS]: 'Neon-Ringe', [VisualizerMode.NEBULA]: 'Kosmischer Nebel', [VisualizerMode.KALEIDOSCOPE]: 'Kaleidoskop', [VisualizerMode.LASERS]: 'Konzert-Laser', [VisualizerMode.STROBE]: 'Bühnenwand', [VisualizerMode.SILK]: 'Seidenwellen', [VisualizerMode.LIQUID]: 'Flüssigkugel', [VisualizerMode.TERRAIN]: 'Low-Poly-Gelände' }, lyricsStyles: { [LyricsStyle.STANDARD]: 'Standard', [LyricsStyle.KARAOKE]: 'Karaoke', [LyricsStyle.MINIMAL]: 'Minimal' }, helpModal: { title: 'Über SonicVision AI', intro: 'SonicVision AI ist ein immersives audiovisuelles Erlebnis...', shortcutsTitle: 'Tastaturkürzel', shortcutItems: { toggleMic: 'Mikrofon Ein / Aus', fullscreen: 'Vollbild umschalten', randomize: 'Zufällige Einstellungen', lyrics: 'Text Ein / Aus', hideUi: 'Steuerung Ein / Aus', glow: 'Glühen umschalten', trails: 'Spuren umschalten', changeMode: 'Modus ändern', changeTheme: 'Thema ändern' }, howItWorksTitle: 'So funktioniert es', howItWorksSteps: ['1. Mikrofonzugriff erlauben.', '2. Musik im Hintergrund abspielen (oder singen!).', '3. Die Visuals reagieren sofort auf Frequenzen.', '4. Alle ~30 Sek. erkennt die KI den Song und lädt den Text.'], settingsTitle: 'Erläuterung der Einstellungen', settingsDesc: { sensitivity: 'Passt die Reaktion der Visuals auf die Lautstärke an.', speed: 'Steuert die Geschwindigkeit der Animationen.', glow: 'Fügt einen Neon-Effekt hinzu (leistungshungrig).', trails: 'Erzeugt Bewegungsunschärfe für flüssigere Visuals.', smoothing: 'Wie sanft die Visualisierungen auf Änderungen reagieren.', fftSize: 'Höhere Werte sorgen für detailliertere Frequenzbalken.' }, projectInfoTitle: 'Projekt-Info', projectInfoText: 'Unterstützt von Google Gemini 3.0 Pro, React 19 und Three.js (WebGL).', privacyTitle: 'Datenschutz', privacyText: 'Audio wird lokal für die Visualisierung verarbeitet. Kurze Clips werden nur zur Song-Erkennung an Google Gemini gesendet und nicht gespeichert.', version: 'Version' } }
 };

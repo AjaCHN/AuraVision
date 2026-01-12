@@ -185,28 +185,28 @@ export class ShapesRenderer implements IVisualizerRenderer {
     ctx.translate(w/2, h/2);
     for (let i = 0; i < 8; i++) {
         const sides = 3 + i;
-        const radius = (Math.min(w, h) * 0.05 * (i + 1)) + (bass / 255) * 60;
+        const radius = (Math.min(w, h) * 0.05 * (i + 1)) + (bassNorm * 80);
         const angleOffset = rotation * (0.5 + i * 0.1) * (i % 2 === 0 ? 1 : -1);
         
-        // Flashing logic: specific lines (even index) flash aggressively with bass
         const isFlashingLine = i % 2 === 0;
-        const pulseEffect = isFlashingLine ? (bassNorm * 3.5) : (bassNorm * 0.4);
+        const pulseEffect = isFlashingLine ? (bassNorm * 2.5) : (bassNorm * 0.4);
         const baseAlpha = isFlashingLine ? (0.05 + pulseEffect) : (0.4 + pulseEffect);
         
         ctx.globalAlpha = Math.min(Math.max(baseAlpha, 0.05), 1.0);
-        ctx.strokeStyle = colors[i % colors.length];
+        ctx.strokeStyle = colors[i % colors.length] || '#ffffff';
         ctx.lineWidth = (2 + (mids / 80)) * settings.sensitivity;
         
         ctx.beginPath();
-        for (let j = 0; j <= sides; j++) {
+        for (let j = 0; j < sides; j++) {
             const a = (j / sides) * Math.PI * 2 + angleOffset;
             const px = Math.cos(a) * radius;
             const py = Math.sin(a) * radius;
-            if (j === 0) ctx.moveTo(px, px); else ctx.lineTo(px, py);
+            if (j === 0) ctx.moveTo(px, py); 
+            else ctx.lineTo(px, py);
         }
+        ctx.closePath(); // 修复抽象几何主题 Bug：确保多边形路径完全闭合
         ctx.stroke();
 
-        // Extra glow ring on bass hits for flashing shapes
         if (isFlashingLine && bassNorm > 0.6) {
             ctx.globalAlpha = (bassNorm - 0.6) * 1.5;
             ctx.lineWidth = 1;
@@ -282,7 +282,6 @@ export class NebulaRenderer implements IVisualizerRenderer {
     const maxParticles = 60; 
     if (this.particles.length < maxParticles) {
         for (let i = 0; i < 1; i++) {
-            // Nebula cloud sizes reduced by 30%
             const baseSize = (w * 0.28) + (Math.random() * w * 0.28); 
             this.particles.push({
                 x: Math.random() * w,
@@ -388,7 +387,7 @@ export class LasersRenderer implements IVisualizerRenderer {
     const highs = getAverage(data, 100, 255) / 255;
     const bass = getAverage(data, 0, 20) / 255;
     const mids = getAverage(data, 20, 80) / 255;
-    const beamCount = 12; // Increase beams for more density
+    const beamCount = 12;
     
     ctx.save();
     ctx.globalCompositeOperation = 'screen';
@@ -400,57 +399,42 @@ export class LasersRenderer implements IVisualizerRenderer {
     ];
 
     origins.forEach((origin, oIdx) => {
-      // Map frequency data chunk to this origin's beams
       const chunkStart = oIdx * beamCount * 2;
       
       for (let i = 0; i < beamCount; i++) {
-        // Individual frequency participation for this beam
         const freqVal = (data[chunkStart + i * 2] || 0) / 255;
-        
         const angleBase = (oIdx === 0 ? -0.2 : oIdx === 1 ? -Math.PI + 0.2 : -Math.PI/2);
-        
-        // Fanning effect: beams spread more when music is intense
         const fanSpread = 0.7 + (bass * 0.4);
-        
-        // Jitter: high frequencies add tiny random-like vibrations
         const jitter = Math.sin(rotation * 50 + i) * highs * 0.05;
-        
         const angle = angleBase + Math.sin(rotation * settings.speed * 0.4 + i * 0.4) * fanSpread + jitter;
         
         const length = Math.max(w, h) * 2.5;
         const endX = origin.x + Math.cos(angle) * length;
         const endY = origin.y + Math.sin(angle) * length;
-
         const color = colors[i % colors.length];
         
-        // Participation logic: 
-        // 1. Base intensity from individual frequency bin
-        // 2. Pulse strength driven by bass and high-freq spikes
         const baseIntensity = (0.1 + freqVal * 0.9) * settings.sensitivity;
         const pulse = (0.4 + bass * 2.5 + highs * 1.5);
         
-        // Different behavior for different beam indices
         let finalAlpha = baseIntensity * pulse;
-        if (i % 3 === 0) finalAlpha *= (0.5 + highs * 2); // Some beams react more to treble
-        if (i % 2 === 0) finalAlpha *= (0.5 + bass * 1.5);  // Others more to bass
+        if (i % 3 === 0) finalAlpha *= (0.5 + highs * 2); 
+        if (i % 2 === 0) finalAlpha *= (0.5 + bass * 1.5);
 
         finalAlpha = Math.min(Math.max(finalAlpha, 0.05), 1.0);
 
         ctx.beginPath();
         const g = ctx.createLinearGradient(origin.x, origin.y, endX, endY);
         g.addColorStop(0, color);
-        g.addColorStop(0.5 + mids * 0.2, color); // Midrange pushes the solid color further out
+        g.addColorStop(0.5 + mids * 0.2, color); 
         g.addColorStop(1, 'transparent');
         
         ctx.strokeStyle = g;
-        // Width reacts to overall intensity (mids/bass)
         ctx.lineWidth = (1.2 + bass * 15 + mids * 5) * settings.sensitivity;
         ctx.globalAlpha = finalAlpha;
         ctx.moveTo(origin.x, origin.y);
         ctx.lineTo(endX, endY);
         ctx.stroke();
 
-        // Secondary glow layer for high-intensity participation
         if (finalAlpha > 0.4) {
             ctx.lineWidth = ctx.lineWidth * 2.5;
             ctx.globalAlpha = finalAlpha * 0.3;
@@ -459,7 +443,6 @@ export class LasersRenderer implements IVisualizerRenderer {
       }
     });
 
-    // Central flash on bass peak
     if (bass > 0.8) {
         const centerX = w / 2;
         const centerY = h;
@@ -472,7 +455,6 @@ export class LasersRenderer implements IVisualizerRenderer {
         ctx.arc(centerX, centerY, w * 0.5, 0, Math.PI * 2);
         ctx.fill();
     }
-
     ctx.restore();
   }
 }
@@ -499,11 +481,8 @@ export class StrobeRenderer implements IVisualizerRenderer {
         const curW = cellW - padding * 2;
         const curH = cellH - padding * 2;
 
-        // Participation: threshold set very low to include more blocks
         const threshold = 0.15; 
         const intensity = val > threshold ? (val - threshold) / (1 - threshold) : 0;
-        
-        // Grid flashing: participation of almost all blocks during bass kicks
         const gridFactor = (r + c) % 3 === 0 ? bass * 1.2 : bass * 0.6;
         const finalAlpha = (intensity * settings.sensitivity) + gridFactor;
 
