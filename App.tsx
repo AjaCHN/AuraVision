@@ -155,6 +155,47 @@ const App: React.FC = () => {
     return () => clearInterval(intervalId);
   }, [settings.autoRotate, settings.rotateInterval]);
 
+  // Auto Theme Switching Logic based on Mood
+  useEffect(() => {
+    if (!currentSong || !currentSong.mood) return;
+
+    const mood = currentSong.mood.toLowerCase();
+    
+    // Theme 0: Sunset (Red/Orange) - Energetic, Warm
+    if (mood.match(/energetic|upbeat|party|dance|rock|intense|warm|passionate|fire|活力|摇滚|激情|热烈|动感|summer/)) {
+        setColorTheme(COLOR_THEMES[0]);
+    }
+    // Theme 1: Cyberpunk (Blue/Purple/Pink) - Electronic, Modern
+    else if (mood.match(/electronic|synth|pop|modern|neon|club|future|cyber|电子|赛博|未来|流行|night/)) {
+        setColorTheme(COLOR_THEMES[1]);
+    }
+    // Theme 2: Matrix (Green) - Tech, Dark, Edgy
+    else if (mood.match(/techno|sci-fi|digital|aggressive|edgy|dark|glitch|industrial|黑暗|科技|工业|压抑/)) {
+        setColorTheme(COLOR_THEMES[2]);
+    }
+    // Theme 3: Dark Slate (Grey/Blue) - Sad, Serious
+    else if (mood.match(/sad|melanchol|ballad|slow|emotional|serious|gloomy|lonely|悲伤|忧郁|慢歌|抒情|沉重/)) {
+        setColorTheme(COLOR_THEMES[3]);
+    }
+    // Theme 4: Ocean (Blue/Cyan) - Calm, Water
+    else if (mood.match(/calm|relax|peace|chill|soothing|water|blue|jazz|soft|平静|放松|海洋|爵士|柔和/)) {
+        setColorTheme(COLOR_THEMES[4]);
+    }
+    // Theme 5: Vaporwave (Pink/Purple) - Retro, Dreamy
+    else if (mood.match(/retro|dreamy|lo-fi|nostalgic|aesthetic|vapor|复古|梦幻|怀旧|蒸汽波/)) {
+        setColorTheme(COLOR_THEMES[5]);
+    }
+    // Theme 6: Golden Hour (Yellow) - Happy, Bright
+    else if (mood.match(/happy|cheer|sunny|bright|joy|optimistic|acoustic|folk|快乐|阳光|民谣|欢快|明亮/)) {
+        setColorTheme(COLOR_THEMES[6]);
+    }
+    // Theme 7: Aurora (Indigo/Purple) - Mystical, Space
+    else if (mood.match(/mystical|ethereal|ambient|spiritual|trance|space|magic|神秘|空灵|氛围|宇宙/)) {
+        setColorTheme(COLOR_THEMES[7]);
+    }
+    
+  }, [currentSong]);
+
   const identificationTimeoutRef = useRef<number | null>(null);
   const silenceDurationRef = useRef<number>(0);
   const songChangeArmedRef = useRef<boolean>(false);

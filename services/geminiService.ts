@@ -45,6 +45,9 @@ export const identifySongFromAudio = async (base64Audio: string, mimeType: strin
         2. **Transcribe & Search**: If there are vocals, phonetically transcribe exactly what you hear and SEARCH for it.
         3. **Decision**: Only return a match if you are confident.
 
+        MOOD ANALYSIS:
+        - Classify the mood into one of these categories if possible: Energetic, Electronic, Dark, Melancholic, Calm, Dreamy, Happy, or Mystical.
+
         LYRICS FORMATTING:
         - Return the lyrics with approximate timestamps relative to the start of the song if known, or just line by line.
         - **IMPORTANT**: If you can identify the song, try to fetch the *full* lyrics for the current section (Chorus/Verse) and include timestamps in [mm:ss] format at the start of lines.
@@ -78,7 +81,7 @@ export const identifySongFromAudio = async (base64Audio: string, mimeType: strin
                          "title": "Song Title",
                          "artist": "Artist Name",
                          "lyricsSnippet": "Lyrics with [mm:ss] timestamps if possible. Max 6 lines.",
-                         "mood": "Vibe description (e.g., Energetic, Melancholic)",
+                         "mood": "Vibe description (e.g., Energetic, Melancholic, Electronic, Calm)",
                          "identified": true/false
                        }`
               }
