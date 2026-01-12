@@ -15,6 +15,19 @@ const getGenAI = () => {
 
 export const identifySongFromAudio = async (base64Audio: string, mimeType: string, language: Language = 'en', region: Region = 'global'): Promise<SongInfo | null> => {
   
+  // 1. Generate fingerprint and check local cache first to save costs/time
+  let features: number[] = [];
+  try {
+    features = await generateFingerprint(base64Audio);
+    const localMatch = findLocalMatch(features);
+    if (localMatch) {
+      console.log(`[Recognition] Local fingerprint match found: ${localMatch.title} by ${localMatch.artist}`);
+      return localMatch;
+    }
+  } catch (e) {
+    console.warn("[Recognition] Fingerprint step failed, falling back to AI identification.", e);
+  }
+
   const callGemini = async (retryCount = 0): Promise<SongInfo | null> => {
     try {
         const ai = getGenAI();
@@ -125,16 +138,11 @@ export const identifySongFromAudio = async (base64Audio: string, mimeType: strin
   };
 
   const aiResult = await callGemini();
-  if (aiResult && aiResult.identified) {
-      generateFingerprint(base64Audio).then(features => {
-          saveToLocalCache(features, aiResult);
-      });
-      return aiResult;
+
+  // 2. If AI identified a song, cache it for future fingerprint matches
+  if (aiResult && aiResult.identified && features.length > 0) {
+      saveToLocalCache(features, aiResult);
   }
-  try {
-      const features = await generateFingerprint(base64Audio);
-      const localMatch = findLocalMatch(features);
-      if (localMatch) return localMatch;
-  } catch (e) {}
+
   return aiResult;
 };

@@ -41,6 +41,7 @@ export interface VisualizerSettings {
   trails: boolean;     // Enable transparency clearing
   autoRotate: boolean; // Automatically switch modes
   rotateInterval: number; // Seconds between rotation
+  hideCursor: boolean; // Whether to hide the mouse cursor
 }
 
 export interface VisualizerConfig {

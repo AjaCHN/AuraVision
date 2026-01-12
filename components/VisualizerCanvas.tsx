@@ -120,7 +120,7 @@ const VisualizerCanvas: React.FC<VisualizerCanvasProps> = ({
      }
   };
 
-  return <canvas ref={canvasRef} onDoubleClick={toggleFullscreen} className="absolute top-0 left-0 w-full h-full cursor-none" />;
+  return <canvas ref={canvasRef} onDoubleClick={toggleFullscreen} className={`absolute top-0 left-0 w-full h-full ${settings.hideCursor ? 'cursor-none' : ''}`} />;
 };
 
 function drawLyrics(

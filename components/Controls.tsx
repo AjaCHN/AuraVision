@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import { VisualizerMode, LyricsStyle, Language, VisualizerSettings, Region, AudioDevice } from '../types';
 import { VISUALIZER_PRESETS, COLOR_THEMES, REGION_NAMES } from '../constants';
@@ -166,6 +167,21 @@ const Controls: React.FC<ControlsProps> = ({
 
   return (
     <>
+      {/* Fixed Status Indicator - Top Left (Non-intrusive) */}
+      <div className={`fixed top-8 left-8 z-40 transition-all duration-500 pointer-events-none ${isIdentifying ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'}`}>
+         <div className="flex items-center gap-3 bg-black/40 backdrop-blur-md border border-white/10 rounded-full px-4 py-2 shadow-2xl">
+            <div className="flex items-center gap-1 h-3">
+               <div className="w-1 bg-blue-400 rounded-full h-full animate-[bounce_0.8s_infinite]"></div>
+               <div className="w-1 bg-blue-400 rounded-full h-2/3 animate-[bounce_0.8s_infinite_0.1s]"></div>
+               <div className="w-1 bg-blue-400 rounded-full h-full animate-[bounce_0.8s_infinite_0.2s]"></div>
+               <div className="w-1 bg-blue-400 rounded-full h-1/2 animate-[bounce_0.8s_infinite_0.3s]"></div>
+            </div>
+            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-300">
+               {t.identifying}
+            </span>
+         </div>
+      </div>
+
       {/* Fixed Help Button - Top Right */}
       <button 
          onClick={() => setShowHelp(true)}
@@ -181,6 +197,7 @@ const Controls: React.FC<ControlsProps> = ({
       {!isExpanded ? (
         <div className="fixed bottom-6 left-0 w-full z-30 flex justify-center items-center pointer-events-none">
           <div className={`pointer-events-auto flex items-center gap-4 bg-black/60 backdrop-blur-xl border border-white/10 rounded-full p-2 pl-3 pr-4 shadow-2xl animate-fade-in-up transition-opacity duration-1000 ${isUserInactive ? 'opacity-30 hover:opacity-100' : 'opacity-100'}`}>
+             
              {/* Randomize Button */}
              <button
                 onClick={randomizeSettings}
@@ -191,6 +208,12 @@ const Controls: React.FC<ControlsProps> = ({
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
                  </svg>
               </button>
+
+              {isIdentifying && (
+                <div className="flex items-center gap-1 animate-pulse">
+                   <div className="w-1.5 h-1.5 rounded-full bg-blue-400 shadow-[0_0_8px_rgba(96,165,250,0.8)]"></div>
+                </div>
+              )}
 
               <div className="h-6 w-px bg-white/20"></div>
 
@@ -403,6 +426,15 @@ const Controls: React.FC<ControlsProps> = ({
                           >
                             <span className="text-xs text-white/80">{t.autoRotate}</span>
                             <div className={`w-2 h-2 rounded-full ${settings.autoRotate ? 'bg-yellow-400 shadow-[0_0_8px_rgba(250,204,21,0.8)]' : 'bg-white/20'}`} />
+                          </button>
+
+                          <button 
+                            onClick={() => updateSetting('hideCursor', !settings.hideCursor)}
+                            title={t.toggleHideCursor}
+                            className={`flex items-center justify-between px-3 py-2 rounded-lg border transition-all ${settings.hideCursor ? 'bg-teal-500/20 border-teal-500/50' : 'bg-black/20 border-white/10'}`}
+                          >
+                            <span className="text-xs text-white/80">{t.hideCursor}</span>
+                            <div className={`w-2 h-2 rounded-full ${settings.hideCursor ? 'bg-teal-400 shadow-[0_0_8px_rgba(20,184,166,0.8)]' : 'bg-white/20'}`} />
                           </button>
                       </div>
                   </div>

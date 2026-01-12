@@ -206,7 +206,7 @@ const ThreeVisualizer: React.FC<ThreeVisualizerProps> = ({ analyser, colors, set
   };
 
   return (
-    <div className="absolute inset-0 z-0">
+    <div className={`absolute inset-0 z-0 ${settings.hideCursor ? 'cursor-none' : ''}`}>
       <Canvas 
         camera={{ position: [0, 2, 15], fov: 60 }} 
         dpr={[1, 2]} 

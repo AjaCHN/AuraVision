@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import VisualizerCanvas from './components/VisualizerCanvas';
 import ThreeVisualizer from './components/ThreeVisualizer'; // New WebGL Component
@@ -17,7 +18,8 @@ const DEFAULT_SETTINGS: VisualizerSettings = {
   glow: true,
   trails: true,
   autoRotate: false,
-  rotateInterval: 30
+  rotateInterval: 30,
+  hideCursor: false
 };
 const DEFAULT_LYRICS_STYLE = LyricsStyle.KARAOKE; 
 const DEFAULT_SHOW_LYRICS = true;
@@ -120,11 +122,14 @@ const App: React.FC = () => {
   // Request Wake Lock
   const requestWakeLock = async () => {
     try {
-      if ('wakeLock' in navigator) {
+      if ('wakeLock' in navigator && !wakeLockRef.current) {
         wakeLockRef.current = await (navigator as any).wakeLock.request('screen');
+        wakeLockRef.current.addEventListener('release', () => {
+          wakeLockRef.current = null;
+        });
       }
     } catch (err) {
-      console.log(`Wake Lock error: ${err}`);
+      console.warn(`Wake Lock request failed: ${err}`);
     }
   };
 
@@ -134,10 +139,24 @@ const App: React.FC = () => {
         await wakeLockRef.current.release();
         wakeLockRef.current = null;
       } catch (err) {
-        console.log(`Wake Lock release error: ${err}`);
+        console.warn(`Wake Lock release failed: ${err}`);
       }
     }
   };
+
+  // Handle visibility change to re-acquire wake lock
+  useEffect(() => {
+    const handleVisibilityChange = async () => {
+      if (document.visibilityState === 'visible' && isListening) {
+        await requestWakeLock();
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, [isListening]);
 
   // Auto Rotate Logic
   useEffect(() => {
@@ -203,7 +222,7 @@ const App: React.FC = () => {
   // Initialize Audio Logic
   const startAudio = async (deviceId?: string) => {
     // Release any previous wake lock first
-    releaseWakeLock();
+    await releaseWakeLock();
     // Stop previous stream if any
     if (isListening) stopAudio();
 
@@ -234,7 +253,7 @@ const App: React.FC = () => {
       setIsListening(true);
       
       setupRecorder(stream);
-      requestWakeLock(); // Keep screen on!
+      await requestWakeLock(); // Keep screen on while listening!
 
     } catch (err) {
       console.error("Error accessing microphone:", err);
@@ -242,7 +261,7 @@ const App: React.FC = () => {
     }
   };
 
-  const stopAudio = () => {
+  const stopAudio = async () => {
     if (audioContext) audioContext.close();
     if (mediaStream) mediaStream.getTracks().forEach(track => track.stop());
     if (identificationTimeoutRef.current) clearTimeout(identificationTimeoutRef.current);
@@ -254,7 +273,7 @@ const App: React.FC = () => {
     setIsListening(false);
     setIsIdentifying(false);
     
-    releaseWakeLock();
+    await releaseWakeLock(); // Release the screen lock when stopping
     
     silenceDurationRef.current = 0;
     songChangeArmedRef.current = false;
@@ -485,7 +504,8 @@ const App: React.FC = () => {
        glow: Math.random() > 0.4, 
        trails: Math.random() > 0.3,
        autoRotate: false,
-       rotateInterval: 30
+       rotateInterval: 30,
+       hideCursor: settings.hideCursor // Keep current hideCursor preference
     };
 
     setMode(randomMode);
@@ -513,7 +533,7 @@ const App: React.FC = () => {
   ].includes(mode);
 
   return (
-    <div className="relative w-screen h-screen overflow-hidden text-white select-none">
+    <div className={`relative w-screen h-screen overflow-hidden text-white select-none ${settings.hideCursor ? 'cursor-none' : ''}`}>
       
       {/* Background Visualizer - Switches between 2D and 3D */}
       {isWebGLMode ? (
@@ -543,6 +563,8 @@ const App: React.FC = () => {
         language={language}
         onRetry={handleSongRetry}
         onClose={() => setCurrentSong(null)}
+        analyser={analyser}
+        sensitivity={settings.sensitivity}
       />
 
       {/* Start Prompt if not listening */}

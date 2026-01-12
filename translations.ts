@@ -1,3 +1,4 @@
+
 import { VisualizerMode, LyricsStyle, Language, Region } from './types';
 
 export const TRANSLATIONS = {
@@ -30,6 +31,7 @@ export const TRANSLATIONS = {
     close: 'Close',
     betaDisclaimer: 'Beta feature. Accuracy is being improved.',
     wrongSong: 'Wrong Song? Retry',
+    hideCursor: 'Hide Cursor',
     // Tooltips
     randomizeTooltip: 'Randomize all visual settings (Press R)',
     resetTooltip: 'Reset to default settings',
@@ -42,6 +44,7 @@ export const TRANSLATIONS = {
     toggleGlow: 'Toggle neon glow effect (Press G)',
     toggleTrails: 'Toggle motion trails (Press T)',
     toggleAutoRotate: 'Toggle automatic mode switching',
+    toggleHideCursor: 'Toggle mouse cursor visibility',
     modes: {
       [VisualizerMode.PLASMA]: 'Plasma Flow',
       [VisualizerMode.BARS]: 'Frequency Bars',
@@ -136,6 +139,7 @@ export const TRANSLATIONS = {
     close: '关闭',
     betaDisclaimer: 'Beta 功能，准确性持续优化中。',
     wrongSong: '识别错误？重试',
+    hideCursor: '隐藏鼠标',
     // Tooltips
     randomizeTooltip: '随机生成所有视觉设置 (按 R 键)',
     resetTooltip: '重置为默认设置',
@@ -148,6 +152,7 @@ export const TRANSLATIONS = {
     toggleGlow: '开关霓虹光晕效果 (按 G 键)',
     toggleTrails: '开关动态拖尾效果 (按 T 键)',
     toggleAutoRotate: '开关自动切换模式功能',
+    toggleHideCursor: '切换鼠标指针可见性',
     modes: {
       [VisualizerMode.PLASMA]: '流体等离子',
       [VisualizerMode.BARS]: '镜像频谱',
