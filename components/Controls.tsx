@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { VisualizerMode, LyricsStyle, Language, VisualizerSettings, Region, AudioDevice } from '../types';
-import { VISUALIZER_PRESETS, COLOR_THEMES, REGION_NAMES } from '../constants';
+import { VISUALIZER_PRESETS, COLOR_THEMES, REGION_NAMES, APP_VERSION } from '../constants';
 import { TRANSLATIONS } from '../translations';
 import HelpModal from './HelpModal';
 
@@ -24,545 +24,433 @@ interface ControlsProps {
   settings: VisualizerSettings;
   setSettings: (settings: VisualizerSettings) => void;
   resetSettings: () => void;
+  resetVisualSettings: () => void;
   randomizeSettings: () => void;
   audioDevices: AudioDevice[];
   selectedDeviceId: string;
   onDeviceChange: (id: string) => void;
 }
 
-const Controls: React.FC<ControlsProps> = ({
-  currentMode,
-  setMode,
-  colorTheme,
-  setColorTheme,
-  toggleMicrophone,
-  isListening,
-  isIdentifying,
-  lyricsStyle,
-  setLyricsStyle,
-  showLyrics,
-  setShowLyrics,
-  language,
-  setLanguage,
-  region,
-  setRegion,
-  settings,
-  setSettings,
-  resetSettings,
-  randomizeSettings,
-  audioDevices,
-  selectedDeviceId,
-  onDeviceChange
-}) => {
-  const [isExpanded, setIsExpanded] = useState(false);
-  const [showHelp, setShowHelp] = useState(false);
-  
-  // Idle detection state
-  const [isUserInactive, setIsUserInactive] = useState(false);
-  const inactiveTimerRef = useRef<number>(0);
-  const colorInputRef = useRef<HTMLInputElement>(null);
+type TabType = 'visual' | 'audio' | 'ai' | 'system';
 
-  const t = TRANSLATIONS[language];
+// --- Custom Dropdown Component ---
+const CustomSelect = ({ label, value, options, onChange }: { label: string, value: string, options: {value: string, label: string}[], onChange: (val: any) => void }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
-  const updateSetting = <K extends keyof VisualizerSettings>(key: K, value: VisualizerSettings[K]) => {
-    setSettings({ ...settings, [key]: value });
-  };
-
-  const handleCustomColor = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const hex = e.target.value;
-    // Generate a palette: Picked Color, 30% Lighter, 30% Darker roughly
-    // We'll simulate this with some simple math or just use variations
-    const r = parseInt(hex.slice(1, 3), 16);
-    const g = parseInt(hex.slice(3, 5), 16);
-    const b = parseInt(hex.slice(5, 7), 16);
-
-    const lighten = (c: number) => Math.min(255, Math.floor(c + (255 - c) * 0.4)).toString(16).padStart(2, '0');
-    const darken = (c: number) => Math.max(0, Math.floor(c * 0.6)).toString(16).padStart(2, '0');
-
-    const theme = [
-      hex,
-      `#${lighten(r)}${lighten(g)}${lighten(b)}`,
-      `#${darken(r)}${darken(g)}${darken(b)}`
-    ];
-    setColorTheme(theme);
-  };
-
-  // Setup idle timer
   useEffect(() => {
-    const resetTimer = () => {
-      setIsUserInactive(false);
-      if (inactiveTimerRef.current) clearTimeout(inactiveTimerRef.current);
-      // Fade out after 3 seconds of inactivity
-      inactiveTimerRef.current = window.setTimeout(() => {
-        setIsUserInactive(true);
-      }, 3000);
-    };
-
-    window.addEventListener('mousemove', resetTimer);
-    window.addEventListener('click', resetTimer);
-    window.addEventListener('keydown', resetTimer);
-    
-    // Initialize
-    resetTimer();
-
-    return () => {
-      window.removeEventListener('mousemove', resetTimer);
-      window.removeEventListener('click', resetTimer);
-      window.removeEventListener('keydown', resetTimer);
-      if (inactiveTimerRef.current) clearTimeout(inactiveTimerRef.current);
-    };
-  }, []);
-
-  // Keyboard Shortcuts
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      // Avoid triggering if active element is an input
-      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLSelectElement) return;
-
-      const key = e.key.toLowerCase();
-
-      switch (key) {
-        case 'r':
-          randomizeSettings();
-          break;
-        case ' ': // Spacebar
-          e.preventDefault(); // Prevent scrolling
-          toggleMicrophone();
-          break;
-        case 'l':
-          setShowLyrics(!showLyrics);
-          break;
-        case 'f':
-          if (!document.fullscreenElement) {
-              document.documentElement.requestFullscreen().catch(err => console.log(err));
-          } else {
-              document.exitFullscreen();
-          }
-          break;
-        case 'h':
-          setIsExpanded(prev => !prev);
-          break;
-        case 'g':
-          updateSetting('glow', !settings.glow);
-          break;
-        case 't':
-          updateSetting('trails', !settings.trails);
-          break;
-        case 'arrowright':
-        case 'arrowleft': {
-          const modes = Object.values(VisualizerMode);
-          const currentIndex = modes.indexOf(currentMode);
-          let nextIndex = key === 'arrowright' ? currentIndex + 1 : currentIndex - 1;
-          
-          if (nextIndex >= modes.length) nextIndex = 0;
-          if (nextIndex < 0) nextIndex = modes.length - 1;
-          
-          setMode(modes[nextIndex]);
-          break;
-        }
-        case 'arrowup':
-        case 'arrowdown': {
-           // Find current theme index based on value comparison (JSON stringify is safe for string arrays)
-           const currentThemeStr = JSON.stringify(colorTheme);
-           const themeIndex = COLOR_THEMES.findIndex(t => JSON.stringify(t) === currentThemeStr);
-           
-           if (themeIndex === -1) {
-              // If currently in custom theme, go to first or last
-              setColorTheme(key === 'arrowup' ? COLOR_THEMES[0] : COLOR_THEMES[COLOR_THEMES.length - 1]);
-           } else {
-              let nextThemeIdx = key === 'arrowup' ? themeIndex + 1 : themeIndex - 1;
-              if (nextThemeIdx >= COLOR_THEMES.length) nextThemeIdx = 0;
-              if (nextThemeIdx < 0) nextThemeIdx = COLOR_THEMES.length - 1;
-              setColorTheme(COLOR_THEMES[nextThemeIdx]);
-           }
-           e.preventDefault(); // Prevent page scrolling
-           break;
-        }
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
       }
     };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [
-    randomizeSettings, toggleMicrophone, showLyrics, settings, 
-    currentMode, setMode, setShowLyrics, updateSetting, setIsExpanded, 
-    colorTheme, setColorTheme
-  ]);
+  const currentLabel = options.find(o => o.value === value)?.label || value;
+
+  return (
+    <div className="space-y-1.5 relative group" ref={dropdownRef}>
+      <span className="text-[10px] font-bold uppercase text-white/30 tracking-[0.15em] block ml-1">{label}</span>
+      <button 
+        onClick={() => setIsOpen(!isOpen)}
+        className={`w-full flex items-center justify-between bg-white/[0.03] border ${isOpen ? 'border-blue-500/50 shadow-[0_0_15px_rgba(59,130,246,0.15)]' : 'border-white/10'} rounded-xl px-4 py-3 text-xs text-white hover:bg-white/[0.07] transition-all duration-300`}
+      >
+        <span className="truncate font-medium">{currentLabel}</span>
+        <svg xmlns="http://www.w3.org/2000/svg" className={`h-3.5 w-3.5 text-white/40 transition-transform duration-500 ${isOpen ? 'rotate-180 text-blue-400' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+        </svg>
+      </button>
+
+      {isOpen && (
+        <div className="absolute bottom-full left-0 w-full mb-3 z-50 bg-[#0a0a0c]/95 backdrop-blur-2xl border border-white/10 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] max-h-64 overflow-y-auto custom-scrollbar animate-fade-in-up py-2.5">
+          {options.map((opt) => (
+            <button
+              key={opt.value}
+              onClick={() => { onChange(opt.value); setIsOpen(false); }}
+              className={`w-full px-4 py-3 text-left text-xs transition-all flex items-center justify-between ${value === opt.value ? 'bg-blue-500/10 text-blue-400' : 'text-white/50 hover:bg-white/5 hover:text-white'}`}
+            >
+              <span className={value === opt.value ? 'font-bold' : ''}>{opt.label}</span>
+              {value === opt.value && <div className="w-1.5 h-1.5 bg-blue-500 rounded-full shadow-[0_0_8px_rgba(59,130,246,0.8)]" />}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
+const Controls: React.FC<ControlsProps> = ({
+  currentMode, setMode, colorTheme, setColorTheme, toggleMicrophone,
+  isListening, isIdentifying, lyricsStyle, setLyricsStyle, showLyrics, setShowLyrics,
+  language, setLanguage, region, setRegion, settings, setSettings,
+  resetSettings, resetVisualSettings, randomizeSettings, audioDevices, selectedDeviceId, onDeviceChange
+}) => {
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [activeTab, setActiveTab] = useState<TabType>('visual');
+  const [showHelp, setShowHelp] = useState(false);
+  const [hoveredHint, setHoveredHint] = useState<string>('');
+  const t = TRANSLATIONS[language];
+
+  const languages: {code: Language, label: string}[] = [
+    { code: 'en', label: 'English' },
+    { code: 'zh', label: '简体中文' },
+    { code: 'ja', label: '日本語' },
+    { code: 'es', label: 'Español' },
+    { code: 'ko', label: '한국어' },
+    { code: 'de', label: 'Deutsch' }
+  ];
+
+  const toggleFullscreen = () => {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen();
+    } else if (document.exitFullscreen) {
+      document.exitFullscreen();
+    }
+  };
+
+  const Slider = ({ label, value, min, max, step, onChange, icon, hintKey }: any) => (
+    <div 
+      className="space-y-2.5 group"
+      onMouseEnter={() => setHoveredHint(t.hints[hintKey])}
+      onMouseLeave={() => setHoveredHint('')}
+    >
+      <div className="flex justify-between items-end text-[10px] text-white/30 uppercase font-black tracking-widest">
+        <span className="flex items-center gap-1.5 transition-colors group-hover:text-white/60">
+          {icon} <span>{label}</span>
+        </span>
+        <span className="text-white/90 font-mono text-[11px] bg-white/5 px-1.5 py-0.5 rounded leading-none transition-colors group-hover:bg-blue-500/20 group-hover:text-blue-400">
+          {value.toFixed(2)}
+        </span>
+      </div>
+      <div className="relative h-4 flex items-center">
+        <input 
+          type="range" 
+          min={min} 
+          max={max} 
+          step={step} 
+          value={value} 
+          onPointerDown={(e) => e.stopPropagation()} 
+          onChange={(e) => onChange(parseFloat(e.target.value))} 
+          className="w-full h-1 bg-transparent cursor-pointer appearance-none relative z-10" 
+        />
+      </div>
+    </div>
+  );
 
   return (
     <>
-      {/* Fixed Status Indicator - Top Left (Non-intrusive) */}
-      <div className={`fixed top-8 left-8 z-40 transition-all duration-500 pointer-events-none ${isIdentifying ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'}`}>
-         <div className="flex items-center gap-3 bg-black/40 backdrop-blur-md border border-white/10 rounded-full px-4 py-2 shadow-2xl">
-            <div className="flex items-center gap-1 h-3">
-               <div className="w-1 bg-blue-400 rounded-full h-full animate-[bounce_0.8s_infinite]"></div>
-               <div className="w-1 bg-blue-400 rounded-full h-2/3 animate-[bounce_0.8s_infinite_0.1s]"></div>
-               <div className="w-1 bg-blue-400 rounded-full h-full animate-[bounce_0.8s_infinite_0.2s]"></div>
-               <div className="w-1 bg-blue-400 rounded-full h-1/2 animate-[bounce_0.8s_infinite_0.3s]"></div>
+      {/* AI Identification Indicator */}
+      {isIdentifying && (
+        <div className="fixed top-8 left-8 z-40 bg-black/40 backdrop-blur-xl border border-blue-500/20 rounded-full px-5 py-2.5 flex items-center gap-3 shadow-2xl animate-pulse">
+           <div className="w-2 h-2 bg-blue-400 rounded-full animate-ping" />
+           <span className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-200">{t.identifying}</span>
+        </div>
+      )}
+
+      {/* Mini Bar */}
+      {!isExpanded && (
+        <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-30 flex items-center gap-2 bg-black/60 backdrop-blur-2xl border border-white/10 rounded-full p-1.5 pr-6 shadow-[0_20px_40px_rgba(0,0,0,0.4)] hover:scale-105 transition-all duration-500 animate-fade-in-up">
+           <button 
+             onClick={isListening ? randomizeSettings : toggleMicrophone} 
+             onMouseEnter={() => setHoveredHint(isListening ? t.hints.randomize : t.hints.mic)}
+             onMouseLeave={() => setHoveredHint('')}
+             className={`w-11 h-11 rounded-full flex items-center justify-center transition-all duration-500 ${isListening ? 'bg-indigo-600 hover:bg-indigo-500 shadow-lg shadow-indigo-600/30 text-white' : 'bg-white/10 hover:bg-white/20 text-white/40'}`}
+           >
+              {isListening ? (
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+              ) : (
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" /></svg>
+              )}
+           </button>
+           <button onClick={() => setIsExpanded(true)} className="text-xs font-black uppercase tracking-[0.1em] text-white/60 hover:text-white transition-colors flex items-center gap-3 pl-2">
+             <span>{t.showOptions}</span>
+             <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5 opacity-40" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 15l7-7 7 7" /></svg>
+           </button>
+        </div>
+      )}
+
+      {/* Expanded Control Panel */}
+      {isExpanded && (
+        <div className="fixed bottom-0 left-0 w-full z-40 bg-[#060608]/85 backdrop-blur-[60px] border-t border-white/[0.08] pt-10 pb-10 px-8 animate-fade-in-up shadow-[0_-20px_80px_rgba(0,0,0,0.6)]">
+          <div className="max-w-6xl mx-auto space-y-10">
+            {/* Header / Tab Navigation */}
+            <div className="flex flex-col md:flex-row justify-between items-center gap-8 border-b border-white/[0.05] pb-8">
+              <div className="flex bg-white/[0.03] p-1.5 rounded-2xl border border-white/[0.05]">
+                {(['visual', 'audio', 'ai', 'system'] as TabType[]).map(tab => (
+                  <button 
+                    key={tab} 
+                    onClick={() => setActiveTab(tab)} 
+                    onMouseEnter={() => setHoveredHint(t.hints[tab])}
+                    onMouseLeave={() => setHoveredHint('')}
+                    className={`px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all duration-300 ${activeTab === tab ? 'bg-white/10 text-white shadow-[0_5px_15px_rgba(255,255,255,0.05)]' : 'text-white/20 hover:text-white/40'}`}
+                  >
+                    {t.tabs[tab]}
+                  </button>
+                ))}
+              </div>
+              
+              <div className="flex items-center gap-3">
+                <button 
+                  onClick={randomizeSettings} 
+                  onMouseEnter={() => setHoveredHint(t.hints.randomize)}
+                  onMouseLeave={() => setHoveredHint('')}
+                  className="w-12 h-12 flex items-center justify-center bg-white/[0.03] rounded-2xl text-white/30 hover:text-white hover:bg-white/10 hover:border-white/10 border border-transparent transition-all duration-300"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                  </svg>
+                </button>
+                <button 
+                  onClick={toggleFullscreen} 
+                  onMouseEnter={() => setHoveredHint(t.hints.fullscreen)}
+                  onMouseLeave={() => setHoveredHint('')}
+                  className="w-12 h-12 flex items-center justify-center bg-white/[0.03] rounded-2xl text-white/30 hover:text-white hover:bg-white/10 hover:border-white/10 border border-transparent transition-all duration-300"
+                >
+                   <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
+                   </svg>
+                </button>
+                <button 
+                  onClick={() => setShowHelp(true)} 
+                  onMouseEnter={() => setHoveredHint(t.hints.help)}
+                  onMouseLeave={() => setHoveredHint('')}
+                  className="w-12 h-12 flex items-center justify-center bg-white/[0.03] rounded-2xl text-white/30 hover:text-white hover:bg-white/10 hover:border-white/10 border border-transparent transition-all duration-300"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                </button>
+                <button 
+                  onClick={() => setIsExpanded(false)} 
+                  className="w-14 h-12 flex items-center justify-center bg-blue-600 rounded-2xl text-white shadow-[0_10px_30px_rgba(37,99,235,0.4)] hover:bg-blue-500 hover:scale-[1.05] active:scale-[0.95] transition-all duration-300"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" /></svg>
+                </button>
+              </div>
             </div>
-            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-300">
-               {t.identifying}
-            </span>
-         </div>
-      </div>
 
-      {/* Fixed Help Button - Top Right */}
-      <button 
-         onClick={() => setShowHelp(true)}
-         title={t.helpTooltip}
-         className="fixed top-6 right-6 z-40 bg-black/30 hover:bg-black/60 backdrop-blur-md border border-white/10 text-white/60 hover:text-white rounded-full p-2 transition-all hover:scale-110 shadow-lg"
-      >
-         <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-         </svg>
-      </button>
+            {/* Content Area */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-12 gap-y-10 min-h-[220px]">
+              
+              {activeTab === 'visual' && (
+                <>
+                  {/* Mode Selection Block */}
+                  <div className="space-y-4">
+                    <span className="text-[10px] font-black uppercase text-white/20 tracking-[0.2em] block ml-1">{t.visualizerMode}</span>
+                    <div className="grid grid-cols-2 gap-2 max-h-[180px] overflow-y-auto custom-scrollbar pr-3">
+                       {Object.keys(VISUALIZER_PRESETS).map(m => (
+                         <button 
+                           key={m} 
+                           onClick={() => setMode(m as VisualizerMode)} 
+                           onMouseEnter={() => setHoveredHint(t.hints.mode)}
+                           onMouseLeave={() => setHoveredHint('')}
+                           className={`px-3 py-3 rounded-xl text-[9px] font-black uppercase tracking-wider border transition-all duration-300 ${currentMode === m ? 'bg-white/10 border-white/20 text-white shadow-inner' : 'bg-white/[0.02] border-white/[0.05] text-white/30 hover:text-white/50 hover:bg-white/[0.05]'}`}
+                         >
+                           {t.modes[m as VisualizerMode]}
+                         </button>
+                       ))}
+                    </div>
+                  </div>
 
-      {/* MINIMIZED VIEW */}
-      {!isExpanded ? (
-        <div className="fixed bottom-6 left-0 w-full z-30 flex justify-center items-center pointer-events-none">
-          <div className={`pointer-events-auto flex items-center gap-4 bg-black/60 backdrop-blur-xl border border-white/10 rounded-full p-2 pl-3 pr-4 shadow-2xl animate-fade-in-up transition-opacity duration-1000 ${isUserInactive ? 'opacity-30 hover:opacity-100' : 'opacity-100'}`}>
-             
-             {/* Randomize Button */}
-             <button
-                onClick={randomizeSettings}
-                title={t.randomizeTooltip}
-                className="h-10 w-10 rounded-full flex items-center justify-center transition-all duration-300 shadow-lg bg-indigo-500 hover:bg-indigo-600 text-white shadow-[0_0_10px_rgba(99,102,241,0.5)]"
-              >
-                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
-                 </svg>
-              </button>
+                  {/* Themes Block */}
+                  <div className="space-y-4">
+                    <span className="text-[10px] font-black uppercase text-white/20 tracking-[0.2em] block ml-1">{t.styleTheme}</span>
+                    <div className="flex flex-wrap gap-2.5 max-h-[180px] overflow-y-auto custom-scrollbar pr-2 pb-2">
+                      {COLOR_THEMES.map((theme, i) => (
+                        <button 
+                          key={i} 
+                          onClick={() => setColorTheme(theme)} 
+                          onMouseEnter={() => setHoveredHint(t.hints.theme)}
+                          onMouseLeave={() => setHoveredHint('')}
+                          className={`w-9 h-9 rounded-full border-2 flex-shrink-0 transition-all duration-300 hover:scale-110 ${JSON.stringify(colorTheme) === JSON.stringify(theme) ? 'border-white scale-110 shadow-[0_0_15px_rgba(255,255,255,0.3)] ring-4 ring-white/10' : 'border-black/50'}`} 
+                          style={{background: `linear-gradient(135deg, ${theme[0]}, ${theme[1]})` }} 
+                        />
+                      ))}
+                    </div>
+                  </div>
 
-              {isIdentifying && (
-                <div className="flex items-center gap-1 animate-pulse">
-                   <div className="w-1.5 h-1.5 rounded-full bg-blue-400 shadow-[0_0_8px_rgba(96,165,250,0.8)]"></div>
-                </div>
+                  {/* Effects Block */}
+                  <div className="space-y-6">
+                    <Slider label={t.speed} hintKey="speed" value={settings.speed} min={0.1} max={3.0} step={0.1} onChange={(v:any) => setSettings({...settings, speed: v})} />
+                    
+                    <div className="grid grid-cols-2 gap-2.5">
+                       <button 
+                         onClick={() => setSettings({...settings, glow: !settings.glow})} 
+                         onMouseEnter={() => setHoveredHint(t.hints.glow)}
+                         onMouseLeave={() => setHoveredHint('')}
+                         className={`py-3 rounded-xl border text-[9px] font-black uppercase tracking-widest transition-all duration-300 ${settings.glow ? 'bg-blue-500/10 border-blue-500/30 text-blue-400 shadow-inner' : 'bg-white/[0.03] border-white/[0.05] text-white/20'}`}
+                       >
+                         {t.glow}
+                       </button>
+                       <button 
+                         onClick={() => setSettings({...settings, trails: !settings.trails})} 
+                         onMouseEnter={() => setHoveredHint(t.hints.trails)}
+                         onMouseLeave={() => setHoveredHint('')}
+                         className={`py-3 rounded-xl border text-[9px] font-black uppercase tracking-widest transition-all duration-300 ${settings.trails ? 'bg-purple-500/10 border-purple-500/30 text-purple-400 shadow-inner' : 'bg-white/[0.03] border-white/[0.05] text-white/20'}`}
+                       >
+                         {t.trails}
+                       </button>
+                    </div>
+
+                    <div className="space-y-2 pt-4 border-t border-white/[0.05]">
+                        <div 
+                          className="flex items-center justify-between p-3.5 bg-white/[0.02] rounded-xl border border-white/[0.05]"
+                          onMouseEnter={() => setHoveredHint(t.hints.autoRotate)}
+                          onMouseLeave={() => setHoveredHint('')}
+                        >
+                           <span className="text-[10px] font-black uppercase text-white/30 tracking-widest">{t.autoRotate}</span>
+                           <button onClick={() => setSettings({...settings, autoRotate: !settings.autoRotate})} className={`w-11 h-6 rounded-full relative transition-all duration-500 ${settings.autoRotate ? 'bg-blue-600' : 'bg-white/10'}`}>
+                             <div className={`absolute top-1 w-4 h-4 bg-white rounded-full shadow-lg transition-all duration-500 ${settings.autoRotate ? 'left-6' : 'left-1'}`} />
+                           </button>
+                        </div>
+                        <button 
+                          onClick={resetVisualSettings} 
+                          onMouseEnter={() => setHoveredHint(t.hints.resetVisual)}
+                          onMouseLeave={() => setHoveredHint('')}
+                          className="w-full py-3 bg-white/[0.03] border border-white/[0.05] rounded-xl text-[9px] font-black uppercase tracking-widest text-white/30 hover:text-white/70 hover:bg-white/5 transition-all duration-300 flex items-center justify-center gap-2"
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                          </svg>
+                          {t.resetVisual}
+                        </button>
+                    </div>
+                  </div>
+                </>
               )}
 
-              <div className="h-6 w-px bg-white/20"></div>
-
-              {/* Expand Button */}
-              <button 
-                onClick={() => setIsExpanded(true)}
-                title={`${t.showOptions} (H)`}
-                className="flex items-center gap-2 text-sm font-medium text-white/90 hover:text-white transition-colors"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd" />
-                </svg>
-                <span>{t.showOptions}</span>
-              </button>
-          </div>
-        </div>
-      ) : (
-      /* EXPANDED VIEW */
-      <div className="fixed bottom-0 left-0 w-full z-30 flex flex-col justify-end pointer-events-none">
-        
-        {/* Main Panel Container */}
-        <div 
-           className={`pointer-events-auto w-full bg-gradient-to-t from-black via-black/95 to-transparent pt-8 pb-6 px-4 md:px-8 backdrop-blur-sm transition-all duration-500 ease-out transform
-           ${isUserInactive ? 'opacity-60 hover:opacity-100 translate-y-2 hover:translate-y-0' : 'opacity-100'}`}
-        >
-          
-          {/* Header Row: Random, Reset, Hide */}
-          <div className="flex justify-center items-center gap-2 md:gap-3 -mt-6 mb-2 flex-wrap">
-             <button 
-               onClick={randomizeSettings}
-               title={t.randomizeTooltip}
-               className="bg-indigo-500/80 hover:bg-indigo-600/90 backdrop-blur-md text-white shadow-[0_0_10px_rgba(99,102,241,0.5)] rounded-full px-4 py-1 flex items-center gap-2 text-xs transition-all mb-2 font-medium"
-             >
-               <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
-               </svg>
-               <span>{t.randomize} (R)</span>
-             </button>
-
-             <button 
-               onClick={resetSettings}
-               title={t.resetTooltip}
-               className="bg-black/50 hover:bg-black/70 backdrop-blur-md border border-white/10 text-white/60 hover:text-white rounded-full px-4 py-1 flex items-center gap-2 text-xs transition-all mb-2"
-             >
-               <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-               </svg>
-               <span>{t.reset}</span>
-             </button>
-
-             <button 
-               onClick={() => setIsExpanded(false)}
-               title={`${t.hideOptions} (H)`}
-               className="bg-black/50 hover:bg-black/70 backdrop-blur-md border border-white/10 text-white/60 hover:text-white rounded-full px-4 py-1 flex items-center gap-2 text-xs transition-all mb-2"
-             >
-               <span>{t.hideOptions}</span>
-               <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-               </svg>
-             </button>
-          </div>
-
-          <div className="max-w-7xl mx-auto flex flex-col gap-6">
-            
-            {/* Top Section: Modes & Play Button */}
-            <div className="flex flex-col md:flex-row gap-6 items-center md:items-start">
-               
-               {/* 1. Mic Button */}
-               <div className="flex-shrink-0 flex flex-col items-center">
-                  <button
-                    onClick={toggleMicrophone}
-                    title={`${isListening ? t.stopMic : t.startMic} (Space)`}
-                    className={`h-16 w-16 rounded-2xl flex items-center justify-center transition-all duration-500 shadow-xl border border-white/10
-                      ${isListening 
-                        ? 'bg-gradient-to-br from-red-500 to-pink-600 text-white shadow-red-500/30' 
-                        : 'bg-white/10 hover:bg-white/20 text-white backdrop-blur-md'}`}
-                  >
-                    {isListening ? (
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 animate-pulse" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
-                      </svg>
-                    ) : (
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
-                      </svg>
-                    )}
-                  </button>
-                  <div className="text-center mt-2 text-[10px] uppercase tracking-wider font-bold text-white/40">
-                     {isIdentifying ? (
-                       <span className="text-blue-400 animate-pulse">{t.identifying}</span>
-                     ) : (
-                       <span>{t.listening}</span>
-                     )}
+              {activeTab === 'audio' && (
+                <>
+                  <div className="space-y-6">
+                    <CustomSelect 
+                      label={t.audioInput}
+                      value={selectedDeviceId}
+                      options={[{ value: '', label: 'Default System Output' }, ...audioDevices.map(d => ({ value: d.deviceId, label: d.label }))]}
+                      onChange={onDeviceChange}
+                    />
+                    <button 
+                      onClick={toggleMicrophone} 
+                      onMouseEnter={() => setHoveredHint(t.hints.mic)}
+                      onMouseLeave={() => setHoveredHint('')}
+                      className={`w-full py-4 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all duration-300 ${isListening ? 'bg-red-500/10 text-red-400 border border-red-500/30' : 'bg-blue-600 text-white shadow-xl shadow-blue-600/20'}`}
+                    >
+                      {isListening ? t.stopMic : t.startMic}
+                    </button>
                   </div>
-               </div>
+                  <div className="space-y-8">
+                    <Slider label={t.sensitivity} hintKey="sensitivity" value={settings.sensitivity} min={0.5} max={4.0} step={0.1} onChange={(v:any) => setSettings({...settings, sensitivity: v})} />
+                    <Slider label={t.smoothing} hintKey="smoothing" value={settings.smoothing} min={0} max={0.95} step={0.01} onChange={(v:any) => setSettings({...settings, smoothing: v})} />
+                  </div>
+                  <div className="space-y-4">
+                    <span className="text-[10px] font-black uppercase text-white/20 tracking-[0.2em] block ml-1">{t.fftSize}</span>
+                    <div className="grid grid-cols-2 gap-2.5">
+                       {[512, 1024, 2048, 4096].map(size => (
+                         <button 
+                           key={size} 
+                           onClick={() => setSettings({...settings, fftSize: size})} 
+                           onMouseEnter={() => setHoveredHint(t.hints.fftSize)}
+                           onMouseLeave={() => setHoveredHint('')}
+                           className={`py-3 rounded-xl border text-[11px] font-mono transition-all duration-300 ${settings.fftSize === size ? 'bg-white/10 border-white/20 text-white shadow-inner' : 'bg-white/[0.02] border-white/[0.05] text-white/20 hover:text-white/40'}`}
+                         >
+                           {size}
+                         </button>
+                       ))}
+                    </div>
+                  </div>
+                </>
+              )}
 
-               {/* 2. Visualizer Modes (Wrapped) */}
-               <div className="flex-1 w-full">
-                  <div className="flex items-center justify-between mb-2 px-1">
-                     <h3 className="text-white/50 text-xs uppercase tracking-widest font-bold">{t.visualizerMode} (←/→)</h3>
+              {activeTab === 'ai' && (
+                <>
+                  <div className="space-y-4">
+                    <span className="text-[10px] font-black uppercase text-white/20 tracking-[0.2em] block ml-1">{t.lyrics}</span>
+                    <button 
+                      onClick={() => setShowLyrics(!showLyrics)} 
+                      onMouseEnter={() => setHoveredHint(t.hints.lyrics)}
+                      onMouseLeave={() => setHoveredHint('')}
+                      className={`w-full py-5 rounded-2xl border font-black text-xs uppercase tracking-[0.15em] transition-all duration-500 ${showLyrics ? 'bg-green-500/10 border-green-500/30 text-green-400 shadow-[0_0_30px_rgba(34,197,94,0.1)]' : 'bg-white/[0.02] border-white/[0.05] text-white/20 hover:bg-white/[0.05]'}`}
+                    >
+                      {showLyrics ? 'Recognition Active' : 'Enable AI Recognition'}
+                    </button>
                   </div>
-                  {/* Container - Wrap */}
-                  <div className="flex flex-wrap gap-2 pb-2">
-                    {Object.entries(VISUALIZER_PRESETS).map(([modeKey, _]) => (
-                      <button
-                        key={modeKey}
-                        onClick={() => setMode(modeKey as VisualizerMode)}
-                        title={`${t.selectMode}: ${t.modes[modeKey as VisualizerMode]}`}
-                        className={`px-3 py-2 rounded-xl border transition-all duration-300 text-xs font-medium whitespace-nowrap
-                          ${currentMode === modeKey 
-                            ? 'bg-white/20 border-white/40 text-white shadow-[0_0_15px_rgba(255,255,255,0.2)]' 
-                            : 'bg-white/5 border-white/5 text-white/60 hover:bg-white/10'}`}
-                      >
-                        {t.modes[modeKey as VisualizerMode]}
-                      </button>
-                    ))}
+                  <div className="space-y-6">
+                    <CustomSelect 
+                      label={`${t.lyrics} ${t.styleTheme}`}
+                      value={lyricsStyle}
+                      options={Object.values(LyricsStyle).map(s => ({ value: s, label: t.lyricsStyles[s] }))}
+                      onChange={(val) => setLyricsStyle(val as LyricsStyle)}
+                    />
                   </div>
-               </div>
+                  <div className="space-y-6">
+                    <CustomSelect 
+                      label={t.region}
+                      value={region}
+                      options={Object.entries(REGION_NAMES).map(([val, name]) => ({ value: val, label: name }))}
+                      onChange={(val) => setRegion(val as Region)}
+                    />
+                  </div>
+                </>
+              )}
+
+              {activeTab === 'system' && (
+                <>
+                  <div className="space-y-6">
+                    <CustomSelect 
+                      label={t.language}
+                      value={language}
+                      options={languages.map(l => ({ value: l.code, label: l.label }))}
+                      onChange={(val) => setLanguage(val as Language)}
+                    />
+                    <button 
+                      onClick={resetSettings} 
+                      onMouseEnter={() => setHoveredHint(t.hints.reset)}
+                      onMouseLeave={() => setHoveredHint('')}
+                      className="w-full py-3.5 bg-red-500/5 border border-red-500/10 rounded-xl text-[10px] font-black uppercase tracking-widest text-red-400/60 hover:bg-red-500/20 hover:text-red-300 transition-all duration-300"
+                    >
+                      {t.reset}
+                    </button>
+                  </div>
+
+                  <div className="space-y-4 md:col-span-2">
+                    <span className="text-[10px] font-black uppercase text-white/20 tracking-[0.2em] block ml-1">{t.appInfo}</span>
+                    <div className="bg-white/[0.02] border border-white/[0.05] p-6 rounded-2xl space-y-6 shadow-inner">
+                       <p className="text-sm text-white/40 leading-relaxed font-medium">
+                          {t.appDescription}
+                       </p>
+                       <div className="flex justify-between items-center pt-5 border-t border-white/[0.05]">
+                          <div className="flex items-center gap-3">
+                             <div className="w-1.5 h-1.5 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.8)]" />
+                             <span className="text-[10px] font-black uppercase text-white/20 tracking-widest">{t.version}</span>
+                          </div>
+                          <span className="text-[10px] font-mono text-blue-400 font-bold bg-blue-400/10 px-2.5 py-1 rounded-lg border border-blue-400/20">{APP_VERSION}</span>
+                       </div>
+                    </div>
+                  </div>
+                </>
+              )}
+
             </div>
 
-            {/* Bottom Section: Settings & Theme */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-               
-               {/* Settings Card */}
-               <div className="bg-white/5 border border-white/10 rounded-2xl p-4 flex flex-col justify-center">
-                  <div className="grid grid-cols-2 gap-x-6 gap-y-4">
-                      {/* Sliders */}
-                      <div className="space-y-3">
-                         {/* Audio Device Selector - NEW */}
-                         <div className="space-y-1">
-                            <div className="flex justify-between text-[10px] text-white/60 uppercase font-bold">
-                              <span>{t.audioInput}</span>
-                            </div>
-                            <select
-                                value={selectedDeviceId}
-                                onChange={(e) => onDeviceChange(e.target.value)}
-                                className="w-full bg-black/40 text-white text-xs border border-white/10 rounded-lg px-2 py-1 outline-none focus:border-white/30 truncate"
-                            >
-                                {audioDevices.length === 0 && <option value="">Default Microphone</option>}
-                                {audioDevices.map((device) => (
-                                    <option key={device.deviceId} value={device.deviceId}>
-                                        {device.label}
-                                    </option>
-                                ))}
-                            </select>
-                         </div>
-
-                         <div className="space-y-1">
-                            <div className="flex justify-between text-[10px] text-white/60 uppercase font-bold">
-                              <span>{t.sensitivity}</span> <span>{settings.sensitivity.toFixed(1)}</span>
-                            </div>
-                            <input 
-                                type="range" min="0.5" max="3.0" step="0.1"
-                                value={settings.sensitivity}
-                                onChange={(e) => updateSetting('sensitivity', parseFloat(e.target.value))}
-                                className="w-full accent-blue-500 h-1 bg-white/20 rounded-lg appearance-none cursor-pointer"
-                             />
-                         </div>
-                         <div className="space-y-1">
-                            <div className="flex justify-between text-[10px] text-white/60 uppercase font-bold">
-                              <span>{t.speed}</span> <span>{settings.speed.toFixed(1)}</span>
-                            </div>
-                            <input 
-                                type="range" min="0.1" max="2.0" step="0.1"
-                                value={settings.speed}
-                                onChange={(e) => updateSetting('speed', parseFloat(e.target.value))}
-                                className="w-full accent-purple-500 h-1 bg-white/20 rounded-lg appearance-none cursor-pointer"
-                             />
-                         </div>
-                         {/* Auto Rotate Interval */}
-                         {settings.autoRotate && (
-                            <div className="space-y-1 animate-fade-in-up">
-                                <div className="flex justify-between text-[10px] text-yellow-400/80 uppercase font-bold">
-                                  <span>{t.rotateInterval}</span> <span>{settings.rotateInterval}s</span>
-                                </div>
-                                <input 
-                                    type="range" min="10" max="120" step="5"
-                                    value={settings.rotateInterval}
-                                    onChange={(e) => updateSetting('rotateInterval', parseInt(e.target.value))}
-                                    className="w-full accent-yellow-400 h-1 bg-white/20 rounded-lg appearance-none cursor-pointer"
-                                />
-                            </div>
-                         )}
-                      </div>
-
-                      {/* Toggles */}
-                      <div className="flex flex-col justify-center gap-2">
-                          <button 
-                            onClick={() => updateSetting('glow', !settings.glow)}
-                            title={`${t.toggleGlow} (G)`}
-                            className={`flex items-center justify-between px-3 py-2 rounded-lg border transition-all ${settings.glow ? 'bg-blue-500/20 border-blue-500/50' : 'bg-black/20 border-white/10'}`}
-                          >
-                            <span className="text-xs text-white/80">{t.glow}</span>
-                            <div className={`w-2 h-2 rounded-full ${settings.glow ? 'bg-blue-400 shadow-[0_0_8px_rgba(59,130,246,0.8)]' : 'bg-white/20'}`} />
-                          </button>
-
-                          <button 
-                            onClick={() => updateSetting('trails', !settings.trails)}
-                            title={`${t.toggleTrails} (T)`}
-                            className={`flex items-center justify-between px-3 py-2 rounded-lg border transition-all ${settings.trails ? 'bg-purple-500/20 border-purple-500/50' : 'bg-black/20 border-white/10'}`}
-                          >
-                            <span className="text-xs text-white/80">{t.trails}</span>
-                            <div className={`w-2 h-2 rounded-full ${settings.trails ? 'bg-purple-400 shadow-[0_0_8px_rgba(168,85,247,0.8)]' : 'bg-white/20'}`} />
-                          </button>
-
-                          <button 
-                            onClick={() => updateSetting('autoRotate', !settings.autoRotate)}
-                            title={t.toggleAutoRotate}
-                            className={`flex items-center justify-between px-3 py-2 rounded-lg border transition-all ${settings.autoRotate ? 'bg-yellow-500/20 border-yellow-500/50' : 'bg-black/20 border-white/10'}`}
-                          >
-                            <span className="text-xs text-white/80">{t.autoRotate}</span>
-                            <div className={`w-2 h-2 rounded-full ${settings.autoRotate ? 'bg-yellow-400 shadow-[0_0_8px_rgba(250,204,21,0.8)]' : 'bg-white/20'}`} />
-                          </button>
-
-                          <button 
-                            onClick={() => updateSetting('hideCursor', !settings.hideCursor)}
-                            title={t.toggleHideCursor}
-                            className={`flex items-center justify-between px-3 py-2 rounded-lg border transition-all ${settings.hideCursor ? 'bg-teal-500/20 border-teal-500/50' : 'bg-black/20 border-white/10'}`}
-                          >
-                            <span className="text-xs text-white/80">{t.hideCursor}</span>
-                            <div className={`w-2 h-2 rounded-full ${settings.hideCursor ? 'bg-teal-400 shadow-[0_0_8px_rgba(20,184,166,0.8)]' : 'bg-white/20'}`} />
-                          </button>
-                      </div>
-                  </div>
+            {/* Global Hint Display */}
+            <div className="pt-8 border-t border-white/[0.03] h-14 flex items-center justify-center relative">
+               <div className={`absolute inset-0 flex items-center justify-center transition-all duration-700 ${hoveredHint ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+                  <p className="text-[10px] font-black tracking-[0.3em] uppercase text-blue-400 text-center bg-blue-400/5 px-6 py-2 rounded-full border border-blue-400/10">
+                    {hoveredHint}
+                  </p>
                </div>
-
-               {/* Style & Language Card */}
-               <div className="bg-white/5 border border-white/10 rounded-2xl p-4 flex flex-col gap-4">
-                   <div className="flex justify-between items-center">
-                      <h3 className="text-white/50 text-xs uppercase tracking-widest font-bold">{t.styleTheme} (↑/↓)</h3>
-                      <div className="flex flex-wrap gap-2">
-                          {COLOR_THEMES.map((theme, idx) => (
-                              <button
-                                  key={idx}
-                                  onClick={() => setColorTheme(theme)}
-                                  title={t.changeTheme}
-                                  className={`w-6 h-6 rounded-full border border-white/20 hover:scale-110 transition-transform shadow-lg ${JSON.stringify(colorTheme) === JSON.stringify(theme) ? 'ring-2 ring-white ring-offset-2 ring-offset-black' : ''}`}
-                                  style={{ background: `linear-gradient(135deg, ${theme[0]}, ${theme[1]})` }}
-                              />
-                          ))}
-                          {/* Custom Color Button */}
-                          <input 
-                            type="color" 
-                            ref={colorInputRef} 
-                            className="hidden" 
-                            onChange={handleCustomColor}
-                          />
-                          <button
-                            onClick={() => colorInputRef.current?.click()}
-                            title={t.customColor}
-                            className="w-6 h-6 rounded-full border border-dashed border-white/40 hover:scale-110 transition-transform flex items-center justify-center bg-white/5 text-white/60 hover:text-white"
-                          >
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M12 4v16m8-8H4" />
-                            </svg>
-                          </button>
-                      </div>
-                   </div>
-
-                   <div className="h-px bg-white/10 w-full"></div>
-
-                   {/* Lyrics / Lang / Region Controls Row */}
-                   <div className="flex flex-wrap items-center gap-2">
-                       <select 
-                          value={lyricsStyle}
-                          onChange={(e) => setLyricsStyle(e.target.value as LyricsStyle)}
-                          title={t.selectLyricsStyle}
-                          className="w-[120px] bg-black/40 text-white text-xs border border-white/10 rounded-lg px-2 py-2 outline-none focus:border-white/30 appearance-none cursor-pointer hover:bg-white/5 transition-colors"
-                       >
-                           {Object.values(LyricsStyle).map((style) => (
-                               <option key={style} value={style} className="bg-gray-900 text-white py-1">
-                                   {t.lyrics}: {t.lyricsStyles[style]}
-                               </option>
-                           ))}
-                       </select>
-                       
-                       {/* Region Selector */}
-                       <select
-                          value={region}
-                          onChange={(e) => setRegion(e.target.value as Region)}
-                          title={t.selectRegion}
-                          className="bg-black/40 text-white text-xs border border-white/10 rounded-lg px-2 py-2 outline-none focus:border-white/30 appearance-none cursor-pointer hover:bg-white/5 transition-colors max-w-[90px]"
-                       >
-                          {Object.entries(REGION_NAMES).map(([key, name]) => (
-                             <option key={key} value={key} className="bg-gray-900 text-white py-1">
-                                 {t.regions[key as Region]}
-                             </option>
-                          ))}
-                       </select>
-
-                       <button 
-                         onClick={() => setShowLyrics(!showLyrics)}
-                         title={`${t.showLyrics} (L)`}
-                         className={`h-[34px] w-[34px] rounded-lg border flex items-center justify-center transition-all flex-shrink-0 relative
-                           ${showLyrics ? 'bg-green-500/20 border-green-500/50 text-green-300' : 'bg-black/40 border-white/20 text-white/40'}`}
-                       >
-                         <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                         </svg>
-                         {/* Tiny dot to indicate Beta Status if on */}
-                         {showLyrics && <span className="absolute top-1 right-1 w-1.5 h-1.5 bg-yellow-400 rounded-full animate-pulse shadow-sm"></span>}
-                       </button>
-                       
-                       <button 
-                          onClick={() => setLanguage(language === 'en' ? 'zh' : 'en')}
-                          title={t.toggleLanguage}
-                          className="h-[34px] w-[34px] text-[10px] font-bold text-white/60 hover:text-white border border-white/20 rounded-lg bg-black/40 hover:bg-white/5 transition-colors flex-shrink-0"
-                        >
-                          {language === 'en' ? 'ZH' : 'EN'}
-                        </button>
-                   </div>
+               <div className={`transition-all duration-700 ${hoveredHint ? 'opacity-0 -translate-y-4' : 'opacity-100 translate-y-0'}`}>
+                  <p className="text-[9px] font-black tracking-[0.4em] uppercase text-white/10 text-center">
+                    SonicVision AI • Generative Spectral Analysis • Gemini 3
+                  </p>
                </div>
             </div>
-
           </div>
         </div>
-      </div>
       )}
-      
-      {/* Help Modal Integration */}
-      <HelpModal 
-        isOpen={showHelp} 
-        onClose={() => setShowHelp(false)} 
-        language={language}
-      />
+
+      <HelpModal isOpen={showHelp} onClose={() => setShowHelp(false)} language={language} />
     </>
   );
 };

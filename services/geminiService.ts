@@ -4,64 +4,54 @@ import { GEMINI_MODEL, REGION_NAMES } from '../constants';
 import { SongInfo, Language, Region } from '../types';
 import { generateFingerprint, saveToLocalCache, findLocalMatch } from './fingerprintService';
 
-let genAI: GoogleGenAI | null = null;
-
-const getGenAI = () => {
-  if (!genAI) {
-    genAI = new GoogleGenAI({ apiKey: process.env.API_KEY });
-  }
-  return genAI;
-};
-
-export const identifySongFromAudio = async (base64Audio: string, mimeType: string, language: Language = 'en', region: Region = 'global'): Promise<SongInfo | null> => {
+/**
+ * 歌曲识别服务
+ * 使用 Gemini 3 Flash 进行多模态音频分析与联网搜索
+ */
+export const identifySongFromAudio = async (
+  base64Audio: string, 
+  mimeType: string, 
+  language: Language = 'en', 
+  region: Region = 'global'
+): Promise<SongInfo | null> => {
   
-  // 1. Generate fingerprint and check local cache first to save costs/time
+  // 1. 生成指纹并尝试本地匹配
   let features: number[] = [];
   try {
     features = await generateFingerprint(base64Audio);
     const localMatch = findLocalMatch(features);
     if (localMatch) {
-      console.log(`[Recognition] Local fingerprint match found: ${localMatch.title} by ${localMatch.artist}`);
+      console.log(`[Recognition] Local match found: ${localMatch.title}`);
       return localMatch;
     }
   } catch (e) {
-    console.warn("[Recognition] Fingerprint step failed, falling back to AI identification.", e);
+    console.warn("[Recognition] Fingerprint step failed, falling back to AI.", e);
   }
 
+  // 2. 调用 Gemini API
   const callGemini = async (retryCount = 0): Promise<SongInfo | null> => {
     try {
-        const ai = getGenAI();
+        // 必须在调用前新建实例以保证使用最新的 API Key
+        const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
         
         const langContext = language === 'zh' 
-          ? 'Output "mood" in Simplified Chinese. For Chinese songs, "title" and "artist" MUST be in Chinese characters.' 
-          : 'Output "mood" in English. "title" and "artist" should be in their original language or English.';
+          ? '请使用中文输出 mood 字段。对于中文歌曲，title 和 artist 必须使用汉字。' 
+          : 'Output mood in English. Use original language for title and artist.';
 
         let regionContext = '';
         if (region !== 'global') {
            const regionName = REGION_NAMES[region] || region;
-           regionContext = `CONTEXT: User is in the "${regionName}" market. Prioritize identifying songs trending or classic in this region.`;
+           regionContext = `CONTEXT: User is currently in the "${regionName}" music market.`;
         }
 
-        const systemInstruction = `You are a world-class Audio Analysis AI. 
-        Your goal is to identify songs from short, potentially low-quality audio clips.
-
-        CRITICAL INSTRUCTION:
-        - You have access to a **Google Search** tool.
-        - You **MUST** transcribe any lyrics you hear and **SEARCH** them to verify the Song Title and Artist.
-        - If vocals are unclear, search for the melody description or instrumentation style.
+        const systemInstruction = `You are a world-class Music Identification Expert.
+        STEPS:
+        1. Listen to the provided audio clip (vocals, melody, instruments).
+        2. Transcribe clear lyrics if heard.
+        3. Use GOOGLE SEARCH to confirm the exact Title, Artist, and most common lyrics.
+        4. Detect the overall vibe/mood of the music.
         
-        PROCESS:
-        1. **Listen Deeply**: Analyze the melody, chord progression, and vocal timbre.
-        2. **Transcribe & Search**: If there are vocals, phonetically transcribe exactly what you hear and SEARCH for it.
-        3. **Decision**: Only return a match if you are confident.
-
-        MOOD ANALYSIS:
-        - Classify the mood into one of these categories if possible: Energetic, Electronic, Dark, Melancholic, Calm, Dreamy, Happy, or Mystical.
-
-        LYRICS FORMATTING:
-        - **IMPORTANT**: DO NOT include any timestamps, time labels, or [mm:ss] tags in the lyrics.
-        - Provide a clean, text-only snippet of the current section (Chorus/Verse).
-        - Use line breaks for separate phrases.
+        If it's ambient noise or no music is detected, set "identified" to false.
         `;
 
         const response = await ai.models.generateContent({
@@ -75,43 +65,34 @@ export const identifySongFromAudio = async (base64Audio: string, mimeType: strin
                 }
               },
               {
-                text: `Analyze this audio clip.
-                       ${regionContext}
-                       ${langContext}
-
-                       Think step-by-step:
-                       1. What language are the vocals?
-                       2. What are the specific lyrics heard? (SEARCH THEM)
-                       3. What is the song Title and Artist?
-
-                       Return JSON object:
-                       {
-                         "title": "Song Title",
-                         "artist": "Artist Name",
-                         "lyricsSnippet": "Clean text lyrics ONLY. NO TIMESTAMPS. Max 6 lines.",
-                         "mood": "Vibe description",
-                         "identified": true/false
-                       }`
+                text: `Identify this song. ${regionContext} ${langContext}`
               }
             ]
           },
           config: {
             tools: [{ googleSearch: {} }],
             systemInstruction: systemInstruction,
+            responseMimeType: "application/json",
+            // 最佳实践：使用 responseSchema 确保输出结构
+            responseSchema: {
+              type: Type.OBJECT,
+              properties: {
+                title: { type: Type.STRING, description: "The track name" },
+                artist: { type: Type.STRING, description: "The artist or band name" },
+                lyricsSnippet: { type: Type.STRING, description: "Approximately 4-6 lines of lyrics without timestamps" },
+                mood: { type: Type.STRING, description: "One or two words describing the musical vibe" },
+                identified: { type: Type.BOOLEAN, description: "Whether a song was successfully identified" }
+              },
+              required: ["title", "artist", "identified"]
+            }
           }
         });
 
-        const text = response.text;
-        if (!text) return null;
+        if (!response.text) return null;
         
-        let jsonStr = text;
-        const jsonMatch = text.match(/\{[\s\S]*\}/);
-        if (jsonMatch) {
-            jsonStr = jsonMatch[0];
-        }
-        
-        const songInfo = JSON.parse(jsonStr) as SongInfo;
+        let songInfo: SongInfo = JSON.parse(response.text.trim());
 
+        // 提取搜索来源 URL 以展示给用户
         const groundingChunks = response.candidates?.[0]?.groundingMetadata?.groundingChunks;
         if (groundingChunks) {
           const webSource = groundingChunks.find(chunk => chunk.web?.uri);
@@ -124,13 +105,9 @@ export const identifySongFromAudio = async (base64Audio: string, mimeType: strin
         return songInfo;
 
     } catch (error: any) {
-        const errorMessage = error.message || (error.error && error.error.message) || JSON.stringify(error);
-        if (error.status === 429 || error.code === 429 || errorMessage.includes('429') || errorMessage.includes('quota')) {
-          return null;
-        }
-        const isTransportError = (errorMessage.includes('error code: 6') || errorMessage.includes('Rpc failed') || errorMessage.includes('503'));
-        if (isTransportError && retryCount < 3) {
-             await new Promise(r => setTimeout(r, 2000 * (retryCount + 1))); 
+        console.error("Gemini API Identification Error:", error);
+        if (retryCount < 1) { // 失败重试一次
+             await new Promise(r => setTimeout(r, 2000)); 
              return callGemini(retryCount + 1);
         }
         return null;
@@ -139,7 +116,7 @@ export const identifySongFromAudio = async (base64Audio: string, mimeType: strin
 
   const aiResult = await callGemini();
 
-  // 2. If AI identified a song, cache it for future fingerprint matches
+  // 3. 只有当真正识别到歌曲且有指纹时才缓存
   if (aiResult && aiResult.identified && features.length > 0) {
       saveToLocalCache(features, aiResult);
   }

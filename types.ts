@@ -1,5 +1,5 @@
 
-export type Language = 'en' | 'zh';
+export type Language = 'en' | 'zh' | 'ja' | 'es' | 'ko' | 'de';
 
 export type Region = 'global' | 'US' | 'CN' | 'JP' | 'KR' | 'EU' | 'LATAM';
 
@@ -37,13 +37,16 @@ export interface SongInfo {
 }
 
 export interface VisualizerSettings {
-  sensitivity: number; // 1.0 to 3.0
-  speed: number;       // 0.5 to 2.0
-  glow: boolean;       // Enable shadowBlur
-  trails: boolean;     // Enable transparency clearing
-  autoRotate: boolean; // Automatically switch modes
-  rotateInterval: number; // Seconds between rotation
-  hideCursor: boolean; // Whether to hide the mouse cursor
+  sensitivity: number;
+  speed: number;
+  glow: boolean;
+  trails: boolean;
+  autoRotate: boolean;
+  rotateInterval: number;
+  hideCursor: boolean;
+  smoothing: number;
+  fftSize: number;
+  quality: 'low' | 'med' | 'high';
 }
 
 export interface VisualizerConfig {
@@ -52,7 +55,6 @@ export interface VisualizerConfig {
   colorTheme: string[];
 }
 
-// Strategy Pattern Interface for Visualizers
 export interface IVisualizerRenderer {
   init(canvas: HTMLCanvasElement): void;
   draw(
