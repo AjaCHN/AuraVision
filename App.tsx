@@ -9,6 +9,7 @@ import { COLOR_THEMES } from './constants';
 import { identifySongFromAudio } from './services/geminiService';
 import { TRANSLATIONS } from './translations';
 
+const STORAGE_PREFIX = 'sv_v6_';
 const DEFAULT_MODE = VisualizerMode.PLASMA; 
 const DEFAULT_THEME_INDEX = 1; 
 const DEFAULT_SETTINGS: VisualizerSettings = {
@@ -35,15 +36,13 @@ const App: React.FC = () => {
   const [mediaStream, setMediaStream] = useState<MediaStream | null>(null);
   
   const [audioDevices, setAudioDevices] = useState<AudioDevice[]>([]);
-  const [selectedDeviceId, setSelectedDeviceId] = useState<string>('');
 
   const getStorage = <T,>(key: string, fallback: T): T => {
     if (typeof window === 'undefined') return fallback;
-    const saved = localStorage.getItem(key);
-    if (saved) {
+    const saved = localStorage.getItem(STORAGE_PREFIX + key);
+    if (saved !== null) {
       try {
-        const parsed = JSON.parse(saved);
-        return parsed;
+        return JSON.parse(saved) as T;
       } catch (e) {
         return fallback;
       }
@@ -59,15 +58,29 @@ const App: React.FC = () => {
     return 'global';
   };
 
-  const [mode, setMode] = useState<VisualizerMode>(() => getStorage('sv_mode_v4', DEFAULT_MODE));
-  const [colorTheme, setColorTheme] = useState<string[]>(() => getStorage('sv_theme', COLOR_THEMES[DEFAULT_THEME_INDEX]));
-  const [settings, setSettings] = useState<VisualizerSettings>(() => getStorage('sv_settings_v3', DEFAULT_SETTINGS));
+  const [mode, setMode] = useState<VisualizerMode>(() => getStorage('mode', DEFAULT_MODE));
+  const [colorTheme, setColorTheme] = useState<string[]>(() => getStorage('theme', COLOR_THEMES[DEFAULT_THEME_INDEX]));
+  const [settings, setSettings] = useState<VisualizerSettings>(() => getStorage('settings', DEFAULT_SETTINGS));
+  const [lyricsStyle, setLyricsStyle] = useState<LyricsStyle>(() => getStorage('lyrics_style', DEFAULT_LYRICS_STYLE));
+  const [showLyrics, setShowLyrics] = useState<boolean>(() => getStorage('show_lyrics', DEFAULT_SHOW_LYRICS));
+  const [language, setLanguage] = useState<Language>(() => getStorage('language', DEFAULT_LANGUAGE));
+  const [region, setRegion] = useState<Region>(() => getStorage('region', detectDefaultRegion()));
+  const [selectedDeviceId, setSelectedDeviceId] = useState<string>(() => getStorage('device_id', ''));
+
   const [isIdentifying, setIsIdentifying] = useState(false);
   const [currentSong, setCurrentSong] = useState<SongInfo | null>(null);
-  const [lyricsStyle, setLyricsStyle] = useState<LyricsStyle>(() => getStorage('sv_lyrics_style_v3', DEFAULT_LYRICS_STYLE));
-  const [showLyrics, setShowLyrics] = useState<boolean>(() => getStorage('sv_show_lyrics', DEFAULT_SHOW_LYRICS));
-  const [language, setLanguage] = useState<Language>(() => getStorage('sv_language', DEFAULT_LANGUAGE));
-  const [region, setRegion] = useState<Region>(() => getStorage('sv_region', detectDefaultRegion()));
+
+  // 统一持久化存储监听
+  useEffect(() => {
+    localStorage.setItem(STORAGE_PREFIX + 'mode', JSON.stringify(mode));
+    localStorage.setItem(STORAGE_PREFIX + 'theme', JSON.stringify(colorTheme));
+    localStorage.setItem(STORAGE_PREFIX + 'settings', JSON.stringify(settings));
+    localStorage.setItem(STORAGE_PREFIX + 'lyrics_style', JSON.stringify(lyricsStyle));
+    localStorage.setItem(STORAGE_PREFIX + 'show_lyrics', JSON.stringify(showLyrics));
+    localStorage.setItem(STORAGE_PREFIX + 'language', JSON.stringify(language));
+    localStorage.setItem(STORAGE_PREFIX + 'region', JSON.stringify(region));
+    localStorage.setItem(STORAGE_PREFIX + 'device_id', JSON.stringify(selectedDeviceId));
+  }, [mode, colorTheme, settings, lyricsStyle, showLyrics, language, region, selectedDeviceId]);
 
   useEffect(() => {
     if (analyser) {
@@ -76,14 +89,7 @@ const App: React.FC = () => {
         analyser.fftSize = settings.fftSize;
       }
     }
-    localStorage.setItem('sv_settings_v3', JSON.stringify(settings));
-    localStorage.setItem('sv_mode_v4', JSON.stringify(mode));
-    localStorage.setItem('sv_show_lyrics', JSON.stringify(showLyrics));
-    localStorage.setItem('sv_language', JSON.stringify(language));
-    localStorage.setItem('sv_theme', JSON.stringify(colorTheme));
-    localStorage.setItem('sv_lyrics_style_v3', JSON.stringify(lyricsStyle));
-    localStorage.setItem('sv_region', JSON.stringify(region));
-  }, [settings, mode, showLyrics, language, colorTheme, lyricsStyle, region, analyser]);
+  }, [settings.smoothing, settings.fftSize, analyser]);
 
   useEffect(() => {
     const fetchDevices = async () => {
@@ -100,52 +106,29 @@ const App: React.FC = () => {
     fetchDevices();
   }, []);
 
-  /**
-   * Smart Random Logic
-   * Ensures high-quality visual results by avoiding extreme/unstable parameter sets.
-   */
   const randomizeSettings = useCallback(() => {
-    // 1. Theme selection from expanded library
     const randomTheme = COLOR_THEMES[Math.floor(Math.random() * COLOR_THEMES.length)];
     setColorTheme(randomTheme);
-
-    // 2. Mode selection
     const modes = Object.values(VisualizerMode);
     const randomMode = modes[Math.floor(Math.random() * modes.length)];
     setMode(randomMode);
-
-    // 3. Smart parameter randomization (Sweet-spot ranges)
     setSettings(prev => ({
       ...prev,
-      speed: 0.8 + Math.random() * 0.8, // Range [0.8, 1.6] - Dynamic but not chaotic
-      sensitivity: 1.2 + Math.random() * 1.0, // Range [1.2, 2.2] - Strong response
-      glow: Math.random() > 0.15, // 85% chance of Glow for better aesthetics
-      trails: Math.random() > 0.2, // 80% chance of Trails for smoother motion
-      smoothing: 0.7 + Math.random() * 0.2 // Range [0.7, 0.9] - Smooth but responsive
+      speed: 0.8 + Math.random() * 0.8,
+      sensitivity: 1.2 + Math.random() * 1.0,
+      glow: Math.random() > 0.15,
+      trails: Math.random() > 0.2,
+      smoothing: 0.7 + Math.random() * 0.2
     }));
   }, []);
 
-  /**
-   * Full Factory Reset
-   */
   const resetAppSettings = useCallback(() => {
-    localStorage.clear(); 
-    setSettings(DEFAULT_SETTINGS);
-    setMode(DEFAULT_MODE);
-    setColorTheme(COLOR_THEMES[DEFAULT_THEME_INDEX]);
-    setLanguage(DEFAULT_LANGUAGE);
-    setRegion(detectDefaultRegion());
-    setLyricsStyle(DEFAULT_LYRICS_STYLE);
-    setShowLyrics(DEFAULT_SHOW_LYRICS);
-    setSelectedDeviceId('');
-    setCurrentSong(null);
-    // Reload can be used to ensure a clean state, but state resetting is usually enough
+    Object.keys(localStorage).forEach(key => {
+      if (key.startsWith(STORAGE_PREFIX)) localStorage.removeItem(key);
+    });
     window.location.reload(); 
   }, []);
 
-  /**
-   * Reset Visual Effects ONLY
-   */
   const resetVisualSettings = useCallback(() => {
     setMode(DEFAULT_MODE);
     setColorTheme(COLOR_THEMES[DEFAULT_THEME_INDEX]);
@@ -173,13 +156,14 @@ const App: React.FC = () => {
 
   const startMicrophone = async (deviceId?: string) => {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ 
+      const constraints: MediaStreamConstraints = { 
         audio: deviceId ? { deviceId: { exact: deviceId } } : {
           echoCancellation: false,
           noiseSuppression: false,
           autoGainControl: false
         } 
-      });
+      };
+      const stream = await navigator.mediaDevices.getUserMedia(constraints);
       const context = new (window.AudioContext || (window as any).webkitAudioContext)();
       const src = context.createMediaStreamSource(stream);
       const node = context.createAnalyser();
@@ -208,7 +192,7 @@ const App: React.FC = () => {
   };
 
   useEffect(() => {
-    if (isListening && selectedDeviceId) {
+    if (isListening) {
       if (mediaStream) mediaStream.getTracks().forEach(t => t.stop());
       startMicrophone(selectedDeviceId);
     }
@@ -243,7 +227,7 @@ const App: React.FC = () => {
     let interval: number;
     if (isListening && mediaStream && showLyrics) {
       performIdentification(mediaStream);
-      interval = window.setInterval(() => performIdentification(mediaStream), 30000);
+      interval = window.setInterval(() => performIdentification(mediaStream), 45000);
     }
     return () => clearInterval(interval);
   }, [isListening, mediaStream, showLyrics, performIdentification]);
@@ -257,7 +241,7 @@ const App: React.FC = () => {
         <div className="max-w-md space-y-8 animate-fade-in-up">
           <h1 className="text-5xl font-black bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500">{t.welcomeTitle}</h1>
           <p className="text-gray-400 text-sm leading-relaxed">{t.welcomeText}</p>
-          <button onClick={() => { setHasStarted(true); startMicrophone(); }} className="px-8 py-4 bg-white text-black font-bold rounded-2xl hover:scale-105 transition-all">{t.startExperience}</button>
+          <button onClick={() => { setHasStarted(true); startMicrophone(selectedDeviceId); }} className="px-8 py-4 bg-white text-black font-bold rounded-2xl hover:scale-105 transition-all">{t.startExperience}</button>
         </div>
       </div>
     );
