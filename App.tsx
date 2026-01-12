@@ -306,23 +306,23 @@ const App: React.FC = () => {
 
         if (result && result.identified) {
            setCurrentSong(result);
-           scheduleIdentificationLoop(rec, 60000, false); // Quota Safety: 60s
+           scheduleIdentificationLoop(rec, 60000, false); 
         } else if (result && !result.identified) {
            // Valid response but song unknown
            if (!isRetry) {
-             scheduleIdentificationLoop(rec, 5000, true); // Retry once quickly (5s)
+             scheduleIdentificationLoop(rec, 10000, true); // Retry once (10s delay to save quota)
            } else {
-             scheduleIdentificationLoop(rec, 30000, false); // Then back off (30s)
+             scheduleIdentificationLoop(rec, 40000, false); // Then back off (40s)
            }
         } else {
            // Result is null -> Error (Network or Quota)
            // Do NOT retry quickly. Back off significantly.
            console.log("Identification failed (API Error), backing off...");
-           scheduleIdentificationLoop(rec, 60000, false); // Quota Safety: 60s
+           scheduleIdentificationLoop(rec, 60000, false); 
         }
       } catch (e) {
         console.error("Identification loop error:", e);
-        scheduleIdentificationLoop(rec, 60000, false); // Quota Safety: 60s
+        scheduleIdentificationLoop(rec, 60000, false); 
       }
     }, delay);
   };

@@ -396,7 +396,7 @@ export class NebulaRenderer implements IVisualizerRenderer {
   private getSprite(color: string): HTMLCanvasElement {
     if (this.spriteCache[color]) return this.spriteCache[color];
 
-    const size = 128; // Sprite resolution
+    const size = 256; // Increased resolution from 128
     const canvas = document.createElement('canvas');
     canvas.width = size;
     canvas.height = size;
@@ -457,7 +457,7 @@ export class NebulaRenderer implements IVisualizerRenderer {
            vx: 0, vy: 0,
            life: isInitialFill ? Math.random() * 800 : 0, 
            maxLife: 800 + Math.random() * 400,
-           size: (80 + Math.random() * 150) * 2, // Larger size for sprites
+           size: (200 + Math.random() * 250) * 2.5, // Increased size substantially
            colorIndex: Math.floor(Math.random() * colors.length), 
            type: 'smoke',
            rotation: Math.random() * Math.PI * 2,

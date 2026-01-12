@@ -1,9 +1,9 @@
 import { VisualizerMode, Region } from './types';
 
-export const APP_VERSION = '1.2.0';
+export const APP_VERSION = '0.1.3';
 
-// Using Pro model for maximum accuracy in audio analysis
-export const GEMINI_MODEL = 'gemini-3-pro-preview';
+// Using Flash model for better quota limits (higher RPM) and speed, while still supporting multimodal input
+export const GEMINI_MODEL = 'gemini-2.5-flash';
 
 export const VISUALIZER_PRESETS = {
   [VisualizerMode.PLASMA]: {
