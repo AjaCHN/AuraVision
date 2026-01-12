@@ -44,9 +44,8 @@ export interface VisualizerSettings {
   autoRotate: boolean;
   rotateInterval: number;
   hideCursor: boolean;
-  // 新增设置项
-  smoothing: number;    // 0.0 - 0.95
-  fftSize: number;     // 256 - 4096
+  smoothing: number;
+  fftSize: number;
   quality: 'low' | 'med' | 'high';
 }
 

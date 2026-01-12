@@ -41,7 +41,7 @@ const Controls: React.FC<ControlsProps> = ({
   const [isExpanded, setIsExpanded] = useState(false);
   const [activeTab, setActiveTab] = useState<TabType>('visual');
   const [showHelp, setShowHelp] = useState(false);
-  const [hoveredHint, setHoveredHint] = useState<string>(''); // 提示状态
+  const [hoveredHint, setHoveredHint] = useState<string>('');
   const t = TRANSLATIONS[language];
 
   const languages: {code: Language, label: string}[] = [
@@ -89,21 +89,29 @@ const Controls: React.FC<ControlsProps> = ({
 
   return (
     <>
-      {/* 识别状态指示器 */}
+      {/* AI 识别状态 */}
       {isIdentifying && (
         <div className="fixed top-8 left-8 z-40 bg-black/40 backdrop-blur-md border border-blue-500/20 rounded-full px-4 py-2 animate-pulse">
            <span className="text-[10px] font-black uppercase tracking-widest text-blue-300">{t.identifying}</span>
         </div>
       )}
 
-      {/* 迷你模式按钮 */}
+      {/* 迷你模式状态栏 */}
       {!isExpanded && (
         <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-30 flex items-center gap-3 bg-black/60 backdrop-blur-xl border border-white/10 rounded-full p-2 pr-6 shadow-2xl animate-fade-in-up">
            <button 
-             onClick={toggleMicrophone} 
-             className={`w-12 h-12 rounded-full flex items-center justify-center transition-all ${isListening ? 'bg-red-500 shadow-lg shadow-red-500/20' : 'bg-white/10 hover:bg-white/20 text-white/40'}`}
+             onClick={isListening ? randomizeSettings : toggleMicrophone} 
+             onMouseEnter={() => setHoveredHint(isListening ? t.hints.randomize : t.hints.mic)}
+             onMouseLeave={() => setHoveredHint('')}
+             className={`w-12 h-12 rounded-full flex items-center justify-center transition-all ${isListening ? 'bg-indigo-600 hover:bg-indigo-500 shadow-lg shadow-indigo-600/20 text-white' : 'bg-white/10 hover:bg-white/20 text-white/40'}`}
            >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" /></svg>
+              {isListening ? (
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+              ) : (
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" /></svg>
+              )}
            </button>
            <button onClick={() => setIsExpanded(true)} className="text-sm font-bold text-white/90 hover:text-white transition-colors flex items-center gap-2">
              <span>{t.showOptions}</span>
@@ -114,10 +122,8 @@ const Controls: React.FC<ControlsProps> = ({
 
       {/* 展开式控制面板 */}
       {isExpanded && (
-        <div className="fixed bottom-0 left-0 w-full z-40 bg-black/90 backdrop-blur-3xl border-t border-white/10 pt-8 pb-10 px-8 animate-fade-in-up">
+        <div className="fixed bottom-0 left-0 w-full z-40 bg-black/75 backdrop-blur-3xl border-t border-white/10 pt-8 pb-8 px-8 animate-fade-in-up">
           <div className="max-w-6xl mx-auto space-y-8">
-            
-            {/* Header: Tabs & Actions */}
             <div className="flex flex-col md:flex-row justify-between items-center gap-6">
               <div className="flex bg-white/5 p-1 rounded-2xl border border-white/5">
                 {(['visual', 'audio', 'ai', 'system'] as TabType[]).map(tab => (
@@ -170,14 +176,13 @@ const Controls: React.FC<ControlsProps> = ({
               </div>
             </div>
 
-            {/* Tab Contents */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 min-h-[160px]">
               
               {activeTab === 'visual' && (
                 <>
                   <div className="space-y-4">
                     <span className="text-[10px] font-black uppercase text-white/30 tracking-widest block">{t.visualizerMode}</span>
-                    <div className="grid grid-cols-2 gap-2 max-h-[120px] overflow-y-auto scrollbar-hide pr-2">
+                    <div className="grid grid-cols-2 gap-2 max-h-[160px] overflow-y-auto custom-scrollbar pr-2">
                        {Object.keys(VISUALIZER_PRESETS).map(m => (
                          <button 
                            key={m} 
@@ -206,21 +211,9 @@ const Controls: React.FC<ControlsProps> = ({
                       ))}
                     </div>
                   </div>
-                  <div className="space-y-3">
+                  <div className="space-y-4">
                     <Slider label={t.speed} hintKey="speed" value={settings.speed} min={0.1} max={3.0} step={0.1} onChange={(v:any) => setSettings({...settings, speed: v})} />
                     
-                    {/* 自动切换选项已从系统页移动到此处 */}
-                    <div 
-                      className="flex items-center justify-between p-3 bg-white/5 rounded-xl border border-white/5"
-                      onMouseEnter={() => setHoveredHint(t.hints.autoRotate)}
-                      onMouseLeave={() => setHoveredHint('')}
-                    >
-                       <span className="text-[10px] font-black uppercase text-white/30 tracking-widest">{t.autoRotate}</span>
-                       <button onClick={() => setSettings({...settings, autoRotate: !settings.autoRotate})} className={`w-10 h-5 rounded-full relative transition-colors ${settings.autoRotate ? 'bg-green-500' : 'bg-white/10'}`}>
-                         <div className={`absolute top-0.5 w-4 h-4 bg-white rounded-full transition-all ${settings.autoRotate ? 'left-5.5' : 'left-0.5'}`} />
-                       </button>
-                    </div>
-
                     <div className="flex gap-2">
                        <button 
                          onClick={() => setSettings({...settings, glow: !settings.glow})} 
@@ -239,6 +232,19 @@ const Controls: React.FC<ControlsProps> = ({
                          {t.trails}
                        </button>
                     </div>
+
+                    <div className="space-y-2 pt-2 border-t border-white/5">
+                        <div 
+                          className="flex items-center justify-between p-3 bg-white/5 rounded-xl border border-white/5"
+                          onMouseEnter={() => setHoveredHint(t.hints.autoRotate)}
+                          onMouseLeave={() => setHoveredHint('')}
+                        >
+                           <span className="text-[10px] font-black uppercase text-white/30 tracking-widest">{t.autoRotate}</span>
+                           <button onClick={() => setSettings({...settings, autoRotate: !settings.autoRotate})} className={`w-10 h-5 rounded-full relative transition-colors ${settings.autoRotate ? 'bg-green-500' : 'bg-white/10'}`}>
+                             <div className={`absolute top-0.5 w-4 h-4 bg-white rounded-full transition-all ${settings.autoRotate ? 'left-5.5' : 'left-0.5'}`} />
+                           </button>
+                        </div>
+                    </div>
                   </div>
                 </>
               )}
@@ -252,7 +258,7 @@ const Controls: React.FC<ControlsProps> = ({
                       onChange={(e) => onDeviceChange(e.target.value)} 
                       onMouseEnter={() => setHoveredHint(t.hints.device)}
                       onMouseLeave={() => setHoveredHint('')}
-                      className="w-full bg-zinc-900 text-xs border border-white/10 rounded-xl px-4 py-3 text-white"
+                      className="w-full bg-black/40 backdrop-blur-md text-xs border border-white/10 rounded-xl px-4 py-3 text-white outline-none focus:border-blue-500/50"
                     >
                        {audioDevices.map(d => <option key={d.deviceId} value={d.deviceId}>{d.label}</option>)}
                     </select>
@@ -308,7 +314,7 @@ const Controls: React.FC<ControlsProps> = ({
                       onChange={(e) => setLyricsStyle(e.target.value as LyricsStyle)} 
                       onMouseEnter={() => setHoveredHint(t.hints.lyricsStyle)}
                       onMouseLeave={() => setHoveredHint('')}
-                      className="w-full bg-zinc-900 text-xs border border-white/10 rounded-xl px-4 py-3 text-white"
+                      className="w-full bg-black/40 backdrop-blur-md text-xs border border-white/10 rounded-xl px-4 py-3 text-white outline-none focus:border-blue-500/50"
                     >
                        {Object.values(LyricsStyle).map(s => <option key={s} value={s}>{t.lyricsStyles[s]}</option>)}
                     </select>
@@ -320,7 +326,7 @@ const Controls: React.FC<ControlsProps> = ({
                       onChange={(e) => setRegion(e.target.value as Region)} 
                       onMouseEnter={() => setHoveredHint(t.hints.region)}
                       onMouseLeave={() => setHoveredHint('')}
-                      className="w-full bg-zinc-900 text-xs border border-white/10 rounded-xl px-4 py-3 text-white"
+                      className="w-full bg-black/40 backdrop-blur-md text-xs border border-white/10 rounded-xl px-4 py-3 text-white outline-none focus:border-blue-500/50"
                     >
                        {Object.entries(REGION_NAMES).map(([val, name]) => <option key={val} value={val}>{name}</option>)}
                     </select>
@@ -335,7 +341,7 @@ const Controls: React.FC<ControlsProps> = ({
                     <select 
                       value={language} 
                       onChange={(e) => setLanguage(e.target.value as Language)} 
-                      className="w-full bg-zinc-900 text-xs border border-white/10 rounded-xl px-4 py-3 text-white"
+                      className="w-full bg-black/40 backdrop-blur-md text-xs border border-white/10 rounded-xl px-4 py-3 text-white outline-none"
                     >
                        {languages.map(l => <option key={l.code} value={l.code}>{l.label}</option>)}
                     </select>
@@ -351,13 +357,16 @@ const Controls: React.FC<ControlsProps> = ({
 
                   <div className="space-y-4 md:col-span-2">
                     <span className="text-[10px] font-black uppercase text-white/30 tracking-widest block">{t.appInfo}</span>
-                    <div className="bg-white/5 border border-white/5 p-4 rounded-2xl space-y-3">
-                       <p className="text-xs text-white/60 leading-relaxed">
-                          {t.appDescription}
+                    <div className="bg-white/5 border border-white/10 p-6 rounded-2xl space-y-4">
+                       <p className="text-sm text-white/70 leading-relaxed italic">
+                          "{t.appDescription}"
                        </p>
-                       <div className="flex justify-between items-center pt-2 border-t border-white/5">
-                          <span className="text-[10px] font-black uppercase text-white/20 tracking-widest">{t.version}</span>
-                          <span className="text-xs font-mono text-blue-400/80">{APP_VERSION}</span>
+                       <div className="flex justify-between items-center pt-4 border-t border-white/10">
+                          <div className="flex items-center gap-2">
+                             <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+                             <span className="text-[10px] font-black uppercase text-white/40 tracking-widest">{t.version}</span>
+                          </div>
+                          <span className="text-xs font-mono text-blue-400 font-bold bg-blue-400/10 px-2 py-0.5 rounded-lg border border-blue-400/20">{APP_VERSION}</span>
                        </div>
                     </div>
                   </div>
@@ -366,10 +375,10 @@ const Controls: React.FC<ControlsProps> = ({
 
             </div>
 
-            {/* 动态状态提示栏 (Hint Bar) */}
-            <div className="pt-6 border-t border-white/5 h-10 flex items-center justify-center">
-               <p className="text-[11px] font-medium text-white/20 tracking-wide uppercase text-center italic transition-all duration-300">
-                  {hoveredHint || 'SonicVision AI - Realtime Generative Visuals'}
+            {/* 优化后的工具提示区域 */}
+            <div className="pt-6 border-t border-white/5 h-12 flex items-center justify-center overflow-hidden">
+               <p className={`text-xs font-bold tracking-[0.2em] uppercase text-center transition-all duration-300 ${hoveredHint ? 'text-blue-400 opacity-100 -translate-y-1 scale-105' : 'text-white/20 opacity-40 translate-y-0'}`}>
+                  {hoveredHint || 'SonicVision AI • Interactive Generative Audio'}
                </p>
             </div>
           </div>

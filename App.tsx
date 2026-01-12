@@ -37,8 +37,6 @@ const App: React.FC = () => {
   const [audioDevices, setAudioDevices] = useState<AudioDevice[]>([]);
   const [selectedDeviceId, setSelectedDeviceId] = useState<string>('');
 
-  const wakeLockRef = useRef<any>(null);
-
   const getStorage = <T,>(key: string, fallback: T): T => {
     if (typeof window === 'undefined') return fallback;
     const saved = localStorage.getItem(key);
@@ -72,7 +70,6 @@ const App: React.FC = () => {
   const [region, setRegion] = useState<Region>(() => getStorage('sv_region', detectDefaultRegion()));
 
   useEffect(() => {
-    // 实时更新分析器参数
     if (analyser) {
       analyser.smoothingTimeConstant = settings.smoothing;
       if (analyser.fftSize !== settings.fftSize) {
@@ -99,6 +96,26 @@ const App: React.FC = () => {
     };
     fetchDevices();
   }, []);
+
+  const randomizeSettings = useCallback(() => {
+    const themes = COLOR_THEMES;
+    setColorTheme(themes[Math.floor(Math.random() * themes.length)]);
+    const modes = Object.values(VisualizerMode);
+    setMode(modes[Math.floor(Math.random() * modes.length)]);
+  }, []);
+
+  // Handle Auto Rotate logic simplified
+  useEffect(() => {
+    let interval: number | undefined;
+    if (isListening && settings.autoRotate) {
+      interval = window.setInterval(() => {
+        const modes = Object.values(VisualizerMode);
+        const nextIndex = (modes.indexOf(mode) + 1) % modes.length;
+        setMode(modes[nextIndex]);
+      }, settings.rotateInterval * 1000);
+    }
+    return () => clearInterval(interval);
+  }, [isListening, settings.autoRotate, settings.rotateInterval, mode]);
 
   const startMicrophone = async (deviceId?: string) => {
     try {
@@ -206,12 +223,7 @@ const App: React.FC = () => {
         lyricsStyle={lyricsStyle} setLyricsStyle={setLyricsStyle} showLyrics={showLyrics} setShowLyrics={setShowLyrics}
         language={language} setLanguage={setLanguage} region={region} setRegion={setRegion}
         settings={settings} setSettings={setSettings} resetSettings={() => setSettings(DEFAULT_SETTINGS)}
-        randomizeSettings={() => {
-          const themes = COLOR_THEMES;
-          setColorTheme(themes[Math.floor(Math.random() * themes.length)]);
-          const modes = Object.values(VisualizerMode);
-          setMode(modes[Math.floor(Math.random() * modes.length)]);
-        }}
+        randomizeSettings={randomizeSettings}
         audioDevices={audioDevices} selectedDeviceId={selectedDeviceId} onDeviceChange={setSelectedDeviceId}
       />
     </div>
