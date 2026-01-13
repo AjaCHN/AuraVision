@@ -211,24 +211,64 @@ export class SmokeRenderer implements IVisualizerRenderer {
     source: 'top' | 'bottom';
   }> = [];
 
-  init() { this.particles = []; }
+  private spriteCache: Record<string, HTMLCanvasElement> = {};
+
+  init() { 
+    this.particles = []; 
+    this.spriteCache = {};
+  }
+
+  // Pre-render the radial gradient for performance
+  private getSprite(color: string): HTMLCanvasElement {
+    if (this.spriteCache[color]) return this.spriteCache[color];
+
+    const size = 128; // Standard size for texture
+    const canvas = document.createElement('canvas');
+    canvas.width = size;
+    canvas.height = size;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return canvas;
+
+    const centerX = size / 2;
+    const centerY = size / 2;
+    const radius = size / 2;
+
+    const g = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, radius);
+    g.addColorStop(0, color);
+    g.addColorStop(1, 'transparent');
+    
+    ctx.fillStyle = g;
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+    ctx.fill();
+
+    this.spriteCache[color] = canvas;
+    return canvas;
+  }
 
   draw(ctx: CanvasRenderingContext2D, data: Uint8Array, w: number, h: number, colors: string[], settings: VisualizerSettings, rotation: number) {
+    if (colors.length === 0) return;
+    
     // Audio analysis
     const bass = getAverage(data, 0, 10) / 255;
     const mids = getAverage(data, 10, 50) / 255;
 
     // Emission
-    // Base emission + reactive emission
-    const spawnRate = 1 + Math.floor(bass * 5 * settings.sensitivity);
-    for (let i = 0; i < spawnRate; i++) {
-        // Spawn from top
-        if (Math.random() > 0.5) {
-            this.particles.push(this.createParticle(w, h, 'top', colors, settings));
-        }
-        // Spawn from bottom
-        else {
-            this.particles.push(this.createParticle(w, h, 'bottom', colors, settings));
+    // Reduced emission rate for better performance
+    // Max 2 particles per frame instead of potentially 6+
+    const spawnRate = 1 + Math.floor(bass * 3 * settings.sensitivity); 
+    const maxParticles = 200; // Reduced from 400 to prevent fill-rate bottleneck
+
+    if (this.particles.length < maxParticles) {
+        for (let i = 0; i < spawnRate; i++) {
+            // Spawn from top
+            if (Math.random() > 0.5) {
+                this.particles.push(this.createParticle(w, h, 'top', colors, settings));
+            }
+            // Spawn from bottom
+            else {
+                this.particles.push(this.createParticle(w, h, 'bottom', colors, settings));
+            }
         }
     }
 
@@ -264,22 +304,18 @@ export class SmokeRenderer implements IVisualizerRenderer {
         // Draw
         const alpha = Math.min(1, p.life / 100) * 0.15; // Low opacity for subtle smoke
         
-        ctx.beginPath();
-        const g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.size);
-        g.addColorStop(0, p.color);
-        g.addColorStop(1, 'transparent');
-        ctx.fillStyle = g;
+        // Performance Optimization: Use drawImage with pre-cached sprite instead of createRadialGradient
+        const sprite = this.getSprite(p.color);
         ctx.globalAlpha = alpha;
-        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-        ctx.fill();
+        
+        // Draw the sprite centered at p.x, p.y with dimensions p.size * 2
+        // We multiply by 2 because size is radius
+        ctx.drawImage(sprite, p.x - p.size, p.y - p.size, p.size * 2, p.size * 2);
     }
     
     // Reset context
     ctx.globalCompositeOperation = 'source-over';
     ctx.globalAlpha = 1;
-    
-    // Safety limit
-    if (this.particles.length > 400) this.particles.shift();
   }
 
   private createParticle(w: number, h: number, source: 'top' | 'bottom', colors: string[], settings: VisualizerSettings) {
@@ -293,8 +329,9 @@ export class SmokeRenderer implements IVisualizerRenderer {
           vx: (Math.random() - 0.5) * 0.5,
           vy: vy * (1 + Math.random()),
           size,
-          life: 300 + Math.random() * 200,
-          maxLife: 500,
+          // Slightly reduced life duration to keep particle count in check
+          life: 200 + Math.random() * 200, 
+          maxLife: 400,
           color,
           source
       };
