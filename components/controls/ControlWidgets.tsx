@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 
@@ -59,7 +58,7 @@ export const FloatingTooltip = ({ text, visible, anchorRef }: TooltipProps) => {
   );
 };
 
-export const TooltipArea = ({ children, text }: { children: React.ReactNode, text: string }) => {
+export const TooltipArea = ({ children, text }: { children?: React.ReactNode, text: string }) => {
   const [isHovered, setIsHovered] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   

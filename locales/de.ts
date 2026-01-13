@@ -87,6 +87,14 @@ export const de = {
   textSize: 'Schriftgröße',
   textRotation: 'Drehung',
   textFont: 'Schriftart',
+  system: {
+    shortcuts: {
+      mic: 'Mikro',
+      ui: 'UI',
+      mode: 'Modus',
+      random: 'Zufall'
+    }
+  },
   errors: {
     title: 'Audio-Fehler',
     accessDenied: 'Zugriff verweigert. Bitte überprüfen Sie Ihre Browser-Berechtigungen.',

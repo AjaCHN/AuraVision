@@ -87,6 +87,14 @@ export const es = {
   textSize: 'Tamaño de Fuente',
   textRotation: 'Rotación',
   textFont: 'Fuente',
+  system: {
+    shortcuts: {
+      mic: 'Mic',
+      ui: 'Interfaz',
+      mode: 'Modo',
+      random: 'Aleatorio'
+    }
+  },
   errors: {
     title: 'Error de Audio',
     accessDenied: 'Acceso denegado. Por favor revisa los permisos del micrófono.',

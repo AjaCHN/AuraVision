@@ -87,6 +87,14 @@ export const zh = {
   textSize: '字体大小',
   textRotation: '旋转角度',
   textFont: '字体样式',
+  system: {
+    shortcuts: {
+      mic: '麦克风',
+      ui: '界面',
+      mode: '模式',
+      random: '随机'
+    }
+  },
   errors: {
     title: '音频错误',
     accessDenied: '无法访问麦克风，请检查浏览器权限。',

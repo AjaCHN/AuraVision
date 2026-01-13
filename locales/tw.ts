@@ -4,6 +4,7 @@ import { VisualizerMode, LyricsStyle } from '../types';
 export const tw = {
   tabs: {
     visual: '視覺',
+    text: '文字',
     audio: '音訊',
     ai: '曲目辨識',
     system: '系統'
@@ -86,6 +87,14 @@ export const tw = {
   textSize: '字體大小',
   textRotation: '旋轉角度',
   textFont: '字體樣式',
+  system: {
+    shortcuts: {
+      mic: '麥克風',
+      ui: '介面',
+      mode: '模式',
+      random: '隨機'
+    }
+  },
   errors: {
     title: '音訊錯誤',
     accessDenied: '無法存取麥克風，請檢查瀏覽器權限。',

@@ -87,6 +87,14 @@ export const ko = {
   textSize: '글꼴 크기',
   textRotation: '회전',
   textFont: '글꼴',
+  system: {
+    shortcuts: {
+      mic: '마이크',
+      ui: 'UI',
+      mode: '모드',
+      random: '랜덤'
+    }
+  },
   errors: {
     title: '오디오 오류',
     accessDenied: '접근이 거부되었습니다. 마이크 권한을 확인해주세요.',

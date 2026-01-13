@@ -87,6 +87,14 @@ export const ja = {
   textSize: 'フォントサイズ',
   textRotation: '回転角度',
   textFont: 'フォントファミリー',
+  system: {
+    shortcuts: {
+      mic: 'マイク',
+      ui: 'UI',
+      mode: 'モード',
+      random: 'ランダム'
+    }
+  },
   errors: {
     title: 'オーディオエラー',
     accessDenied: 'アクセスが拒否されました。マイクの権限を確認してください。',

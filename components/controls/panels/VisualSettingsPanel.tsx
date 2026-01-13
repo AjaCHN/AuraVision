@@ -20,11 +20,11 @@ export const VisualSettingsPanel: React.FC<VisualSettingsPanelProps> = ({
 }) => {
   return (
     <>
-      <div className="flex flex-col p-3 h-full overflow-hidden border-b lg:border-b-0 lg:border-r border-white/5">
-        <span className="text-[9px] font-black uppercase text-white/50 tracking-[0.25em] block ml-1 mb-2 flex-shrink-0">{t.visualizerMode}</span>
+      <div className="flex flex-col p-2 h-full overflow-hidden border-b lg:border-b-0 lg:border-r border-white/5">
+        <span className="text-[9px] font-black uppercase text-white/50 tracking-[0.25em] block ml-1 mb-1 flex-shrink-0">{t.visualizerMode}</span>
         <div className="grid grid-cols-2 gap-1 flex-1 overflow-y-auto custom-scrollbar p-0 pr-1">
            {Object.keys(VISUALIZER_PRESETS).map(m => (
-             <button key={m} onClick={() => setMode(m as VisualizerMode)} className={`px-2 py-1.5 rounded-md text-[9px] font-black uppercase tracking-widest border transition-all duration-300 ${currentMode === m ? 'bg-white/20 border-white/40 text-white shadow-[inset_0_2px_10px_rgba(255,255,255,0.05)]' : 'bg-white/[0.04] border-transparent text-white/40 hover:text-white hover:bg-white/[0.08]'}`}>
+             <button key={m} onClick={() => setMode(m as VisualizerMode)} className={`px-2 py-1 rounded-md text-[9px] font-black uppercase tracking-widest border transition-all duration-300 ${currentMode === m ? 'bg-white/20 border-white/40 text-white shadow-[inset_0_2px_10px_rgba(255,255,255,0.05)]' : 'bg-white/[0.04] border-transparent text-white/40 hover:text-white hover:bg-white/[0.08]'}`}>
                {t.modes[m as VisualizerMode]}
              </button>
            ))}

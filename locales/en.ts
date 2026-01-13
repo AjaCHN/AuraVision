@@ -87,6 +87,14 @@ export const en = {
   textSize: 'Font Size',
   textRotation: 'Rotation',
   textFont: 'Font Family',
+  system: {
+    shortcuts: {
+      mic: 'Mic',
+      ui: 'UI',
+      mode: 'Mode',
+      random: 'Random'
+    }
+  },
   errors: {
     title: 'Audio Error',
     accessDenied: 'Access denied. Please check your browser permissions for microphone.',

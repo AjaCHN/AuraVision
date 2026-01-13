@@ -66,19 +66,19 @@ export const SystemSettingsPanel: React.FC<SystemSettingsPanelProps> = ({
              <h4 className="text-[9px] font-black text-purple-400 uppercase tracking-widest ml-1">{h.shortcutsTitle}</h4>
              <div className="grid grid-cols-2 gap-2">
                 <div className="bg-white/[0.02] p-2 rounded-lg border border-white/5 flex justify-between items-center">
-                   <span className="text-[9px] text-white/50">Mic</span>
+                   <span className="text-[9px] text-white/50">{t.system.shortcuts.mic}</span>
                    <kbd className="text-[9px] font-mono bg-white/10 px-1 rounded text-white/80">Space</kbd>
                 </div>
                 <div className="bg-white/[0.02] p-2 rounded-lg border border-white/5 flex justify-between items-center">
-                   <span className="text-[9px] text-white/50">UI</span>
+                   <span className="text-[9px] text-white/50">{t.system.shortcuts.ui}</span>
                    <kbd className="text-[9px] font-mono bg-white/10 px-1 rounded text-white/80">H</kbd>
                 </div>
                 <div className="bg-white/[0.02] p-2 rounded-lg border border-white/5 flex justify-between items-center">
-                   <span className="text-[9px] text-white/50">Mode</span>
+                   <span className="text-[9px] text-white/50">{t.system.shortcuts.mode}</span>
                    <kbd className="text-[9px] font-mono bg-white/10 px-1 rounded text-white/80">← →</kbd>
                 </div>
                 <div className="bg-white/[0.02] p-2 rounded-lg border border-white/5 flex justify-between items-center">
-                   <span className="text-[9px] text-white/50">Random</span>
+                   <span className="text-[9px] text-white/50">{t.system.shortcuts.random}</span>
                    <kbd className="text-[9px] font-mono bg-white/10 px-1 rounded text-white/80">R</kbd>
                 </div>
              </div>

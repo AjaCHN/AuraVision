@@ -87,6 +87,14 @@ export const fr = {
   textSize: 'Taille de la police',
   textRotation: 'Rotation',
   textFont: 'Police',
+  system: {
+    shortcuts: {
+      mic: 'Micro',
+      ui: 'UI',
+      mode: 'Mode',
+      random: 'Aléatoire'
+    }
+  },
   errors: {
     title: 'Erreur Audio',
     accessDenied: 'Accès refusé. Veuillez vérifier les permissions de votre navigateur.',
