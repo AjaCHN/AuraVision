@@ -336,7 +336,8 @@ const App: React.FC = () => {
         };
       };
       recorder.start();
-      setTimeout(() => recorder.state === 'recording' && recorder.stop(), 5000); 
+      // Increase recording duration to 7 seconds for better identification
+      setTimeout(() => recorder.state === 'recording' && recorder.stop(), 7000); 
     } catch (e) {
       setIsIdentifying(false);
     }

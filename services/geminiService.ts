@@ -31,31 +31,33 @@ export const identifySongFromAudio = async (
   // 2. 调用 Gemini API
   const callGemini = async (retryCount = 0): Promise<SongInfo | null> => {
     try {
-        // 必须在调用前新建实例以保证使用最新的 API Key
         const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
         
-        let langContext = 'Output mood in English. Use original language for title and artist.';
-        
+        let outputInstruction = 'Output mood in English.';
         if (language === 'zh') {
-             langContext = '请使用简体中文输出 mood 字段。对于中文歌曲，title 和 artist 必须使用汉字。';
+             outputInstruction = 'Output mood in Simplified Chinese. For Chinese songs, use Chinese characters for Title/Artist.';
         } else if (language === 'tw') {
-             langContext = '請使用繁體中文輸出 mood 欄位。對於中文歌曲，title 和 artist 必須使用繁體漢字。';
+             outputInstruction = 'Output mood in Traditional Chinese. For Chinese songs, use Traditional Chinese characters.';
         }
 
-        let regionContext = '';
-        if (region !== 'global') {
-           const regionName = REGION_NAMES[region] || region;
-           regionContext = `CONTEXT: User is currently in the "${regionName}" music market.`;
-        }
+        const regionName = region === 'global' ? 'Global' : (REGION_NAMES[region] || region);
 
+        // 将地区信息注入系统指令，以辅助搜索定位
         const systemInstruction = `You are a world-class Music Identification Expert.
-        STEPS:
-        1. Listen to the provided audio clip (vocals, melody, instruments).
-        2. Transcribe clear lyrics if heard.
-        3. Use GOOGLE SEARCH to confirm the exact Title, Artist, and most common lyrics.
-        4. Detect the overall vibe/mood of the music.
         
-        If it's ambient noise or no music is detected, set "identified" to false.
+        CONTEXT:
+        - User Location: ${regionName}
+        - Task: Identify the song from the audio clip.
+        
+        INSTRUCTIONS:
+        1. Listen to the audio clip (melody, lyrics, instrumentation).
+        2. Use the "googleSearch" tool to search for lyrics or audio fingerprints to confirm the EXACT Title and Artist.
+        3. **IMPORTANT**: Prioritize songs that are popular or trending in the "${regionName}" market.
+        4. Detect the mood (e.g., Energetic, Melancholic, Chill).
+        5. ${outputInstruction}
+        6. Return strictly JSON.
+
+        If no music is detected or it cannot be identified, set "identified" to false.
         `;
 
         const response = await ai.models.generateContent({
@@ -69,7 +71,7 @@ export const identifySongFromAudio = async (
                 }
               },
               {
-                text: `Identify this song. ${regionContext} ${langContext}`
+                text: "Identify this song."
               }
             ]
           },
@@ -77,24 +79,32 @@ export const identifySongFromAudio = async (
             tools: [{ googleSearch: {} }],
             systemInstruction: systemInstruction,
             responseMimeType: "application/json",
-            // 最佳实践：使用 responseSchema 确保输出结构
             responseSchema: {
               type: Type.OBJECT,
               properties: {
                 title: { type: Type.STRING, description: "The track name" },
                 artist: { type: Type.STRING, description: "The artist or band name" },
-                lyricsSnippet: { type: Type.STRING, description: "Approximately 4-6 lines of lyrics without timestamps" },
-                mood: { type: Type.STRING, description: "One or two words describing the musical vibe" },
-                identified: { type: Type.BOOLEAN, description: "Whether a song was successfully identified" }
+                lyricsSnippet: { type: Type.STRING, description: "4-6 lines of lyrics" },
+                mood: { type: Type.STRING, description: "Musical vibe" },
+                identified: { type: Type.BOOLEAN, description: "Success status" }
               },
               required: ["title", "artist", "identified"]
             }
           }
         });
 
-        if (!response.text) return null;
+        if (!response.text) {
+            console.warn("[Recognition] Empty response from Gemini.");
+            return null;
+        }
         
-        let songInfo: SongInfo = JSON.parse(response.text.trim());
+        let songInfo: SongInfo;
+        try {
+            songInfo = JSON.parse(response.text.trim());
+        } catch (e) {
+            console.error("[Recognition] Failed to parse JSON", response.text);
+            return null;
+        }
 
         // 提取搜索来源 URL 以展示给用户
         const groundingChunks = response.candidates?.[0]?.groundingMetadata?.groundingChunks;
@@ -110,7 +120,7 @@ export const identifySongFromAudio = async (
 
     } catch (error: any) {
         console.error("Gemini API Identification Error:", error);
-        if (retryCount < 1) { // 失败重试一次
+        if (retryCount < 1) { 
              await new Promise(r => setTimeout(r, 2000)); 
              return callGemini(retryCount + 1);
         }
@@ -120,7 +130,7 @@ export const identifySongFromAudio = async (
 
   const aiResult = await callGemini();
 
-  // 3. 只有当真正识别到歌曲且有指纹时才缓存
+  // 3. 缓存结果
   if (aiResult && aiResult.identified && features.length > 0) {
       saveToLocalCache(features, aiResult);
   }
