@@ -19,7 +19,7 @@ export const AudioSettingsPanel: React.FC<AudioSettingsPanelProps> = ({
 }) => {
   return (
     <>
-      <div className="bg-white/[0.04] rounded-[2rem] p-8 space-y-8 shadow-2xl">
+      <div className="p-6 space-y-6 border-b lg:border-b-0 lg:border-r border-white/10">
         <CustomSelect 
           label={t.audioInput} 
           value={selectedDeviceId} 
@@ -43,13 +43,13 @@ export const AudioSettingsPanel: React.FC<AudioSettingsPanelProps> = ({
             activeColor="red"
         />
       </div>
-      <div className="bg-white/[0.04] rounded-[2rem] p-8 space-y-10 shadow-2xl">
+      <div className="p-6 space-y-8 border-b lg:border-b-0 lg:border-r border-white/10">
         <Slider label={t.sensitivity} hintText={t.hints.sensitivity} value={settings.sensitivity} min={0.5} max={4.0} step={0.1} onChange={(v:any) => setSettings({...settings, sensitivity: v})} />
         <Slider label={t.smoothing} hintText={t.hints.smoothing} value={settings.smoothing} min={0} max={0.95} step={0.01} onChange={(v:any) => setSettings({...settings, smoothing: v})} />
         
       </div>
       <TooltipArea text={t.hints.fftSize}>
-        <div className="bg-white/[0.04] rounded-[2rem] p-8 space-y-6 shadow-2xl">
+        <div className="p-6 space-y-6 h-full">
           <span className="text-[11px] font-black uppercase text-white/50 tracking-[0.25em] block ml-1">{t.fftSize}</span>
           <div className="grid grid-cols-2 gap-3">
             {[512, 1024, 2048, 4096].map(size => (

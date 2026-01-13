@@ -16,7 +16,7 @@ export const SystemSettingsPanel: React.FC<SystemSettingsPanelProps> = ({
 }) => {
   return (
     <>
-      <div className="bg-white/[0.04] rounded-[2rem] p-8 space-y-8 shadow-2xl">
+      <div className="p-6 space-y-8 border-b lg:border-b-0 lg:border-r border-white/10">
         <CustomSelect 
           label={t.language} 
           value={language} 
@@ -34,7 +34,7 @@ export const SystemSettingsPanel: React.FC<SystemSettingsPanelProps> = ({
           onChange={(val) => setLanguage(val as Language)} 
         />
       </div>
-      <div className="bg-white/[0.04] rounded-[2rem] p-8 space-y-6 shadow-2xl flex flex-col justify-center">
+      <div className="p-6 space-y-6 flex flex-col justify-center">
           <button onClick={resetSettings} className="w-full py-5 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400 font-bold text-xs uppercase tracking-widest hover:bg-red-500/20 transition-all">
           {t.reset}
           </button>

@@ -20,9 +20,8 @@ export const VisualSettingsPanel: React.FC<VisualSettingsPanelProps> = ({
 }) => {
   return (
     <>
-      <div className="flex flex-col bg-white/[0.04] rounded-[2rem] p-8 h-full shadow-2xl overflow-hidden">
-        <span className="text-[11px] font-black uppercase text-white/50 tracking-[0.25em] block ml-1 mb-6 flex-shrink-0">{t.visualizerMode}</span>
-        {/* Optimized: Use flex-1 to fill available height instead of fixed max-h */}
+      <div className="flex flex-col p-5 h-full overflow-hidden border-b lg:border-b-0 lg:border-r border-white/10">
+        <span className="text-[11px] font-black uppercase text-white/50 tracking-[0.25em] block ml-1 mb-4 flex-shrink-0">{t.visualizerMode}</span>
         <div className="grid grid-cols-2 gap-3 flex-1 overflow-y-auto custom-scrollbar p-1 pr-2">
            {Object.keys(VISUALIZER_PRESETS).map(m => (
              <button key={m} onClick={() => setMode(m as VisualizerMode)} className={`px-4 py-4 rounded-xl text-[10px] font-black uppercase tracking-widest border transition-all duration-300 ${currentMode === m ? 'bg-white/20 border-white/40 text-white shadow-[inset_0_2px_10px_rgba(255,255,255,0.05)]' : 'bg-white/[0.04] border-transparent text-white/40 hover:text-white hover:bg-white/[0.08]'}`}>
@@ -32,9 +31,8 @@ export const VisualSettingsPanel: React.FC<VisualSettingsPanelProps> = ({
         </div>
       </div>
       
-      <div className="flex flex-col bg-white/[0.04] rounded-[2rem] p-8 h-full shadow-2xl overflow-hidden">
-        <span className="text-[11px] font-black uppercase text-white/50 tracking-[0.25em] block ml-1 mb-6 flex-shrink-0">{t.styleTheme}</span>
-        {/* Optimized: Use flex-1 to fill available height */}
+      <div className="flex flex-col p-5 h-full overflow-hidden border-b lg:border-b-0 lg:border-r border-white/10">
+        <span className="text-[11px] font-black uppercase text-white/50 tracking-[0.25em] block ml-1 mb-4 flex-shrink-0">{t.styleTheme}</span>
         <div className="flex flex-wrap gap-4 p-2 flex-1 overflow-y-auto custom-scrollbar content-start">
           {COLOR_THEMES.map((theme, i) => (
             <button key={i} onClick={() => setColorTheme(theme)} className={`w-10 h-10 rounded-full border-2 flex-shrink-0 transition-all duration-300 hover:scale-110 overflow-hidden ${JSON.stringify(colorTheme) === JSON.stringify(theme) ? 'border-white/80 scale-110 shadow-[0_0_20px_rgba(255,255,255,0.3)]' : 'border-transparent opacity-60 hover:opacity-100'}`} style={{background: `linear-gradient(135deg, ${theme[0]}, ${theme[1]})` }} />
@@ -42,7 +40,8 @@ export const VisualSettingsPanel: React.FC<VisualSettingsPanelProps> = ({
         </div>
       </div>
       
-      <div className="flex flex-col bg-white/[0.04] rounded-[2rem] p-8 h-full space-y-6 shadow-2xl overflow-y-auto custom-scrollbar">
+      {/* Removed h-full and overflow-y-auto to allow content to dictate grid height */}
+      <div className="flex flex-col p-5 space-y-5">
         <div className="space-y-6 pb-6 border-b border-white/10">
           <Slider label={t.speed} hintText={t.hints.speed} value={settings.speed} min={0.1} max={3.0} step={0.1} onChange={(v:any) => setSettings({...settings, speed: v})} />
           
@@ -70,8 +69,7 @@ export const VisualSettingsPanel: React.FC<VisualSettingsPanelProps> = ({
           </div>
         </div>
 
-        <div className="space-y-6 pt-4">
-          {/* Sliding Switch for Auto Rotate */}
+        <div className="space-y-6 pt-2">
           <SettingsToggle 
             label={t.autoRotate} 
             statusText={settings.autoRotate ? `${settings.rotateInterval}s` : 'DISABLED'}
@@ -91,7 +89,6 @@ export const VisualSettingsPanel: React.FC<VisualSettingsPanelProps> = ({
             />
           </SettingsToggle>
 
-          {/* Sliding Switch for Cycle Colors */}
           <SettingsToggle 
             label={t.cycleColors} 
             statusText={settings.cycleColors ? `${settings.colorInterval}s` : 'DISABLED'}

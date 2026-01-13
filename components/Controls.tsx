@@ -199,9 +199,9 @@ const Controls: React.FC<ControlsProps> = ({
         <div 
           className={`fixed bottom-0 left-0 w-full z-40 bg-[#08080a]/95 backdrop-blur-[100px] border-t border-white/10 transition-all duration-700 shadow-[0_-25px_100px_rgba(0,0,0,0.9)] opacity-100`}
         >
-          <div className="max-h-[85vh] overflow-y-auto custom-scrollbar pt-10 pb-32 px-10">
-            <div className="max-w-6xl mx-auto space-y-12">
-              <div className="flex flex-col md:flex-row justify-between items-center gap-8 border-b border-white/10 pb-10">
+          <div className="max-h-[85vh] overflow-y-auto custom-scrollbar pt-6 pb-20 px-6">
+            <div className="max-w-6xl mx-auto space-y-8">
+              <div className="flex flex-col md:flex-row justify-between items-center gap-8 border-b border-white/10 pb-6">
                 <div className="flex bg-white/[0.04] p-1 rounded-2xl overflow-x-auto max-w-full scrollbar-hide gap-1 mask-fade-right">
                   {(['visual', 'audio', 'ai', 'system'] as TabType[]).map(tab => (
                     <button 
@@ -224,50 +224,52 @@ const Controls: React.FC<ControlsProps> = ({
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 items-stretch">
-                {activeTab === 'visual' && (
-                  <VisualSettingsPanel 
-                    currentMode={currentMode}
-                    setMode={setMode}
-                    colorTheme={colorTheme}
-                    setColorTheme={setColorTheme}
-                    settings={settings}
-                    setSettings={setSettings}
-                    resetVisualSettings={resetVisualSettings}
-                    t={t}
-                  />
-                )}
-                {activeTab === 'audio' && (
-                  <AudioSettingsPanel 
-                    settings={settings}
-                    setSettings={setSettings}
-                    audioDevices={audioDevices}
-                    selectedDeviceId={selectedDeviceId}
-                    onDeviceChange={onDeviceChange}
-                    toggleMicrophone={toggleMicrophone}
-                    isListening={isListening}
-                    t={t}
-                  />
-                )}
-                {activeTab === 'ai' && (
-                  <AiSettingsPanel 
-                    showLyrics={showLyrics}
-                    setShowLyrics={setShowLyrics}
-                    lyricsStyle={lyricsStyle}
-                    setLyricsStyle={setLyricsStyle}
-                    region={region}
-                    setRegion={setRegion}
-                    t={t}
-                  />
-                )}
-                {activeTab === 'system' && (
-                  <SystemSettingsPanel 
-                    language={language}
-                    setLanguage={setLanguage}
-                    resetSettings={resetSettings}
-                    t={t}
-                  />
-                )}
+              <div className="bg-white/[0.02] border border-white/10 rounded-3xl overflow-hidden shadow-2xl backdrop-blur-sm min-h-[320px]">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-0 items-stretch">
+                  {activeTab === 'visual' && (
+                    <VisualSettingsPanel 
+                      currentMode={currentMode}
+                      setMode={setMode}
+                      colorTheme={colorTheme}
+                      setColorTheme={setColorTheme}
+                      settings={settings}
+                      setSettings={setSettings}
+                      resetVisualSettings={resetVisualSettings}
+                      t={t}
+                    />
+                  )}
+                  {activeTab === 'audio' && (
+                    <AudioSettingsPanel 
+                      settings={settings}
+                      setSettings={setSettings}
+                      audioDevices={audioDevices}
+                      selectedDeviceId={selectedDeviceId}
+                      onDeviceChange={onDeviceChange}
+                      toggleMicrophone={toggleMicrophone}
+                      isListening={isListening}
+                      t={t}
+                    />
+                  )}
+                  {activeTab === 'ai' && (
+                    <AiSettingsPanel 
+                      showLyrics={showLyrics}
+                      setShowLyrics={setShowLyrics}
+                      lyricsStyle={lyricsStyle}
+                      setLyricsStyle={setLyricsStyle}
+                      region={region}
+                      setRegion={setRegion}
+                      t={t}
+                    />
+                  )}
+                  {activeTab === 'system' && (
+                    <SystemSettingsPanel 
+                      language={language}
+                      setLanguage={setLanguage}
+                      resetSettings={resetSettings}
+                      t={t}
+                    />
+                  )}
+                </div>
               </div>
             </div>
           </div>
