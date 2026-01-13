@@ -1,50 +1,10 @@
 
-import React from 'react';
+import React, { useRef } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { EffectComposer, Bloom, ChromaticAberration, TiltShift } from '@react-three/postprocessing';
 import * as THREE from 'three';
 import { VisualizerMode, VisualizerSettings } from '../types';
 import { SilkWavesScene, LiquidSphereScene, LowPolyTerrainScene } from './ThreeScenes';
-
-// Add global JSX augmentation to ensure Three.js intrinsic elements are recognized by the TypeScript compiler.
-declare global {
-  namespace JSX {
-    interface IntrinsicElements {
-      mesh: any;
-      pointLight: any;
-      spotLight: any;
-      ambientLight: any;
-      primitive: any;
-      meshPhysicalMaterial: any;
-      color: any;
-      directionalLight: any;
-      fog: any;
-      circleGeometry: any;
-      meshBasicMaterial: any;
-      meshStandardMaterial: any;
-    }
-  }
-
-  // Augment React.JSX namespace for compatibility with newer React types
-  namespace React {
-    namespace JSX {
-      interface IntrinsicElements {
-        mesh: any;
-        pointLight: any;
-        spotLight: any;
-        ambientLight: any;
-        primitive: any;
-        meshPhysicalMaterial: any;
-        color: any;
-        directionalLight: any;
-        fog: any;
-        circleGeometry: any;
-        meshBasicMaterial: any;
-        meshStandardMaterial: any;
-      }
-    }
-  }
-}
 
 interface ThreeVisualizerProps {
   analyser: AnalyserNode | null;

@@ -357,8 +357,8 @@ const App: React.FC = () => {
 
   if (!hasStarted) {
     return (
-      <div className="min-h-screen bg-black flex items-center justify-center p-6 text-center">
-        <div className="max-w-md space-y-8 animate-fade-in-up">
+      <div className="min-h-[100dvh] bg-black flex items-center justify-center p-6 text-center overflow-y-auto">
+        <div className="max-w-md space-y-8 animate-fade-in-up my-auto">
           <h1 className="text-5xl font-black bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500">{t.welcomeTitle}</h1>
           <p className="text-gray-400 text-sm leading-relaxed">{t.welcomeText}</p>
           <button onClick={() => { setHasStarted(true); startMicrophone(selectedDeviceId); }} className="px-8 py-4 bg-white text-black font-bold rounded-2xl hover:scale-105 transition-all">{t.startExperience}</button>
@@ -373,7 +373,7 @@ const App: React.FC = () => {
   }
 
   return (
-    <div className={`min-h-screen bg-black overflow-hidden relative ${settings.hideCursor ? 'cursor-none' : ''}`}>
+    <div className={`h-[100dvh] bg-black overflow-hidden relative ${settings.hideCursor ? 'cursor-none' : ''}`}>
       
       {/* Error Notification Toast */}
       {errorMessage && (
