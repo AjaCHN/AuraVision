@@ -4,6 +4,7 @@ import { VisualizerMode, LyricsStyle } from '../types';
 export const en = {
   tabs: {
     visual: 'Visual',
+    text: 'Text',
     audio: 'Audio',
     ai: 'AI Recognition',
     system: 'System'
@@ -75,10 +76,13 @@ export const en = {
   appDescription: 'An immersive visualization suite driven by real-time spectral analysis and Gemini AI recognition.',
   version: 'Build',
   defaultMic: 'Default Microphone',
-  customText: 'Custom Text',
+  customText: 'Custom Text Content',
+  textProperties: 'Typography & Layout',
   customTextPlaceholder: 'ENTER TEXT',
-  showText: 'Toggle Text',
+  showText: 'Show Overlay',
   pulseBeat: 'Pulse with Beat',
+  textSize: 'Font Size',
+  textRotation: 'Rotation',
   errors: {
     title: 'Audio Error',
     accessDenied: 'Access denied. Please check your browser permissions for microphone.',

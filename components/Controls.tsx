@@ -11,6 +11,7 @@ import { VisualSettingsPanel } from './panels/VisualSettingsPanel';
 import { AudioSettingsPanel } from './panels/AudioSettingsPanel';
 import { AiSettingsPanel } from './panels/AiSettingsPanel';
 import { SystemSettingsPanel } from './panels/SystemSettingsPanel';
+import { CustomTextSettingsPanel } from './panels/CustomTextSettingsPanel';
 
 interface ControlsProps {
   currentMode: VisualizerMode;
@@ -38,7 +39,7 @@ interface ControlsProps {
   onDeviceChange: (id: string) => void;
 }
 
-type TabType = 'visual' | 'audio' | 'ai' | 'system';
+type TabType = 'visual' | 'text' | 'audio' | 'ai' | 'system';
 
 const Controls: React.FC<ControlsProps> = ({
   currentMode, setMode, colorTheme, setColorTheme, toggleMicrophone,
@@ -203,7 +204,7 @@ const Controls: React.FC<ControlsProps> = ({
             <div className="max-w-6xl mx-auto space-y-8">
               <div className="flex flex-col md:flex-row justify-between items-center gap-8 border-b border-white/10 pb-6">
                 <div className="flex bg-white/[0.04] p-1 rounded-2xl overflow-x-auto max-w-full scrollbar-hide gap-1 mask-fade-right">
-                  {(['visual', 'audio', 'ai', 'system'] as TabType[]).map(tab => (
+                  {(['visual', 'text', 'audio', 'ai', 'system'] as TabType[]).map(tab => (
                     <button 
                       key={tab} 
                       onClick={() => setActiveTab(tab)} 
@@ -235,6 +236,13 @@ const Controls: React.FC<ControlsProps> = ({
                       settings={settings}
                       setSettings={setSettings}
                       resetVisualSettings={resetVisualSettings}
+                      t={t}
+                    />
+                  )}
+                  {activeTab === 'text' && (
+                    <CustomTextSettingsPanel
+                      settings={settings}
+                      setSettings={setSettings}
                       t={t}
                     />
                   )}

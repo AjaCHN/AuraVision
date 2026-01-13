@@ -4,6 +4,7 @@ import { VisualizerMode, LyricsStyle } from '../types';
 export const zh = {
   tabs: {
     visual: '视觉',
+    text: '文字',
     audio: '音频',
     ai: '曲目识别',
     system: '系统'
@@ -75,10 +76,13 @@ export const zh = {
   appDescription: '一个基于实时频域分析与 Gemini AI 语义识别的沉浸式音乐可视化套件。',
   version: '版本号',
   defaultMic: '系统默认麦克风',
-  customText: '自定义文字',
+  customText: '自定义文字内容',
+  textProperties: '排版与布局',
   customTextPlaceholder: '输入文字',
-  showText: '显示/隐藏',
+  showText: '显示文字图层',
   pulseBeat: '随节奏律动',
+  textSize: '字体大小',
+  textRotation: '旋转角度',
   errors: {
     title: '音频错误',
     accessDenied: '无法访问麦克风，请检查浏览器权限。',

@@ -56,6 +56,8 @@ export interface VisualizerSettings {
   customText: string;
   showCustomText: boolean;
   textPulse: boolean;
+  customTextRotation: number; // degrees -180 to 180
+  customTextSize: number; // Scale factor 1 to 100
 }
 
 export interface VisualizerConfig {

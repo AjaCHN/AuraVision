@@ -30,7 +30,9 @@ const DEFAULT_SETTINGS: VisualizerSettings = {
   monitor: false,
   customText: 'AURA',
   showCustomText: false,
-  textPulse: true
+  textPulse: true,
+  customTextRotation: 0,
+  customTextSize: 12
 };
 const DEFAULT_LYRICS_STYLE = LyricsStyle.KARAOKE; 
 const DEFAULT_SHOW_LYRICS = false;
@@ -115,7 +117,8 @@ const App: React.FC = () => {
       sensitivity: 1.2 + Math.random() * 1.0,
       glow: Math.random() > 0.15,
       trails: Math.random() > 0.2,
-      smoothing: 0.7 + Math.random() * 0.2
+      smoothing: 0.7 + Math.random() * 0.2,
+      customTextRotation: (Math.random() > 0.8) ? (Math.random() * 20 - 10) : 0 // Occasional slight tilt
     }));
   }, []);
 
@@ -141,7 +144,9 @@ const App: React.FC = () => {
       quality: DEFAULT_SETTINGS.quality,
       customText: DEFAULT_SETTINGS.customText,
       showCustomText: DEFAULT_SETTINGS.showCustomText,
-      textPulse: DEFAULT_SETTINGS.textPulse
+      textPulse: DEFAULT_SETTINGS.textPulse,
+      customTextRotation: DEFAULT_SETTINGS.customTextRotation,
+      customTextSize: DEFAULT_SETTINGS.customTextSize
     }));
   }, []);
 

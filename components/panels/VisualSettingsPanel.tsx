@@ -79,36 +79,6 @@ export const VisualSettingsPanel: React.FC<VisualSettingsPanelProps> = ({
            </div>
         </div>
 
-        {/* Custom Text Section */}
-        <div className="space-y-2 pb-4 border-b border-white/10">
-           <span className="text-[10px] font-black uppercase text-white/40 tracking-wider block">{t.customText}</span>
-           <div className="flex gap-2 items-start">
-              <textarea 
-                value={settings.customText}
-                onChange={(e) => setSettings({...settings, customText: e.target.value.toUpperCase()})}
-                placeholder={t.customTextPlaceholder}
-                rows={2}
-                className="flex-1 bg-white/[0.04] border border-white/10 rounded-lg px-3 py-2 text-xs font-bold text-white tracking-widest uppercase focus:outline-none focus:border-blue-500/50 focus:bg-white/[0.08] transition-all resize-none custom-scrollbar"
-              />
-              <div className="flex flex-col gap-2">
-                <button 
-                   onClick={() => setSettings({...settings, showCustomText: !settings.showCustomText})} 
-                   className={`px-3 py-1.5 rounded-lg border transition-all flex-1 flex items-center justify-center ${settings.showCustomText ? 'bg-green-500/20 border-green-500/40 text-green-300' : 'bg-white/[0.04] border-transparent text-white/30 hover:text-white'}`}
-                   title={t.showText}
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
-                </button>
-                <button 
-                   onClick={() => setSettings({...settings, textPulse: !settings.textPulse})} 
-                   className={`px-3 py-1.5 rounded-lg border transition-all flex-1 flex items-center justify-center ${settings.textPulse ? 'bg-pink-500/20 border-pink-500/40 text-pink-300' : 'bg-white/[0.04] border-transparent text-white/30 hover:text-white'}`}
-                   title={t.pulseBeat}
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>
-                </button>
-              </div>
-           </div>
-        </div>
-
         {/* Auto Rotate Controls (Simplified) */}
         <div className="space-y-3 pt-1">
            <div className="flex items-center justify-between">

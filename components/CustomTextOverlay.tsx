@@ -11,6 +11,11 @@ const CustomTextOverlay: React.FC<CustomTextOverlayProps> = ({ settings, analyse
   const textRef = useRef<HTMLDivElement>(null);
   const requestRef = useRef<number>(0);
 
+  // Default size is 12vw, so settings.customTextSize (default 12) maps to that.
+  // We constrain it with pixel limits.
+  const sizeVw = settings.customTextSize || 12;
+  const sizePx = sizeVw * 13; // rough conversion approximation
+
   useEffect(() => {
     if (!settings.showCustomText || !settings.customText) {
       if (requestRef.current) cancelAnimationFrame(requestRef.current);
@@ -31,12 +36,15 @@ const CustomTextOverlay: React.FC<CustomTextOverlayProps> = ({ settings, analyse
 
         // Scale based on bass and sensitivity
         const scale = 1 + (bass * 0.5 * settings.sensitivity);
-        // Fix: Removed translate(-50%, -50%) as the parent container is already centered
-        textRef.current.style.transform = `scale(${scale})`;
+        const rotation = settings.customTextRotation || 0;
+        
+        // Combine transforms: Rotation first, then Scale
+        textRef.current.style.transform = `rotate(${rotation}deg) scale(${scale})`;
         textRef.current.style.opacity = `${0.6 + bass * 0.4}`;
       } else if (textRef.current) {
-        // Reset if pulse is disabled or no audio
-        textRef.current.style.transform = `scale(1)`;
+        // Static state if pulse disabled
+        const rotation = settings.customTextRotation || 0;
+        textRef.current.style.transform = `rotate(${rotation}deg) scale(1)`;
         textRef.current.style.opacity = '0.9';
       }
       requestRef.current = requestAnimationFrame(animate);
@@ -47,20 +55,20 @@ const CustomTextOverlay: React.FC<CustomTextOverlayProps> = ({ settings, analyse
     return () => {
       if (requestRef.current) cancelAnimationFrame(requestRef.current);
     };
-  }, [settings.showCustomText, settings.customText, settings.textPulse, settings.sensitivity, analyser]);
+  }, [settings.showCustomText, settings.customText, settings.textPulse, settings.sensitivity, settings.customTextRotation, analyser]);
 
   if (!settings.showCustomText || !settings.customText) return null;
 
   return (
     <div 
-      className="pointer-events-none fixed top-1/2 left-1/2 z-[100] w-full text-center mix-blend-overlay"
+      className="pointer-events-none fixed top-1/2 left-1/2 z-[100] w-full text-center mix-blend-overlay flex items-center justify-center"
       style={{ transform: 'translate(-50%, -50%)' }}
     >
       <div 
         ref={textRef} 
-        className="text-white font-black tracking-widest uppercase transition-transform duration-75 ease-out select-none inline-block"
+        className="text-white font-black tracking-widest uppercase transition-transform duration-75 ease-out select-none inline-block origin-center"
         style={{ 
-            fontSize: 'min(12vw, 160px)', 
+            fontSize: `min(${sizeVw}vw, ${sizePx}px)`, 
             textShadow: '0 0 40px rgba(255,255,255,0.3)',
             whiteSpace: 'pre-wrap',
             lineHeight: 1.1
