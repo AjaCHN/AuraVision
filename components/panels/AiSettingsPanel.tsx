@@ -22,7 +22,7 @@ export const AiSettingsPanel: React.FC<AiSettingsPanelProps> = ({
       <TooltipArea text={t.hints.lyrics}>
         <div className="p-6 h-full flex flex-col justify-center border-b lg:border-b-0 lg:border-r border-white/10">
           <div className="space-y-2">
-            <span className="text-[11px] font-bold uppercase text-white/50 tracking-[0.18em] block ml-1">{t.lyrics}</span>
+            <span className="text-xs font-bold uppercase text-white/50 tracking-[0.18em] block ml-1">{t.lyrics}</span>
             <button onClick={() => setShowLyrics(!showLyrics)} className={`w-full py-3.5 rounded-xl border font-black text-sm uppercase tracking-[0.2em] transition-all duration-500 ${showLyrics ? 'bg-green-500/20 border-green-500/40 text-green-300 shadow-[0_0_40px_rgba(34,197,94,0.1)]' : 'bg-white/[0.04] border-transparent text-white/40 hover:bg-white/[0.08] hover:text-white'}`}>
               {showLyrics ? t.aiState.active : t.aiState.enable}
             </button>

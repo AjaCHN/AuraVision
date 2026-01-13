@@ -260,7 +260,8 @@ export class SmokeRenderer implements IVisualizerRenderer {
     const maxParticles = settings.quality === 'high' ? 200 : settings.quality === 'med' ? 120 : 60;
     const spawnChance = settings.quality === 'high' ? 0.9 : 0.5;
     
-    const spawnRate = 1 + Math.floor(bass * 3 * settings.sensitivity); 
+    // Significantly increase spawn rate on bass hits
+    const spawnRate = 1 + Math.floor(bass * 6 * settings.sensitivity); 
 
     if (this.particles.length < maxParticles && Math.random() < spawnChance) {
         for (let i = 0; i < spawnRate; i++) {
@@ -274,6 +275,10 @@ export class SmokeRenderer implements IVisualizerRenderer {
 
     // Use screen blend mode for additive smoke effect
     ctx.globalCompositeOperation = 'screen'; 
+    
+    // Global Pulse Factors
+    const sizePulse = 1 + (bass * 0.25 * settings.sensitivity); // Clouds expand on beat
+    const alphaPulse = 0.5 + (bass * 0.8 * settings.sensitivity); // Clouds brighten on beat
 
     for (let i = this.particles.length - 1; i >= 0; i--) {
         const p = this.particles[i];
@@ -283,25 +288,30 @@ export class SmokeRenderer implements IVisualizerRenderer {
         const speed = (0.5 + mids * 2.0) * settings.speed;
         p.y += (distToCenter * 0.01 * speed) + p.vy * speed;
         
-        const turbulence = Math.sin(p.y * 0.01 + rotation + p.life * 0.02) * (1 + bass * 2);
+        // Turbulence increased by bass for "shaking" effect on beat
+        const turbulenceAmp = 1 + bass * 8 * settings.sensitivity;
+        const turbulence = Math.sin(p.y * 0.01 + rotation + p.life * 0.02) * turbulenceAmp;
         p.x += (p.vx + turbulence) * speed;
 
         p.life--;
-        p.size *= 1.005; 
+        p.size *= 1.002; 
 
         if (Math.abs(p.y - centerY) < 20 || p.life <= 0) {
             this.particles.splice(i, 1);
             continue;
         }
 
-        const alpha = Math.min(1, p.life / 100) * 0.15; 
-        
+        const baseAlpha = Math.min(1, p.life / 100) * 0.15; 
+        const finalAlpha = Math.min(1.0, baseAlpha * alphaPulse);
+
         // Skip invisible particles
-        if (alpha < 0.01) continue;
+        if (finalAlpha < 0.01) continue;
 
         const sprite = this.getSprite(p.color);
-        ctx.globalAlpha = alpha;
-        ctx.drawImage(sprite, p.x - p.size, p.y - p.size, p.size * 2, p.size * 2);
+        const drawSize = p.size * sizePulse;
+
+        ctx.globalAlpha = finalAlpha;
+        ctx.drawImage(sprite, p.x - drawSize, p.y - drawSize, drawSize * 2, drawSize * 2);
     }
     
     ctx.globalCompositeOperation = 'source-over';

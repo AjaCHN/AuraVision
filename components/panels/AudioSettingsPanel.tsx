@@ -30,7 +30,7 @@ export const AudioSettingsPanel: React.FC<AudioSettingsPanelProps> = ({
           ]} 
           onChange={onDeviceChange} 
         />
-        <button onClick={toggleMicrophone} className={`w-full py-5 rounded-2xl font-black text-xs uppercase tracking-[0.2em] transition-all duration-300 ${isListening ? 'bg-red-500/15 text-red-400 border border-red-500/30' : 'bg-blue-600 text-white shadow-2xl shadow-blue-600/20 hover:bg-blue-500 hover:scale-[1.02]'}`}>
+        <button onClick={toggleMicrophone} className={`w-full py-5 rounded-2xl font-black text-sm uppercase tracking-[0.2em] transition-all duration-300 ${isListening ? 'bg-red-500/15 text-red-400 border border-red-500/30' : 'bg-blue-600 text-white shadow-2xl shadow-blue-600/20 hover:bg-blue-500 hover:scale-[1.02]'}`}>
           {isListening ? t.stopMic : t.startMic}
         </button>
         
@@ -50,7 +50,7 @@ export const AudioSettingsPanel: React.FC<AudioSettingsPanelProps> = ({
       </div>
       <TooltipArea text={t.hints.fftSize}>
         <div className="p-6 space-y-6 h-full">
-          <span className="text-[11px] font-black uppercase text-white/50 tracking-[0.25em] block ml-1">{t.fftSize}</span>
+          <span className="text-xs font-black uppercase text-white/50 tracking-[0.25em] block ml-1">{t.fftSize}</span>
           <div className="grid grid-cols-2 gap-3">
             {[512, 1024, 2048, 4096].map(size => (
               <button key={size} onClick={() => setSettings({...settings, fftSize: size})} className={`py-4 rounded-xl border text-[13px] font-mono font-bold transition-all duration-300 ${settings.fftSize === size ? 'bg-white/20 border-white/40 text-white shadow-[inset_0_2px_10px_rgba(255,255,255,0.05)]' : 'bg-white/[0.04] border-transparent text-white/40 hover:text-white hover:bg-white/[0.08]'}`}>

@@ -49,7 +49,7 @@ export const FloatingTooltip = ({ text, visible, anchorRef }: TooltipProps) => {
       }}
     >
       <div className="animate-fade-in-up">
-        <div className="px-3 py-2 bg-blue-600 text-white text-[11px] font-bold rounded-lg shadow-2xl whitespace-normal w-max max-w-[240px] text-center relative">
+        <div className="px-3 py-2 bg-blue-600 text-white text-xs font-bold rounded-lg shadow-2xl whitespace-normal w-max max-w-[240px] text-center relative">
           {text}
           <div className="absolute top-full left-1/2 -translate-x-1/2 border-8 border-transparent border-t-blue-600" />
         </div>
@@ -103,7 +103,7 @@ export const CustomSelect = ({ label, value, options, onChange, hintText }: { la
       onMouseLeave={() => setIsHovered(false)}
     >
       {hintText && <FloatingTooltip text={hintText} visible={isHovered && !isOpen} anchorRef={dropdownRef} />}
-      <span className="text-[11px] font-bold uppercase text-white/50 tracking-[0.18em] block ml-1">{label}</span>
+      <span className="text-xs font-bold uppercase text-white/50 tracking-[0.18em] block ml-1">{label}</span>
       <button 
         onClick={() => setIsOpen(!isOpen)}
         className={`w-full flex items-center justify-between bg-white/[0.04] border ${isOpen ? 'border-blue-500/50 shadow-[0_0_20px_rgba(59,130,246,0.15)]' : 'border-transparent hover:bg-white/[0.08]'} rounded-xl px-4 py-3.5 text-sm text-white/90 transition-all duration-300`}
@@ -159,8 +159,8 @@ export const SettingsToggle = ({ label, statusText, value, onChange, hintText, c
       >
          {hintText && <FloatingTooltip text={hintText} visible={isHovered} anchorRef={containerRef} />}
          <div className="flex flex-col">
-           <span className="text-[11px] font-black uppercase text-white/60 tracking-widest">{label}</span>
-           <span className="text-[9px] text-white/30 font-bold mt-0.5">{statusText}</span>
+           <span className="text-xs font-black uppercase text-white/60 tracking-widest">{label}</span>
+           <span className="text-[10px] text-white/30 font-bold mt-0.5">{statusText}</span>
          </div>
          <button onClick={(e) => { e.stopPropagation(); onChange(); }} className={`w-12 h-6.5 rounded-full relative transition-all duration-500 ${bgClass}`}>
            <div className={`absolute top-1 left-1 w-4.5 h-4.5 bg-white rounded-full shadow-lg transition-all duration-500 ${value ? 'translate-x-[22px]' : 'translate-x-0'}`} />
@@ -187,7 +187,7 @@ export const Slider = ({ label, value, min, max, step, onChange, icon, hintText,
         onMouseLeave={() => setIsHovered(false)}
       >
         <FloatingTooltip text={hintText} visible={isHovered} anchorRef={containerRef} />
-        <div className="flex justify-between items-end text-[11px] text-white/40 uppercase font-black tracking-widest group-hover:text-white/70 transition-colors">
+        <div className="flex justify-between items-end text-xs text-white/40 uppercase font-black tracking-widest group-hover:text-white/70 transition-colors">
           <span className="flex items-center gap-2">
             {icon} <span className="font-bold">{label}</span>
           </span>
@@ -242,7 +242,7 @@ export const ControlPanelButton = ({ onClick, label, active, hintText }: { onCli
         {hintText && <FloatingTooltip text={hintText} visible={isHovered} anchorRef={buttonRef} /> }
         <button 
           onClick={onClick} 
-          className={`w-full py-4 rounded-xl border text-[10px] font-black uppercase tracking-[0.15em] transition-all duration-300 ${active ? 'bg-white/15 border-white/30 text-white shadow-[inset_0_2px_10px_rgba(255,255,255,0.05)]' : 'bg-white/[0.04] border-transparent text-white/40 hover:text-white hover:bg-white/10'}`}
+          className={`w-full py-4 rounded-xl border text-xs font-black uppercase tracking-[0.15em] transition-all duration-300 ${active ? 'bg-white/15 border-white/30 text-white shadow-[inset_0_2px_10px_rgba(255,255,255,0.05)]' : 'bg-white/[0.04] border-transparent text-white/40 hover:text-white hover:bg-white/10'}`}
         >
           {label}
         </button>
