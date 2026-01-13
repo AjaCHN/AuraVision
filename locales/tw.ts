@@ -50,7 +50,7 @@ export const tw = {
   listening: '監聽中',
   identifying: 'AI 正在解析曲目...',
   startExperience: '開啟視聽盛宴',
-  welcomeTitle: '聲輝 Aura',
+  welcomeTitle: 'SonicVision AI',
   welcomeText: '將聲波轉化為數位藝術。透過即時頻域分析與 AI 語意辨識，開啟前所未有的視聽互動體驗。',
   hideOptions: '收起',
   showOptions: '顯示設定',
@@ -112,8 +112,8 @@ export const tw = {
     [LyricsStyle.MINIMAL]: '極簡主義'
   },
   helpModal: {
-    title: 'Aura 互動指南',
-    intro: 'Aura 是一款沉浸式的視聽互動工具，它利用高精度麥克風取樣，將音訊訊號即時轉化為數學生成的數位藝術。',
+    title: 'SonicVision AI 互動指南',
+    intro: 'SonicVision AI 是一款沉浸式的視聽互動工具，它利用高精度麥克風取樣，將音訊訊號即時轉化為數學生成的數位藝術。',
     shortcutsTitle: '控制快捷鍵',
     shortcutItems: {
       toggleMic: '開啟/關閉 音訊採集',

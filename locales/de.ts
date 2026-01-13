@@ -50,7 +50,7 @@ export const de = {
   listening: 'Aktiv',
   identifying: 'KI analysiert...',
   startExperience: 'Erlebnis starten',
-  welcomeTitle: 'Aura',
+  welcomeTitle: 'SonicVision AI',
   welcomeText: 'Verwandeln Sie Audio in generative Kunst. Erleben Sie Echtzeit-Musikidentifikation und immersive Visualisierung.',
   hideOptions: 'Einklappen',
   showOptions: 'Optionen',
@@ -112,8 +112,8 @@ export const de = {
     [LyricsStyle.MINIMAL]: 'Minimalistisch'
   },
   helpModal: {
-    title: 'Aura Anleitung',
-    intro: 'Aura verwandelt Ihren Mikrofoneingang mithilfe fortschrittlicher Spektralanalyse in reaktionsschnelle, generative digitale Kunst.',
+    title: 'SonicVision AI Anleitung',
+    intro: 'SonicVision AI verwandelt Ihren Mikrofoneingang mithilfe fortschrittlicher Spektralanalyse in reaktionsschnelle, generative digitale Kunst.',
     shortcutsTitle: 'Tastatursteuerung',
     shortcutItems: {
       toggleMic: 'Audio-Eingang umschalten',

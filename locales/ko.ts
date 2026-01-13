@@ -50,7 +50,7 @@ export const ko = {
   listening: '작동 중',
   identifying: 'AI 분석 중...',
   startExperience: '경험 시작하기',
-  welcomeTitle: 'Aura',
+  welcomeTitle: 'SonicVision AI',
   welcomeText: '오디오를 제너레이티브 아트로 변환합니다. 실시간 음악 식별과 몰입형 시각화를 경험하세요.',
   hideOptions: '접기',
   showOptions: '옵션 펼치기',
@@ -112,8 +112,8 @@ export const ko = {
     [LyricsStyle.MINIMAL]: '미니멀'
   },
   helpModal: {
-    title: 'Aura 가이드',
-    intro: 'Aura는 고급 스펙트럼 분석을 사용하여 마이크 입력을 반응성 높은 제너레이티브 디지털 아트로 변환합니다.',
+    title: 'SonicVision AI 가이드',
+    intro: 'SonicVision AI는 고급 스펙트럼 분석을 사용하여 마이크 입력을 반응성 높은 제너레이티브 디지털 아트로 변환합니다.',
     shortcutsTitle: '키보드 상호 작용',
     shortcutItems: {
       toggleMic: '오디오 입력 토글',

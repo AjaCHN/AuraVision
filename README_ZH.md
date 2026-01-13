@@ -4,7 +4,7 @@
 [English](README.md)
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
-![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)
+![React](https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=black)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.0-3178C6?logo=typescript&logoColor=white)
 ![Gemini AI](https://img.shields.io/badge/AI-Gemini%203.0-8E75B2?logo=google&logoColor=white)
 ![Tailwind CSS](https://img.shields.io/badge/Styling-Tailwind-38B2AC?logo=tailwindcss&logoColor=white)
@@ -49,7 +49,7 @@ SonicVision AI 具有 8 种独特的、数学生成的视觉引擎：
 
 ## 🛠️ 技术栈
 
-*   **前端:** React 19, TypeScript
+*   **前端:** React 18, TypeScript
 *   **样式:** Tailwind CSS, Custom Canvas API (2D Context)
 *   **音频处理:** Web Audio API (`AnalyserNode`, `MediaStream`)
 *   **AI 集成:** Google GenAI SDK (`@google/genai`) with Tool Use (Google Search)

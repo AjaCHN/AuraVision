@@ -31,4 +31,4 @@
 *   **重复索引**: `openspec/OPENSPEC.md`。
 
 ---
-*SonicVision AI Project Specification - Version 0.2.4*
+*SonicVision AI Project Specification - Version 0.2.6*

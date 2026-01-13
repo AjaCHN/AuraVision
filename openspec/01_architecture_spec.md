@@ -2,10 +2,13 @@
 # OpenSpec: 系统架构规范
 
 ## 1. 核心技术栈
-- **Runtime:** React 19 (ESM)
+- **Build System:** Vite 5.2 (Rollup)
+- **Runtime:** React 18.3+
+- **Language:** TypeScript 5.4
+- **Styling:** Tailwind CSS 3.4 (PostCSS)
 - **Engine:** 
   - 2D: Canvas 2D API (策略模式封装)
-  - 3D: Three.js / @react-three/fiber
+  - 3D: Three.js (r164) / @react-three/fiber
 - **Intelligence:** Google Gemini 3 (Flash Preview)
 - **Audio:** Web Audio API (实时分析 + 离线解码)
 

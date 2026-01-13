@@ -50,7 +50,7 @@ export const en = {
   listening: 'Active',
   identifying: 'AI Analyzing...',
   startExperience: 'Launch Experience',
-  welcomeTitle: 'Aura',
+  welcomeTitle: 'SonicVision AI',
   welcomeText: 'Translate audio into generative art. Experience real-time music identification and immersive visualization.',
   hideOptions: 'Collapse',
   showOptions: 'Expand Options',
@@ -112,8 +112,8 @@ export const en = {
     [LyricsStyle.MINIMAL]: 'Minimalist'
   },
   helpModal: {
-    title: 'Aura Guide',
-    intro: 'Aura transforms your microphone input into highly responsive, generative digital art using advanced spectral analysis.',
+    title: 'SonicVision AI Guide',
+    intro: 'SonicVision AI transforms your microphone input into highly responsive, generative digital art using advanced spectral analysis.',
     shortcutsTitle: 'Keyboard Interaction',
     shortcutItems: {
       toggleMic: 'Toggle Audio Input',
@@ -137,7 +137,7 @@ export const en = {
     settingsDesc: {
       sensitivity: 'Gain control for audio-reactive elements.',
       speed: 'Temporal frequency of the generative patterns.',
-      glow: 'Post-processing bloom intensity.',
+      glow: 'Intensidad del resplandor de post-procesamiento.',
       trails: 'Temporal accumulation for fluid movement.',
       smoothing: 'Temporal damping of the frequency data.',
       fftSize: 'Sub-band count for spectral resolution.'

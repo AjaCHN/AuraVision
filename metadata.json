@@ -1,6 +1,6 @@
 {
-  "name": "Aura",
-  "description": "An immersive music visualization experience powered by your microphone and Gemini AI for song recognition.",
+  "name": "SonicVision AI",
+  "description": "Transform live audio into stunning, real-time generative art powered by Gemini AI.",
   "requestFramePermissions": [
     "microphone"
   ]

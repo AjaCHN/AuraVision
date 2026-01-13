@@ -50,7 +50,7 @@ export const fr = {
   listening: 'Actif',
   identifying: 'Analyse IA...',
   startExperience: 'Lancer l\'Expérience',
-  welcomeTitle: 'Aura',
+  welcomeTitle: 'SonicVision AI',
   welcomeText: 'Traduisez l\'audio en art génératif. Découvrez l\'identification musicale en temps réel et la visualisation immersive.',
   hideOptions: 'Réduire',
   showOptions: 'Options',
@@ -112,8 +112,8 @@ export const fr = {
     [LyricsStyle.MINIMAL]: 'Minimaliste'
   },
   helpModal: {
-    title: 'Guide Aura',
-    intro: 'Aura transforme votre entrée microphone en art numérique génératif hautement réactif grâce à une analyse spectrale avancée.',
+    title: 'Guide SonicVision AI',
+    intro: 'SonicVision AI transforme votre entrée microphone en art numérique génératif hautement réactif grâce à une analyse spectrale avancée.',
     shortcutsTitle: 'Raccourcis Clavier',
     shortcutItems: {
       toggleMic: 'Entrée Audio On/Off',
@@ -145,7 +145,7 @@ export const fr = {
     projectInfoTitle: 'Moteur Principal',
     projectInfoText: 'Propulsé par Google Gemini 3 Flash, React 19 et WebGL accéléré par le matériel.',
     privacyTitle: 'Politique de Confidentialité',
-    privacyText: 'L\'audio est analysé localement. Des instantanés temporaires sont envoyés à Gemini uniquement pour l\'identification.',
+    privacyText: 'L\'audio est analysé localmente. Des instantanés temporaires sont envoyés à Gemini uniquement pour l\'identification.',
     version: 'Version'
   }
 };

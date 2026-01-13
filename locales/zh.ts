@@ -50,7 +50,7 @@ export const zh = {
   listening: '监听中',
   identifying: 'AI 正在解析曲目...',
   startExperience: '开启视听盛宴',
-  welcomeTitle: '声辉 Aura',
+  welcomeTitle: 'SonicVision AI',
   welcomeText: '将声波转化为数字艺术。通过实时频域分析与 AI 语义识别，开启前所未有的视听交互体验。',
   hideOptions: '收起',
   showOptions: '显示设置',
@@ -112,8 +112,8 @@ export const zh = {
     [LyricsStyle.MINIMAL]: '极简主义'
   },
   helpModal: {
-    title: 'Aura 交互指南',
-    intro: 'Aura 是一款沉浸式的视听交互工具，它利用高精度麦克风采样，将音频信号实时转化为数学生成的数字艺术。',
+    title: 'SonicVision AI 交互指南',
+    intro: 'SonicVision AI 是一款沉浸式的视听交互工具，它利用高精度麦克风采样，将音频信号实时转化为数学生成的数字艺术。',
     shortcutsTitle: '控制快捷键',
     shortcutItems: {
       toggleMic: '开启/关闭 音频采集',
