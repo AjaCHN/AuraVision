@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import { VisualizerMode, LyricsStyle, Language, VisualizerSettings, Region, AudioDevice } from '../types';
 import { VISUALIZER_PRESETS, COLOR_THEMES, REGION_NAMES, APP_VERSION } from '../constants';
@@ -130,7 +131,7 @@ const Controls: React.FC<ControlsProps> = ({
           <div className="max-h-[85vh] overflow-y-auto custom-scrollbar pt-10 pb-32 px-10">
             <div className="max-w-6xl mx-auto space-y-12">
               <div className="flex flex-col md:flex-row justify-between items-center gap-8 border-b border-white/10 pb-10">
-                <div className="flex bg-white/[0.04] p-1 rounded-2xl overflow-x-auto max-w-full scrollbar-hide gap-1">
+                <div className="flex bg-white/[0.04] p-1 rounded-2xl overflow-x-auto max-w-full scrollbar-hide gap-1 mask-fade-right">
                   {(['visual', 'audio', 'ai', 'system'] as TabType[]).map(tab => (
                     <button 
                       key={tab} 

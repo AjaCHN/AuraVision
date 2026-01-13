@@ -1,3 +1,4 @@
+
 import { VisualizerMode, LyricsStyle } from '../types';
 
 export const fr = {
@@ -102,6 +103,7 @@ export const fr = {
     [VisualizerMode.LASERS]: 'Lasers de Concert',
     [VisualizerMode.STROBE]: 'Matrice de Grille',
     [VisualizerMode.SMOKE]: 'Fumée Éthérée',
+    [VisualizerMode.RIPPLES]: 'Ondulations de l\'eau',
     [VisualizerMode.SILK]: 'Vagues de Soie',
     [VisualizerMode.LIQUID]: 'Sphère Liquide',
     [VisualizerMode.TERRAIN]: 'Terrain Low-Poly'

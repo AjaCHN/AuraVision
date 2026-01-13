@@ -50,6 +50,10 @@ export const VISUALIZER_PRESETS = {
     name: 'Ethereal Smoke',
     description: 'Dual-stream mystical fog'
   },
+  [VisualizerMode.RIPPLES]: {
+    name: 'Water Ripples',
+    description: 'Raindrop effects triggered by bass kicks'
+  },
   [VisualizerMode.SILK]: {
     name: 'Silk Waves',
     description: 'Iridescent flowing fabric (WebGL)'

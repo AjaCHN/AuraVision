@@ -31,7 +31,7 @@ export const generateFingerprint = async (base64Audio: string): Promise<number[]
     const audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
     const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
     
-    // Immediately release the hardware context
+    // Immediately release the hardware context to prevent leaks
     try {
         await audioCtx.close();
     } catch (e) {

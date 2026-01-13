@@ -15,6 +15,7 @@ export enum VisualizerMode {
   LASERS = 'LASERS',   
   STROBE = 'STROBE',
   SMOKE = 'SMOKE',   
+  RIPPLES = 'RIPPLES',
   // WebGL Modes
   SILK = 'SILK',
   LIQUID = 'LIQUID',

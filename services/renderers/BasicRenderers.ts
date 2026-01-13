@@ -95,3 +95,49 @@ export class StrobeRenderer implements IVisualizerRenderer {
     ctx.restore();
   }
 }
+
+export class RipplesRenderer implements IVisualizerRenderer {
+  private ripples: Array<{x: number, y: number, r: number, alpha: number, speed: number, color: string}> = [];
+  
+  init() { this.ripples = []; }
+  
+  draw(ctx: CanvasRenderingContext2D, data: Uint8Array, w: number, h: number, colors: string[], settings: VisualizerSettings) {
+    if (colors.length === 0) return;
+    
+    // Detect Kick/Bass to trigger ripples
+    const bass = getAverage(data, 0, 10);
+    // Dynamic threshold based on sensitivity
+    const threshold = 200 * (2.0 - Math.min(1.5, settings.sensitivity * 0.5));
+    
+    if (bass > threshold && Math.random() > 0.7) {
+        this.ripples.push({
+            x: Math.random() * w,
+            y: Math.random() * h,
+            r: 10,
+            alpha: 1.0,
+            speed: (3 + Math.random() * 4) * settings.speed,
+            color: colors[Math.floor(Math.random() * colors.length)]
+        });
+    }
+
+    ctx.lineWidth = 3 * settings.sensitivity;
+    
+    for (let i = this.ripples.length - 1; i >= 0; i--) {
+        const r = this.ripples[i];
+        r.r += r.speed;
+        r.alpha -= 0.015;
+        
+        if (r.alpha <= 0) {
+            this.ripples.splice(i, 1);
+            continue;
+        }
+        
+        ctx.beginPath();
+        ctx.arc(r.x, r.y, r.r, 0, Math.PI * 2);
+        ctx.strokeStyle = r.color;
+        ctx.globalAlpha = r.alpha;
+        ctx.stroke();
+    }
+    ctx.globalAlpha = 1.0;
+  }
+}

@@ -1,3 +1,4 @@
+
 import { VisualizerMode, LyricsStyle } from '../types';
 
 export const tw = {
@@ -102,6 +103,7 @@ export const tw = {
     [VisualizerMode.LASERS]: '舞台雷射矩陣',
     [VisualizerMode.STROBE]: '巨幕點陣陣列',
     [VisualizerMode.SMOKE]: '空靈煙霧',
+    [VisualizerMode.RIPPLES]: '動感水波',
     [VisualizerMode.SILK]: '流光綢緞 (WebGL)',
     [VisualizerMode.LIQUID]: '液態星球 (WebGL)',
     [VisualizerMode.TERRAIN]: '低多邊形山脈 (WebGL)'

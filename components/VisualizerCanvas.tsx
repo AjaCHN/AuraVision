@@ -10,7 +10,7 @@ import {
 import { 
   BarsRenderer, RingsRenderer, ParticlesRenderer, TunnelRenderer, 
   PlasmaRenderer, ShapesRenderer, NebulaRenderer, 
-  KaleidoscopeRenderer, LasersRenderer, StrobeRenderer, SmokeRenderer
+  KaleidoscopeRenderer, LasersRenderer, StrobeRenderer, SmokeRenderer, RipplesRenderer
 } from '../services/visualizerStrategies';
 
 interface VisualizerCanvasProps {
@@ -43,6 +43,7 @@ const VisualizerCanvas: React.FC<VisualizerCanvasProps> = ({
     [VisualizerMode.LASERS]: new LasersRenderer(),
     [VisualizerMode.STROBE]: new StrobeRenderer(),
     [VisualizerMode.SMOKE]: new SmokeRenderer(),
+    [VisualizerMode.RIPPLES]: new RipplesRenderer(),
   });
 
   useEffect(() => {
@@ -66,6 +67,7 @@ const VisualizerCanvas: React.FC<VisualizerCanvasProps> = ({
     if (mode === VisualizerMode.PARTICLES) alpha = 0.06; // 锁定长拖尾
     if (mode === VisualizerMode.NEBULA) alpha = 0.08;
     if (mode === VisualizerMode.SMOKE) alpha = 0.1; // Smooth trails for smoke
+    if (mode === VisualizerMode.RIPPLES) alpha = 0.1;
     
     if (settings.trails) {
         ctx.fillStyle = `rgba(0, 0, 0, ${alpha})`; 
