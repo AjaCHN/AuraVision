@@ -4,134 +4,21 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Aura</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-      body {
-        margin: 0;
-        overflow: hidden;
-        background-color: #000;
-        font-family: 'Inter', sans-serif;
-      }
-      /* Custom scrollbar for lyrics */
-      .scrollbar-hide::-webkit-scrollbar {
-          display: none;
-      }
-      .scrollbar-hide {
-          -ms-overflow-style: none;
-          scrollbar-width: none;
-      }
-      
-      /* Sleek custom scrollbar for settings panels */
-      .custom-scrollbar::-webkit-scrollbar {
-        width: 4px;
-      }
-      .custom-scrollbar::-webkit-scrollbar-track {
-        background: rgba(255, 255, 255, 0.05);
-        border-radius: 10px;
-      }
-      .custom-scrollbar::-webkit-scrollbar-thumb {
-        background: rgba(255, 255, 255, 0.15);
-        border-radius: 10px;
-      }
-      .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-        background: rgba(59, 130, 246, 0.5); /* blue-500/50 */
-      }
-      
-      /* Mask fade effect for horizontal scrolling lists */
-      .mask-fade-right {
-        mask-image: linear-gradient(to right, black 85%, transparent 100%);
-        -webkit-mask-image: linear-gradient(to right, black 85%, transparent 100%);
-      }
-
-      /* Entrance Animation */
-      @keyframes fadeInUp {
-        from {
-          opacity: 0;
-          transform: translateY(20px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-      
-      .animate-fade-in-up {
-        animation: fadeInUp 0.5s ease-out forwards;
-      }
-
-      /* 优化滑块拖动手感 */
-      input[type=range] {
-        -webkit-appearance: none;
-        background: transparent;
-      }
-
-      input[type=range]:focus {
-        outline: none;
-      }
-
-      /* Chrome, Safari, Edge, Opera */
-      input[type=range]::-webkit-slider-thumb {
-        -webkit-appearance: none;
-        height: 18px;
-        width: 18px;
-        border-radius: 50%;
-        background: #3b82f6; /* blue-500 */
-        cursor: pointer;
-        margin-top: -7px; /* 中心对齐: (track_height/2) - (thumb_height/2) */
-        box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
-        border: 2px solid white;
-        transition: transform 0.1s ease, box-shadow 0.1s ease;
-      }
-
-      input[type=range]::-webkit-slider-runnable-track {
-        width: 100%;
-        height: 4px;
-        cursor: pointer;
-        background: rgba(255, 255, 255, 0.1);
-        border-radius: 2px;
-      }
-
-      input[type=range]:active::-webkit-slider-thumb {
-        transform: scale(1.2);
-        box-shadow: 0 0 15px rgba(59, 130, 246, 0.8);
-      }
-
-      /* Firefox */
-      input[type=range]::-moz-range-thumb {
-        height: 16px;
-        width: 16px;
-        border-radius: 50%;
-        background: #3b82f6;
-        cursor: pointer;
-        border: 2px solid white;
-        box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
-      }
-
-      input[type=range]::-moz-range-track {
-        width: 100%;
-        height: 4px;
-        cursor: pointer;
-        background: rgba(255, 255, 255, 0.1);
-        border-radius: 2px;
-      }
-    </style>
+    <!-- Tailwind and styles are now imported via index.tsx -> index.css -->
   <script type="importmap">
 {
   "imports": {
-    "react": "https://esm.sh/react@18.3.1",
-    "react-dom": "https://esm.sh/react-dom@18.3.1",
-    "react-dom/": "https://esm.sh/react-dom@18.3.1/",
-    "react/": "https://esm.sh/react@18.3.1/",
+    "react/": "https://esm.sh/react@^19.2.3/",
+    "react": "https://esm.sh/react@^19.2.3",
+    "react-dom": "https://esm.sh/react-dom@^19.2.3",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
     "@google/genai": "https://esm.sh/@google/genai@^1.35.0",
-    "three": "https://esm.sh/three@0.164.1",
-    "three/": "https://esm.sh/three@0.164.1/",
-    "three/addons/": "https://esm.sh/three@0.164.1/examples/jsm/",
-    "three/examples/": "https://esm.sh/three@0.164.1/examples/",
-    "@react-three/fiber": "https://esm.sh/@react-three/fiber@8.16.8?external=react,react-dom,three",
-    "@react-three/drei": "https://esm.sh/@react-three/drei@9.106.0?external=react,react-dom,three,@react-three/fiber",
-    "@react-three/postprocessing": "https://esm.sh/@react-three/postprocessing@2.16.2?external=react,react-dom,three,@react-three/fiber",
-    "postprocessing": "https://esm.sh/postprocessing@6.35.0?external=three",
-    "uuid": "https://esm.sh/uuid@9.0.1"
+    "@react-three/postprocessing": "https://esm.sh/@react-three/postprocessing@^3.0.4",
+    "@react-three/fiber": "https://esm.sh/@react-three/fiber@^9.5.0",
+    "@react-three/drei": "https://esm.sh/@react-three/drei@^10.7.7",
+    "vite": "https://esm.sh/vite@^7.3.1",
+    "@vitejs/plugin-react": "https://esm.sh/@vitejs/plugin-react@^5.1.2",
+    "three": "https://esm.sh/three@^0.182.0"
   }
 }
 </script>
