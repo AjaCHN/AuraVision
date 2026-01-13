@@ -32,6 +32,8 @@ interface ControlsProps {
 
 type TabType = 'visual' | 'audio' | 'ai' | 'system';
 
+export const SYSTEM_AUDIO_ID = 'SYSTEM_AUDIO';
+
 const FloatingTooltip = ({ text, visible }: { text: string; visible: boolean }) => (
   <div 
     className={`absolute bottom-full left-1/2 -translate-x-1/2 mb-3 px-3 py-2 bg-blue-600 text-white text-[11px] font-bold rounded-lg shadow-2xl whitespace-normal w-44 text-center pointer-events-none transition-all duration-300 z-[100] ${visible ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-2 scale-95'}`}
@@ -198,6 +200,8 @@ const Controls: React.FC<ControlsProps> = ({
 
   return (
     <>
+      <HelpModal isOpen={showHelp} onClose={() => setShowHelp(false)} language={language} />
+
       {isIdentifying && (
         <div className="fixed top-8 left-8 z-40 bg-black/60 backdrop-blur-2xl border border-blue-500/30 rounded-full px-6 py-3.5 flex items-center gap-4 shadow-[0_15px_40px_rgba(0,0,0,0.6)] animate-pulse">
            <div className="w-2.5 h-2.5 bg-blue-400 rounded-full animate-ping" />
@@ -251,7 +255,7 @@ const Controls: React.FC<ControlsProps> = ({
                 
                 <div className="flex items-center gap-4">
                   <ActionButton onClick={randomizeSettings} hintKey="randomize" icon={<svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>} />
-                  <ActionButton onClick={toggleFullscreen} hintKey="fullscreen" icon={<svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" /></svg>} />
+                  <ActionButton onClick={toggleFullscreen} hintKey="fullscreen" icon={<svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" /></svg>} />
                   <ActionButton onClick={() => setShowHelp(true)} hintKey="help" icon={<svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>} />
                   <button onClick={() => setIsExpanded(false)} className="w-16 h-12 flex items-center justify-center bg-blue-600 rounded-2xl text-white shadow-[0_12px_40px_rgba(37,99,235,0.3)] hover:bg-blue-500 hover:scale-[1.05] active:scale-[0.95] transition-all duration-300">
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" /></svg>
@@ -294,7 +298,7 @@ const Controls: React.FC<ControlsProps> = ({
                           <div className="flex items-center justify-between relative group">
                              <div className="flex flex-col">
                                <span className="text-[11px] font-black uppercase text-white/60 tracking-widest">{t.autoRotate}</span>
-                               <span className="text-[9px] text-white/30 font-bold mt-0.5">{t.rotateInterval}</span>
+                               <span className="text-[9px] text-white/30 font-bold mt-0.5">{settings.autoRotate ? `${settings.rotateInterval}s` : 'DISABLED'}</span>
                              </div>
                              <button onClick={() => setSettings({...settings, autoRotate: !settings.autoRotate})} className={`w-12 h-6.5 rounded-full relative transition-all duration-500 ${settings.autoRotate ? 'bg-blue-600 shadow-[0_0_15px_rgba(37,99,235,0.4)]' : 'bg-white/10'}`}>
                                <div className={`absolute top-1 w-4.5 h-4.5 bg-white rounded-full shadow-lg transition-all duration-500 ${settings.autoRotate ? 'left-6.5' : 'left-1'}`} />
@@ -328,7 +332,17 @@ const Controls: React.FC<ControlsProps> = ({
                 {activeTab === 'audio' && (
                   <>
                     <div className="bg-white/[0.04] rounded-[2rem] p-8 space-y-8 shadow-2xl">
-                      <CustomSelect label={t.audioInput} value={selectedDeviceId} hint={t.hints.device} options={[{ value: '', label: 'Default System Output' }, ...audioDevices.map(d => ({ value: d.deviceId, label: d.label }))]} onChange={onDeviceChange} />
+                      <CustomSelect 
+                        label={t.audioInput} 
+                        value={selectedDeviceId} 
+                        hint={t.hints.device} 
+                        options={[
+                          { value: '', label: 'Default Microphone' }, 
+                          { value: SYSTEM_AUDIO_ID, label: t.systemAudio },
+                          ...audioDevices.map(d => ({ value: d.deviceId, label: d.label }))
+                        ]} 
+                        onChange={onDeviceChange} 
+                      />
                       <button onClick={toggleMicrophone} className={`w-full py-5 rounded-2xl font-black text-xs uppercase tracking-[0.2em] transition-all duration-300 ${isListening ? 'bg-red-500/15 text-red-400 border border-red-500/30' : 'bg-blue-600 text-white shadow-2xl shadow-blue-600/20 hover:bg-blue-500 hover:scale-[1.02]'}`}>
                         {isListening ? t.stopMic : t.startMic}
                       </button>
@@ -358,40 +372,47 @@ const Controls: React.FC<ControlsProps> = ({
                       </button>
                     </div>
                     <div className="bg-white/[0.04] rounded-[2rem] p-8 space-y-8 shadow-2xl">
-                      <CustomSelect label={`${t.lyrics} ${t.styleTheme}`} value={lyricsStyle} hint={t.hints.lyricsStyle} options={Object.values(LyricsStyle).map(s => ({ value: s, label: t.lyricsStyles[s] }))} onChange={(val) => setLyricsStyle(val as LyricsStyle)} />
+                      <CustomSelect 
+                        label={`${t.lyrics} ${t.styleTheme}`} 
+                        value={lyricsStyle} 
+                        hint={t.hints.lyricsStyle} 
+                        options={Object.values(LyricsStyle).map(s => ({ value: s, label: t.lyricsStyles[s] }))} 
+                        onChange={(val) => setLyricsStyle(val as LyricsStyle)} 
+                      />
                     </div>
                     <div className="bg-white/[0.04] rounded-[2rem] p-8 space-y-8 shadow-2xl">
-                      <CustomSelect label={t.region} value={region} hint={t.hints.region} options={Object.entries(REGION_NAMES).map(([val, name]) => ({ value: val, label: name }))} onChange={(val) => setRegion(val as Region)} />
+                       <CustomSelect 
+                         label={t.region} 
+                         value={region} 
+                         hint={t.hints.region} 
+                         options={Object.keys(REGION_NAMES).map(r => ({ value: r, label: REGION_NAMES[r as Region] }))} 
+                         onChange={(val) => setRegion(val as Region)} 
+                       />
                     </div>
                   </>
                 )}
                 {activeTab === 'system' && (
                   <>
                     <div className="bg-white/[0.04] rounded-[2rem] p-8 space-y-8 shadow-2xl">
-                      <CustomSelect label={t.language} value={language} options={[
-                        { code: 'en', label: 'English' },
-                        { code: 'zh', label: '简体中文' },
-                        { code: 'ja', label: '日本語' },
-                        { code: 'es', label: 'Español' },
-                        { code: 'ko', label: '한국어' },
-                        { code: 'de', label: 'Deutsch' }
-                      ].map(l => ({ value: l.code, label: l.label }))} onChange={(val) => setLanguage(val as Language)} />
-                      <button onClick={resetSettings} className="w-full py-4.5 bg-red-500/10 border border-transparent hover:border-red-500/30 rounded-2xl text-[11px] font-black uppercase tracking-[0.2em] text-red-400 hover:bg-red-500/20 hover:text-red-300 transition-all duration-300" title={t.reset}>
-                        {t.reset}
-                      </button>
+                      <CustomSelect 
+                        label={t.language} 
+                        value={language} 
+                        hint={t.hints.language} 
+                        options={[
+                           { value: 'en', label: 'English' },
+                           { value: 'zh', label: '中文 (Chinese)' },
+                           { value: 'ja', label: '日本語 (Japanese)' }
+                        ]} 
+                        onChange={(val) => setLanguage(val as Language)} 
+                      />
                     </div>
-                    <div className="bg-white/[0.04] rounded-[2rem] p-8 space-y-6 md:col-span-2 shadow-2xl">
-                      <span className="text-[11px] font-black uppercase text-white/50 tracking-[0.25em] block ml-1">{t.appInfo}</span>
-                      <div className="bg-black/20 p-8 rounded-3xl space-y-8 shadow-inner">
-                         <p className="text-base text-white/60 leading-relaxed font-medium">{t.appDescription}</p>
-                         <div className="flex justify-between items-center pt-6 border-t border-white/10">
-                            <div className="flex items-center gap-4">
-                               <div className="w-2 h-2 rounded-full bg-green-500 shadow-[0_0_10px_rgba(34,197,94,0.5)]" />
-                               <span className="text-xs font-black uppercase text-white/50 tracking-widest">{t.version}</span>
-                            </div>
-                            <span className="text-xs font-mono text-blue-400 font-bold bg-blue-500/10 px-3.5 py-1.5 rounded-lg border border-blue-500/20">{APP_VERSION}</span>
-                         </div>
-                      </div>
+                    <div className="bg-white/[0.04] rounded-[2rem] p-8 space-y-6 shadow-2xl flex flex-col justify-center">
+                        <button onClick={resetSettings} className="w-full py-5 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400 font-bold text-xs uppercase tracking-widest hover:bg-red-500/20 transition-all">
+                        {t.reset}
+                        </button>
+                         <div className="text-center">
+                            <span className="text-[10px] text-white/20 font-mono">v{APP_VERSION}</span>
+                        </div>
                     </div>
                   </>
                 )}
@@ -400,7 +421,6 @@ const Controls: React.FC<ControlsProps> = ({
           </div>
         </div>
       )}
-      <HelpModal isOpen={showHelp} onClose={() => setShowHelp(false)} language={language} />
     </>
   );
 };

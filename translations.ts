@@ -1,3 +1,4 @@
+
 import { VisualizerMode, LyricsStyle, Language } from './types';
 
 // Translation dictionary for supported languages
@@ -40,6 +41,7 @@ export const TRANSLATIONS: Record<Language, any> = {
     autoRotate: 'Auto-Cycle Modes',
     rotateInterval: 'Interval (s)',
     audioInput: 'Input Device',
+    systemAudio: 'System / Tab Audio',
     lyrics: 'Lyrics',
     showLyrics: 'Enable AI Recognition',
     language: 'UI Language',
@@ -79,6 +81,7 @@ export const TRANSLATIONS: Record<Language, any> = {
       [VisualizerMode.KALEIDOSCOPE]: 'Kaleidoscope',
       [VisualizerMode.LASERS]: 'Concert Lasers',
       [VisualizerMode.STROBE]: 'Grid Matrix',
+      [VisualizerMode.SMOKE]: 'Ethereal Smoke',
       [VisualizerMode.SILK]: 'Silk Waves',
       [VisualizerMode.LIQUID]: 'Liquid Sphere',
       [VisualizerMode.TERRAIN]: 'Low-Poly Terrain'
@@ -164,6 +167,7 @@ export const TRANSLATIONS: Record<Language, any> = {
     autoRotate: '自动循环',
     rotateInterval: '切换间隔 (秒)',
     audioInput: '输入源选择',
+    systemAudio: '系统音频 (标签页/屏幕)',
     lyrics: 'AI 曲目识别',
     showLyrics: '启用自动识别',
     language: '界面语言',
@@ -203,6 +207,7 @@ export const TRANSLATIONS: Record<Language, any> = {
       [VisualizerMode.KALEIDOSCOPE]: '迷幻万花筒',
       [VisualizerMode.LASERS]: '舞台激光矩阵',
       [VisualizerMode.STROBE]: '巨幕点阵阵列',
+      [VisualizerMode.SMOKE]: '空灵烟雾',
       [VisualizerMode.SILK]: '流光绸缎 (WebGL)',
       [VisualizerMode.LIQUID]: '液态星球 (WebGL)',
       [VisualizerMode.TERRAIN]: '低多边形山脉 (WebGL)'
@@ -288,6 +293,7 @@ export const TRANSLATIONS: Record<Language, any> = {
     autoRotate: '自動切替',
     rotateInterval: '間隔 (秒)',
     audioInput: '入力ソース',
+    systemAudio: 'システム音声 (タブ/画面)',
     lyrics: 'AI曲識別',
     showLyrics: '自動識別を有効にする',
     language: '言語',
@@ -327,6 +333,7 @@ export const TRANSLATIONS: Record<Language, any> = {
       [VisualizerMode.KALEIDOSCOPE]: '万華鏡',
       [VisualizerMode.LASERS]: 'コンサート・レーザー',
       [VisualizerMode.STROBE]: 'グリッド・マトリックス',
+      [VisualizerMode.SMOKE]: 'エーテル・スモーク',
       [VisualizerMode.SILK]: 'シルク・ウェーブ',
       [VisualizerMode.LIQUID]: 'リキッド・スフィア',
       [VisualizerMode.TERRAIN]: 'ローポリ・テレイン'

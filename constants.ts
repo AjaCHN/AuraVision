@@ -46,6 +46,10 @@ export const VISUALIZER_PRESETS = {
     name: 'Grid Matrix',
     description: 'Massive LED grid pulsing to the beat'
   },
+  [VisualizerMode.SMOKE]: {
+    name: 'Ethereal Smoke',
+    description: 'Dual-stream mystical fog'
+  },
   [VisualizerMode.SILK]: {
     name: 'Silk Waves',
     description: 'Iridescent flowing fabric (WebGL)'

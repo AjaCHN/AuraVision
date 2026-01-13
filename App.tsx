@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import VisualizerCanvas from './components/VisualizerCanvas';
 import ThreeVisualizer from './components/ThreeVisualizer';
-import Controls from './components/Controls';
+import Controls, { SYSTEM_AUDIO_ID } from './components/Controls';
 import SongOverlay from './components/SongOverlay';
 import { VisualizerMode, SongInfo, LyricsStyle, Language, VisualizerSettings, Region, AudioDevice } from './types';
 import { COLOR_THEMES } from './constants';
@@ -34,6 +34,10 @@ const App: React.FC = () => {
   const [analyser, setAnalyser] = useState<AnalyserNode | null>(null);
   const [mediaStream, setMediaStream] = useState<MediaStream | null>(null);
   const [audioDevices, setAudioDevices] = useState<AudioDevice[]>([]);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  
+  // Ref to track the active audio context for robust cleanup
+  const audioContextRef = useRef<AudioContext | null>(null);
 
   const getStorage = useCallback(<T,>(key: string, fallback: T): T => {
     if (typeof window === 'undefined') return fallback;
@@ -70,7 +74,6 @@ const App: React.FC = () => {
   const [isIdentifying, setIsIdentifying] = useState(false);
   const [currentSong, setCurrentSong] = useState<SongInfo | null>(null);
 
-  // 统一持久化存储监听：确保所有核心状态同步到 LocalStorage
   useEffect(() => {
     const data = { 
       mode, 
@@ -78,7 +81,7 @@ const App: React.FC = () => {
       settings, 
       lyricsStyle, 
       showLyrics, 
-      language, // 确保 language 被包含并监听
+      language, 
       region, 
       deviceId: selectedDeviceId 
     };
@@ -96,20 +99,30 @@ const App: React.FC = () => {
     }
   }, [settings.smoothing, settings.fftSize, analyser]);
 
-  useEffect(() => {
-    const fetchDevices = async () => {
-      try {
-        const devices = await navigator.mediaDevices.enumerateDevices();
-        const inputs = devices
-          .filter(d => d.kind === 'audioinput')
-          .map(d => ({ deviceId: d.deviceId, label: d.label || `Mic ${d.deviceId.slice(0, 5)}` }));
-        setAudioDevices(inputs);
-      } catch (e) {
-        console.error("Device fetch error:", e);
-      }
-    };
-    fetchDevices();
+  const updateAudioDevices = useCallback(async () => {
+    try {
+      // Check if enumerateDevices is supported
+      if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) return;
+      
+      const devices = await navigator.mediaDevices.enumerateDevices();
+      const inputs = devices
+        .filter(d => d.kind === 'audioinput')
+        .map(d => ({ deviceId: d.deviceId, label: d.label || `Mic ${d.deviceId.slice(0, 5)}` }));
+      setAudioDevices(inputs);
+    } catch (e) {
+      console.warn("Device fetch warning:", e);
+    }
   }, []);
+
+  useEffect(() => {
+    updateAudioDevices();
+    if (navigator.mediaDevices) {
+      navigator.mediaDevices.addEventListener('devicechange', updateAudioDevices);
+      return () => {
+        navigator.mediaDevices.removeEventListener('devicechange', updateAudioDevices);
+      };
+    }
+  }, [updateAudioDevices]);
 
   const randomizeSettings = useCallback(() => {
     const randomTheme = COLOR_THEMES[Math.floor(Math.random() * COLOR_THEMES.length)];
@@ -159,49 +172,161 @@ const App: React.FC = () => {
     return () => clearInterval(interval);
   }, [isListening, settings.autoRotate, settings.rotateInterval, mode]);
 
-  const startMicrophone = async (deviceId?: string) => {
+  const startMicrophone = useCallback(async (deviceId?: string) => {
+    setErrorMessage(null);
     try {
-      const constraints: MediaStreamConstraints = { 
-        audio: deviceId ? { deviceId: { exact: deviceId } } : {
-          echoCancellation: false,
-          noiseSuppression: false,
-          autoGainControl: false
-        } 
-      };
-      const stream = await navigator.mediaDevices.getUserMedia(constraints);
+      let stream: MediaStream;
+
+      // 1. Clean up existing context before creating a new one
+      if (audioContextRef.current) {
+        audioContextRef.current.close();
+        audioContextRef.current = null;
+      }
+      if (audioContext) {
+        audioContext.close();
+      }
+
+      // 2. Acquire Stream
+      if (deviceId === SYSTEM_AUDIO_ID) {
+        try {
+            stream = await navigator.mediaDevices.getDisplayMedia({
+                video: true,
+                audio: {
+                    echoCancellation: false,
+                    noiseSuppression: false,
+                    autoGainControl: false
+                }
+            });
+        } catch (err: any) {
+            if (err.name === 'NotAllowedError') {
+                console.warn("System audio sharing was cancelled by user.");
+                setIsListening(false);
+                return; // Exit gracefully without error message
+            }
+            throw err;
+        }
+        
+        if (stream.getAudioTracks().length === 0) {
+            stream.getTracks().forEach(t => t.stop());
+            throw new Error("No audio track detected. Please check 'Share Audio' in the browser dialog.");
+        }
+
+        stream.getTracks()[0].onended = () => {
+            setIsListening(false);
+        };
+      } else {
+        try {
+            const constraints: MediaStreamConstraints = { 
+                audio: {
+                  deviceId: deviceId ? { exact: deviceId } : undefined,
+                  echoCancellation: false,
+                  noiseSuppression: false,
+                  autoGainControl: false
+                }
+            };
+            stream = await navigator.mediaDevices.getUserMedia(constraints);
+        } catch (e: any) {
+             // Fallback: If specific device fails (e.g. unplugged), try default device
+             if (deviceId && (e.name === 'OverconstrainedError' || e.name === 'NotFoundError' || e.name === 'NotReadableError')) {
+                 console.warn(`Device ${deviceId} unavailable, falling back to default.`);
+                 const fallbackConstraints = { 
+                     audio: {
+                       echoCancellation: false,
+                       noiseSuppression: false,
+                       autoGainControl: false
+                     }
+                 };
+                 stream = await navigator.mediaDevices.getUserMedia(fallbackConstraints);
+                 // Don't update state here to avoid race condition loop
+             } else {
+                 throw e;
+             }
+        }
+      }
+      
+      // 3. Create Audio Context
       const context = new (window.AudioContext || (window as any).webkitAudioContext)();
+      
+      // Ensure context is running (sometimes it starts suspended)
+      if (context.state === 'suspended') {
+        await context.resume();
+      }
+
       const src = context.createMediaStreamSource(stream);
       const node = context.createAnalyser();
       node.fftSize = settings.fftSize;
       node.smoothingTimeConstant = settings.smoothing;
       src.connect(node);
       
+      audioContextRef.current = context;
       setAudioContext(context);
       setAnalyser(node);
       setMediaStream(stream);
       setIsListening(true);
-    } catch (err) {
-      console.error('Mic initialization error:', err);
-      setIsListening(false);
-    }
-  };
 
-  const toggleMicrophone = () => {
+      // 4. Refresh devices list to get permission-gated labels
+      updateAudioDevices();
+
+    } catch (err: any) {
+      // Graceful error handling
+      const isPermissionError = err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError';
+      
+      if (isPermissionError) {
+         console.warn("Microphone permission denied.");
+      } else {
+         console.error('Audio initialization error:', err);
+      }
+      
+      setIsListening(false);
+      
+      let msg = "Could not access audio device.";
+      if (isPermissionError) {
+          msg = "Access denied. Please check your browser permissions for microphone.";
+      } else if (err.name === 'NotFoundError') {
+          msg = "No audio input device found.";
+      } else if (err.name === 'NotReadableError') {
+          msg = "Audio device is busy or invalid.";
+      } else if (err.message) {
+          msg = err.message;
+      }
+      setErrorMessage(msg);
+    }
+  }, [settings.fftSize, settings.smoothing, updateAudioDevices, audioContext]);
+
+  const toggleMicrophone = useCallback(() => {
     if (isListening) {
       if (mediaStream) mediaStream.getTracks().forEach(t => t.stop());
-      if (audioContext) audioContext.close();
+      if (audioContextRef.current) {
+        audioContextRef.current.close();
+        audioContextRef.current = null;
+      }
+      setAudioContext(null);
       setIsListening(false);
     } else {
       startMicrophone(selectedDeviceId);
     }
-  };
+  }, [isListening, mediaStream, selectedDeviceId, startMicrophone]);
 
+  // Restart microphone when device changes (only if already listening)
   useEffect(() => {
     if (isListening) {
+      // Cleanup old stream
       if (mediaStream) mediaStream.getTracks().forEach(t => t.stop());
+      // Start new one
       startMicrophone(selectedDeviceId);
     }
+    // Note: startMicrophone is intentionally excluded to prevent restart on settings change
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedDeviceId]);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (audioContextRef.current) {
+        audioContextRef.current.close();
+      }
+    };
+  }, []);
 
   const performIdentification = useCallback(async (stream: MediaStream) => {
     if (!showLyrics || isIdentifying) return;
@@ -247,6 +372,11 @@ const App: React.FC = () => {
           <h1 className="text-5xl font-black bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500">{t.welcomeTitle}</h1>
           <p className="text-gray-400 text-sm leading-relaxed">{t.welcomeText}</p>
           <button onClick={() => { setHasStarted(true); startMicrophone(selectedDeviceId); }} className="px-8 py-4 bg-white text-black font-bold rounded-2xl hover:scale-105 transition-all">{t.startExperience}</button>
+          {errorMessage && (
+             <div className="mt-4 p-3 bg-red-500/20 text-red-200 text-sm rounded-lg border border-red-500/30">
+                 {errorMessage}
+             </div>
+          )}
         </div>
       </div>
     );
@@ -254,6 +384,27 @@ const App: React.FC = () => {
 
   return (
     <div className={`min-h-screen bg-black overflow-hidden relative ${settings.hideCursor ? 'cursor-none' : ''}`}>
+      
+      {/* Error Notification Toast */}
+      {errorMessage && (
+        <div className="fixed top-24 left-1/2 -translate-x-1/2 z-50 bg-red-900/90 text-white px-6 py-4 rounded-xl shadow-2xl flex items-center gap-4 backdrop-blur-md max-w-md border border-red-500/50 animate-fade-in-up">
+            <div className="p-2 bg-red-500 rounded-full">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+            </div>
+            <div className="flex-1">
+                <p className="font-bold text-sm text-red-100">Audio Error</p>
+                <p className="text-xs text-red-200/80 leading-snug">{errorMessage}</p>
+            </div>
+            <button onClick={() => setErrorMessage(null)} className="p-2 hover:bg-white/10 rounded-full transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-white/70" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+      )}
+
       {isThreeMode ? (
         <ThreeVisualizer analyser={analyser} mode={mode} colors={colorTheme} settings={settings} />
       ) : (

@@ -13,7 +13,8 @@ export enum VisualizerMode {
   NEBULA = 'NEBULA', 
   KALEIDOSCOPE = 'KALEIDOSCOPE',
   LASERS = 'LASERS',   
-  STROBE = 'STROBE',   
+  STROBE = 'STROBE',
+  SMOKE = 'SMOKE',   
   // WebGL Modes
   SILK = 'SILK',
   LIQUID = 'LIQUID',

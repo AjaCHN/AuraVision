@@ -1,12 +1,9 @@
 import React, { useRef, useMemo } from 'react';
 import { Canvas, useFrame, extend } from '@react-three/fiber';
 import { EffectComposer, Bloom, ChromaticAberration, TiltShift } from '@react-three/postprocessing';
-import { AfterimagePass } from 'three/examples/jsm/postprocessing/AfterimagePass.js';
+import { Environment } from '@react-three/drei';
 import * as THREE from 'three';
 import { VisualizerMode, VisualizerSettings } from '../types';
-
-// Register standard Three.js shader pass if not available in R3F postprocessing automatically
-extend({ AfterimagePass });
 
 // Add global JSX augmentation to ensure Three.js intrinsic elements are recognized by the TypeScript compiler.
 declare global {
@@ -24,7 +21,6 @@ declare global {
       circleGeometry: any;
       meshBasicMaterial: any;
       meshStandardMaterial: any;
-      afterimagePass: any;
     }
   }
 
@@ -44,7 +40,6 @@ declare global {
         circleGeometry: any;
         meshBasicMaterial: any;
         meshStandardMaterial: any;
-        afterimagePass: any;
       }
     }
   }
@@ -60,34 +55,55 @@ interface ThreeVisualizerProps {
 const SilkWavesScene: React.FC<{ analyser: AnalyserNode; colors: string[]; settings: VisualizerSettings }> = ({ analyser, colors, settings }) => {
   const meshRef = useRef<THREE.Mesh>(null);
   const dataArray = useMemo(() => new Uint8Array(analyser.frequencyBinCount), [analyser]);
-  // Increase segments for smoother silk detail
-  const geometry = useMemo(() => new THREE.PlaneGeometry(60, 60, 100, 100), []);
+  // Increase segments for smoother silk detail: 160x160 for high fidelity folds
+  const geometry = useMemo(() => new THREE.PlaneGeometry(60, 60, 160, 160), []);
 
   useFrame((state) => {
     if (!meshRef.current) return;
     analyser.getByteFrequencyData(dataArray);
 
-    let vol = 0;
-    for(let i=0; i<40; i++) vol += dataArray[i];
-    vol = (vol / 40) * settings.sensitivity;
+    // Audio Analysis - Split into bands
+    let bass = 0;
+    let treble = 0;
+
+    // Bass (0-20 bins)
+    for(let i=0; i<20; i++) bass += dataArray[i];
+    bass = (bass / 20) * settings.sensitivity;
+
+    // Treble (100-180 bins) - Capture hi-hats and snares
+    for(let i=100; i<180; i++) treble += dataArray[i];
+    treble = (treble / 80) * settings.sensitivity;
 
     const positions = meshRef.current.geometry.attributes.position as THREE.BufferAttribute;
-    const time = state.clock.getElapsedTime() * settings.speed * 0.3;
+    const time = state.clock.getElapsedTime() * settings.speed * 0.2;
+
+    const bassNorm = bass / 255;
+    const trebleNorm = treble / 255;
 
     for (let i = 0; i < positions.count; i++) {
         const x = positions.getX(i);
         const y = positions.getY(i);
         
-        // Multi-layered noise for silk-like folds
-        const z1 = Math.sin(x * 0.15 + time) * Math.cos(y * 0.12 + time * 0.7) * 5.5;
-        const z2 = Math.sin(x * 0.4 - time * 1.2) * Math.sin(y * 0.35 + time * 0.9) * 2.5;
-        const z3 = Math.sin(x * 0.8 + time * 2) * 0.8; // High freq micro-folds
+        // 1. Base organic movement (Simulating wind on heavy silk)
+        // Uses lower frequency noise for large, elegant folds
+        const z1 = Math.sin(x * 0.15 + time) * Math.cos(y * 0.12 + time * 0.7) * 4.0;
+        const z2 = Math.sin(x * 0.4 - time * 1.2) * Math.sin(y * 0.35 + time * 0.9) * 2.0;
         
-        const audioAmp = 1 + (vol / 255) * 4.0; 
+        // 2. Audio Reactive Layers
+        
+        // Bass Layer: Drives large, energetic ripples radiating from center
+        // This gives the feeling of the fabric being "pushed" by the beat
         const dist = Math.sqrt(x*x + y*y);
-        const ripple = Math.sin(dist * 1.2 - time * 6) * (vol / 255) * 2.0;
+        const bassRipple = Math.sin(dist * 0.8 - time * 4.0) * bassNorm * 4.0;
         
-        positions.setZ(i, (z1 + z2 + z3) * audioAmp + ripple);
+        // Treble Layer: Adds fine, high-frequency surface detail/jitter
+        // Simulates vibration or texture appearing with high notes
+        const trebleDetail = Math.cos(x * 2.0 + time * 3.0) * Math.sin(y * 2.0 + time * 3.0) * trebleNorm * 1.2;
+        
+        // Combine all layers
+        const combinedZ = z1 + z2 + bassRipple + trebleDetail;
+        
+        positions.setZ(i, combinedZ);
     }
     positions.needsUpdate = true;
     meshRef.current.geometry.computeVertexNormals();
@@ -98,23 +114,23 @@ const SilkWavesScene: React.FC<{ analyser: AnalyserNode; colors: string[]; setti
   return (
     <>
       <color attach="background" args={['#020205']} /> 
-      <pointLight position={[25, 40, 25]} intensity={12.0} color={colors[0]} distance={150} />
-      <pointLight position={[-25, 20, 25]} intensity={8.0} color={colors[1]} distance={150} />
-      <spotLight position={[0, -40, 30]} angle={0.9} penumbra={0.6} intensity={25.0} color={colors[2] || '#ffffff'} distance={120} />
-      <ambientLight intensity={1.2} />
+      <pointLight position={[25, 40, 25]} intensity={8.0} color={colors[0]} distance={150} />
+      <pointLight position={[-25, 20, 25]} intensity={5.0} color={colors[1]} distance={150} />
+      <spotLight position={[0, -40, 30]} angle={0.8} penumbra={0.6} intensity={15.0} color={colors[2] || '#ffffff'} distance={120} />
+      <ambientLight intensity={0.8} />
       <mesh ref={meshRef}>
          <primitive object={geometry} attach="geometry" />
          <meshPhysicalMaterial 
             color={colors[0]} 
             emissive={colors[1]} 
-            emissiveIntensity={0.4}
-            metalness={0.7}
-            roughness={0.15}
+            emissiveIntensity={0.3}
+            metalness={0.6}
+            roughness={0.3}
             clearcoat={1.0}
-            clearcoatRoughness={0.1}
-            sheen={1.0}
+            clearcoatRoughness={0.2}
+            sheen={1.5}
             sheenColor={new THREE.Color(colors[2] || '#ffffff')}
-            sheenRoughness={0.2}
+            sheenRoughness={0.4}
             side={THREE.DoubleSide}
             flatShading={false}
          />
@@ -126,7 +142,8 @@ const SilkWavesScene: React.FC<{ analyser: AnalyserNode; colors: string[]; setti
 const LiquidSphereScene: React.FC<{ analyser: AnalyserNode; colors: string[]; settings: VisualizerSettings }> = ({ analyser, colors, settings }) => {
   const meshRef = useRef<THREE.Mesh>(null);
   const dataArray = useMemo(() => new Uint8Array(analyser.frequencyBinCount), [analyser]);
-  const geometry = useMemo(() => new THREE.IcosahedronGeometry(4, 3), []);
+  // Increased detail for finer imperfections (Detail level 5)
+  const geometry = useMemo(() => new THREE.IcosahedronGeometry(4, 5), []);
   const originalPositions = useMemo(() => {
      const pos = geometry.attributes.position;
      const count = pos.count;
@@ -142,43 +159,79 @@ const LiquidSphereScene: React.FC<{ analyser: AnalyserNode; colors: string[]; se
   useFrame(({ clock }) => {
     if (!meshRef.current) return;
     analyser.getByteFrequencyData(dataArray);
-    let lowEnd = 0;
-    for(let i=0; i<30; i++) lowEnd += dataArray[i];
-    lowEnd = (lowEnd / 30) * settings.sensitivity;
+    
+    // Split frequency analysis for different noise layers
+    let bass = 0;
+    let treble = 0;
+    
+    // Bass (0-20) drives global shape
+    for(let i=0; i<20; i++) bass += dataArray[i];
+    bass = (bass / 20) * settings.sensitivity;
+    
+    // Treble (80-150) drives surface details/imperfections
+    for(let i=80; i<150; i++) treble += dataArray[i];
+    treble = (treble / 70) * settings.sensitivity;
+
     const time = clock.getElapsedTime() * settings.speed * 0.4;
     const positions = meshRef.current.geometry.attributes.position as THREE.BufferAttribute;
+    
     for (let i = 0; i < positions.count; i++) {
         const ox = originalPositions[i*3];
         const oy = originalPositions[i*3+1];
         const oz = originalPositions[i*3+2];
-        const noise = Math.sin(ox * 0.4 + time) * Math.cos(oy * 0.3 + time * 0.8) * Math.sin(oz * 0.4 + time * 1.2);
-        const reactivity = (lowEnd/255) * 0.5;
-        const displacement = 1 + (noise * 0.3) + (reactivity * noise);
-        positions.setXYZ(i, ox * displacement, oy * displacement, oz * displacement);
+        
+        // Layer 1: Base Liquid Motion (Low frequency, high amplitude)
+        const noise1 = Math.sin(ox * 0.4 + time) * Math.cos(oy * 0.3 + time * 0.8) * Math.sin(oz * 0.4 + time * 1.2);
+        
+        // Layer 2: Surface Imperfections (High frequency, low amplitude)
+        // Creates the "rippled" or "imperfect" surface look, simulating surface tension
+        const noise2 = Math.sin(ox * 2.5 + time * 1.5) * Math.cos(oy * 2.5 + time * 1.7) * Math.sin(oz * 2.5 + time * 1.3);
+        
+        const reactivity = (bass / 255);
+        const vibration = (treble / 255);
+
+        // Displacement calculation
+        // 1. Base shape change reacts to Bass
+        const d1 = noise1 * (0.3 + reactivity * 0.5);
+        
+        // 2. Surface ripples react to Treble
+        const d2 = noise2 * (0.05 + vibration * 0.15);
+
+        const totalDisplacement = 1 + d1 + d2;
+        
+        positions.setXYZ(i, ox * totalDisplacement, oy * totalDisplacement, oz * totalDisplacement);
     }
     positions.needsUpdate = true;
     meshRef.current.geometry.computeVertexNormals();
     meshRef.current.rotation.y = time * 0.1;
+    meshRef.current.rotation.z = time * 0.05;
   });
 
   return (
     <>
-      <color attach="background" args={['#000000']} />
-      <ambientLight intensity={0.4} />
-      <pointLight position={[15, 15, 15]} intensity={3} color={colors[0]} />
+      <color attach="background" args={['#050505']} />
+      
+      {/* Dynamic Reflections Environment */}
+      <Environment preset="city" />
+      
+      <ambientLight intensity={0.2} />
+      <pointLight position={[15, 15, 15]} intensity={2} color={colors[0]} />
       <pointLight position={[-15, -15, -5]} intensity={2} color={colors[1]} />
-      <directionalLight position={[0, 10, 5]} intensity={1} color="#ffffff" />
+      <spotLight position={[0, 10, 0]} intensity={1} color={colors[2] || '#ffffff'} angle={0.5} penumbra={1} />
+      
       <mesh ref={meshRef}>
          <primitive object={geometry} attach="geometry" />
          <meshPhysicalMaterial 
             color={colors[0]}
             emissive={colors[1]}
-            emissiveIntensity={0.3}
-            metalness={0.6}
-            roughness={0.2}
-            clearcoat={1.0}
-            clearcoatRoughness={0.2}
+            emissiveIntensity={0.2}
+            metalness={0.95}    // Increased for liquid metal look
+            roughness={0.08}    // Reduced for sharper reflections
+            clearcoat={1.0}     // Clearcoat for wet look
+            clearcoatRoughness={0.1}
             reflectivity={1.0}
+            envMapIntensity={1.2}
+            side={THREE.DoubleSide}
          />
       </mesh>
     </>
@@ -262,22 +315,17 @@ const ThreeVisualizer: React.FC<ThreeVisualizerProps> = ({ analyser, colors, set
         gl={{ antialias: false, toneMapping: THREE.ReinhardToneMapping, preserveDrawingBuffer: true, autoClear: true }}
       >
         {renderScene()}
-        {(settings.glow || settings.trails) && (
+        {settings.glow && (
             <EffectComposer enableNormalPass={false}>
-                {settings.glow && (
-                  <>
-                    <Bloom 
-                        luminanceThreshold={0.2} 
-                        luminanceSmoothing={0.85} 
-                        height={300} 
-                        intensity={getBloomIntensity()} 
-                    />
-                    <ChromaticAberration 
-                        offset={new THREE.Vector2(0.002 * settings.sensitivity, 0.002)}
-                    />
-                  </>
-                )}
-                {settings.trails && <afterimagePass args={[0.85]} />}
+                <Bloom 
+                    luminanceThreshold={0.2} 
+                    luminanceSmoothing={0.85} 
+                    height={300} 
+                    intensity={getBloomIntensity()} 
+                />
+                <ChromaticAberration 
+                    offset={new THREE.Vector2(0.002 * settings.sensitivity, 0.002)}
+                />
                 {(mode === VisualizerMode.LIQUID || mode === VisualizerMode.SILK) && (
                     <TiltShift blur={0.1} />
                 )}

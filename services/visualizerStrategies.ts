@@ -204,7 +204,7 @@ export class ShapesRenderer implements IVisualizerRenderer {
             if (j === 0) ctx.moveTo(px, py); 
             else ctx.lineTo(px, py);
         }
-        ctx.closePath(); // 修复抽象几何主题 Bug：确保多边形路径完全闭合
+        ctx.closePath();
         ctx.stroke();
 
         if (isFlashingLine && bassNorm > 0.6) {
@@ -502,5 +502,105 @@ export class StrobeRenderer implements IVisualizerRenderer {
       }
     }
     ctx.restore();
+  }
+}
+
+export class SmokeRenderer implements IVisualizerRenderer {
+  private particles: Array<{
+    x: number; y: number;
+    vx: number; vy: number;
+    size: number;
+    life: number; maxLife: number;
+    color: string;
+    source: 'top' | 'bottom';
+  }> = [];
+
+  init() { this.particles = []; }
+
+  draw(ctx: CanvasRenderingContext2D, data: Uint8Array, w: number, h: number, colors: string[], settings: VisualizerSettings, rotation: number) {
+    // Audio analysis
+    const bass = getAverage(data, 0, 10) / 255;
+    const mids = getAverage(data, 10, 50) / 255;
+
+    // Emission
+    // Base emission + reactive emission
+    const spawnRate = 1 + Math.floor(bass * 5 * settings.sensitivity);
+    for (let i = 0; i < spawnRate; i++) {
+        // Spawn from top
+        if (Math.random() > 0.5) {
+            this.particles.push(this.createParticle(w, h, 'top', colors, settings));
+        }
+        // Spawn from bottom
+        else {
+            this.particles.push(this.createParticle(w, h, 'bottom', colors, settings));
+        }
+    }
+
+    // Use screen blend mode for additive smoke effect
+    ctx.globalCompositeOperation = 'screen'; 
+
+    for (let i = this.particles.length - 1; i >= 0; i--) {
+        const p = this.particles[i];
+        
+        // Movement toward center
+        const centerY = h / 2;
+        const distToCenter = centerY - p.y;
+        
+        // Base vertical speed + audio reaction
+        const speed = (0.5 + mids * 2.0) * settings.speed;
+        
+        // Move towards center with easing
+        p.y += (distToCenter * 0.01 * speed) + p.vy * speed;
+        
+        // Horizontal turbulence based on noise approximation
+        const turbulence = Math.sin(p.y * 0.01 + rotation + p.life * 0.02) * (1 + bass * 2);
+        p.x += (p.vx + turbulence) * speed;
+
+        p.life--;
+        p.size *= 1.005; // Grow slightly as it dissipates
+
+        // Remove if near center or dead
+        if (Math.abs(p.y - centerY) < 20 || p.life <= 0) {
+            this.particles.splice(i, 1);
+            continue;
+        }
+
+        // Draw
+        const alpha = Math.min(1, p.life / 100) * 0.15; // Low opacity for subtle smoke
+        
+        ctx.beginPath();
+        const g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.size);
+        g.addColorStop(0, p.color);
+        g.addColorStop(1, 'transparent');
+        ctx.fillStyle = g;
+        ctx.globalAlpha = alpha;
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fill();
+    }
+    
+    // Reset context
+    ctx.globalCompositeOperation = 'source-over';
+    ctx.globalAlpha = 1;
+    
+    // Safety limit
+    if (this.particles.length > 400) this.particles.shift();
+  }
+
+  private createParticle(w: number, h: number, source: 'top' | 'bottom', colors: string[], settings: VisualizerSettings) {
+      const x = Math.random() * w;
+      const y = source === 'top' ? -50 : h + 50;
+      const vy = source === 'top' ? 1 : -1;
+      const size = (30 + Math.random() * 50) * (settings.sensitivity || 1);
+      const color = colors[Math.floor(Math.random() * colors.length)];
+      return {
+          x, y,
+          vx: (Math.random() - 0.5) * 0.5,
+          vy: vy * (1 + Math.random()),
+          size,
+          life: 300 + Math.random() * 200,
+          maxLife: 500,
+          color,
+          source
+      };
   }
 }
