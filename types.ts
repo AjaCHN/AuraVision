@@ -15,7 +15,6 @@ export enum VisualizerMode {
   LASERS = 'LASERS',   
   STROBE = 'STROBE',
   SMOKE = 'SMOKE',   
-  WATER_RIPPLES = 'WATER_RIPPLES',
   // WebGL Modes
   SILK = 'SILK',
   LIQUID = 'LIQUID',
@@ -48,7 +47,6 @@ export interface VisualizerSettings {
   hideCursor: boolean;
   smoothing: number;
   fftSize: number;
-  monitor: boolean; // New setting
   quality: 'low' | 'med' | 'high';
 }
 

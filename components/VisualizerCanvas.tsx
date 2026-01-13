@@ -10,7 +10,7 @@ import {
 import { 
   BarsRenderer, RingsRenderer, ParticlesRenderer, TunnelRenderer, 
   PlasmaRenderer, ShapesRenderer, NebulaRenderer, 
-  KaleidoscopeRenderer, LasersRenderer, StrobeRenderer, SmokeRenderer, WaterRipplesRenderer
+  KaleidoscopeRenderer, LasersRenderer, StrobeRenderer, SmokeRenderer
 } from '../services/visualizerStrategies';
 
 interface VisualizerCanvasProps {
@@ -43,7 +43,6 @@ const VisualizerCanvas: React.FC<VisualizerCanvasProps> = ({
     [VisualizerMode.LASERS]: new LasersRenderer(),
     [VisualizerMode.STROBE]: new StrobeRenderer(),
     [VisualizerMode.SMOKE]: new SmokeRenderer(),
-    [VisualizerMode.WATER_RIPPLES]: new WaterRipplesRenderer(),
   });
 
   useEffect(() => {

@@ -1,3 +1,4 @@
+
 # SonicVision AI - OpenSpec 规范主文档
 
 本项目严格遵循 **OpenSpec** 标准进行架构设计与文档编写。SonicVision AI 是一项融合了高性能实时频谱分析与 Google Gemini 3 系列生成式 AI 的沉浸式视听交互实验。
@@ -30,4 +31,4 @@
 *   **重复索引**: `openspec/OPENSPEC.md`。
 
 ---
-*SonicVision AI Project Specification - Version 0.2.3*
+*SonicVision AI Project Specification - Version 0.2.4*

@@ -1,3 +1,4 @@
+
 # SonicVision AI 🎵👁️
 
 [中文文档](README_ZH.md)
@@ -125,9 +126,12 @@ SonicVision AI features 8 distinct, mathematically generated visualization engin
 /
 ├── components/
 │   ├── Controls.tsx        # UI for settings, mode switching, and expansion
+│   ├── ControlWidgets.tsx  # Reusable UI primitives (Sliders, Toggles)
 │   ├── HelpModal.tsx       # Info and Guide modal
 │   ├── SongOverlay.tsx     # Floating lyrics, song info, and source links
-│   └── VisualizerCanvas.tsx# Core Canvas rendering logic (all 8 modes)
+│   ├── ThreeScenes.tsx     # WebGL scene definitions
+│   ├── ThreeVisualizer.tsx # React Three Fiber canvas wrapper
+│   └── VisualizerCanvas.tsx# Core 2D Canvas rendering logic (all 8 modes)
 ├── services/
 │   └── geminiService.ts    # Gemini 3 client setup with Google Search tool
 ├── constants.ts            # Visualizer presets, color themes, model config

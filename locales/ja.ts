@@ -1,4 +1,3 @@
-
 import { VisualizerMode, LyricsStyle } from '../types';
 
 export const ja = {
@@ -103,7 +102,6 @@ export const ja = {
     [VisualizerMode.LASERS]: 'コンサート・レーザー',
     [VisualizerMode.STROBE]: 'グリッド・マトリックス',
     [VisualizerMode.SMOKE]: 'エーテル・スモーク',
-    [VisualizerMode.WATER_RIPPLES]: '水の波紋',
     [VisualizerMode.SILK]: 'シルク・ウェーブ',
     [VisualizerMode.LIQUID]: 'リキッド・スフィア',
     [VisualizerMode.TERRAIN]: 'ローポリ・テレイン'

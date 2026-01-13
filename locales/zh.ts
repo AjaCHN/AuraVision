@@ -1,4 +1,3 @@
-
 import { VisualizerMode, LyricsStyle } from '../types';
 
 export const zh = {
@@ -103,7 +102,6 @@ export const zh = {
     [VisualizerMode.LASERS]: '舞台激光矩阵',
     [VisualizerMode.STROBE]: '巨幕点阵阵列',
     [VisualizerMode.SMOKE]: '空灵烟雾',
-    [VisualizerMode.WATER_RIPPLES]: '水波涟漪',
     [VisualizerMode.SILK]: '流光绸缎 (WebGL)',
     [VisualizerMode.LIQUID]: '液态星球 (WebGL)',
     [VisualizerMode.TERRAIN]: '低多边形山脉 (WebGL)'

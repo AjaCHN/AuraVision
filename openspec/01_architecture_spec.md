@@ -20,5 +20,8 @@
 
 ## 3. 模块依赖图
 - **App:** 状态中枢 (State Source of Truth)，管理 AudioContext 与 MediaStream 生命周期。
+- **Components:**
+  - `VisualizerCanvas` / `ThreeVisualizer`: 渲染入口。
+  - `Controls` + `ControlWidgets`: UI 交互层，组件拆分以提升复用性。
 - **Visualizers:** 纯渲染函数集合，解耦业务逻辑。
 - **Services:** 包含 `fingerprintService` (特征工程) 与 `geminiService` (网络通信)。

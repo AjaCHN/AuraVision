@@ -1,7 +1,7 @@
 
 import { VisualizerMode, Region } from './types';
 
-export const APP_VERSION = '0.2.3';
+export const APP_VERSION = '0.2.4';
 
 export const GEMINI_MODEL = 'gemini-3-flash-preview';
 
@@ -49,10 +49,6 @@ export const VISUALIZER_PRESETS = {
   [VisualizerMode.SMOKE]: {
     name: 'Ethereal Smoke',
     description: 'Dual-stream mystical fog'
-  },
-  [VisualizerMode.WATER_RIPPLES]: {
-    name: 'Water Ripples',
-    description: 'Bass drops create expanding shockwaves'
   },
   [VisualizerMode.SILK]: {
     name: 'Silk Waves',

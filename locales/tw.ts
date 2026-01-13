@@ -1,4 +1,3 @@
-
 import { VisualizerMode, LyricsStyle } from '../types';
 
 export const tw = {
@@ -22,7 +21,7 @@ export const tw = {
     region: '針對特定音樂市場優化 AI 搜尋的演算法。',
     autoRotate: '每隔 30 秒自動循環切換視覺化引擎。',
     rotateInterval: '設定自動循環模式時的切換間隔時間（秒）。',
-    monitor: '將麥克風聲音透過揚声器播放。注意：可能會產生刺耳的嘯叫聲（Feedback）！',
+    monitor: '將麥克風聲音透過揚聲器播放。注意：可能會產生刺耳的嘯叫聲（Feedback）！',
     reset: '將所有應用設定、語言及音訊選項恢復至原廠狀態。',
     resetVisual: '僅將視覺特效參數（速度、光暈、殘影）回歸預設。',
     randomize: '透過隨機演算法生成一套高美學的模式與配色組合。',
@@ -103,7 +102,6 @@ export const tw = {
     [VisualizerMode.LASERS]: '舞台雷射矩陣',
     [VisualizerMode.STROBE]: '巨幕點陣陣列',
     [VisualizerMode.SMOKE]: '空靈煙霧',
-    [VisualizerMode.WATER_RIPPLES]: '水波漣漪',
     [VisualizerMode.SILK]: '流光綢緞 (WebGL)',
     [VisualizerMode.LIQUID]: '液態星球 (WebGL)',
     [VisualizerMode.TERRAIN]: '低多邊形山脈 (WebGL)'

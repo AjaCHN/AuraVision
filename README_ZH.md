@@ -1,3 +1,4 @@
+
 # SonicVision AI 🎵👁️
 
 [English](README.md)
@@ -125,8 +126,11 @@ SonicVision AI 具有 8 种独特的、数学生成的视觉引擎：
 /
 ├── components/
 │   ├── Controls.tsx        # 设置、模式切换和扩展的 UI
+│   ├── ControlWidgets.tsx  # 可复用的 UI 组件 (滑块, 开关)
 │   ├── HelpModal.tsx       # 信息和指南模态框
 │   ├── SongOverlay.tsx     # 悬浮歌词、歌曲信息和来源链接
+│   ├── ThreeScenes.tsx     # WebGL 场景定义
+│   ├── ThreeVisualizer.tsx # React Three Fiber 画布封装
 │   └── VisualizerCanvas.tsx# 核心 Canvas 渲染逻辑（所有 8 种模式）
 ├── services/
 │   └── geminiService.ts    # 带有 Google Search 工具的 Gemini 3 客户端设置

@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import VisualizerCanvas from './components/VisualizerCanvas';
 import ThreeVisualizer from './components/ThreeVisualizer';
@@ -21,7 +22,6 @@ const DEFAULT_SETTINGS: VisualizerSettings = {
   hideCursor: false,
   smoothing: 0.8,
   fftSize: 512, 
-  monitor: false,
   quality: 'high'
 };
 const DEFAULT_LYRICS_STYLE = LyricsStyle.KARAOKE; 
@@ -37,8 +37,6 @@ const App: React.FC = () => {
   const [audioDevices, setAudioDevices] = useState<AudioDevice[]>([]);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   
-  // Track audio nodes for monitor control
-  const monitorGainNodeRef = useRef<GainNode | null>(null);
   // Ref to track the active audio context for robust cleanup
   const audioContextRef = useRef<AudioContext | null>(null);
 
@@ -101,17 +99,6 @@ const App: React.FC = () => {
       }
     }
   }, [settings.smoothing, settings.fftSize, analyser]);
-
-  // Update Monitor Gain when settings change
-  useEffect(() => {
-    if (monitorGainNodeRef.current && audioContextRef.current) {
-        // Safe ramp to avoid clicks
-        const now = audioContextRef.current.currentTime;
-        const targetGain = settings.monitor ? 1.0 : 0.0;
-        monitorGainNodeRef.current.gain.cancelScheduledValues(now);
-        monitorGainNodeRef.current.gain.setTargetAtTime(targetGain, now, 0.1);
-    }
-  }, [settings.monitor]);
 
   const updateAudioDevices = useCallback(async () => {
     try {
@@ -249,15 +236,8 @@ const App: React.FC = () => {
       node.fftSize = settings.fftSize;
       node.smoothingTimeConstant = settings.smoothing;
       
-      // Monitor Path: Source -> Gain -> Destination
-      const gainNode = context.createGain();
-      gainNode.gain.value = settings.monitor ? 1.0 : 0.0;
-      
       src.connect(node);
-      src.connect(gainNode);
-      gainNode.connect(context.destination);
       
-      monitorGainNodeRef.current = gainNode;
       audioContextRef.current = context;
       setAudioContext(context);
       setAnalyser(node);
@@ -293,7 +273,7 @@ const App: React.FC = () => {
       }
       setErrorMessage(msg);
     }
-  }, [settings.fftSize, settings.smoothing, settings.monitor, updateAudioDevices, language]);
+  }, [settings.fftSize, settings.smoothing, updateAudioDevices, language]);
 
   const toggleMicrophone = useCallback(() => {
     if (isListening) {
@@ -309,7 +289,6 @@ const App: React.FC = () => {
         }
       }
       setAudioContext(null);
-      monitorGainNodeRef.current = null;
       setIsListening(false);
     } else {
       startMicrophone(selectedDeviceId);

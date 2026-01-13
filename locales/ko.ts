@@ -1,4 +1,3 @@
-
 import { VisualizerMode, LyricsStyle } from '../types';
 
 export const ko = {
@@ -103,7 +102,6 @@ export const ko = {
     [VisualizerMode.LASERS]: '콘서트 레이저',
     [VisualizerMode.STROBE]: '그리드 매트릭스',
     [VisualizerMode.SMOKE]: '천상의 연기',
-    [VisualizerMode.WATER_RIPPLES]: '물결',
     [VisualizerMode.SILK]: '실크 웨이브',
     [VisualizerMode.LIQUID]: '액체 구체',
     [VisualizerMode.TERRAIN]: '로우 폴리 지형'

@@ -7,7 +7,7 @@
 - **PlasmaFlow:** 
   - 逻辑：通过 `Math.sin/cos` 混合生成多层径向渐变，速度受 `settings.speed` 线性缩放。
 - **Starfield:** 
-  - 逻辑：3D 透视投影粒子系统，`warpSpeed` 与中高频振幅正相关。
+  - 逻辑：3D 透视投影粒子系统，采用线性轨迹（Linear Trajectory）代替旋转，粒子大小缩小至 1/3，`warpSpeed` 与中高频振幅正相关。
 - **Nebula:** 
   - 逻辑：Sprite 贴图混合。使用离屏 Canvas 预烘焙高斯模糊粒子。
 - **Ethereal Smoke:**
