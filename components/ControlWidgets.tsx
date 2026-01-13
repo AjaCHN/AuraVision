@@ -1,22 +1,72 @@
 
 import React, { useState, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 
 // --- Tooltips ---
 
-export const FloatingTooltip = ({ text, visible }: { text: string; visible: boolean }) => (
-  <div 
-    className={`absolute bottom-full left-1/2 -translate-x-1/2 mb-3 px-3 py-2 bg-blue-600 text-white text-[11px] font-bold rounded-lg shadow-2xl whitespace-normal w-max max-w-[240px] text-center pointer-events-none transition-all duration-300 z-[100] ${visible ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-2 scale-95'}`}
-  >
-    {text}
-    <div className="absolute top-full left-1/2 -translate-x-1/2 border-8 border-transparent border-t-blue-600" />
-  </div>
-);
+interface TooltipProps {
+  text: string;
+  visible: boolean;
+  anchorRef: React.RefObject<HTMLElement>;
+}
+
+export const FloatingTooltip = ({ text, visible, anchorRef }: TooltipProps) => {
+  const [coords, setCoords] = useState<{ top: number; left: number } | null>(null);
+
+  useEffect(() => {
+    if (visible && anchorRef.current) {
+      const updatePosition = () => {
+        if (anchorRef.current) {
+          const rect = anchorRef.current.getBoundingClientRect();
+          setCoords({
+            top: rect.top - 8, // 8px padding above element
+            left: rect.left + rect.width / 2
+          });
+        }
+      };
+      
+      updatePosition();
+      // Listen to global scroll and resize to update tooltip position
+      window.addEventListener('scroll', updatePosition, true);
+      window.addEventListener('resize', updatePosition);
+      
+      return () => {
+        window.removeEventListener('scroll', updatePosition, true);
+        window.removeEventListener('resize', updatePosition);
+      };
+    }
+  }, [visible, anchorRef]);
+
+  if (!visible || !coords) return null;
+
+  return createPortal(
+    <div 
+      className="fixed z-[9999] px-3 py-2 bg-blue-600 text-white text-[11px] font-bold rounded-lg shadow-2xl whitespace-normal w-max max-w-[240px] text-center pointer-events-none animate-fade-in-up"
+      style={{
+        top: coords.top,
+        left: coords.left,
+        transform: 'translate(-50%, -100%)'
+      }}
+    >
+      {text}
+      <div className="absolute top-full left-1/2 -translate-x-1/2 border-8 border-transparent border-t-blue-600" />
+    </div>,
+    document.body
+  );
+};
 
 export const TooltipArea = ({ children, text }: { children: React.ReactNode, text: string }) => {
   const [isHovered, setIsHovered] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+  
   return (
-    <div className="relative" onMouseEnter={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)}>
-      <FloatingTooltip text={text} visible={isHovered} />
+    <div 
+      ref={containerRef}
+      className="relative" 
+      onMouseEnter={() => setIsHovered(true)} 
+      onMouseLeave={() => setIsHovered(false)}
+    >
+      <FloatingTooltip text={text} visible={isHovered} anchorRef={containerRef} />
       {children}
     </div>
   );
@@ -48,7 +98,7 @@ export const CustomSelect = ({ label, value, options, onChange, hintText }: { la
       onMouseEnter={() => setIsHovered(true)} 
       onMouseLeave={() => setIsHovered(false)}
     >
-      {hintText && <FloatingTooltip text={hintText} visible={isHovered && !isOpen} />}
+      {hintText && <FloatingTooltip text={hintText} visible={isHovered && !isOpen} anchorRef={dropdownRef} />}
       <span className="text-[11px] font-bold uppercase text-white/50 tracking-[0.18em] block ml-1">{label}</span>
       <button 
         onClick={() => setIsOpen(!isOpen)}
@@ -88,6 +138,7 @@ export const SettingsToggle = ({ label, statusText, value, onChange, hintText, c
   activeColor?: 'blue' | 'red' 
 }) => {
   const [isHovered, setIsHovered] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
   
   const bgClass = activeColor === 'red' 
     ? (value ? 'bg-red-500 shadow-[0_0_15px_rgba(239,68,68,0.4)]' : 'bg-white/10')
@@ -96,12 +147,13 @@ export const SettingsToggle = ({ label, statusText, value, onChange, hintText, c
   return (
     <div className="bg-black/20 rounded-2xl p-5 space-y-5">
       <div 
+        ref={containerRef}
         className="flex items-center justify-between relative group cursor-pointer"
         onMouseEnter={() => setIsHovered(true)} 
         onMouseLeave={() => setIsHovered(false)}
         onClick={onChange}
       >
-         {hintText && <FloatingTooltip text={hintText} visible={isHovered} />}
+         {hintText && <FloatingTooltip text={hintText} visible={isHovered} anchorRef={containerRef} />}
          <div className="flex flex-col">
            <span className="text-[11px] font-black uppercase text-white/60 tracking-widest">{label}</span>
            <span className="text-[9px] text-white/30 font-bold mt-0.5">{statusText}</span>
@@ -121,9 +173,16 @@ export const SettingsToggle = ({ label, statusText, value, onChange, hintText, c
 
 export const Slider = ({ label, value, min, max, step, onChange, icon, hintText, unit = "" }: any) => {
     const [isHovered, setIsHovered] = useState(false);
+    const containerRef = useRef<HTMLDivElement>(null);
+
     return (
-      <div className="space-y-3.5 relative group" onMouseEnter={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)}>
-        <FloatingTooltip text={hintText} visible={isHovered} />
+      <div 
+        ref={containerRef}
+        className="space-y-3.5 relative group" 
+        onMouseEnter={() => setIsHovered(true)} 
+        onMouseLeave={() => setIsHovered(false)}
+      >
+        <FloatingTooltip text={hintText} visible={isHovered} anchorRef={containerRef} />
         <div className="flex justify-between items-end text-[11px] text-white/40 uppercase font-black tracking-widest group-hover:text-white/70 transition-colors">
           <span className="flex items-center gap-2">
             {icon} <span className="font-bold">{label}</span>
@@ -150,9 +209,15 @@ export const Slider = ({ label, value, min, max, step, onChange, icon, hintText,
 
 export const ActionButton = ({ onClick, icon, hintText, className = "" }: { onClick: () => void, icon: React.ReactNode, hintText: string, className?: string }) => {
     const [isHovered, setIsHovered] = useState(false);
+    const buttonRef = useRef<HTMLDivElement>(null);
     return (
-      <div className="relative" onMouseEnter={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)}>
-        <FloatingTooltip text={hintText} visible={isHovered} />
+      <div 
+        ref={buttonRef}
+        className="relative" 
+        onMouseEnter={() => setIsHovered(true)} 
+        onMouseLeave={() => setIsHovered(false)}
+      >
+        <FloatingTooltip text={hintText} visible={isHovered} anchorRef={buttonRef} />
         <button onClick={onClick} className={`w-12 h-12 flex items-center justify-center bg-white/5 rounded-2xl text-white/40 hover:text-white hover:bg-white/15 border border-transparent hover:border-white/10 transition-all duration-300 ${className}`}>
           {icon}
         </button>
@@ -162,9 +227,15 @@ export const ActionButton = ({ onClick, icon, hintText, className = "" }: { onCl
 
 export const ControlPanelButton = ({ onClick, label, active, hintText }: { onClick: () => void, label: string, active: boolean, hintText?: string }) => {
     const [isHovered, setIsHovered] = useState(false);
+    const buttonRef = useRef<HTMLDivElement>(null);
     return (
-      <div className="relative flex-1" onMouseEnter={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)}>
-        {hintText && <FloatingTooltip text={hintText} visible={isHovered} />}
+      <div 
+        ref={buttonRef}
+        className="relative flex-1" 
+        onMouseEnter={() => setIsHovered(true)} 
+        onMouseLeave={() => setIsHovered(false)}
+      >
+        {hintText && <FloatingTooltip text={hintText} visible={isHovered} anchorRef={buttonRef} />}
         <button 
           onClick={onClick} 
           className={`w-full py-4 rounded-xl border text-[10px] font-black uppercase tracking-[0.15em] transition-all duration-300 ${active ? 'bg-white/15 border-white/30 text-white shadow-[inset_0_2px_10px_rgba(255,255,255,0.05)]' : 'bg-white/[0.04] border-transparent text-white/40 hover:text-white hover:bg-white/10'}`}
