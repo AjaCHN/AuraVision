@@ -1,5 +1,5 @@
 
-import { GoogleGenAI, Type } from "@google/genai";
+import { GoogleGenAI } from "@google/genai";
 import { GEMINI_MODEL, REGION_NAMES } from '../constants';
 import { SongInfo, Language, Region } from '../types';
 import { generateFingerprint, saveToLocalCache, findLocalMatch } from './fingerprintService';
@@ -55,7 +55,16 @@ export const identifySongFromAudio = async (
         3. **IMPORTANT**: Prioritize songs that are popular or trending in the "${regionName}" market.
         4. Detect the mood (e.g., Energetic, Melancholic, Chill).
         5. ${outputInstruction}
-        6. Return strictly JSON.
+        6. Return strictly a raw JSON object. Do not use Markdown formatting.
+
+        JSON Structure:
+        {
+          "title": "string",
+          "artist": "string",
+          "lyricsSnippet": "string (4-6 lines)",
+          "mood": "string",
+          "identified": boolean
+        }
 
         If no music is detected or it cannot be identified, set "identified" to false.
         `;
@@ -78,18 +87,8 @@ export const identifySongFromAudio = async (
           config: {
             tools: [{ googleSearch: {} }],
             systemInstruction: systemInstruction,
-            responseMimeType: "application/json",
-            responseSchema: {
-              type: Type.OBJECT,
-              properties: {
-                title: { type: Type.STRING, description: "The track name" },
-                artist: { type: Type.STRING, description: "The artist or band name" },
-                lyricsSnippet: { type: Type.STRING, description: "4-6 lines of lyrics" },
-                mood: { type: Type.STRING, description: "Musical vibe" },
-                identified: { type: Type.BOOLEAN, description: "Success status" }
-              },
-              required: ["title", "artist", "identified"]
-            }
+            // responseSchema is incompatible with googleSearch in some contexts or returns text chunks
+            // We parse manually below
           }
         });
 
@@ -100,7 +99,12 @@ export const identifySongFromAudio = async (
         
         let songInfo: SongInfo;
         try {
-            songInfo = JSON.parse(response.text.trim());
+            // Clean up Markdown if present (e.g. ```json ... ```)
+            let cleanText = response.text.trim();
+            if (cleanText.startsWith('```')) {
+                cleanText = cleanText.replace(/^```(json)?\n/, '').replace(/\n```$/, '');
+            }
+            songInfo = JSON.parse(cleanText);
         } catch (e) {
             console.error("[Recognition] Failed to parse JSON", response.text);
             return null;

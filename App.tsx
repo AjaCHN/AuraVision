@@ -189,12 +189,14 @@ const App: React.FC = () => {
       const chunks: Blob[] = [];
       recorder.ondataavailable = (e) => chunks.push(e.data);
       recorder.onstop = async () => {
-        const blob = new Blob(chunks, { type: 'audio/webm' });
+        // Correct mimeType handling
+        const mimeType = recorder.mimeType || 'audio/webm';
+        const blob = new Blob(chunks, { type: mimeType });
         const reader = new FileReader();
         reader.readAsDataURL(blob);
         reader.onloadend = async () => {
           const base64Data = (reader.result as string).split(',')[1];
-          const info = await identifySongFromAudio(base64Data, 'audio/webm', language, region);
+          const info = await identifySongFromAudio(base64Data, mimeType, language, region);
           if (info && info.identified) setCurrentSong(info);
           setIsIdentifying(false);
         };
@@ -203,6 +205,7 @@ const App: React.FC = () => {
       // Increase recording duration to 7 seconds for better identification
       setTimeout(() => recorder.state === 'recording' && recorder.stop(), 7000); 
     } catch (e) {
+      console.error("Recording error:", e);
       setIsIdentifying(false);
     }
   }, [showLyrics, isIdentifying, language, region]);
