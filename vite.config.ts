@@ -10,11 +10,13 @@ export default defineConfig(({ mode }) => {
   return {
     plugins: [react()],
     base: './', // Ensure relative paths for assets
+    build: {
+      outDir: 'build', // Output to 'build' folder instead of 'dist' for compatibility
+    },
     define: {
       // Safely inject API Key from the loaded environment variables
-      'process.env.API_KEY': JSON.stringify(env.API_KEY),
-      // Polyfill process.env to avoid runtime crashes
-      'process.env': {}
+      'process.env.API_KEY': JSON.stringify(env.API_KEY)
+      // Do NOT define 'process.env': {} as it breaks libraries relying on process.env.NODE_ENV
     }
   }
 })

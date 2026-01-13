@@ -14,7 +14,7 @@ interface SceneProps {
 export const SilkWavesScene: React.FC<SceneProps> = ({ analyser, colors, settings }) => {
   const meshRef = useRef<THREE.Mesh>(null);
   const dataArray = useMemo(() => new Uint8Array(analyser.frequencyBinCount), [analyser]);
-  // Reduced segments from 160x160 to 100x100 for better performance (10k vertices instead of 25k)
+  // Optimized geometry: 100x100 segments
   const geometry = useMemo(() => new THREE.PlaneGeometry(60, 60, 100, 100), []);
 
   useFrame((state) => {
@@ -89,7 +89,7 @@ export const SilkWavesScene: React.FC<SceneProps> = ({ analyser, colors, setting
 export const LiquidSphereScene: React.FC<SceneProps> = ({ analyser, colors, settings }) => {
   const meshRef = useRef<THREE.Mesh>(null);
   const dataArray = useMemo(() => new Uint8Array(analyser.frequencyBinCount), [analyser]);
-  // Reduced detail from 5 to 4 to significantly reduce vertex count while maintaining roundness
+  // Optimized geometry: detail 4
   const geometry = useMemo(() => new THREE.IcosahedronGeometry(4, 4), []);
   const originalPositions = useMemo(() => {
      const pos = geometry.attributes.position;
