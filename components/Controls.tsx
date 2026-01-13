@@ -95,6 +95,46 @@ const CustomSelect = ({ label, value, options, onChange, hint }: { label: string
   );
 };
 
+const SettingsToggle = ({ label, statusText, value, onChange, hint, children, activeColor = 'blue' }: { 
+  label: string, 
+  statusText: string, 
+  value: boolean, 
+  onChange: () => void, 
+  hint?: string, 
+  children?: React.ReactNode,
+  activeColor?: 'blue' | 'red' 
+}) => {
+  const [isHovered, setIsHovered] = useState(false);
+  
+  const bgClass = activeColor === 'red' 
+    ? (value ? 'bg-red-500 shadow-[0_0_15px_rgba(239,68,68,0.4)]' : 'bg-white/10')
+    : (value ? 'bg-blue-600 shadow-[0_0_15px_rgba(37,99,235,0.4)]' : 'bg-white/10');
+
+  return (
+    <div className="bg-black/20 rounded-2xl p-5 space-y-5">
+      <div 
+        className="flex items-center justify-between relative group"
+        onMouseEnter={() => setIsHovered(true)} 
+        onMouseLeave={() => setIsHovered(false)}
+      >
+         {hint && <FloatingTooltip text={hint} visible={isHovered} />}
+         <div className="flex flex-col">
+           <span className="text-[11px] font-black uppercase text-white/60 tracking-widest">{label}</span>
+           <span className="text-[9px] text-white/30 font-bold mt-0.5">{statusText}</span>
+         </div>
+         <button onClick={onChange} className={`w-12 h-6.5 rounded-full relative transition-all duration-500 ${bgClass}`}>
+           <div className={`absolute top-1 w-4.5 h-4.5 bg-white rounded-full shadow-lg transition-all duration-500 ${value ? 'left-6.5' : 'left-1'}`} />
+         </button>
+      </div>
+      {value && children && (
+         <div className="animate-fade-in-up">
+           {children}
+         </div>
+      )}
+    </div>
+  );
+};
+
 const Controls: React.FC<ControlsProps> = ({
   currentMode, setMode, colorTheme, setColorTheme, toggleMicrophone,
   isListening, isIdentifying, lyricsStyle, setLyricsStyle, showLyrics, setShowLyrics,
@@ -292,33 +332,24 @@ const Controls: React.FC<ControlsProps> = ({
                       </div>
 
                       <div className="space-y-6 pt-4">
-                        {/* Auto-Cycle Modes Toggle & Slider */}
-                        <div className="bg-black/20 rounded-2xl p-5 space-y-5">
-                          <div className="flex items-center justify-between relative group">
-                             <div className="flex flex-col">
-                               <span className="text-[11px] font-black uppercase text-white/60 tracking-widest">{t.autoRotate}</span>
-                               <span className="text-[9px] text-white/30 font-bold mt-0.5">{settings.autoRotate ? `${settings.rotateInterval}s` : 'DISABLED'}</span>
-                             </div>
-                             <button onClick={() => setSettings({...settings, autoRotate: !settings.autoRotate})} className={`w-12 h-6.5 rounded-full relative transition-all duration-500 ${settings.autoRotate ? 'bg-blue-600 shadow-[0_0_15px_rgba(37,99,235,0.4)]' : 'bg-white/10'}`}>
-                               <div className={`absolute top-1 w-4.5 h-4.5 bg-white rounded-full shadow-lg transition-all duration-500 ${settings.autoRotate ? 'left-6.5' : 'left-1'}`} />
-                             </button>
-                          </div>
-                          
-                          {settings.autoRotate && (
-                            <div className="animate-fade-in-up">
-                              <Slider 
-                                label={t.rotateInterval} 
-                                hintKey="rotateInterval" 
-                                value={settings.rotateInterval} 
-                                min={5} 
-                                max={120} 
-                                step={1} 
-                                unit="s"
-                                onChange={(v:any) => setSettings({...settings, rotateInterval: v})} 
-                              />
-                            </div>
-                          )}
-                        </div>
+                        <SettingsToggle 
+                          label={t.autoRotate} 
+                          statusText={settings.autoRotate ? `${settings.rotateInterval}s` : 'DISABLED'}
+                          value={settings.autoRotate}
+                          onChange={() => setSettings({...settings, autoRotate: !settings.autoRotate})}
+                          hint={t.hints.autoRotate}
+                        >
+                          <Slider 
+                            label={t.rotateInterval} 
+                            hintKey="rotateInterval" 
+                            value={settings.rotateInterval} 
+                            min={5} 
+                            max={120} 
+                            step={1} 
+                            unit="s"
+                            onChange={(v:any) => setSettings({...settings, rotateInterval: v})} 
+                          />
+                        </SettingsToggle>
 
                         <button onClick={resetVisualSettings} className="w-full py-4 bg-white/[0.04] rounded-xl text-[10px] font-black uppercase tracking-widest text-white/50 hover:text-white hover:bg-white/[0.08] transition-all duration-300 flex items-center justify-center gap-3">
                           <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 opacity-60" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
@@ -336,7 +367,7 @@ const Controls: React.FC<ControlsProps> = ({
                         value={selectedDeviceId} 
                         hint={t.hints.device} 
                         options={[
-                          { value: '', label: 'Default Microphone' }, 
+                          { value: '', label: t.defaultMic }, 
                           ...audioDevices.map(d => ({ value: d.deviceId, label: d.label }))
                         ]} 
                         onChange={onDeviceChange} 
@@ -349,17 +380,14 @@ const Controls: React.FC<ControlsProps> = ({
                       <Slider label={t.sensitivity} hintKey="sensitivity" value={settings.sensitivity} min={0.5} max={4.0} step={0.1} onChange={(v:any) => setSettings({...settings, sensitivity: v})} />
                       <Slider label={t.smoothing} hintKey="smoothing" value={settings.smoothing} min={0} max={0.95} step={0.01} onChange={(v:any) => setSettings({...settings, smoothing: v})} />
                       
-                      {/* Monitor Toggle */}
-                      <div className="bg-black/20 rounded-2xl p-5 flex items-center justify-between relative group">
-                           <div className="flex flex-col">
-                             <span className="text-[11px] font-black uppercase text-white/60 tracking-widest">{t.monitorAudio}</span>
-                             <span className="text-[9px] text-white/30 font-bold mt-0.5">{settings.monitor ? 'ENABLED' : 'MUTED'}</span>
-                           </div>
-                           <button onClick={() => setSettings({...settings, monitor: !settings.monitor})} className={`w-12 h-6.5 rounded-full relative transition-all duration-500 ${settings.monitor ? 'bg-red-500 shadow-[0_0_15px_rgba(239,68,68,0.4)]' : 'bg-white/10'}`}>
-                             <div className={`absolute top-1 w-4.5 h-4.5 bg-white rounded-full shadow-lg transition-all duration-500 ${settings.monitor ? 'left-6.5' : 'left-1'}`} />
-                           </button>
-                           <FloatingTooltip text={t.hints.monitor} visible={false} /> {/* Hint handled by parent wrapper if hovered */}
-                      </div>
+                      <SettingsToggle
+                        label={t.monitorAudio}
+                        statusText={settings.monitor ? 'ENABLED' : 'MUTED'}
+                        value={settings.monitor}
+                        onChange={() => setSettings({...settings, monitor: !settings.monitor})}
+                        hint={t.hints.monitor}
+                        activeColor="red"
+                      />
                     </div>
                     <div className="bg-white/[0.04] rounded-[2rem] p-8 space-y-6 shadow-2xl">
                       <span className="text-[11px] font-black uppercase text-white/50 tracking-[0.25em] block ml-1">{t.fftSize}</span>
@@ -378,7 +406,7 @@ const Controls: React.FC<ControlsProps> = ({
                     <div className="bg-white/[0.04] rounded-[2rem] p-8 space-y-6 shadow-2xl">
                       <span className="text-[11px] font-black uppercase text-white/50 tracking-[0.25em] block ml-1">{t.lyrics}</span>
                       <button onClick={() => setShowLyrics(!showLyrics)} className={`w-full py-6 rounded-3xl border font-black text-sm uppercase tracking-[0.2em] transition-all duration-500 ${showLyrics ? 'bg-green-500/20 border-green-500/40 text-green-300 shadow-[0_0_40px_rgba(34,197,94,0.1)]' : 'bg-white/[0.04] border-transparent text-white/40 hover:bg-white/[0.08] hover:text-white'}`}>
-                        {showLyrics ? 'Recognition Active' : 'Enable AI Recognition'}
+                        {showLyrics ? t.aiState.active : t.aiState.enable}
                       </button>
                     </div>
                     <div className="bg-white/[0.04] rounded-[2rem] p-8 space-y-8 shadow-2xl">
@@ -395,7 +423,7 @@ const Controls: React.FC<ControlsProps> = ({
                          label={t.region} 
                          value={region} 
                          hint={t.hints.region} 
-                         options={Object.keys(REGION_NAMES).map(r => ({ value: r, label: REGION_NAMES[r as Region] }))} 
+                         options={Object.keys(REGION_NAMES).map(r => ({ value: r, label: t.regions[r] }))} 
                          onChange={(val) => setRegion(val as Region)} 
                        />
                     </div>
