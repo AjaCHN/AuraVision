@@ -1,7 +1,8 @@
+
 {
   "name": "aura-vision",
   "private": true,
-  "version": "0.2.10",
+  "version": "0.2.13",
   "type": "module",
   "scripts": {
     "dev": "vite",

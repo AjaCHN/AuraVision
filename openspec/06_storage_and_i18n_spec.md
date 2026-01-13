@@ -6,7 +6,7 @@
 - **Key 列表:**
   - `mode`: 当前渲染模式。
   - `theme`: 数组字符串化后的色盘。
-  - `settings`: 完整的配置对象 (包含 `monitor`, `autoRotate`, `rotateInterval` 等)。
+  - `settings`: 完整的配置对象 (包含 `monitor`, `autoRotate`, `customText`, `rotateInterval` 等)。
   - `deviceId`: 用户选择的特定音频输入设备 ID。
   - `fingerprints`: 指纹缓存库。
 
