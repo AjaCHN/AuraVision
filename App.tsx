@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import VisualizerCanvas from './components/VisualizerCanvas';
 import ThreeVisualizer from './components/ThreeVisualizer';
-import Controls, { SYSTEM_AUDIO_ID } from './components/Controls';
+import Controls from './components/Controls';
 import SongOverlay from './components/SongOverlay';
 import { VisualizerMode, SongInfo, LyricsStyle, Language, VisualizerSettings, Region, AudioDevice } from './types';
 import { COLOR_THEMES } from './constants';
@@ -208,61 +208,32 @@ const App: React.FC = () => {
       // because it points to the same object as oldContext.
 
       // 2. Acquire Stream
-      if (deviceId === SYSTEM_AUDIO_ID) {
-        try {
-            stream = await navigator.mediaDevices.getDisplayMedia({
-                video: true,
-                audio: {
-                    echoCancellation: false,
-                    noiseSuppression: false,
-                    autoGainControl: false
-                }
-            });
-        } catch (err: any) {
-            if (err.name === 'NotAllowedError') {
-                console.warn("System audio sharing was cancelled by user.");
-                setIsListening(false);
-                return; // Exit gracefully without error message
-            }
-            throw err;
-        }
-        
-        if (stream.getAudioTracks().length === 0) {
-            stream.getTracks().forEach(t => t.stop());
-            throw new Error("No audio track detected. Please check 'Share Audio' in the browser dialog.");
-        }
-
-        stream.getTracks()[0].onended = () => {
-            setIsListening(false);
-        };
-      } else {
-        try {
-            const constraints: MediaStreamConstraints = { 
-                audio: {
-                  deviceId: deviceId ? { exact: deviceId } : undefined,
-                  echoCancellation: false,
-                  noiseSuppression: false,
-                  autoGainControl: false
-                }
-            };
-            stream = await navigator.mediaDevices.getUserMedia(constraints);
-        } catch (e: any) {
-             // Fallback: If specific device fails (e.g. unplugged), try default device
-             if (deviceId && (e.name === 'OverconstrainedError' || e.name === 'NotFoundError' || e.name === 'NotReadableError')) {
-                 console.warn(`Device ${deviceId} unavailable, falling back to default.`);
-                 const fallbackConstraints = { 
-                     audio: {
-                       echoCancellation: false,
-                       noiseSuppression: false,
-                       autoGainControl: false
-                     }
-                 };
-                 stream = await navigator.mediaDevices.getUserMedia(fallbackConstraints);
-                 // Don't update state here to avoid race condition loop
-             } else {
-                 throw e;
-             }
-        }
+      try {
+          const constraints: MediaStreamConstraints = { 
+              audio: {
+                deviceId: deviceId ? { exact: deviceId } : undefined,
+                echoCancellation: false,
+                noiseSuppression: false,
+                autoGainControl: false
+              }
+          };
+          stream = await navigator.mediaDevices.getUserMedia(constraints);
+      } catch (e: any) {
+           // Fallback: If specific device fails (e.g. unplugged), try default device
+           if (deviceId && (e.name === 'OverconstrainedError' || e.name === 'NotFoundError' || e.name === 'NotReadableError')) {
+               console.warn(`Device ${deviceId} unavailable, falling back to default.`);
+               const fallbackConstraints = { 
+                   audio: {
+                     echoCancellation: false,
+                     noiseSuppression: false,
+                     autoGainControl: false
+                   }
+               };
+               stream = await navigator.mediaDevices.getUserMedia(fallbackConstraints);
+               // Don't update state here to avoid race condition loop
+           } else {
+               throw e;
+           }
       }
       
       // 3. Create Audio Context
@@ -297,6 +268,8 @@ const App: React.FC = () => {
       updateAudioDevices();
 
     } catch (err: any) {
+      const t = TRANSLATIONS[language];
+      
       // Graceful error handling
       const isPermissionError = err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError';
       
@@ -308,19 +281,19 @@ const App: React.FC = () => {
       
       setIsListening(false);
       
-      let msg = "Could not access audio device.";
+      let msg = t.errors.general;
       if (isPermissionError) {
-          msg = "Access denied. Please check your browser permissions for microphone.";
+          msg = t.errors.accessDenied;
       } else if (err.name === 'NotFoundError') {
-          msg = "No audio input device found.";
+          msg = t.errors.noDevice;
       } else if (err.name === 'NotReadableError') {
-          msg = "Audio device is busy or invalid.";
+          msg = t.errors.deviceBusy;
       } else if (err.message) {
           msg = err.message;
       }
       setErrorMessage(msg);
     }
-  }, [settings.fftSize, settings.smoothing, settings.monitor, updateAudioDevices]);
+  }, [settings.fftSize, settings.smoothing, settings.monitor, updateAudioDevices, language]);
 
   const toggleMicrophone = useCallback(() => {
     if (isListening) {
@@ -431,7 +404,7 @@ const App: React.FC = () => {
                 </svg>
             </div>
             <div className="flex-1">
-                <p className="font-bold text-sm text-red-100">Audio Error</p>
+                <p className="font-bold text-sm text-red-100">{t.errors.title}</p>
                 <p className="text-xs text-red-200/80 leading-snug">{errorMessage}</p>
             </div>
             <button onClick={() => setErrorMessage(null)} className="p-2 hover:bg-white/10 rounded-full transition-colors">

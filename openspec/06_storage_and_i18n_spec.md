@@ -1,3 +1,4 @@
+
 # OpenSpec: 持久化与本地化规范
 
 ## 1. 持久化存储 (LocalStorage)
@@ -5,8 +6,8 @@
 - **Key 列表:**
   - `mode`: 当前渲染模式。
   - `theme`: 数组字符串化后的色盘。
-  - `settings`: 完整的配置对象。
-  - `device_id`: 用户选择的音频设备。
+  - `settings`: 完整的配置对象 (包含 `monitor`, `autoRotate`, `rotateInterval` 等)。
+  - `deviceId`: 用户选择的特定音频输入设备 ID。
   - `fingerprints`: 指纹缓存库。
 
 ## 2. 国际化 (i18n)

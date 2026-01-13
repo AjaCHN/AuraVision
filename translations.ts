@@ -1,5 +1,5 @@
 
-import { VisualizerMode, LyricsStyle, Language } from './types';
+import { VisualizerMode, LyricsStyle, Language, Region } from './types';
 
 // Translation dictionary for supported languages
 export const TRANSLATIONS: Record<Language, any> = {
@@ -23,6 +23,7 @@ export const TRANSLATIONS: Record<Language, any> = {
       lyricsStyle: 'Change the typography and animation style of the lyrics.',
       region: 'Filter AI search results based on specific music markets.',
       autoRotate: 'Automatically cycle through visualizer modes every 30s.',
+      monitor: 'Playback microphone input through local speakers. CAUTION: Can cause feedback loops.',
       reset: 'Restore all application settings to defaults.',
       resetVisual: 'Only reset visual parameters (speed, glow, trails) to defaults.',
       randomize: 'Generate a surprise combination of mode and colors.',
@@ -41,7 +42,7 @@ export const TRANSLATIONS: Record<Language, any> = {
     autoRotate: 'Auto-Cycle Modes',
     rotateInterval: 'Interval (s)',
     audioInput: 'Input Device',
-    systemAudio: 'System / Tab Audio',
+    monitorAudio: 'Monitor Input',
     lyrics: 'Lyrics',
     showLyrics: 'Enable AI Recognition',
     language: 'UI Language',
@@ -70,6 +71,27 @@ export const TRANSLATIONS: Record<Language, any> = {
     appInfo: 'About App',
     appDescription: 'An immersive visualization suite driven by real-time spectral analysis and Gemini AI recognition.',
     version: 'Build',
+    defaultMic: 'Default Microphone',
+    errors: {
+      title: 'Audio Error',
+      accessDenied: 'Access denied. Please check your browser permissions for microphone.',
+      noDevice: 'No audio input device found.',
+      deviceBusy: 'Audio device is busy or invalid.',
+      general: 'Could not access audio device.'
+    },
+    aiState: {
+      active: 'Recognition Active',
+      enable: 'Enable AI Recognition'
+    },
+    regions: {
+      global: 'Global',
+      US: 'USA / West',
+      CN: 'China',
+      JP: 'Japan',
+      KR: 'Korea',
+      EU: 'Europe',
+      LATAM: 'Latin America'
+    },
     modes: {
       [VisualizerMode.PLASMA]: 'Plasma Flow',
       [VisualizerMode.BARS]: 'Frequency Bars',
@@ -149,6 +171,7 @@ export const TRANSLATIONS: Record<Language, any> = {
       lyricsStyle: '更改识别结果及歌词的排版风格。',
       region: '针对特定音乐市场优化 AI 搜索的匹配算法。',
       autoRotate: '每隔 30 秒自动循环切换可视化引擎。',
+      monitor: '将麦克风声音通过扬声器播放。注意：可能会产生刺耳的啸叫声！',
       reset: '将所有应用配置、语言及音频选项恢复至出厂状态。',
       resetVisual: '仅将视觉特效参数（速度、光晕、拖尾）回归默认。',
       randomize: '通过随机算法生成一套高美学的模式与配色组合。',
@@ -167,7 +190,7 @@ export const TRANSLATIONS: Record<Language, any> = {
     autoRotate: '自动循环',
     rotateInterval: '切换间隔 (秒)',
     audioInput: '输入源选择',
-    systemAudio: '系统音频 (标签页/屏幕)',
+    monitorAudio: '监听输入',
     lyrics: 'AI 曲目识别',
     showLyrics: '启用自动识别',
     language: '界面语言',
@@ -196,6 +219,27 @@ export const TRANSLATIONS: Record<Language, any> = {
     appInfo: '关于应用',
     appDescription: '一个基于实时频域分析与 Gemini AI 语义识别的沉浸式音乐可视化套件。',
     version: '版本号',
+    defaultMic: '系统默认麦克风',
+    errors: {
+      title: '音频错误',
+      accessDenied: '无法访问麦克风，请检查浏览器权限。',
+      noDevice: '未检测到音频输入设备。',
+      deviceBusy: '音频设备被占用或无效。',
+      general: '无法访问音频设备。'
+    },
+    aiState: {
+      active: '识别功能已开启',
+      enable: '开启 AI 识别'
+    },
+    regions: {
+      global: '全球',
+      US: '美国 / 西方',
+      CN: '中国大陆',
+      JP: '日本',
+      KR: '韩国',
+      EU: '欧洲',
+      LATAM: '拉丁美洲'
+    },
     modes: {
       [VisualizerMode.PLASMA]: '流体等离子',
       [VisualizerMode.BARS]: '镜像频谱分析',
@@ -275,6 +319,7 @@ export const TRANSLATIONS: Record<Language, any> = {
       lyricsStyle: '歌詞のタイポグラフィとスタイルを変更します。',
       region: '特定の市場に基づいてAI識別を最適化します。',
       autoRotate: '30秒ごとに自動的にモードを切り替えます。',
+      monitor: 'マイク音声をスピーカーから再生します。注意：ハウリングの恐れがあります。',
       reset: 'すべての設定をデフォルトに戻します。',
       resetVisual: 'ビジュアルパラメータのみをデフォルトにリセットします。',
       randomize: 'モードと色のサプライズの組み合わせを生成します。',
@@ -293,7 +338,7 @@ export const TRANSLATIONS: Record<Language, any> = {
     autoRotate: '自動切替',
     rotateInterval: '間隔 (秒)',
     audioInput: '入力ソース',
-    systemAudio: 'システム音声 (タブ/画面)',
+    monitorAudio: '入力モニター',
     lyrics: 'AI曲識別',
     showLyrics: '自動識別を有効にする',
     language: '言語',
@@ -322,6 +367,27 @@ export const TRANSLATIONS: Record<Language, any> = {
     appInfo: 'アプリ情報',
     appDescription: 'リアルタイムのオーディオ分析とAI認識を活用した没入型の音楽可视化体験。',
     version: 'バージョン',
+    defaultMic: 'デフォルトのマイク',
+    errors: {
+      title: 'オーディオエラー',
+      accessDenied: 'アクセスが拒否されました。マイクの権限を確認してください。',
+      noDevice: 'オーディオ入力デバイスが見つかりません。',
+      deviceBusy: 'デバイスが使用中または無効です。',
+      general: 'オーディオデバイスにアクセスできません。'
+    },
+    aiState: {
+      active: '認識機能が有効',
+      enable: 'AI認識を有効にする'
+    },
+    regions: {
+      global: 'グローバル',
+      US: '米国 / 西欧',
+      CN: '中国',
+      JP: '日本',
+      KR: '韓国',
+      EU: 'ヨーロッパ',
+      LATAM: 'ラテンアメリカ'
+    },
     modes: {
       [VisualizerMode.PLASMA]: 'プラズマ・フロウ',
       [VisualizerMode.BARS]: 'スペクトラム・バー',
