@@ -1,5 +1,5 @@
 import React, { useRef, useMemo } from 'react';
-import { Canvas, useFrame, extend, ThreeElements } from '@react-three/fiber';
+import { Canvas, useFrame, extend } from '@react-three/fiber';
 import { EffectComposer, Bloom, ChromaticAberration, TiltShift } from '@react-three/postprocessing';
 import { AfterimagePass } from 'three/examples/jsm/postprocessing/AfterimagePass.js';
 import * as THREE from 'three';
@@ -24,6 +24,28 @@ declare global {
       circleGeometry: any;
       meshBasicMaterial: any;
       meshStandardMaterial: any;
+      afterimagePass: any;
+    }
+  }
+
+  // Augment React.JSX namespace for compatibility with newer React types
+  namespace React {
+    namespace JSX {
+      interface IntrinsicElements {
+        mesh: any;
+        pointLight: any;
+        spotLight: any;
+        ambientLight: any;
+        primitive: any;
+        meshPhysicalMaterial: any;
+        color: any;
+        directionalLight: any;
+        fog: any;
+        circleGeometry: any;
+        meshBasicMaterial: any;
+        meshStandardMaterial: any;
+        afterimagePass: any;
+      }
     }
   }
 }
@@ -49,7 +71,7 @@ const SilkWavesScene: React.FC<{ analyser: AnalyserNode; colors: string[]; setti
     for(let i=0; i<40; i++) vol += dataArray[i];
     vol = (vol / 40) * settings.sensitivity;
 
-    const positions = meshRef.current.geometry.attributes.position;
+    const positions = meshRef.current.geometry.attributes.position as THREE.BufferAttribute;
     const time = state.clock.getElapsedTime() * settings.speed * 0.3;
 
     for (let i = 0; i < positions.count; i++) {
@@ -124,7 +146,7 @@ const LiquidSphereScene: React.FC<{ analyser: AnalyserNode; colors: string[]; se
     for(let i=0; i<30; i++) lowEnd += dataArray[i];
     lowEnd = (lowEnd / 30) * settings.sensitivity;
     const time = clock.getElapsedTime() * settings.speed * 0.4;
-    const positions = meshRef.current.geometry.attributes.position;
+    const positions = meshRef.current.geometry.attributes.position as THREE.BufferAttribute;
     for (let i = 0; i < positions.count; i++) {
         const ox = originalPositions[i*3];
         const oy = originalPositions[i*3+1];
@@ -174,7 +196,7 @@ const LowPolyTerrainScene: React.FC<{ analyser: AnalyserNode; colors: string[]; 
      let bass = 0;
      for(let i=0; i<20; i++) bass += dataArray[i];
      bass = (bass/20) * settings.sensitivity;
-     const positions = meshRef.current.geometry.attributes.position;
+     const positions = meshRef.current.geometry.attributes.position as THREE.BufferAttribute;
      const time = clock.getElapsedTime() * settings.speed;
      for(let i=0; i<positions.count; i++) {
          const x = positions.getX(i);
@@ -198,7 +220,7 @@ const LowPolyTerrainScene: React.FC<{ analyser: AnalyserNode; colors: string[]; 
         <mesh ref={meshRef} rotation={[-Math.PI/2, 0, 0]} position={[0, -5, 0]}>
             <primitive object={geometry} attach="geometry" />
             <meshStandardMaterial 
-                color={colors[1]} 
+                color={colors[1] || '#ffffff'} 
                 flatShading={true} 
                 roughness={0.8}
                 metalness={0.2}
@@ -240,17 +262,22 @@ const ThreeVisualizer: React.FC<ThreeVisualizerProps> = ({ analyser, colors, set
         gl={{ antialias: false, toneMapping: THREE.ReinhardToneMapping, preserveDrawingBuffer: true, autoClear: true }}
       >
         {renderScene()}
-        {settings.glow && (
+        {(settings.glow || settings.trails) && (
             <EffectComposer enableNormalPass={false}>
-                <Bloom 
-                    luminanceThreshold={0.2} 
-                    luminanceSmoothing={0.85} 
-                    height={300} 
-                    intensity={getBloomIntensity()} 
-                />
-                <ChromaticAberration 
-                    offset={new THREE.Vector2(0.002 * settings.sensitivity, 0.002)}
-                />
+                {settings.glow && (
+                  <>
+                    <Bloom 
+                        luminanceThreshold={0.2} 
+                        luminanceSmoothing={0.85} 
+                        height={300} 
+                        intensity={getBloomIntensity()} 
+                    />
+                    <ChromaticAberration 
+                        offset={new THREE.Vector2(0.002 * settings.sensitivity, 0.002)}
+                    />
+                  </>
+                )}
+                {settings.trails && <afterimagePass args={[0.85]} />}
                 {(mode === VisualizerMode.LIQUID || mode === VisualizerMode.SILK) && (
                     <TiltShift blur={0.1} />
                 )}
