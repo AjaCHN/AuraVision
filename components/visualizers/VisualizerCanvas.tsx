@@ -12,6 +12,7 @@ import {
   PlasmaRenderer, ShapesRenderer, NebulaRenderer, 
   KaleidoscopeRenderer, LasersRenderer
 } from '../../services/visualizerStrategies';
+import { lerpHex } from '../../services/colorUtils';
 
 interface VisualizerCanvasProps {
   analyser: AnalyserNode | null;
@@ -30,6 +31,9 @@ const VisualizerCanvas: React.FC<VisualizerCanvasProps> = ({
   const requestRef = useRef<number>(0);
   const rotationRef = useRef<number>(0);
   const lyricsScaleRef = useRef<number>(1.0);
+  
+  // Store current display colors for smooth transition
+  const currentColorsRef = useRef<string[]>(colors);
   
   const renderersRef = useRef<Partial<Record<VisualizerMode, IVisualizerRenderer>>>({
     [VisualizerMode.BARS]: new BarsRenderer(),
@@ -55,6 +59,14 @@ const VisualizerCanvas: React.FC<VisualizerCanvasProps> = ({
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
+    // Smoothly interpolate colors towards target props.colors
+    const lerpFactor = 0.05; // Adjust for transition speed
+    const smoothedColors = currentColorsRef.current.map((curr, i) => {
+        const target = colors[i] || colors[0] || '#ffffff';
+        return lerpHex(curr, target, lerpFactor);
+    });
+    currentColorsRef.current = smoothedColors;
+
     const dataArray = new Uint8Array(analyser.frequencyBinCount);
     const width = canvas.width;
     const height = canvas.height;
@@ -73,7 +85,7 @@ const VisualizerCanvas: React.FC<VisualizerCanvasProps> = ({
     
     if (settings.glow) {
         ctx.shadowBlur = mode === VisualizerMode.PLASMA ? 30 : 15;
-        ctx.shadowColor = colors[0];
+        ctx.shadowColor = smoothedColors[0];
     } else {
         ctx.shadowBlur = 0;
     }
@@ -83,11 +95,11 @@ const VisualizerCanvas: React.FC<VisualizerCanvasProps> = ({
 
     const renderer = renderersRef.current[mode];
     if (renderer) {
-      renderer.draw(ctx, dataArray, width, height, colors, settings, rotationRef.current);
+      renderer.draw(ctx, dataArray, width, height, smoothedColors, settings, rotationRef.current);
     }
 
     if (showLyrics && song && (song.lyricsSnippet || song.identified)) {
-       drawLyrics(ctx, dataArray, width, height, colors, song, lyricsStyle, settings, lyricsScaleRef);
+       drawLyrics(ctx, dataArray, width, height, smoothedColors, song, lyricsStyle, settings, lyricsScaleRef);
     }
     requestRef.current = requestAnimationFrame(draw);
   };

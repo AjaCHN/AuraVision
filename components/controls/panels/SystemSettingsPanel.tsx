@@ -15,6 +15,7 @@ export const SystemSettingsPanel: React.FC<SystemSettingsPanelProps> = ({
   language, setLanguage, resetSettings, t
 }) => {
   const h = t.helpModal; // Access help modal translations for consistent text
+  const s = h.shortcutItems; // Shortcut descriptions
 
   return (
     <>
@@ -61,29 +62,30 @@ export const SystemSettingsPanel: React.FC<SystemSettingsPanelProps> = ({
              </p>
           </div>
 
-          {/* Shortcuts Mini List */}
+          {/* Shortcuts Expanded List */}
           <div className="space-y-2">
              <h4 className="text-[9px] font-black text-purple-400 uppercase tracking-widest ml-1">{h.shortcutsTitle}</h4>
              <div className="grid grid-cols-2 gap-2">
-                <div className="bg-white/[0.02] p-2 rounded-lg border border-white/5 flex justify-between items-center">
-                   <span className="text-[9px] text-white/50">{t.system.shortcuts.mic}</span>
-                   <kbd className="text-[9px] font-mono bg-white/10 px-1 rounded text-white/80">Space</kbd>
-                </div>
-                <div className="bg-white/[0.02] p-2 rounded-lg border border-white/5 flex justify-between items-center">
-                   <span className="text-[9px] text-white/50">{t.system.shortcuts.ui}</span>
-                   <kbd className="text-[9px] font-mono bg-white/10 px-1 rounded text-white/80">H</kbd>
-                </div>
-                <div className="bg-white/[0.02] p-2 rounded-lg border border-white/5 flex justify-between items-center">
-                   <span className="text-[9px] text-white/50">{t.system.shortcuts.mode}</span>
-                   <kbd className="text-[9px] font-mono bg-white/10 px-1 rounded text-white/80">← →</kbd>
-                </div>
-                <div className="bg-white/[0.02] p-2 rounded-lg border border-white/5 flex justify-between items-center">
-                   <span className="text-[9px] text-white/50">{t.system.shortcuts.random}</span>
-                   <kbd className="text-[9px] font-mono bg-white/10 px-1 rounded text-white/80">R</kbd>
-                </div>
+                <ShortcutItem label={s.toggleMic} k="Space" />
+                <ShortcutItem label={s.fullscreen} k="F" />
+                <ShortcutItem label={s.lyrics} k="L" />
+                <ShortcutItem label={s.hideUi} k="H" />
+                <ShortcutItem label={s.randomize} k="R" />
+                <ShortcutItem label={s.changeMode} k="← →" />
+                <ShortcutItem label={s.changeTheme} k="↑ ↓" />
+                <ShortcutItem label={s.glow} k="G" />
+                <ShortcutItem label={s.trails} k="T" />
              </div>
           </div>
       </div>
     </>
   );
 };
+
+// Helper component for uniform shortcut items
+const ShortcutItem = ({ label, k }: { label: string, k: string }) => (
+  <div className="bg-white/[0.02] p-2 rounded-lg border border-white/5 flex justify-between items-center group hover:bg-white/5 transition-colors">
+     <span className="text-[9px] text-white/50 group-hover:text-white/80 transition-colors truncate pr-2" title={label}>{label}</span>
+     <kbd className="text-[9px] font-mono bg-white/10 px-1.5 py-0.5 rounded text-white/80 border border-white/5 shadow-sm min-w-[20px] text-center">{k}</kbd>
+  </div>
+);

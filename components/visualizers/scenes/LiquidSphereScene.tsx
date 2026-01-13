@@ -13,12 +13,20 @@ interface SceneProps {
 
 export const LiquidSphereScene: React.FC<SceneProps> = ({ analyser, colors, settings }) => {
   const meshRef = useRef<THREE.Mesh>(null);
+  const materialRef = useRef<THREE.MeshPhysicalMaterial>(null);
+  const light1Ref = useRef<THREE.PointLight>(null);
+  const light2Ref = useRef<THREE.PointLight>(null);
+  const light3Ref = useRef<THREE.SpotLight>(null);
+
   const dataArray = useMemo(() => new Uint8Array(analyser.frequencyBinCount), [analyser]);
   
+  // Use refs for colors to lerp smoothly
+  const c0 = useRef(new THREE.Color(colors[0]));
+  const c1 = useRef(new THREE.Color(colors[1]));
+  const c2 = useRef(new THREE.Color(colors[2] || '#ffffff'));
+  const targetColor = useRef(new THREE.Color());
+
   // Optimized: Reduce polyhedron detail based on quality
-  // Detail 3 = High vertex count (~640 faces)
-  // Detail 2 = Medium (~320 faces)
-  // Detail 1 = Low (~80 faces) - creates a cool low-poly look for low-end devices
   const geometry = useMemo(() => {
       let detail = 1;
       if (settings.quality === 'med') detail = 2;
@@ -39,6 +47,20 @@ export const LiquidSphereScene: React.FC<SceneProps> = ({ analyser, colors, sett
   }, [geometry]);
 
   useFrame(({ clock }) => {
+    // 1. Color Lerping
+    c0.current.lerp(targetColor.current.set(colors[0]), 0.05);
+    c1.current.lerp(targetColor.current.set(colors[1]), 0.05);
+    c2.current.lerp(targetColor.current.set(colors[2] || '#ffffff'), 0.05);
+
+    if (materialRef.current) {
+        materialRef.current.color = c0.current;
+        materialRef.current.emissive = c1.current;
+    }
+    if (light1Ref.current) light1Ref.current.color = c0.current;
+    if (light2Ref.current) light2Ref.current.color = c1.current;
+    if (light3Ref.current) light3Ref.current.color = c2.current;
+
+    // 2. Geometry Animation
     if (!meshRef.current) return;
     analyser.getByteFrequencyData(dataArray);
     
@@ -59,12 +81,9 @@ export const LiquidSphereScene: React.FC<SceneProps> = ({ analyser, colors, sett
         const oy = originalPositions[i*3+1];
         const oz = originalPositions[i*3+2];
         
-        // Simplified Noise Calculation
-        // Removed one layer of trig functions for speed
         const noise1 = Math.sin(ox * 0.4 + time) * Math.cos(oy * 0.3 + time * 0.8) * Math.sin(oz * 0.4 + time * 1.2);
         
         let noise2 = 0;
-        // Only calc detailed noise on Med/High
         if (settings.quality !== 'low') {
             noise2 = Math.sin(ox * 2.5 + time * 1.5) * Math.cos(oy * 2.5 + time * 1.7) * Math.sin(oz * 2.5 + time * 1.3);
         }
@@ -92,15 +111,14 @@ export const LiquidSphereScene: React.FC<SceneProps> = ({ analyser, colors, sett
       <Environment preset="city" />
       
       <ambientLight intensity={0.2} />
-      <pointLight position={[15, 15, 15]} intensity={2} color={colors[0]} />
-      <pointLight position={[-15, -15, -5]} intensity={2} color={colors[1]} />
-      <spotLight position={[0, 10, 0]} intensity={1} color={colors[2] || '#ffffff'} angle={0.5} penumbra={1} />
+      <pointLight ref={light1Ref} position={[15, 15, 15]} intensity={2} />
+      <pointLight ref={light2Ref} position={[-15, -15, -5]} intensity={2} />
+      <spotLight ref={light3Ref} position={[0, 10, 0]} intensity={1} angle={0.5} penumbra={1} />
       
       <mesh ref={meshRef}>
          <primitive object={geometry} attach="geometry" />
          <meshPhysicalMaterial 
-            color={colors[0]}
-            emissive={colors[1]}
+            ref={materialRef}
             emissiveIntensity={0.2}
             metalness={0.95}    
             roughness={0.08}    

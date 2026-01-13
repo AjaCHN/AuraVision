@@ -82,3 +82,25 @@ export interface AudioDevice {
   deviceId: string;
   label: string;
 }
+
+// Global JSX IntrinsicElements augmentation for React Three Fiber
+declare global {
+  namespace JSX {
+    interface IntrinsicElements {
+      mesh: any;
+      group: any;
+      pointLight: any;
+      spotLight: any;
+      ambientLight: any;
+      primitive: any;
+      color: any;
+      fog: any;
+      circleGeometry: any;
+      meshBasicMaterial: any;
+      meshStandardMaterial: any;
+      meshPhysicalMaterial: any;
+      planeGeometry: any;
+      icosahedronGeometry: any;
+    }
+  }
+}
