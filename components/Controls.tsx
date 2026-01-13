@@ -177,9 +177,28 @@ const Controls: React.FC<ControlsProps> = ({
                     <div className="flex flex-col bg-white/[0.04] rounded-[2rem] p-8 h-full space-y-6 shadow-2xl">
                       <div className="space-y-6 pb-6 border-b border-white/10">
                         <Slider label={t.speed} hintText={t.hints.speed} value={settings.speed} min={0.1} max={3.0} step={0.1} onChange={(v:any) => setSettings({...settings, speed: v})} />
+                        
+                        <div className="space-y-2">
+                           <span className="text-[11px] font-black uppercase text-white/50 tracking-[0.18em] block ml-1">Quality</span>
+                           <div className="flex gap-2">
+                             {(['low', 'med', 'high'] as const).map(q => (
+                               <button 
+                                 key={q} 
+                                 onClick={() => setSettings({...settings, quality: q})} 
+                                 className={`flex-1 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest border transition-all ${settings.quality === q ? 'bg-white/20 border-white/40 text-white' : 'bg-white/[0.04] border-transparent text-white/40 hover:text-white'}`}
+                               >
+                                 {q}
+                               </button>
+                             ))}
+                           </div>
+                        </div>
+
                         <div className="flex gap-3">
                            <ControlPanelButton onClick={() => setSettings({...settings, glow: !settings.glow})} label={t.glow} active={settings.glow} hintText={t.hints.glow} />
                            <ControlPanelButton onClick={() => setSettings({...settings, trails: !settings.trails})} label={t.trails} active={settings.trails} hintText={t.hints.trails} />
+                        </div>
+                        <div className="flex gap-3">
+                           <ControlPanelButton onClick={() => setSettings({...settings, hideCursor: !settings.hideCursor})} label={t.hideCursor} active={settings.hideCursor} />
                         </div>
                       </div>
 
@@ -227,6 +246,15 @@ const Controls: React.FC<ControlsProps> = ({
                       <button onClick={toggleMicrophone} className={`w-full py-5 rounded-2xl font-black text-xs uppercase tracking-[0.2em] transition-all duration-300 ${isListening ? 'bg-red-500/15 text-red-400 border border-red-500/30' : 'bg-blue-600 text-white shadow-2xl shadow-blue-600/20 hover:bg-blue-500 hover:scale-[1.02]'}`}>
                         {isListening ? t.stopMic : t.startMic}
                       </button>
+                      
+                      <SettingsToggle 
+                          label={t.monitorAudio} 
+                          statusText={settings.monitor ? 'ACTIVE' : 'MUTED'}
+                          value={settings.monitor}
+                          onChange={() => setSettings({...settings, monitor: !settings.monitor})}
+                          hintText={t.hints.monitor}
+                          activeColor="red"
+                      />
                     </div>
                     <div className="bg-white/[0.04] rounded-[2rem] p-8 space-y-10 shadow-2xl">
                       <Slider label={t.sensitivity} hintText={t.hints.sensitivity} value={settings.sensitivity} min={0.5} max={4.0} step={0.1} onChange={(v:any) => setSettings({...settings, sensitivity: v})} />

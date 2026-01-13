@@ -35,11 +35,13 @@ const ThreeVisualizer: React.FC<ThreeVisualizerProps> = ({ analyser, colors, set
       return 2.0;
   };
 
+  const dpr = settings.quality === 'low' ? 1 : settings.quality === 'med' ? 1.5 : 2;
+
   return (
     <div className={`absolute inset-0 z-0 ${settings.hideCursor ? 'cursor-none' : ''}`}>
       <Canvas 
         camera={{ position: [0, 2, 15], fov: 60 }} 
-        dpr={[1, 2]} 
+        dpr={dpr} 
         gl={{ antialias: false, toneMapping: THREE.ReinhardToneMapping, preserveDrawingBuffer: true, autoClear: true }}
       >
         {renderScene()}

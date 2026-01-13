@@ -49,6 +49,7 @@ export interface VisualizerSettings {
   smoothing: number;
   fftSize: number;
   quality: 'low' | 'med' | 'high';
+  monitor: boolean;
 }
 
 export interface VisualizerConfig {

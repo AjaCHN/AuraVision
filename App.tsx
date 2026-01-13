@@ -22,7 +22,8 @@ const DEFAULT_SETTINGS: VisualizerSettings = {
   hideCursor: false,
   smoothing: 0.8,
   fftSize: 512, 
-  quality: 'high'
+  quality: 'high',
+  monitor: false
 };
 const DEFAULT_LYRICS_STYLE = LyricsStyle.KARAOKE; 
 const DEFAULT_SHOW_LYRICS = false;
@@ -39,6 +40,7 @@ const App: React.FC = () => {
   
   // Ref to track the active audio context for robust cleanup
   const audioContextRef = useRef<AudioContext | null>(null);
+  const monitorGainNodeRef = useRef<GainNode | null>(null);
 
   const getStorage = useCallback(<T,>(key: string, fallback: T): T => {
     if (typeof window === 'undefined') return fallback;
@@ -100,6 +102,15 @@ const App: React.FC = () => {
     }
   }, [settings.smoothing, settings.fftSize, analyser]);
 
+  // Handle monitor gain changes dynamically
+  useEffect(() => {
+    if (monitorGainNodeRef.current && audioContextRef.current) {
+        const targetGain = settings.monitor ? 1 : 0;
+        // Smooth transition to avoid clicking
+        monitorGainNodeRef.current.gain.setTargetAtTime(targetGain, audioContextRef.current.currentTime, 0.1);
+    }
+  }, [settings.monitor]);
+
   const updateAudioDevices = useCallback(async () => {
     try {
       // Check if enumerateDevices is supported
@@ -157,7 +168,9 @@ const App: React.FC = () => {
       glow: DEFAULT_SETTINGS.glow,
       trails: DEFAULT_SETTINGS.trails,
       autoRotate: DEFAULT_SETTINGS.autoRotate,
-      smoothing: DEFAULT_SETTINGS.smoothing
+      smoothing: DEFAULT_SETTINGS.smoothing,
+      hideCursor: DEFAULT_SETTINGS.hideCursor,
+      quality: DEFAULT_SETTINGS.quality
     }));
   }, []);
 
@@ -237,6 +250,13 @@ const App: React.FC = () => {
       node.smoothingTimeConstant = settings.smoothing;
       
       src.connect(node);
+
+      // Monitoring Path
+      const monitorNode = context.createGain();
+      monitorNode.gain.value = settings.monitor ? 1 : 0;
+      src.connect(monitorNode);
+      monitorNode.connect(context.destination);
+      monitorGainNodeRef.current = monitorNode;
       
       audioContextRef.current = context;
       setAudioContext(context);
@@ -273,7 +293,7 @@ const App: React.FC = () => {
       }
       setErrorMessage(msg);
     }
-  }, [settings.fftSize, settings.smoothing, updateAudioDevices, language]);
+  }, [settings.fftSize, settings.smoothing, settings.monitor, updateAudioDevices, language]);
 
   const toggleMicrophone = useCallback(() => {
     if (isListening) {
