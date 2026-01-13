@@ -32,8 +32,6 @@ interface ControlsProps {
 
 type TabType = 'visual' | 'audio' | 'ai' | 'system';
 
-export const SYSTEM_AUDIO_ID = 'SYSTEM_AUDIO';
-
 const FloatingTooltip = ({ text, visible }: { text: string; visible: boolean }) => (
   <div 
     className={`absolute bottom-full left-1/2 -translate-x-1/2 mb-3 px-3 py-2 bg-blue-600 text-white text-[11px] font-bold rounded-lg shadow-2xl whitespace-normal w-44 text-center pointer-events-none transition-all duration-300 z-[100] ${visible ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-2 scale-95'}`}
@@ -294,6 +292,7 @@ const Controls: React.FC<ControlsProps> = ({
                       </div>
 
                       <div className="space-y-6 pt-4">
+                        {/* Auto-Cycle Modes Toggle & Slider */}
                         <div className="bg-black/20 rounded-2xl p-5 space-y-5">
                           <div className="flex items-center justify-between relative group">
                              <div className="flex flex-col">
@@ -338,7 +337,6 @@ const Controls: React.FC<ControlsProps> = ({
                         hint={t.hints.device} 
                         options={[
                           { value: '', label: 'Default Microphone' }, 
-                          { value: SYSTEM_AUDIO_ID, label: t.systemAudio },
                           ...audioDevices.map(d => ({ value: d.deviceId, label: d.label }))
                         ]} 
                         onChange={onDeviceChange} 
@@ -350,6 +348,18 @@ const Controls: React.FC<ControlsProps> = ({
                     <div className="bg-white/[0.04] rounded-[2rem] p-8 space-y-10 shadow-2xl">
                       <Slider label={t.sensitivity} hintKey="sensitivity" value={settings.sensitivity} min={0.5} max={4.0} step={0.1} onChange={(v:any) => setSettings({...settings, sensitivity: v})} />
                       <Slider label={t.smoothing} hintKey="smoothing" value={settings.smoothing} min={0} max={0.95} step={0.01} onChange={(v:any) => setSettings({...settings, smoothing: v})} />
+                      
+                      {/* Monitor Toggle */}
+                      <div className="bg-black/20 rounded-2xl p-5 flex items-center justify-between relative group">
+                           <div className="flex flex-col">
+                             <span className="text-[11px] font-black uppercase text-white/60 tracking-widest">{t.monitorAudio}</span>
+                             <span className="text-[9px] text-white/30 font-bold mt-0.5">{settings.monitor ? 'ENABLED' : 'MUTED'}</span>
+                           </div>
+                           <button onClick={() => setSettings({...settings, monitor: !settings.monitor})} className={`w-12 h-6.5 rounded-full relative transition-all duration-500 ${settings.monitor ? 'bg-red-500 shadow-[0_0_15px_rgba(239,68,68,0.4)]' : 'bg-white/10'}`}>
+                             <div className={`absolute top-1 w-4.5 h-4.5 bg-white rounded-full shadow-lg transition-all duration-500 ${settings.monitor ? 'left-6.5' : 'left-1'}`} />
+                           </button>
+                           <FloatingTooltip text={t.hints.monitor} visible={false} /> {/* Hint handled by parent wrapper if hovered */}
+                      </div>
                     </div>
                     <div className="bg-white/[0.04] rounded-[2rem] p-8 space-y-6 shadow-2xl">
                       <span className="text-[11px] font-black uppercase text-white/50 tracking-[0.25em] block ml-1">{t.fftSize}</span>

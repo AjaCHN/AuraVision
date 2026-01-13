@@ -47,6 +47,7 @@ export interface VisualizerSettings {
   hideCursor: boolean;
   smoothing: number;
   fftSize: number;
+  monitor: boolean; // New setting
   quality: 'low' | 'med' | 'high';
 }
 

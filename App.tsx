@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import VisualizerCanvas from './components/VisualizerCanvas';
 import ThreeVisualizer from './components/ThreeVisualizer';
-import Controls, { SYSTEM_AUDIO_ID } from './components/Controls';
+import Controls from './components/Controls';
 import SongOverlay from './components/SongOverlay';
 import { VisualizerMode, SongInfo, LyricsStyle, Language, VisualizerSettings, Region, AudioDevice } from './types';
 import { COLOR_THEMES } from './constants';
@@ -20,7 +20,8 @@ const DEFAULT_SETTINGS: VisualizerSettings = {
   rotateInterval: 30,
   hideCursor: false,
   smoothing: 0.8,
-  fftSize: 512, 
+  fftSize: 512,
+  monitor: false,
   quality: 'high'
 };
 const DEFAULT_LYRICS_STYLE = LyricsStyle.KARAOKE; 
@@ -36,7 +37,8 @@ const App: React.FC = () => {
   const [audioDevices, setAudioDevices] = useState<AudioDevice[]>([]);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   
-  // Ref to track the active audio context for robust cleanup
+  // Track audio nodes for monitor control
+  const monitorGainNodeRef = useRef<GainNode | null>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
 
   const getStorage = useCallback(<T,>(key: string, fallback: T): T => {
@@ -99,9 +101,19 @@ const App: React.FC = () => {
     }
   }, [settings.smoothing, settings.fftSize, analyser]);
 
+  // Update Monitor Gain when settings change
+  useEffect(() => {
+    if (monitorGainNodeRef.current && audioContextRef.current) {
+        // Safe ramp to avoid clicks
+        const now = audioContextRef.current.currentTime;
+        const targetGain = settings.monitor ? 1.0 : 0.0;
+        monitorGainNodeRef.current.gain.cancelScheduledValues(now);
+        monitorGainNodeRef.current.gain.setTargetAtTime(targetGain, now, 0.1);
+    }
+  }, [settings.monitor]);
+
   const updateAudioDevices = useCallback(async () => {
     try {
-      // Check if enumerateDevices is supported
       if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) return;
       
       const devices = await navigator.mediaDevices.enumerateDevices();
@@ -178,54 +190,30 @@ const App: React.FC = () => {
       let stream: MediaStream;
 
       // 1. Clean up existing context before creating a new one
-      if (audioContextRef.current) {
-        audioContextRef.current.close();
+      const oldContext = audioContextRef.current;
+      if (oldContext) {
         audioContextRef.current = null;
+        if (oldContext.state !== 'closed') {
+          try {
+             await oldContext.close();
+          } catch(e) {
+             console.warn("Error closing old context", e);
+          }
+        }
       }
-      if (audioContext) {
-        audioContext.close();
-      }
-
+      
       // 2. Acquire Stream
-      if (deviceId === SYSTEM_AUDIO_ID) {
-        try {
-            stream = await navigator.mediaDevices.getDisplayMedia({
-                video: true,
-                audio: {
-                    echoCancellation: false,
-                    noiseSuppression: false,
-                    autoGainControl: false
-                }
-            });
-        } catch (err: any) {
-            if (err.name === 'NotAllowedError') {
-                console.warn("System audio sharing was cancelled by user.");
-                setIsListening(false);
-                return; // Exit gracefully without error message
+      try {
+        const constraints: MediaStreamConstraints = { 
+            audio: {
+                deviceId: deviceId ? { exact: deviceId } : undefined,
+                echoCancellation: false,
+                noiseSuppression: false,
+                autoGainControl: false
             }
-            throw err;
-        }
-        
-        if (stream.getAudioTracks().length === 0) {
-            stream.getTracks().forEach(t => t.stop());
-            throw new Error("No audio track detected. Please check 'Share Audio' in the browser dialog.");
-        }
-
-        stream.getTracks()[0].onended = () => {
-            setIsListening(false);
         };
-      } else {
-        try {
-            const constraints: MediaStreamConstraints = { 
-                audio: {
-                  deviceId: deviceId ? { exact: deviceId } : undefined,
-                  echoCancellation: false,
-                  noiseSuppression: false,
-                  autoGainControl: false
-                }
-            };
-            stream = await navigator.mediaDevices.getUserMedia(constraints);
-        } catch (e: any) {
+        stream = await navigator.mediaDevices.getUserMedia(constraints);
+      } catch (e: any) {
              // Fallback: If specific device fails (e.g. unplugged), try default device
              if (deviceId && (e.name === 'OverconstrainedError' || e.name === 'NotFoundError' || e.name === 'NotReadableError')) {
                  console.warn(`Device ${deviceId} unavailable, falling back to default.`);
@@ -237,11 +225,9 @@ const App: React.FC = () => {
                      }
                  };
                  stream = await navigator.mediaDevices.getUserMedia(fallbackConstraints);
-                 // Don't update state here to avoid race condition loop
              } else {
                  throw e;
              }
-        }
       }
       
       // 3. Create Audio Context
@@ -253,14 +239,23 @@ const App: React.FC = () => {
       }
 
       const src = context.createMediaStreamSource(stream);
-      const node = context.createAnalyser();
-      node.fftSize = settings.fftSize;
-      node.smoothingTimeConstant = settings.smoothing;
-      src.connect(node);
+      const analyserNode = context.createAnalyser();
+      analyserNode.fftSize = settings.fftSize;
+      analyserNode.smoothingTimeConstant = settings.smoothing;
       
+      // Monitor Path: Source -> Gain -> Destination
+      const gainNode = context.createGain();
+      gainNode.gain.value = settings.monitor ? 1.0 : 0.0;
+      
+      src.connect(analyserNode);
+      src.connect(gainNode);
+      gainNode.connect(context.destination);
+      
+      monitorGainNodeRef.current = gainNode;
       audioContextRef.current = context;
+      
       setAudioContext(context);
-      setAnalyser(node);
+      setAnalyser(analyserNode);
       setMediaStream(stream);
       setIsListening(true);
 
@@ -291,16 +286,23 @@ const App: React.FC = () => {
       }
       setErrorMessage(msg);
     }
-  }, [settings.fftSize, settings.smoothing, updateAudioDevices, audioContext]);
+  }, [settings.fftSize, settings.smoothing, settings.monitor, updateAudioDevices]);
 
   const toggleMicrophone = useCallback(() => {
     if (isListening) {
-      if (mediaStream) mediaStream.getTracks().forEach(t => t.stop());
-      if (audioContextRef.current) {
-        audioContextRef.current.close();
+      if (mediaStream) {
+        mediaStream.getTracks().forEach(t => t.stop());
+      }
+      
+      const oldContext = audioContextRef.current;
+      if (oldContext) {
         audioContextRef.current = null;
+        if (oldContext.state !== 'closed') {
+           oldContext.close().catch(e => console.warn("Error closing context on toggle", e));
+        }
       }
       setAudioContext(null);
+      monitorGainNodeRef.current = null;
       setIsListening(false);
     } else {
       startMicrophone(selectedDeviceId);
@@ -322,8 +324,9 @@ const App: React.FC = () => {
   // Cleanup on unmount
   useEffect(() => {
     return () => {
-      if (audioContextRef.current) {
-        audioContextRef.current.close();
+      const ctx = audioContextRef.current;
+      if (ctx && ctx.state !== 'closed') {
+        ctx.close().catch(e => console.warn("Error closing context on unmount", e));
       }
     };
   }, []);
