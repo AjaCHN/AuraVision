@@ -33,6 +33,9 @@ interface ControlsProps {
   setSettings: (settings: VisualizerSettings) => void;
   resetSettings: () => void;
   resetVisualSettings: () => void;
+  resetTextSettings: () => void;
+  resetAudioSettings: () => void;
+  resetAiSettings: () => void;
   randomizeSettings: () => void;
   audioDevices: AudioDevice[];
   selectedDeviceId: string;
@@ -45,7 +48,8 @@ const Controls: React.FC<ControlsProps> = ({
   currentMode, setMode, colorTheme, setColorTheme, toggleMicrophone,
   isListening, isIdentifying, lyricsStyle, setLyricsStyle, showLyrics, setShowLyrics,
   language, setLanguage, region, setRegion, settings, setSettings,
-  resetSettings, resetVisualSettings, randomizeSettings, audioDevices, selectedDeviceId, onDeviceChange
+  resetSettings, resetVisualSettings, resetTextSettings, resetAudioSettings, resetAiSettings, 
+  randomizeSettings, audioDevices, selectedDeviceId, onDeviceChange
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [activeTab, setActiveTab] = useState<TabType>('visual');
@@ -243,6 +247,7 @@ const Controls: React.FC<ControlsProps> = ({
                     <CustomTextSettingsPanel
                       settings={settings}
                       setSettings={setSettings}
+                      resetTextSettings={resetTextSettings}
                       t={t}
                     />
                   )}
@@ -255,6 +260,7 @@ const Controls: React.FC<ControlsProps> = ({
                       onDeviceChange={onDeviceChange}
                       toggleMicrophone={toggleMicrophone}
                       isListening={isListening}
+                      resetAudioSettings={resetAudioSettings}
                       t={t}
                     />
                   )}
@@ -266,6 +272,7 @@ const Controls: React.FC<ControlsProps> = ({
                       setLyricsStyle={setLyricsStyle}
                       region={region}
                       setRegion={setRegion}
+                      resetAiSettings={resetAiSettings}
                       t={t}
                     />
                   )}

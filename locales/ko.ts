@@ -62,6 +62,9 @@ export const ko = {
   showOptions: '옵션 펼치기',
   reset: '시스템 초기화',
   resetVisual: '시각 효과 초기화',
+  resetText: '텍스트 초기화',
+  resetAudio: '오디오 초기화',
+  resetAi: 'AI 초기화',
   randomize: '스마트 랜덤',
   help: '지원',
   close: '닫기',
@@ -83,6 +86,7 @@ export const ko = {
   pulseBeat: '비트 반응',
   textSize: '글꼴 크기',
   textRotation: '회전',
+  textFont: '글꼴',
   errors: {
     title: '오디오 오류',
     accessDenied: '접근이 거부되었습니다. 마이크 권한을 확인해주세요.',
@@ -113,9 +117,6 @@ export const ko = {
     [VisualizerMode.NEBULA]: '깊은 성운',
     [VisualizerMode.KALEIDOSCOPE]: '만화경',
     [VisualizerMode.LASERS]: '콘서트 레이저',
-    [VisualizerMode.STROBE]: '그리드 매트릭스',
-    [VisualizerMode.SMOKE]: '천상의 연기',
-    [VisualizerMode.RIPPLES]: '물결',
     [VisualizerMode.SILK]: '실크 웨이브',
     [VisualizerMode.LIQUID]: '액체 구체',
     [VisualizerMode.TERRAIN]: '로우 폴리 지형'

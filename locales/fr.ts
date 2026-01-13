@@ -62,6 +62,9 @@ export const fr = {
   showOptions: 'Options',
   reset: 'Réinitialiser',
   resetVisual: 'Réinit. Visuel',
+  resetText: 'Réinit. Texte',
+  resetAudio: 'Réinit. Audio',
+  resetAi: 'Réinit. IA',
   randomize: 'Aléatoire',
   help: 'Aide',
   close: 'Fermer',
@@ -83,6 +86,7 @@ export const fr = {
   pulseBeat: 'Pulsation au rythme',
   textSize: 'Taille de la police',
   textRotation: 'Rotation',
+  textFont: 'Police',
   errors: {
     title: 'Erreur Audio',
     accessDenied: 'Accès refusé. Veuillez vérifier les permissions de votre navigateur.',
@@ -113,9 +117,6 @@ export const fr = {
     [VisualizerMode.NEBULA]: 'Nébuleuse Profonde',
     [VisualizerMode.KALEIDOSCOPE]: 'Kaléidoscope',
     [VisualizerMode.LASERS]: 'Lasers de Concert',
-    [VisualizerMode.STROBE]: 'Matrice de Grille',
-    [VisualizerMode.SMOKE]: 'Fumée Éthérée',
-    [VisualizerMode.RIPPLES]: 'Ondulations de l\'eau',
     [VisualizerMode.SILK]: 'Vagues de Soie',
     [VisualizerMode.LIQUID]: 'Sphère Liquide',
     [VisualizerMode.TERRAIN]: 'Terrain Low-Poly'

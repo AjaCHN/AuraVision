@@ -62,6 +62,9 @@ export const zh = {
   showOptions: '显示设置',
   reset: '重置全局设置',
   resetVisual: '重置视觉参数',
+  resetText: '重置文字设置',
+  resetAudio: '重置音频设置',
+  resetAi: '重置识别设置',
   randomize: '随机美学组合',
   help: '帮助与说明',
   close: '关闭',
@@ -83,6 +86,7 @@ export const zh = {
   pulseBeat: '随节奏律动',
   textSize: '字体大小',
   textRotation: '旋转角度',
+  textFont: '字体样式',
   errors: {
     title: '音频错误',
     accessDenied: '无法访问麦克风，请检查浏览器权限。',
@@ -113,9 +117,6 @@ export const zh = {
     [VisualizerMode.NEBULA]: '深空星云',
     [VisualizerMode.KALEIDOSCOPE]: '迷幻万花筒',
     [VisualizerMode.LASERS]: '舞台激光矩阵',
-    [VisualizerMode.STROBE]: '巨幕点阵阵列',
-    [VisualizerMode.SMOKE]: '空灵烟雾',
-    [VisualizerMode.RIPPLES]: '动感水波',
     [VisualizerMode.SILK]: '流光绸缎 (WebGL)',
     [VisualizerMode.LIQUID]: '液态星球 (WebGL)',
     [VisualizerMode.TERRAIN]: '低多边形山脈 (WebGL)'

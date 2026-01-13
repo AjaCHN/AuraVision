@@ -1,16 +1,18 @@
 
 import React from 'react';
 import { VisualizerSettings } from '../../types';
-import { SettingsToggle, Slider } from '../ControlWidgets';
+import { AVAILABLE_FONTS } from '../../constants';
+import { SettingsToggle, Slider, CustomSelect } from '../ControlWidgets';
 
 interface CustomTextSettingsPanelProps {
   settings: VisualizerSettings;
   setSettings: (settings: VisualizerSettings) => void;
+  resetTextSettings: () => void;
   t: any;
 }
 
 export const CustomTextSettingsPanel: React.FC<CustomTextSettingsPanelProps> = ({
-  settings, setSettings, t
+  settings, setSettings, resetTextSettings, t
 }) => {
   return (
     <>
@@ -25,6 +27,14 @@ export const CustomTextSettingsPanel: React.FC<CustomTextSettingsPanelProps> = (
              placeholder={t.customTextPlaceholder}
              rows={3}
              className="w-full bg-white/[0.04] border border-white/10 rounded-xl px-4 py-3 text-sm font-bold text-white tracking-widest uppercase focus:outline-none focus:border-blue-500/50 focus:bg-white/[0.08] transition-all resize-none custom-scrollbar"
+           />
+
+           {/* Font Selector */}
+           <CustomSelect 
+             label={t.textFont}
+             value={settings.customTextFont || 'Inter, sans-serif'}
+             options={AVAILABLE_FONTS}
+             onChange={(val) => setSettings({...settings, customTextFont: val})}
            />
 
            {/* Master Toggle */}
@@ -71,11 +81,11 @@ export const CustomTextSettingsPanel: React.FC<CustomTextSettingsPanelProps> = (
          />
       </div>
       
-      {/* Empty column for layout balance or future expansion */}
-      <div className="p-6 h-full flex items-center justify-center text-white/10">
-         <svg xmlns="http://www.w3.org/2000/svg" className="h-24 w-24 opacity-20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-         </svg>
+      <div className="p-6 h-full flex flex-col justify-center items-center">
+         <button onClick={resetTextSettings} className="w-full py-3 bg-white/[0.04] rounded-lg text-[12px] font-black uppercase tracking-widest text-white/50 hover:text-white hover:bg-white/[0.08] transition-all flex items-center justify-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 opacity-60" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
+            {t.resetText}
+         </button>
       </div>
     </>
   );

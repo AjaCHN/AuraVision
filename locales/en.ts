@@ -62,6 +62,9 @@ export const en = {
   showOptions: 'Expand Options',
   reset: 'Reset System',
   resetVisual: 'Reset Aesthetics',
+  resetText: 'Reset Text',
+  resetAudio: 'Reset Audio',
+  resetAi: 'Reset AI',
   randomize: 'Smart Random',
   help: 'Support',
   close: 'Dismiss',
@@ -83,6 +86,7 @@ export const en = {
   pulseBeat: 'Pulse with Beat',
   textSize: 'Font Size',
   textRotation: 'Rotation',
+  textFont: 'Font Family',
   errors: {
     title: 'Audio Error',
     accessDenied: 'Access denied. Please check your browser permissions for microphone.',
@@ -113,9 +117,6 @@ export const en = {
     [VisualizerMode.NEBULA]: 'Deep Nebula',
     [VisualizerMode.KALEIDOSCOPE]: 'Kaleidoscope',
     [VisualizerMode.LASERS]: 'Concert Lasers',
-    [VisualizerMode.STROBE]: 'Grid Matrix',
-    [VisualizerMode.SMOKE]: 'Ethereal Smoke',
-    [VisualizerMode.RIPPLES]: 'Water Ripples',
     [VisualizerMode.SILK]: 'Silk Waves',
     [VisualizerMode.LIQUID]: 'Liquid Sphere',
     [VisualizerMode.TERRAIN]: 'Low-Poly Terrain'

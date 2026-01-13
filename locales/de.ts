@@ -62,6 +62,9 @@ export const de = {
   showOptions: 'Optionen',
   reset: 'System zurücksetzen',
   resetVisual: 'Ästhetik zurücksetzen',
+  resetText: 'Text zurücksetzen',
+  resetAudio: 'Audio zurücksetzen',
+  resetAi: 'KI zurücksetzen',
   randomize: 'Smart Random',
   help: 'Hilfe',
   close: 'Schließen',
@@ -83,6 +86,7 @@ export const de = {
   pulseBeat: 'Pulsieren im Takt',
   textSize: 'Schriftgröße',
   textRotation: 'Drehung',
+  textFont: 'Schriftart',
   errors: {
     title: 'Audio-Fehler',
     accessDenied: 'Zugriff verweigert. Bitte überprüfen Sie Ihre Browser-Berechtigungen.',
@@ -113,9 +117,6 @@ export const de = {
     [VisualizerMode.NEBULA]: 'Tiefer Nebel',
     [VisualizerMode.KALEIDOSCOPE]: 'Kaleidoskop',
     [VisualizerMode.LASERS]: 'Konzert-Laser',
-    [VisualizerMode.STROBE]: 'Gitter-Matrix',
-    [VisualizerMode.SMOKE]: 'Ätherischer Rauch',
-    [VisualizerMode.RIPPLES]: 'Wasserwellen',
     [VisualizerMode.SILK]: 'Seidenwellen',
     [VisualizerMode.LIQUID]: 'Flüssige Sphäre',
     [VisualizerMode.TERRAIN]: 'Low-Poly Terrain'

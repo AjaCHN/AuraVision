@@ -62,6 +62,9 @@ export const ja = {
   showOptions: 'オプションを表示',
   reset: '全体リセット',
   resetVisual: 'ビジュアルリセット',
+  resetText: 'テキストリセット',
+  resetAudio: 'オーディオリセット',
+  resetAi: 'AI設定リセット',
   randomize: 'スマートランダム',
   help: 'ヘルプ',
   close: '閉じる',
@@ -83,6 +86,7 @@ export const ja = {
   pulseBeat: 'ビート連動',
   textSize: 'フォントサイズ',
   textRotation: '回転角度',
+  textFont: 'フォントファミリー',
   errors: {
     title: 'オーディオエラー',
     accessDenied: 'アクセスが拒否されました。マイクの権限を確認してください。',
@@ -113,9 +117,6 @@ export const ja = {
     [VisualizerMode.NEBULA]: 'ディープ・ネブラ',
     [VisualizerMode.KALEIDOSCOPE]: '万華鏡',
     [VisualizerMode.LASERS]: 'コンサート・レーザー',
-    [VisualizerMode.STROBE]: 'グリッド・マトリックス',
-    [VisualizerMode.SMOKE]: 'エーテル・スモーク',
-    [VisualizerMode.RIPPLES]: '水の波紋',
     [VisualizerMode.SILK]: 'シルク・ウェーブ',
     [VisualizerMode.LIQUID]: 'リキッド・スフィア',
     [VisualizerMode.TERRAIN]: 'ローポリ・テレイン'

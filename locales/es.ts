@@ -62,6 +62,9 @@ export const es = {
   showOptions: 'Expandir Opciones',
   reset: 'Reiniciar Sistema',
   resetVisual: 'Reiniciar Estética',
+  resetText: 'Reiniciar Texto',
+  resetAudio: 'Reiniciar Audio',
+  resetAi: 'Reiniciar IA',
   randomize: 'Aleatorio Inteligente',
   help: 'Soporte',
   close: 'Cerrar',
@@ -83,6 +86,7 @@ export const es = {
   pulseBeat: 'Pulsar con el Ritmo',
   textSize: 'Tamaño de Fuente',
   textRotation: 'Rotación',
+  textFont: 'Fuente',
   errors: {
     title: 'Error de Audio',
     accessDenied: 'Acceso denegado. Por favor revisa los permisos del micrófono.',
@@ -113,9 +117,6 @@ export const es = {
     [VisualizerMode.NEBULA]: 'Nebulosa Profunda',
     [VisualizerMode.KALEIDOSCOPE]: 'Caleidoscopio',
     [VisualizerMode.LASERS]: 'Láseres de Concierto',
-    [VisualizerMode.STROBE]: 'Matriz de Cuadrícula',
-    [VisualizerMode.SMOKE]: 'Humo Etéreo',
-    [VisualizerMode.RIPPLES]: 'Ondas de Agua',
     [VisualizerMode.SILK]: 'Ondas de Seda',
     [VisualizerMode.LIQUID]: 'Esfera Líquida',
     [VisualizerMode.TERRAIN]: 'Terreno Low-Poly'

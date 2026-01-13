@@ -11,11 +11,12 @@ interface AudioSettingsPanelProps {
   onDeviceChange: (id: string) => void;
   toggleMicrophone: () => void;
   isListening: boolean;
+  resetAudioSettings: () => void;
   t: any;
 }
 
 export const AudioSettingsPanel: React.FC<AudioSettingsPanelProps> = ({
-  settings, setSettings, audioDevices, selectedDeviceId, onDeviceChange, toggleMicrophone, isListening, t
+  settings, setSettings, audioDevices, selectedDeviceId, onDeviceChange, toggleMicrophone, isListening, resetAudioSettings, t
 }) => {
   return (
     <>
@@ -47,6 +48,10 @@ export const AudioSettingsPanel: React.FC<AudioSettingsPanelProps> = ({
         <Slider label={t.sensitivity} hintText={t.hints.sensitivity} value={settings.sensitivity} min={0.5} max={4.0} step={0.1} onChange={(v:any) => setSettings({...settings, sensitivity: v})} />
         <Slider label={t.smoothing} hintText={t.hints.smoothing} value={settings.smoothing} min={0} max={0.95} step={0.01} onChange={(v:any) => setSettings({...settings, smoothing: v})} />
         
+        <button onClick={resetAudioSettings} className="w-full py-3 mt-4 bg-white/[0.04] rounded-lg text-[12px] font-black uppercase tracking-widest text-white/50 hover:text-white hover:bg-white/[0.08] transition-all flex items-center justify-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 opacity-60" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
+            {t.resetAudio}
+        </button>
       </div>
       <TooltipArea text={t.hints.fftSize}>
         <div className="p-6 space-y-6 h-full">

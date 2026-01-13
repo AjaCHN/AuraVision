@@ -1,7 +1,7 @@
 
 import { VisualizerMode, Region } from './types';
 
-export const APP_VERSION = '0.2.14';
+export const APP_VERSION = '0.2.15';
 
 export const GEMINI_MODEL = 'gemini-3-flash-preview';
 
@@ -42,18 +42,6 @@ export const VISUALIZER_PRESETS = {
     name: 'Concert Lasers',
     description: 'Converging sweeping light beams'
   },
-  [VisualizerMode.STROBE]: {
-    name: 'Grid Matrix',
-    description: 'Massive LED grid pulsing to the beat'
-  },
-  [VisualizerMode.SMOKE]: {
-    name: 'Ethereal Smoke',
-    description: 'Dual-stream mystical fog'
-  },
-  [VisualizerMode.RIPPLES]: {
-    name: 'Water Ripples',
-    description: 'Raindrop effects triggered by bass kicks'
-  },
   [VisualizerMode.SILK]: {
     name: 'Silk Waves',
     description: 'Iridescent flowing fabric (WebGL)'
@@ -67,6 +55,16 @@ export const VISUALIZER_PRESETS = {
     description: 'Flying over reactive mountains (WebGL)'
   }
 };
+
+export const AVAILABLE_FONTS = [
+  { value: 'Inter, sans-serif', label: 'Inter (Default)' },
+  { value: 'Arial, sans-serif', label: 'Arial' },
+  { value: 'Courier New, monospace', label: 'Courier New' },
+  { value: 'Times New Roman, serif', label: 'Times New Roman' },
+  { value: 'Impact, sans-serif', label: 'Impact' },
+  { value: 'Georgia, serif', label: 'Georgia' },
+  { value: 'Verdana, sans-serif', label: 'Verdana' }
+];
 
 /**
  * 严选 28 套配色方案 (4x7 布局)

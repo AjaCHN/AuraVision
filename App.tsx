@@ -32,7 +32,8 @@ const DEFAULT_SETTINGS: VisualizerSettings = {
   showCustomText: false,
   textPulse: true,
   customTextRotation: 0,
-  customTextSize: 12
+  customTextSize: 12,
+  customTextFont: 'Inter, sans-serif'
 };
 const DEFAULT_LYRICS_STYLE = LyricsStyle.KARAOKE; 
 const DEFAULT_SHOW_LYRICS = false;
@@ -141,14 +142,39 @@ const App: React.FC = () => {
       cycleColors: DEFAULT_SETTINGS.cycleColors,
       smoothing: DEFAULT_SETTINGS.smoothing,
       hideCursor: DEFAULT_SETTINGS.hideCursor,
-      quality: DEFAULT_SETTINGS.quality,
+      quality: DEFAULT_SETTINGS.quality
+    }));
+  }, []);
+
+  const resetTextSettings = useCallback(() => {
+    setSettings(prev => ({
+      ...prev,
       customText: DEFAULT_SETTINGS.customText,
       showCustomText: DEFAULT_SETTINGS.showCustomText,
       textPulse: DEFAULT_SETTINGS.textPulse,
       customTextRotation: DEFAULT_SETTINGS.customTextRotation,
-      customTextSize: DEFAULT_SETTINGS.customTextSize
+      customTextSize: DEFAULT_SETTINGS.customTextSize,
+      customTextFont: DEFAULT_SETTINGS.customTextFont
     }));
   }, []);
+
+  const resetAudioSettings = useCallback(() => {
+    setSettings(prev => ({
+      ...prev,
+      sensitivity: DEFAULT_SETTINGS.sensitivity,
+      smoothing: DEFAULT_SETTINGS.smoothing,
+      fftSize: DEFAULT_SETTINGS.fftSize,
+      monitor: DEFAULT_SETTINGS.monitor
+    }));
+    setSelectedDeviceId(''); // Reset device selection
+  }, []);
+
+  const resetAiSettings = useCallback(() => {
+    setShowLyrics(DEFAULT_SHOW_LYRICS);
+    setLyricsStyle(DEFAULT_LYRICS_STYLE);
+    setRegion(detectDefaultRegion());
+  }, []);
+
 
   // Auto Mode Cycle
   useEffect(() => {
@@ -180,8 +206,6 @@ const App: React.FC = () => {
   // Restart microphone when device changes (only if already listening)
   useEffect(() => {
     if (isListening) {
-      // Logic handled inside useAudio hook would be cleaner, but we trigger the restart here
-      // to keep the hook focused on mechanism, not policy
       startMicrophone(selectedDeviceId);
     }
   }, [selectedDeviceId]);
@@ -194,7 +218,6 @@ const App: React.FC = () => {
       const chunks: Blob[] = [];
       recorder.ondataavailable = (e) => chunks.push(e.data);
       recorder.onstop = async () => {
-        // Correct mimeType handling
         const mimeType = recorder.mimeType || 'audio/webm';
         const blob = new Blob(chunks, { type: mimeType });
         const reader = new FileReader();
@@ -207,7 +230,6 @@ const App: React.FC = () => {
         };
       };
       recorder.start();
-      // Increase recording duration to 7 seconds for better identification
       setTimeout(() => recorder.state === 'recording' && recorder.stop(), 7000); 
     } catch (e) {
       console.error("Recording error:", e);
@@ -284,6 +306,9 @@ const App: React.FC = () => {
         settings={settings} setSettings={setSettings} 
         resetSettings={resetAppSettings}
         resetVisualSettings={resetVisualSettings}
+        resetTextSettings={resetTextSettings}
+        resetAudioSettings={resetAudioSettings}
+        resetAiSettings={resetAiSettings}
         randomizeSettings={randomizeSettings}
         audioDevices={audioDevices} selectedDeviceId={selectedDeviceId} onDeviceChange={setSelectedDeviceId}
       />

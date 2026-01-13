@@ -1,6 +1,5 @@
 
 import { IVisualizerRenderer, VisualizerSettings } from '../../types';
-import { getAverage } from '../audioUtils';
 
 export class BarsRenderer implements IVisualizerRenderer {
   init() {}
@@ -47,97 +46,5 @@ export class RingsRenderer implements IVisualizerRenderer {
         ctx.arc(centerX, centerY, radius, startAngle, endAngle);
         ctx.stroke();
     }
-  }
-}
-
-export class StrobeRenderer implements IVisualizerRenderer {
-  init() {}
-  draw(ctx: CanvasRenderingContext2D, data: Uint8Array, w: number, h: number, colors: string[], settings: VisualizerSettings) {
-    const cols = 12;
-    const rows = 8;
-    const cellW = w / cols;
-    const cellH = h / rows;
-    const bass = getAverage(data, 0, 10) / 255;
-
-    ctx.save();
-    for (let r = 0; r < rows; r++) {
-      for (let c = 0; c < cols; c++) {
-        const idx = (r * cols + c) % (data.length / 4);
-        const val = data[Math.floor(idx)] / 255;
-        const color = colors[(r + c) % colors.length];
-        
-        const padding = 2; 
-        const x = c * cellW + padding;
-        const y = r * cellH + padding;
-        const curW = cellW - padding * 2;
-        const curH = cellH - padding * 2;
-
-        const threshold = 0.15; 
-        const intensity = val > threshold ? (val - threshold) / (1 - threshold) : 0;
-        const gridFactor = (r + c) % 3 === 0 ? bass * 1.2 : bass * 0.6;
-        const finalAlpha = (intensity * settings.sensitivity) + gridFactor;
-
-        if (finalAlpha > 0.05) {
-            ctx.fillStyle = color;
-            ctx.globalAlpha = Math.min(finalAlpha, 1.0);
-            ctx.fillRect(x, y, curW, curH);
-            
-            if (settings.glow && finalAlpha > 0.3) {
-                ctx.shadowBlur = 30 * finalAlpha * settings.sensitivity;
-                ctx.shadowColor = color;
-                ctx.strokeStyle = '#ffffff';
-                ctx.lineWidth = 1;
-                ctx.strokeRect(x, y, curW, curH);
-            }
-        }
-      }
-    }
-    ctx.restore();
-  }
-}
-
-export class RipplesRenderer implements IVisualizerRenderer {
-  private ripples: Array<{x: number, y: number, r: number, alpha: number, speed: number, color: string}> = [];
-  
-  init() { this.ripples = []; }
-  
-  draw(ctx: CanvasRenderingContext2D, data: Uint8Array, w: number, h: number, colors: string[], settings: VisualizerSettings) {
-    if (colors.length === 0) return;
-    
-    // Detect Kick/Bass to trigger ripples
-    const bass = getAverage(data, 0, 10);
-    // Dynamic threshold based on sensitivity
-    const threshold = 200 * (2.0 - Math.min(1.5, settings.sensitivity * 0.5));
-    
-    if (bass > threshold && Math.random() > 0.7) {
-        this.ripples.push({
-            x: Math.random() * w,
-            y: Math.random() * h,
-            r: 10,
-            alpha: 1.0,
-            speed: (3 + Math.random() * 4) * settings.speed,
-            color: colors[Math.floor(Math.random() * colors.length)]
-        });
-    }
-
-    ctx.lineWidth = 3 * settings.sensitivity;
-    
-    for (let i = this.ripples.length - 1; i >= 0; i--) {
-        const r = this.ripples[i];
-        r.r += r.speed;
-        r.alpha -= 0.015;
-        
-        if (r.alpha <= 0) {
-            this.ripples.splice(i, 1);
-            continue;
-        }
-        
-        ctx.beginPath();
-        ctx.arc(r.x, r.y, r.r, 0, Math.PI * 2);
-        ctx.strokeStyle = r.color;
-        ctx.globalAlpha = r.alpha;
-        ctx.stroke();
-    }
-    ctx.globalAlpha = 1.0;
   }
 }

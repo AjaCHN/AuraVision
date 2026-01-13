@@ -71,7 +71,8 @@ const CustomTextOverlay: React.FC<CustomTextOverlayProps> = ({ settings, analyse
             fontSize: `min(${sizeVw}vw, ${sizePx}px)`, 
             textShadow: '0 0 40px rgba(255,255,255,0.3)',
             whiteSpace: 'pre-wrap',
-            lineHeight: 1.1
+            lineHeight: 1.1,
+            fontFamily: settings.customTextFont || 'Inter, sans-serif'
         }}
       >
         {settings.customText}

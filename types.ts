@@ -13,9 +13,6 @@ export enum VisualizerMode {
   NEBULA = 'NEBULA', 
   KALEIDOSCOPE = 'KALEIDOSCOPE',
   LASERS = 'LASERS',   
-  STROBE = 'STROBE',
-  SMOKE = 'SMOKE',   
-  RIPPLES = 'RIPPLES',
   // WebGL Modes
   SILK = 'SILK',
   LIQUID = 'LIQUID',
@@ -58,6 +55,7 @@ export interface VisualizerSettings {
   textPulse: boolean;
   customTextRotation: number; // degrees -180 to 180
   customTextSize: number; // Scale factor 1 to 100
+  customTextFont: string;
 }
 
 export interface VisualizerConfig {
