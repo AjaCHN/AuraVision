@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import VisualizerCanvas from './components/VisualizerCanvas';
 import ThreeVisualizer from './components/ThreeVisualizer';
@@ -44,6 +43,7 @@ const App: React.FC = () => {
       try {
         return JSON.parse(saved) as T;
       } catch (e) {
+        console.warn(`Storage load failed for ${fullKey}:`, e);
         return fallback;
       }
     }
@@ -70,8 +70,18 @@ const App: React.FC = () => {
   const [isIdentifying, setIsIdentifying] = useState(false);
   const [currentSong, setCurrentSong] = useState<SongInfo | null>(null);
 
+  // 统一持久化存储监听：确保所有核心状态同步到 LocalStorage
   useEffect(() => {
-    const data = { mode, theme: colorTheme, settings, lyricsStyle, showLyrics, language, region, deviceId: selectedDeviceId };
+    const data = { 
+      mode, 
+      theme: colorTheme, 
+      settings, 
+      lyricsStyle, 
+      showLyrics, 
+      language, // 确保 language 被包含并监听
+      region, 
+      deviceId: selectedDeviceId 
+    };
     Object.entries(data).forEach(([key, value]) => {
       localStorage.setItem(STORAGE_PREFIX + key, JSON.stringify(value));
     });
@@ -80,7 +90,9 @@ const App: React.FC = () => {
   useEffect(() => {
     if (analyser) {
       analyser.smoothingTimeConstant = settings.smoothing;
-      if (analyser.fftSize !== settings.fftSize) analyser.fftSize = settings.fftSize;
+      if (analyser.fftSize !== settings.fftSize) {
+        analyser.fftSize = settings.fftSize;
+      }
     }
   }, [settings.smoothing, settings.fftSize, analyser]);
 
@@ -92,7 +104,9 @@ const App: React.FC = () => {
           .filter(d => d.kind === 'audioinput')
           .map(d => ({ deviceId: d.deviceId, label: d.label || `Mic ${d.deviceId.slice(0, 5)}` }));
         setAudioDevices(inputs);
-      } catch (e) { }
+      } catch (e) {
+        console.error("Device fetch error:", e);
+      }
     };
     fetchDevices();
   }, []);
@@ -101,7 +115,8 @@ const App: React.FC = () => {
     const randomTheme = COLOR_THEMES[Math.floor(Math.random() * COLOR_THEMES.length)];
     setColorTheme(randomTheme);
     const modes = Object.values(VisualizerMode);
-    setMode(modes[Math.floor(Math.random() * modes.length)]);
+    const randomMode = modes[Math.floor(Math.random() * modes.length)];
+    setMode(randomMode);
     setSettings(prev => ({
       ...prev,
       speed: 0.8 + Math.random() * 0.8,
@@ -148,7 +163,9 @@ const App: React.FC = () => {
     try {
       const constraints: MediaStreamConstraints = { 
         audio: deviceId ? { deviceId: { exact: deviceId } } : {
-          echoCancellation: false, noiseSuppression: false, autoGainControl: false
+          echoCancellation: false,
+          noiseSuppression: false,
+          autoGainControl: false
         } 
       };
       const stream = await navigator.mediaDevices.getUserMedia(constraints);
@@ -158,11 +175,13 @@ const App: React.FC = () => {
       node.fftSize = settings.fftSize;
       node.smoothingTimeConstant = settings.smoothing;
       src.connect(node);
+      
       setAudioContext(context);
       setAnalyser(node);
       setMediaStream(stream);
       setIsListening(true);
     } catch (err) {
+      console.error('Mic initialization error:', err);
       setIsListening(false);
     }
   };
@@ -203,8 +222,7 @@ const App: React.FC = () => {
         };
       };
       recorder.start();
-      // 优化：将录制时长从 5s 降至 4s，缩短识别循环周期
-      setTimeout(() => recorder.state === 'recording' && recorder.stop(), 4000); 
+      setTimeout(() => recorder.state === 'recording' && recorder.stop(), 5000); 
     } catch (e) {
       setIsIdentifying(false);
     }

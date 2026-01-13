@@ -1,21 +1,33 @@
-# SonicVision AI - OpenSpec 规范文档索引
+# SonicVision AI - OpenSpec 规范主文档
 
-SonicVision AI 是一项融合了高性能实时频谱分析与 Google Gemini 3 系列生成式 AI 的沉浸式视听交互实验。本目录包含项目的全栈技术规范。
+本项目严格遵循 **OpenSpec** 标准进行架构设计与文档编写。SonicVision AI 是一项融合了高性能实时频谱分析与 Google Gemini 3 系列生成式 AI 的沉浸式视听交互实验。
 
-## 核心规范文件
+## 核心规范体系 (Current Standard)
 
-1. **[架构规范 (Architecture Spec)](./01_architecture_spec.md)**
-   - 技术栈定义、核心生命周期、模块化依赖关系。
-2. **[音频引擎规范 (Audio Engine Spec)](./02_audio_engine_spec.md)**
-   - Web Audio API 信号流、FFT 逻辑、声学指纹特征提取。
-3. **[渲染逻辑规范 (Rendering Spec)](./03_rendering_spec.md)**
-   - 2D Canvas 策略模式、3D WebGL 顶点位移算法、后期处理管道。
-4. **[AI 集成规范 (AI Integration Spec)](./04_ai_integration_spec.md)**
-   - Gemini 3 模型配置、搜索增强 (Search Grounding)、结构化输出 Schema。
-5. **[UI/UX 与交互规范 (Interface Spec)](./05_interface_spec.md)**
-   - 交互动效逻辑、闲置隐藏策略、快捷键映射、视觉一致性标准。
-6. **[持久化与本地化规范 (Data & i18n Spec)](./06_storage_and_i18n_spec.md)**
-   - LocalStorage 架构、多语言字典结构、区域偏好逻辑。
+以下文档位于 `openspec/` 目录下，代表了本项目的最新技术标准：
+
+1.  **[01 架构与设计规范](./openspec/01_architecture.md)**
+    *   技术栈、核心生命周期、模块化数据流。
+2.  **[02 音频引擎与信号规范](./openspec/02_audio_engine.md)**
+    *   Web Audio 采集、FFT 分析、声学指纹特征提取算法。
+3.  **[03 视觉生成渲染规范](./openspec/03_visual_engines.md)**
+    *   2D 策略模式渲染器、3D WebGL 顶点位移算法。
+4.  **[04 AI 智能与语义规范](./openspec/04_ai_intelligence.md)**
+    *   Gemini 3 模型配置、搜索增强 (Search Grounding) 与结构化输出 Schema。
+5.  **[05 UI/UX 与交互规范](./openspec/05_ui_ux_design.md)**
+    *   状态转换逻辑、闲置隐藏策略、快捷键映射表。
+6.  **[06 持久化与国际化规范](./openspec/06_persistence_i18n.md)**
+    *   LocalStorage Schema、多语言字典结构与区域偏好。
+
+---
+
+## 冗余文件清理说明 (Deprecation Notice)
+
+为了保持项目整洁，请**忽略**以下在迭代过程中产生的冗余文件（建议在生产环境中删除）：
+
+*   **旧版文档**: `openspec/01_system_architecture.md` 到 `04_ui_ux_spec.md`。
+*   **过渡版文档**: 带有 `_spec.md` 后缀的所有文件。
+*   **重复索引**: `openspec/OPENSPEC.md`。
 
 ---
 *SonicVision AI Project Specification - Version 0.2.3*

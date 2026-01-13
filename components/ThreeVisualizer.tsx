@@ -1,4 +1,3 @@
-
 import React, { useRef, useMemo } from 'react';
 import { Canvas, useFrame, extend, ThreeElements } from '@react-three/fiber';
 import { EffectComposer, Bloom, ChromaticAberration, TiltShift } from '@react-three/postprocessing';
@@ -9,25 +8,23 @@ import { VisualizerMode, VisualizerSettings } from '../types';
 // Register standard Three.js shader pass if not available in R3F postprocessing automatically
 extend({ AfterimagePass });
 
-/**
- * Add global JSX augmentation to ensure Three.js intrinsic elements are recognized by the TypeScript compiler.
- * Augmenting both global JSX and React.JSX ensures compatibility across various TypeScript configurations and React 19.
- */
+// Add global JSX augmentation to ensure Three.js intrinsic elements are recognized by the TypeScript compiler.
 declare global {
   namespace JSX {
-    interface IntrinsicElements extends ThreeElements {}
-  }
-  namespace React {
-    namespace JSX {
-      interface IntrinsicElements extends ThreeElements {}
+    interface IntrinsicElements {
+      mesh: any;
+      pointLight: any;
+      spotLight: any;
+      ambientLight: any;
+      primitive: any;
+      meshPhysicalMaterial: any;
+      color: any;
+      directionalLight: any;
+      fog: any;
+      circleGeometry: any;
+      meshBasicMaterial: any;
+      meshStandardMaterial: any;
     }
-  }
-}
-
-// Specifically augment the React module to ensure React 19 recognizes Three.js intrinsic elements
-declare module 'react' {
-  namespace JSX {
-    interface IntrinsicElements extends ThreeElements {}
   }
 }
 
