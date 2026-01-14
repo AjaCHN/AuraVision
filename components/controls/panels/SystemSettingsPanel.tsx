@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Language, VisualizerSettings } from '../../../core/types';
 import { APP_VERSION } from '../../../core/constants';
@@ -76,7 +75,11 @@ export const SystemSettingsPanel: React.FC<SystemSettingsPanelProps> = ({
                  </svg>
                  {h?.projectInfoTitle || "About Aura"}
                </h4>
-               <p className="text-[11px] text-white/50 leading-relaxed font-medium">{h?.projectInfoText || "Multimodal visualizer."}</p>
+               <p className="text-[11px] text-white/50 leading-relaxed font-medium">
+                 {t?.language === 'zh' 
+                   ? '沉浸式 AI 视听套件。适用于直播背景、现场 VJ、氛围装饰及专注陪伴场景。' 
+                   : 'Immersive AI visualizer for Streamers, VJs, Ambient decor, and Focus sessions.'}
+               </p>
             </div>
             <div className="bg-white/[0.03] p-4 rounded-xl border border-white/5">
                <h4 className="text-[10px] font-black text-green-400 uppercase tracking-widest mb-2 flex items-center gap-2">
@@ -122,6 +125,6 @@ export const SystemSettingsPanel: React.FC<SystemSettingsPanelProps> = ({
 const ShortcutItem = ({ label, k }: { label: string, k: string }) => (
   <div className="bg-white/[0.02] p-2 rounded-lg border border-white/5 flex justify-between items-center group hover:bg-white/5 transition-colors">
      <span className="text-[10px] text-white/40 group-hover:text-white/80 transition-colors truncate pr-2 font-bold uppercase">{label}</span>
-     <kbd className="text-[9px] font-mono bg-white/10 px-1.5 py-0.5 rounded text-white/80 border border-white/10 min-w-[20px] text-center shadow-sm">{k}</kbd>
+     <kbd className="text-[9px] font-mono bg-white/10 px-1.5 py-0.5 rounded text-white/80 border border-white/10 min-w-[24px] text-center shadow-sm">{k}</kbd>
   </div>
 );

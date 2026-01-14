@@ -42,12 +42,14 @@ const ThreeVisualizer: React.FC<ThreeVisualizerProps> = ({ analyser, colors, set
       <Canvas 
         camera={{ position: [0, 2, 16], fov: 55 }} 
         dpr={dpr} 
+        shadows={false}
         gl={{ 
             antialias: settings.quality !== 'low', 
             alpha: false,
             stencil: false,
             depth: true,
-            powerPreference: "high-performance"
+            powerPreference: "high-performance",
+            preserveDrawingBuffer: false
         }}
         onCreated={({ gl }) => {
           gl.setClearColor('#000000');
@@ -58,7 +60,10 @@ const ThreeVisualizer: React.FC<ThreeVisualizerProps> = ({ analyser, colors, set
         </Suspense>
         
         {settings.glow && (
-            <EffectComposer multisampling={settings.quality === 'high' ? 2 : 0}>
+            <EffectComposer 
+              multisampling={settings.quality === 'high' ? 8 : 0}
+              disableNormalPass={true}
+            >
                 <Bloom 
                     luminanceThreshold={0.4} 
                     luminanceSmoothing={0.9} 

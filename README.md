@@ -1,34 +1,56 @@
 # Aura Vision 🎵👁️
 
-### AI-Powered 3D Music Visualizer & Identifier (v0.4.0)
+### AI-Powered 3D Music Visualizer & Identifier (v0.4.1)
 
-[中文文档](README_ZH.md) | [Live Demo](https://aura.tanox.net/)
+[中文文档](README_ZH.md) | [Live Demo](https://aura-vision.vercel.app/)
 
-![License](https://img.shields.io/badge/License-GPL%20v2-blue.svg)
-![React](https://img.shields.io/badge/React-18.3.1-61DAFB?logo=react&logoColor=black)
-![Three.js](https://img.shields.io/badge/Three.js-WebGL-white?logo=three.js&logoColor=black)
-![Gemini AI](https://img.shields.io/badge/AI-Gemini%203.0-8E75B2?logo=google&logoColor=white)
+<p align="center">
+  <img src="https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?q=80&w=1200&auto=format&fit=crop" alt="Aura Vision Banner" width="100%" />
+</p>
 
-**Aura Vision** is a next-gen audio visualization experiment running entirely in your browser. It combines **WebGL** (Three.js) for stunning 3D generative art with **Google Gemini 3.0** for real-time AI music identification and mood-reactive aesthetics.
+<p align="center">
+  <img src="https://img.shields.io/badge/React-18.3.1-61DAFB?logo=react&logoColor=black" />
+  <img src="https://img.shields.io/badge/Three.js-WebGL-white?logo=three.js&logoColor=black" />
+  <img src="https://img.shields.io/badge/AI-Gemini%203.0-8E75B2?logo=google&logoColor=white" />
+  <img src="https://img.shields.io/badge/License-GPL%20v2-blue.svg" />
+  <img src="https://img.shields.io/badge/SEO-Optimized-success" />
+</p>
+
+**Aura Vision** is a cutting-edge web application that transforms live audio into immersive 3D generative art. By combining advanced spectral analysis with **Google Gemini 3.0**, it not only visualizes the rhythm but also identifies the music and adapts its visual mood in real-time.
 
 ---
 
+## 📸 Visual Showcase
+
+| Silk Waves (WebGL) | Liquid Sphere (3D) | Plasma Flow (2D) |
+| :---: | :---: | :---: |
+| ![Silk](https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=400&h=300&fit=crop) | ![Liquid](https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=400&h=300&fit=crop) | ![Plasma](https://images.unsplash.com/photo-1470225620780-dba8ba36b745?q=80&w=400&h=300&fit=crop) |
+
+---
+
+## 🚀 Innovative Use Cases
+
+Aura Vision is designed for professional and casual environments:
+
+*   **📺 Live Streaming (OBS/Streamers):** High-fidelity, reactive background for Twitch or YouTube.
+*   **🎭 Professional VJing:** Plug-and-play visual support for DJ sets or parties.
+*   **🌿 Ambient Mood Decor:** Cast to a Smart TV for a sophisticated digital atmosphere.
+*   **🧘 Relaxation:** Calm, therapeutic visual environments for meditation.
+*   **💻 Focus Companion:** A beautiful, non-distracting visual flow for deep work.
+
 ## ✨ Key Features
 
-*   **🧠 Multimodal AI Intelligence:** Powered by `gemini-3-flash-preview`. Listens to your audio to identify songs, detect mood, and synchronize metadata with visual themes.
-*   **🎨 High-Fidelity 3D Engines:** Immersive modes like **Silk Waves** and **Liquid Sphere** featuring PBR (Physically Based Rendering), bloom, and chromatic aberration.
-*   **🔠 Reactive Typography:** Custom text overlay (e.g., "AURA") that pulses and scales dynamically with the bass frequencies.
+*   **🧠 Gemini 3.0 Integration:** Real-time song recognition and semantic mood analysis.
+*   **🎨 12+ Generative Engines:** From classic frequency bars to advanced WebGL physics scenes.
+*   **🔠 Reactive Typography:** Dynamic custom text that pulses and rotates with the bass.
+*   **🌍 Multi-language Support:** Localized for Global, CN, JP, KR, EU, and LATAM markets.
 
 ## 🛠️ Tech Stack
 
-*   **Core:** React 18.3.1, TypeScript, Vite
-*   **Graphics:** Three.js, @react-three/fiber, Post-processing
-*   **AI:** Google GenAI SDK (`@google/genai`)
-*   **Styling:** Tailwind CSS
-
-## 📄 License
-
-Distributed under the GNU General Public License v2.0.
+*   **Graphics:** Three.js & React Three Fiber
+*   **AI:** Google Generative AI (Gemini 3 Flash)
+*   **Frontend:** React 18.3.1, Tailwind CSS
+*   **Audio:** Web Audio API (Real-time FFT)
 
 ---
 *Made with 💜 using React and Google Gemini API*

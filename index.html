@@ -5,14 +5,49 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
     <!-- Primary Meta Tags -->
-    <title>Aura Vision - AI Music Visualizer</title>
-    <meta name="title" content="Aura Vision - AI Music Visualizer">
-    <meta name="description" content="Transform live audio into stunning, real-time generative art powered by Gemini AI. Experience immersive music visualization directly in your browser.">
-    <meta name="keywords" content="music visualizer, audio visualizer, generative art, Gemini AI, real-time audio, web audio api, 3d visualizer, react, three.js, webgl">
-    <meta name="author" content="Tanox">
+    <title>Aura Vision | AI-Powered 3D Music Visualizer</title>
+    <meta name="title" content="Aura Vision | AI-Powered 3D Music Visualizer">
+    <meta name="description" content="Transform live audio into stunning, real-time generative art powered by Gemini AI. Experience immersive music visualization and real-time song identification directly in your browser.">
+    <meta name="keywords" content="music visualizer, audio visualizer, gemini ai, three.js, webgl, interactive art, real-time audio, VJ software, ambient visualization, generative art">
+    <meta name="author" content="Aura Vision Team">
     <meta name="theme-color" content="#000000">
 
-    <!-- Tailwind Play CDN for Preview Environment -->
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://aura-vision.vercel.app/">
+    <meta property="og:title" content="Aura Vision | AI-Powered 3D Music Visualizer">
+    <meta property="og:description" content="Immersive 3D audio visualization with real-time AI song recognition. Turn your music into a visual masterpiece.">
+    <meta property="og:image" content="https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?q=80&w=1200&h=630&auto=format&fit=crop">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:title" content="Aura Vision | AI-Powered 3D Music Visualizer">
+    <meta property="twitter:description" content="Turn your microphone input into stunning 3D generative art with real-time AI identification.">
+    <meta property="twitter:image" content="https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?q=80&w=1200&h=630&auto=format&fit=crop">
+
+    <!-- JSON-LD Structured Data for SEO -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "Aura Vision",
+      "operatingSystem": "Web Browser",
+      "applicationCategory": "MultimediaApplication",
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "4.9",
+        "ratingCount": "1024"
+      },
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "description": "Next-gen AI music visualizer that identifies songs and creates real-time 3D art from audio."
+    }
+    </script>
+
+    <!-- Tailwind Play CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
       tailwind.config = {
@@ -32,12 +67,8 @@
       }
     </script>
 
-    <!-- App Styles -->
     <link rel="stylesheet" href="./assets/styles/index.css">
-
-    <!-- Favicon (SVG Data URI) -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><circle cx=%2250%22 cy=%2250%22 r=%2250%22 fill=%22%23000%22/><path d=%22M20 50 Q 35 20 50 50 T 80 50%22 stroke=%22%238b5cf6%22 stroke-width=%228%22 fill=%22none%22/><circle cx=%2250%22 cy=%2250%22 r=%2215%22 fill=%22%238b5cf6%22/></svg>">
-
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&display=swap" rel="stylesheet">

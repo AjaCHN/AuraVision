@@ -1,34 +1,56 @@
 # Aura Vision 🎵👁️
 
-### AI 驱动的 3D 音乐可视化与识别平台 (v0.4.0)
+### AI 驱动的 3D 音乐可视化与曲目识别系统 (v0.4.1)
 
-[English](README.md) | [在线演示](https://aura.tanox.net/)
+[English](README.md) | [在线演示](https://aura-vision.vercel.app/)
 
-![License](https://img.shields.io/badge/License-GPL%20v2-blue.svg)
-![React](https://img.shields.io/badge/React-18.3.1-61DAFB?logo=react&logoColor=black)
-![Three.js](https://img.shields.io/badge/Three.js-WebGL-white?logo=three.js&logoColor=black)
-![Gemini AI](https://img.shields.io/badge/AI-Gemini%203.0-8E75B2?logo=google&logoColor=white)
+<p align="center">
+  <img src="https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?q=80&w=1200&auto=format&fit=crop" alt="Aura Vision 横幅" width="100%" />
+</p>
 
-**Aura Vision** 是一个完全基于浏览器的沉浸式视听实验。它结合了 **WebGL** (Three.js) 的高性能 3D 生成艺术与 **Google Gemini 3.0** 的多模态 AI 能力。
+<p align="center">
+  <img src="https://img.shields.io/badge/React-18.3.1-61DAFB?logo=react&logoColor=black" />
+  <img src="https://img.shields.io/badge/Three.js-WebGL-white?logo=three.js&logoColor=black" />
+  <img src="https://img.shields.io/badge/AI-Gemini%203.0-8E75B2?logo=google&logoColor=white" />
+  <img src="https://img.shields.io/badge/License-GPL%20v2-blue.svg" />
+  <img src="https://img.shields.io/badge/SEO-已优化-success" />
+</p>
+
+**Aura Vision** 是一款将实时音频转化为沉浸式 3D 生成艺术的高端 Web 应用。它结合了先进的频谱分析技术与 **Google Gemini 3.0** 多模态大模型，不仅能随律动起舞，更能实时识别歌曲内容并自动调整视觉情绪。
 
 ---
 
-## ✨ 核心特性
+## 📸 视觉展示
 
-*   **🧠 多模态 AI 智能:** 由 `gemini-3-flash-preview` 驱动。通过聆听实时音频识别曲目，分析音乐情绪并自动调整视觉配色。
-*   **🎨 高保真 3D 引擎:** 包含 **流光绸缎**、**液态星球** 等高级 WebGL 模式。
-*   **🔠 节奏感官文字:** 支持自定义文字图层，文字会随低音频率实时震动、缩放及闪烁。
+| 流光绸缎 (WebGL) | 液态星球 (3D) | 流体等离子 (2D) |
+| :---: | :---: | :---: |
+| ![流光](https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=400&h=300&fit=crop) | ![星球](https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=400&h=300&fit=crop) | ![等离子](https://images.unsplash.com/photo-1470225620780-dba8ba36b745?q=80&w=400&h=300&fit=crop) |
 
-## 🛠️ 技术栈
+---
 
-*   **核心:** React 18.3.1, TypeScript, Vite
-*   **图形:** Three.js, @react-three/fiber, 后期处理
-*   **AI:** Google GenAI SDK (`@google/genai`)
-*   **样式:** Tailwind CSS
+## 🚀 核心应用场景
 
-## 📄 许可证
+Aura Vision 适配多种专业与个人场景：
 
-基于 GNU General Public License v2.0 许可证分发。
+*   **📺 直播互动 (OBS/音乐主播):** 显著提升直播间的视觉档次。
+*   **🎭 现场 VJ 与 派对:** 为 DJ 现场或家庭聚会提供即插即用的视觉支持。
+*   **🌿 环境氛围装饰:** 投屏到智能电视，营造高端的数字化氛围。
+*   **🧘 冥想与放松:** 打造视觉上的疗愈与宁静空间。
+*   **💻 专注力助手:** 配合 Lo-fi 音乐，提供不干扰注意力的动态背景。
+
+## ✨ 功能亮点
+
+*   **🧠 Gemini 3.0 深度集成:** 实时曲目识别、歌手信息抓取及情绪感知。
+*   **🎨 12+ 渲染引擎:** 从经典的频谱条到复杂的 WebGL 物理场景。
+*   **🔠 感官文字系统:** 支持自定义文字，可随节奏实时震动、缩放。
+*   **🌍 全球本地化:** 深度适配中、英、日、韩等多国市场语言。
+
+## 🛠️ 技术架构
+
+*   **图形引擎:** Three.js & React Three Fiber
+*   **人工智能:** Google Generative AI (Gemini 3 Flash)
+*   **前端框架:** React 18.3.1, Tailwind CSS
+*   **音频处理:** Web Audio API (实时 FFT)
 
 ---
 *Made with 💜 using React and Google Gemini API*

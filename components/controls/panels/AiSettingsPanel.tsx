@@ -39,6 +39,7 @@ export const AiSettingsPanel: React.FC<AiSettingsPanelProps> = ({ settings, setS
 
   return (
     <>
+      {/* 第一列：AI 核心识别设置 */}
       <TooltipArea text={hints?.lyrics || "Lyrics Recognition"}>
         <div className="p-4 h-full flex flex-col border-b lg:border-b-0 lg:border-r border-white/5 pt-6 space-y-5">
           <div className="flex items-center">
@@ -52,13 +53,27 @@ export const AiSettingsPanel: React.FC<AiSettingsPanelProps> = ({ settings, setS
           </div>
         </div>
       </TooltipArea>
+
+      {/* 第二列：外观风格设置 */}
       <div className="p-4 space-y-4 h-full flex flex-col border-b lg:border-b-0 lg:border-r border-white/5 pt-6">
-        <div className="flex items-center mb-1"><span className="text-xs font-bold uppercase text-white/50 tracking-[0.25em]">{t?.displaySettings || "Display"}</span><BetaBadge label={common?.beta} /></div>
-        <CustomSelect label={`${t?.lyrics || "Lyrics"} ${t?.styleTheme || "Style"}`} value={settings.lyricsStyle || LyricsStyle.KARAOKE} hintText={hints?.lyricsStyle} options={Object.values(LyricsStyle).map(s => ({ value: s, label: lyricsStyles[s] || s }))} onChange={(val) => setSettings({...settings, lyricsStyle: val as LyricsStyle})} />
-        
-        <div className="space-y-2">
+        <div className="flex items-center mb-1">
+           <span className="text-xs font-bold uppercase text-white/50 tracking-[0.25em]">{t?.displaySettings || "Display"}</span>
+           <BetaBadge label={common?.beta} />
+        </div>
+        <CustomSelect 
+          label={`${t?.lyrics || "Lyrics"} ${t?.styleTheme || "Style"}`} 
+          value={settings.lyricsStyle || LyricsStyle.KARAOKE} 
+          hintText={hints?.lyricsStyle} 
+          options={Object.values(LyricsStyle).map(s => ({ value: s, label: lyricsStyles[s] || s }))} 
+          onChange={(val) => setSettings({...settings, lyricsStyle: val as LyricsStyle})} 
+        />
+      </div>
+
+      {/* 第三列：位置设置与重置 (歌词位置移动到此处) */}
+      <div className="p-4 space-y-6 h-full flex flex-col pt-6">
+        <div className="space-y-3">
           <span className="text-[10px] font-black uppercase text-white/50 tracking-[0.15em] block ml-1">{t?.lyricsPosition || "Position"}</span>
-          <div className="grid grid-cols-3 gap-1 bg-white/[0.02] p-2 rounded-xl border border-white/5">
+          <div className="grid grid-cols-3 gap-1 bg-white/[0.02] p-2 rounded-xl border border-white/5 max-w-[160px]">
               {positionOptions.map(pos => (
                 <button 
                   key={pos.value} 
@@ -71,9 +86,13 @@ export const AiSettingsPanel: React.FC<AiSettingsPanelProps> = ({ settings, setS
               ))}
           </div>
         </div>
-      </div>
-      <div className="p-4 space-y-4 h-full flex flex-col pt-6 justify-end">
-         <button onClick={resetAiSettings} className="w-full py-2.5 bg-white/[0.04] rounded-lg text-xs font-bold uppercase tracking-widest text-white/50 hover:text-white flex items-center justify-center gap-2 mt-auto"><svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 opacity-60" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>{t?.resetAi || "Reset AI"}</button>
+        
+        <div className="mt-auto">
+          <button onClick={resetAiSettings} className="w-full py-2.5 bg-white/[0.04] rounded-lg text-xs font-bold uppercase tracking-widest text-white/50 hover:text-white flex items-center justify-center gap-2 transition-colors border border-transparent hover:border-white/10">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 opacity-60" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
+            {t?.resetAi || "Reset AI"}
+          </button>
+        </div>
       </div>
     </>
   );
