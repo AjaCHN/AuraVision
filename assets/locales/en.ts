@@ -69,6 +69,8 @@ export const en = {
   startExperience: 'Launch Experience',
   welcomeTitle: 'Aura Vision',
   welcomeText: 'Translate audio into generative art. Experience real-time music identification and immersive visualization.',
+  unsupportedTitle: 'Browser Not Supported',
+  unsupportedText: 'Aura Vision requires modern features (like microphone access) not available in your browser. Please update to a recent version of Chrome, Firefox, or Safari.',
   hideOptions: 'Collapse',
   showOptions: 'Expand Options',
   reset: 'Reset System',

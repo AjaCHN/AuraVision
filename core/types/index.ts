@@ -1,6 +1,6 @@
-
 import * as React from 'react';
-import type { ThreeElements } from '@react-three/fiber';
+// FIX: Changed to a regular import to ensure build tools correctly handle the type for global JSX augmentation.
+import { ThreeElements } from '@react-three/fiber';
 
 export type Language = 'en' | 'zh' | 'tw' | 'ja' | 'es' | 'ko' | 'de' | 'fr';
 

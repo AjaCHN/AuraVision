@@ -27,10 +27,31 @@ const Controls: React.FC = () => {
   const { isIdle } = useIdleTimer(isExpanded);
   
   const toggleFullscreen = () => {
-    if (!document.fullscreenElement) {
-      document.documentElement.requestFullscreen();
-    } else if (document.exitFullscreen) {
-      document.exitFullscreen();
+    const doc = window.document as any;
+    const elem = doc.documentElement as any;
+
+    const isFullscreen = doc.fullscreenElement || doc.webkitFullscreenElement || doc.mozFullScreenElement || doc.msFullscreenElement;
+
+    if (!isFullscreen) {
+        if (elem.requestFullscreen) {
+            elem.requestFullscreen();
+        } else if (elem.webkitRequestFullscreen) { // Safari
+            elem.webkitRequestFullscreen();
+        } else if (elem.mozRequestFullScreen) { // Firefox
+            elem.mozRequestFullScreen();
+        } else if (elem.msRequestFullscreen) { // IE11
+            elem.msRequestFullscreen();
+        }
+    } else {
+        if (doc.exitFullscreen) {
+            doc.exitFullscreen();
+        } else if (doc.webkitExitFullscreen) { // Safari
+            doc.webkitExitFullscreen();
+        } else if (doc.mozCancelFullScreen) { // Firefox
+            doc.mozCancelFullScreen();
+        } else if (doc.msExitFullscreen) { // IE11
+            doc.msExitFullscreen();
+        }
     }
   };
 

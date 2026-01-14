@@ -70,6 +70,8 @@ export const zh = {
   startExperience: '开启视听盛宴',
   welcomeTitle: 'Aura Vision',
   welcomeText: '将声波转化为数字艺术。通过实时频域分析与 AI 语义识别，开启前所未有的视听交互体验。',
+  unsupportedTitle: '浏览器不受支持',
+  unsupportedText: 'Aura Vision 需要现代浏览器功能（例如麦克风访问权限）才能运行，您当前的浏览器不支持这些功能。请更新到最新版本的 Chrome、Firefox 或 Safari。',
   hideOptions: '收起',
   showOptions: '显示设置',
   reset: '重置全局设置',

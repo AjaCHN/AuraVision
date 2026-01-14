@@ -73,8 +73,22 @@ const App: React.FC = () => {
   const { getStorage, setStorage, clearStorage } = useLocalStorage();
   const [hasStarted, setHasStarted] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(() => !localStorage.getItem(ONBOARDING_KEY));
+  const [isUnsupported, setIsUnsupported] = useState(false);
   
   const wakeLockRef = useRef<any>(null);
+
+  const [language, setLanguage] = useState<Language>(() => { 
+    const saved = getStorage<Language>('language', DEFAULT_LANGUAGE); 
+    return TRANSLATIONS[saved] ? saved : DEFAULT_LANGUAGE; 
+  });
+  
+  const t = TRANSLATIONS[language] || TRANSLATIONS[DEFAULT_LANGUAGE];
+
+  useEffect(() => {
+    if (!navigator.mediaDevices?.getUserMedia) {
+        setIsUnsupported(true);
+    }
+  }, []);
 
   const detectDefaultRegion = (): Region => {
     const lang = navigator.language.toLowerCase();
@@ -86,8 +100,6 @@ const App: React.FC = () => {
 
   const [mode, setMode] = useState<VisualizerMode>(() => getStorage('mode', DEFAULT_MODE));
   const [colorTheme, setColorTheme] = useState<string[]>(() => getStorage('theme', COLOR_THEMES[DEFAULT_THEME_INDEX]));
-  // FIX: The original `getStorage` call was not typed, causing a TypeScript error.
-  // Refactored to properly type the retrieved settings and ensure `showCustomText` is handled correctly.
   const [settings, setSettings] = useState<VisualizerSettings>(() => {
     const savedSettings = getStorage<Partial<VisualizerSettings>>('settings', {});
     return { 
@@ -98,11 +110,8 @@ const App: React.FC = () => {
   });
   const [lyricsStyle, setLyricsStyle] = useState<LyricsStyle>(() => getStorage('lyricsStyle', DEFAULT_LYRICS_STYLE));
   const [showLyrics, setShowLyrics] = useState<boolean>(() => getStorage('showLyrics', DEFAULT_SHOW_LYRICS));
-  const [language, setLanguage] = useState<Language>(() => { const saved = getStorage<Language>('language', DEFAULT_LANGUAGE); return TRANSLATIONS[saved] ? saved : DEFAULT_LANGUAGE; });
   const [region, setRegion] = useState<Region>(() => getStorage('region', detectDefaultRegion()));
   const [selectedDeviceId, setSelectedDeviceId] = useState<string>(() => getStorage('deviceId', ''));
-
-  const t = TRANSLATIONS[language] || TRANSLATIONS[DEFAULT_LANGUAGE];
 
   const { isListening, isSimulating, analyser, mediaStream, audioDevices, errorMessage, setErrorMessage, startMicrophone, startDemoMode, toggleMicrophone } = useAudio({ settings, language });
   const { isIdentifying, currentSong, setCurrentSong, performIdentification } = useIdentification({ language, region, provider: settings.recognitionProvider, showLyrics });
@@ -171,6 +180,18 @@ const App: React.FC = () => {
   if (showOnboarding) return <OnboardingOverlay language={language} setLanguage={setLanguage} onComplete={handleOnboardingComplete} />;
 
   if (!hasStarted) {
+    if (isUnsupported) {
+        return (
+            <div className="min-h-[100dvh] bg-black flex items-center justify-center p-6 text-center">
+                <div className="max-w-md space-y-6 animate-fade-in-up">
+                    <h1 className="text-4xl font-black text-red-400">{t?.unsupportedTitle || 'Browser Not Supported'}</h1>
+                    <p className="text-gray-300 leading-relaxed">
+                        {t?.unsupportedText || 'Aura Vision requires modern browser features (like microphone access) that are not available. Please update to a recent version of Chrome, Firefox, or Safari.'}
+                    </p>
+                </div>
+            </div>
+        );
+    }
     return (
       <div className="min-h-[100dvh] bg-black flex items-center justify-center p-6 text-center">
         <div className="max-w-md space-y-8 animate-fade-in-up">

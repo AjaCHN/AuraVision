@@ -12,7 +12,7 @@ export default defineConfig(({ mode }) => {
     base: './', // Ensure relative paths for assets
     build: {
       outDir: 'build', // Output to 'build' folder instead of 'dist' for compatibility
-      target: 'es2017', // Ensure compatibility with older devices like Android 8
+      target: 'es2015', // Ensure compatibility with older devices like Android 5-10
     },
     define: {
       // Safely inject API Key from the loaded environment variables

@@ -70,6 +70,8 @@ export const tw = {
   startExperience: '開啟視聽盛宴',
   welcomeTitle: 'Aura Vision',
   welcomeText: '將聲波轉化為數位藝術。透過即時頻域分析與 AI 語意辨識，開啟前所未有的視聽互動體驗。',
+  unsupportedTitle: '瀏覽器不受支援',
+  unsupportedText: 'Aura Vision 需要現代瀏覽器功能（例如麥克風存取權限）才能運作，您目前的瀏覽器不支援這些功能。請更新至最新版本的 Chrome、Firefox 或 Safari。',
   hideOptions: '收起',
   showOptions: '顯示設定',
   reset: '重置全域設定',

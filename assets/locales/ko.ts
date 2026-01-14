@@ -69,6 +69,8 @@ export const ko = {
   startExperience: '경험 시작하기',
   welcomeTitle: 'Aura Vision',
   welcomeText: '오디오를 제너레이티브 아트로 변환합니다. 실시간 음악 식별과 몰입형 시각화를 경험하세요.',
+  unsupportedTitle: '브라우저가 지원되지 않습니다',
+  unsupportedText: 'Aura Vision은 현재 브라우저에서 사용할 수 없는 최신 기능(예: 마이크 액세스)이 필요합니다. 최신 버전의 Chrome, Firefox 또는 Safari로 업데이트하십시오.',
   hideOptions: '접기',
   showOptions: '옵션 펼치기',
   reset: '시스템 초기화',

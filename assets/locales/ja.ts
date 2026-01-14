@@ -69,6 +69,8 @@ export const ja = {
   startExperience: '体験を開始',
   welcomeTitle: 'Aura Vision',
   welcomeText: 'オーディオを生成的なデジタルアートに変換します。リアルタイムのスペクトル分析とAI認識による没入型体験。',
+  unsupportedTitle: 'ブラウザがサポートされていません',
+  unsupportedText: 'Aura Visionは、お使いのブラウザでは利用できない最新の機能（マイクアクセスなど）を必要とします。Chrome、Firefox、またはSafariの最新バージョンに更新してください。',
   hideOptions: '閉じる',
   showOptions: 'オプションを表示',
   reset: '全体リセット',
