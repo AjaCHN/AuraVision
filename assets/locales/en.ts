@@ -8,7 +8,8 @@ export const en = {
     visible: 'VISIBLE',
     hidden: 'HIDDEN',
     active: 'ACTIVE',
-    muted: 'MUTED'
+    muted: 'MUTED',
+    beta: 'BETA'
   },
   tabs: {
     visual: 'Visual',
@@ -31,7 +32,7 @@ export const en = {
     region: 'Bias the AI search engine towards music from this specific market.',
     autoRotate: 'Automatically cycle through different visual engines.',
     rotateInterval: 'Time in seconds before switching to the next visual engine.',
-    cycleColors: 'Automatically transition between color themes over time.',
+    cycleColors: 'Transita automatically between color themes over time.',
     colorInterval: 'Time in seconds before smoothly blending to the next color palette.',
     reset: 'Restore all application settings to factory defaults.',
     resetVisual: 'Reset only aesthetics (Speed, Glow, Trails) to defaults.',
@@ -57,6 +58,7 @@ export const en = {
   audioInput: 'Input Device',
   lyrics: 'Lyrics',
   showLyrics: 'Enable AI Recognition',
+  displaySettings: 'Display Settings',
   language: 'UI Language',
   region: 'Target Market',
   startMic: 'Enable Audio',

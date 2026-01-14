@@ -8,7 +8,8 @@ export const fr = {
     visible: 'VISIBLE',
     hidden: 'MASQUÉ',
     active: 'ACTIF',
-    muted: 'MUET'
+    muted: 'MUET',
+    beta: 'BÊTA'
   },
   tabs: {
     visual: 'Visuel',
@@ -35,7 +36,7 @@ export const fr = {
     colorInterval: 'Temps en secondes avant de se fondre doucement vers la palette suivante.',
     reset: 'Restaure tous les paramètres de l\'application aux valeurs d\'usine.',
     resetVisual: 'Réinitialise uniquement l\'esthétique (Vitesse, Lueur, Traînées) par défaut.',
-    randomize: 'Génère une combinaison fortuite de mode visuel et de couleurs.',
+    randomize: 'Génère une combinaison fortuita de mode visuel et de couleurs.',
     fullscreen: 'Active/désactive le mode plein écran immersif.',
     help: 'Voir les raccourcis clavier et la documentation.',
     mic: 'Active ou coupe l\'entrée microphone.',
@@ -57,6 +58,7 @@ export const fr = {
   audioInput: 'Entrée Audio',
   lyrics: 'Paroles',
   showLyrics: 'Activer l\'IA',
+  displaySettings: 'Affichage',
   language: 'Langue',
   region: 'Marché Cible',
   startMic: 'Activer Audio',

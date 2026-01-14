@@ -13,20 +13,33 @@ interface AiSettingsPanelProps {
   t: any;
 }
 
+const BetaBadge = ({ label }: { label?: string }) => (
+  <span className="ml-2 px-1.5 py-[1px] rounded-[4px] bg-gradient-to-r from-blue-500/20 to-purple-500/20 border border-blue-500/30 text-[9px] font-bold text-blue-300 tracking-wider shadow-[0_0_10px_rgba(59,130,246,0.2)]">
+    {label || 'BETA'}
+  </span>
+);
+
 export const AiSettingsPanel: React.FC<AiSettingsPanelProps> = ({
   settings, setSettings, showLyrics, setShowLyrics, resetAiSettings, t
 }) => {
   return (
     <>
+      {/* Column 1: Core Recognition Settings */}
       <TooltipArea text={t.hints.lyrics}>
-        <div className="p-4 h-full flex flex-col border-b lg:border-b-0 lg:border-r border-white/5 pt-6">
+        <div className="p-4 h-full flex flex-col border-b lg:border-b-0 lg:border-r border-white/5 pt-6 space-y-5">
+          <div className="flex items-center">
+             <span className="text-xs font-bold uppercase text-white/50 tracking-[0.25em]">{t.lyrics}</span>
+             <BetaBadge label={t.common.beta} />
+          </div>
+          
           <SettingsToggle 
-             label={t.lyrics}
+             label={t.showLyrics}
              value={showLyrics}
              onChange={() => setShowLyrics(!showLyrics)}
              activeColor="green"
           />
-          <div className="mt-4 space-y-4">
+          
+          <div className="space-y-4 pt-1">
              <CustomSelect 
                 label={t.recognitionSource}
                 value={settings.recognitionProvider || 'GEMINI'}
@@ -36,10 +49,25 @@ export const AiSettingsPanel: React.FC<AiSettingsPanelProps> = ({
                 ]}
                 onChange={(val) => setSettings({...settings, recognitionProvider: val})}
              />
+
+             <CustomSelect 
+               label={t.region} 
+               value={settings.region || 'global'} 
+               hintText={t.hints.region} 
+               options={Object.keys(REGION_NAMES).map(r => ({ value: r, label: t.regions[r] }))} 
+               onChange={(val) => setSettings({...settings, region: val as Region})} 
+             />
           </div>
         </div>
       </TooltipArea>
+
+      {/* Column 2: Visual Display Settings */}
       <div className="p-4 space-y-4 h-full flex flex-col border-b lg:border-b-0 lg:border-r border-white/5 pt-6">
+        <div className="flex items-center mb-1">
+             <span className="text-xs font-bold uppercase text-white/50 tracking-[0.25em]">{t.displaySettings}</span>
+             <BetaBadge label={t.common.beta} />
+        </div>
+
         <CustomSelect 
           label={`${t.lyrics} ${t.styleTheme}`} 
           value={settings.lyricsStyle || LyricsStyle.KARAOKE} 
@@ -59,15 +87,9 @@ export const AiSettingsPanel: React.FC<AiSettingsPanelProps> = ({
             onChange={(val) => setSettings({...settings, lyricsPosition: val})}
         />
       </div>
-      <div className="p-4 space-y-4 h-full flex flex-col pt-6">
-         <CustomSelect 
-           label={t.region} 
-           value={settings.region || 'global'} 
-           hintText={t.hints.region} 
-           options={Object.keys(REGION_NAMES).map(r => ({ value: r, label: t.regions[r] }))} 
-           onChange={(val) => setSettings({...settings, region: val as Region})} 
-         />
-         
+
+      {/* Column 3: Reset Actions */}
+      <div className="p-4 space-y-4 h-full flex flex-col pt-6 justify-end">
          <button onClick={resetAiSettings} className="w-full py-2.5 bg-white/[0.04] rounded-lg text-xs font-bold uppercase tracking-widest text-white/50 hover:text-white hover:bg-white/[0.08] transition-all flex items-center justify-center gap-2 mt-auto">
             <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 opacity-60" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
             {t.resetAi}

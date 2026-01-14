@@ -8,7 +8,8 @@ export const tw = {
     visible: '顯示',
     hidden: '隱藏',
     active: '啟用',
-    muted: '靜音'
+    muted: '靜音',
+    beta: '測試版'
   },
   tabs: {
     visual: '視覺',
@@ -57,6 +58,7 @@ export const tw = {
   audioInput: '輸入來源選擇',
   lyrics: 'AI 曲目辨識',
   showLyrics: '啟用自動辨識',
+  displaySettings: '顯示設定',
   language: '介面語言',
   region: '音樂市場定位',
   startMic: '開啟音訊監聽',

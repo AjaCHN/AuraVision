@@ -8,7 +8,8 @@ export const ko = {
     visible: '표시',
     hidden: '숨김',
     active: '활성',
-    muted: '음소거'
+    muted: '음소거',
+    beta: '베타'
   },
   tabs: {
     visual: '시각 효과',
@@ -57,6 +58,7 @@ export const ko = {
   audioInput: '입력 장치',
   lyrics: '가사',
   showLyrics: 'AI 인식 활성화',
+  displaySettings: '표시 설정',
   language: '언어',
   region: '타겟 시장',
   startMic: '오디오 켜기',

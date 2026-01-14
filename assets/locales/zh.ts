@@ -8,7 +8,8 @@ export const zh = {
     visible: '显示',
     hidden: '隐藏',
     active: '启用',
-    muted: '静音'
+    muted: '静音',
+    beta: '测试版'
   },
   tabs: {
     visual: '视觉',
@@ -57,6 +58,7 @@ export const zh = {
   audioInput: '输入源选择',
   lyrics: 'AI 曲目识别',
   showLyrics: '启用自动识别',
+  displaySettings: '显示设置',
   language: '界面语言',
   region: '音乐市场定位',
   startMic: '开启音频监听',

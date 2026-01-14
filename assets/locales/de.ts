@@ -8,7 +8,8 @@ export const de = {
     visible: 'SICHTBAR',
     hidden: 'VERSTECKT',
     active: 'AKTIV',
-    muted: 'STUMM'
+    muted: 'STUMM',
+    beta: 'BETA'
   },
   tabs: {
     visual: 'Visuell',
@@ -57,6 +58,7 @@ export const de = {
   audioInput: 'Eingabegerät',
   lyrics: 'Songtexte',
   showLyrics: 'KI aktivieren',
+  displaySettings: 'Anzeige',
   language: 'Sprache',
   region: 'Zielmarkt',
   startMic: 'Audio aktivieren',

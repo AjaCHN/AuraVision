@@ -8,7 +8,8 @@ export const ja = {
     visible: '表示',
     hidden: '非表示',
     active: '有効',
-    muted: 'ミュート'
+    muted: 'ミュート',
+    beta: 'ベータ'
   },
   tabs: {
     visual: 'ビジュアル',
@@ -57,6 +58,7 @@ export const ja = {
   audioInput: '入力ソース',
   lyrics: 'AI曲識別',
   showLyrics: '自動識別を有効にする',
+  displaySettings: '表示設定',
   language: '言語',
   region: '音楽地域',
   startMic: 'オーディオ入力を開始',
@@ -101,6 +103,14 @@ export const ja = {
     low: '低',
     med: '中',
     high: '高'
+  },
+  recognitionSource: 'AIプロバイダー',
+  lyricsPosition: '歌詞の位置',
+  simulatedDemo: 'シミュレーション (デモ)',
+  positions: {
+      top: '上',
+      center: '中央',
+      bottom: '下'
   },
   system: {
     shortcuts: {
