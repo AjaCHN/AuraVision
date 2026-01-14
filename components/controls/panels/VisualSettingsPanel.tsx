@@ -73,14 +73,12 @@ export const VisualSettingsPanel: React.FC<VisualSettingsPanelProps> = ({
             <div className="grid grid-cols-2 gap-2">
                 <SettingsToggle 
                     label={t.glow} 
-                    statusText={settings.glow ? t.common.on : t.common.off} 
                     value={settings.glow} 
                     onChange={() => setSettings({...settings, glow: !settings.glow})} 
                     hintText={t.hints.glow}
                 />
                 <SettingsToggle 
                     label={t.trails} 
-                    statusText={settings.trails ? t.common.on : t.common.off} 
                     value={settings.trails} 
                     onChange={() => setSettings({...settings, trails: !settings.trails})} 
                     hintText={t.hints.trails}
@@ -88,14 +86,12 @@ export const VisualSettingsPanel: React.FC<VisualSettingsPanelProps> = ({
             </div>
             <SettingsToggle 
                 label={t.hideCursor} 
-                statusText={settings.hideCursor ? t.common.hidden : t.common.visible} 
                 value={settings.hideCursor} 
                 onChange={() => setSettings({...settings, hideCursor: !settings.hideCursor})} 
                 hintText={t.hints.hideCursor}
             />
             <SettingsToggle 
                 label={t.autoRotate} 
-                statusText={settings.autoRotate ? t.common.on : t.common.off} 
                 value={settings.autoRotate} 
                 onChange={() => setSettings({...settings, autoRotate: !settings.autoRotate})}
                 hintText={t.hints.autoRotate}
@@ -109,7 +105,6 @@ export const VisualSettingsPanel: React.FC<VisualSettingsPanelProps> = ({
             </SettingsToggle>
             <SettingsToggle 
                 label={t.cycleColors} 
-                statusText={settings.cycleColors ? t.common.on : t.common.off} 
                 value={settings.cycleColors} 
                 onChange={() => setSettings({...settings, cycleColors: !settings.cycleColors})}
                 hintText={t.hints.cycleColors}

@@ -25,7 +25,6 @@ export const AiSettingsPanel: React.FC<AiSettingsPanelProps> = ({
         <div className="p-4 h-full flex flex-col border-b lg:border-b-0 lg:border-r border-white/5 pt-6">
           <SettingsToggle 
              label={t.lyrics}
-             statusText={showLyrics ? t.aiState.active : t.aiState.enable}
              value={showLyrics}
              onChange={() => setShowLyrics(!showLyrics)}
              activeColor="green"

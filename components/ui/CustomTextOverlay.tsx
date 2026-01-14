@@ -40,12 +40,13 @@ const CustomTextOverlay: React.FC<CustomTextOverlayProps> = ({ settings, analyse
         
         // Combine transforms: Rotation first, then Scale
         textRef.current.style.transform = `rotate(${rotation}deg) scale(${scale})`;
-        textRef.current.style.opacity = `${0.6 + bass * 0.4}`;
+        // Increase base opacity to ensure visibility
+        textRef.current.style.opacity = `${0.8 + bass * 0.2}`;
       } else if (textRef.current) {
         // Static state if pulse disabled
         const rotation = settings.customTextRotation || 0;
         textRef.current.style.transform = `rotate(${rotation}deg) scale(1)`;
-        textRef.current.style.opacity = '0.9';
+        textRef.current.style.opacity = '1.0';
       }
       requestRef.current = requestAnimationFrame(animate);
     };
@@ -61,7 +62,7 @@ const CustomTextOverlay: React.FC<CustomTextOverlayProps> = ({ settings, analyse
 
   return (
     <div 
-      className="pointer-events-none fixed top-1/2 left-1/2 z-[100] w-full text-center mix-blend-overlay flex items-center justify-center"
+      className="pointer-events-none fixed top-1/2 left-1/2 z-[100] w-full text-center flex items-center justify-center"
       style={{ transform: 'translate(-50%, -50%)' }}
     >
       <div 
@@ -69,7 +70,9 @@ const CustomTextOverlay: React.FC<CustomTextOverlayProps> = ({ settings, analyse
         className="text-white font-black tracking-widest uppercase transition-transform duration-75 ease-out select-none inline-block origin-center"
         style={{ 
             fontSize: `min(${sizeVw}vw, ${sizePx}px)`, 
-            textShadow: '0 0 40px rgba(255,255,255,0.3)',
+            // Removed mix-blend-overlay. Added strong drop shadow and text stroke effect for contrast on any background.
+            textShadow: '0 0 30px rgba(0,0,0,0.9), 0 0 10px rgba(0,0,0,0.8)',
+            WebkitTextStroke: '1px rgba(0,0,0,0.3)',
             whiteSpace: 'pre-wrap',
             lineHeight: 1.1,
             fontFamily: settings.customTextFont || 'Inter, sans-serif'

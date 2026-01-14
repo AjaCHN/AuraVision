@@ -185,7 +185,6 @@ const Controls: React.FC<ControlsProps> = ({
                className={`w-12 h-12 rounded-full flex items-center justify-center transition-all duration-500 ${isListening ? 'bg-indigo-600/80 backdrop-blur-xl shadow-lg shadow-indigo-600/30 text-white' : 'bg-white/10 hover:bg-white/20 text-white/40 hover:text-white'}`}
              >
                 {isListening ? (
-                  // Consistent Randomize Icon (matches settings panel)
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                   </svg>
@@ -197,7 +196,6 @@ const Controls: React.FC<ControlsProps> = ({
              <div className="h-6 w-px bg-white/10 mx-3" />
 
              <button onClick={toggleFullscreen} className="text-white/40 hover:text-white transition-colors" title={t.hints.fullscreen}>
-                {/* Consistent Fullscreen Icon (matches settings panel) */}
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M20 8V4m0 0h-4M4 16v4m0 0h4M20 16v4m0 0h-4" />
                 </svg>
@@ -212,7 +210,6 @@ const Controls: React.FC<ControlsProps> = ({
       )}
 
       {isExpanded && (
-        // Increased opacity from #050505 to bg-neutral-950/95 for a solid feel
         <div 
           className={`fixed bottom-0 left-0 w-full z-40 bg-neutral-950/95 border-t border-white/10 transition-all duration-700 shadow-[0_-25px_100px_rgba(0,0,0,0.9)] opacity-100 backdrop-blur-xl`}
         >
@@ -241,7 +238,6 @@ const Controls: React.FC<ControlsProps> = ({
                 </div>
               </div>
 
-              {/* Increased opacity for inner container as well */}
               <div className="bg-[#0f0f11] border border-white/5 rounded-2xl overflow-hidden shadow-inner min-h-[280px]">
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-0 items-stretch">
                   {activeTab === 'visual' && (

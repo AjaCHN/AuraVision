@@ -41,7 +41,6 @@ export const CustomTextSettingsPanel: React.FC<CustomTextSettingsPanelProps> = (
                {/* Master Toggle */}
                <SettingsToggle 
                  label={t.showText} 
-                 statusText={settings.showCustomText ? t.common.visible : t.common.hidden}
                  value={settings.showCustomText}
                  onChange={() => setSettings({...settings, showCustomText: !settings.showCustomText})}
                  activeColor="blue"
@@ -50,7 +49,6 @@ export const CustomTextSettingsPanel: React.FC<CustomTextSettingsPanelProps> = (
                {/* Pulse Toggle */}
                <SettingsToggle 
                  label={t.pulseBeat} 
-                 statusText={settings.textPulse ? t.common.on : t.common.off}
                  value={settings.textPulse}
                  onChange={() => setSettings({...settings, textPulse: !settings.textPulse})}
                  activeColor="blue"
