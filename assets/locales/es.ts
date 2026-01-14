@@ -35,6 +35,7 @@ export const es = {
     cycleColors: 'Transita automáticamente entre temas de color a lo largo del tiempo.',
     colorInterval: 'Tiempo en segundos antes de mezclarse suavemente con la siguiente paleta.',
     reset: 'Restaura toda la configuración de la aplicación a los valores de fábrica.',
+    confirmReset: '¿Confirmar reinicio? Esta acción no se puede deshacer.',
     resetVisual: 'Restablece solo la estética (Velocidad, Brillo, Estelas) a los valores predeterminados.',
     randomize: 'Genera una combinación fortuita de modo visual y colores.',
     fullscreen: 'Alterna el modo inmersivo de pantalla completa.',
@@ -74,6 +75,7 @@ export const es = {
   hideOptions: 'Colapsar',
   showOptions: 'Expandir Opciones',
   reset: 'Reiniciar Sistema',
+  confirmReset: '¿Confirmar reinicio?',
   resetVisual: 'Reiniciar Estética',
   resetText: 'Reiniciar Texto',
   resetAudio: 'Reiniciar Audio',
@@ -107,6 +109,15 @@ export const es = {
     low: 'Baja',
     med: 'Media',
     high: 'Alta'
+  },
+  presets: {
+    title: 'Presets Inteligentes',
+    hint: 'Aplica una combinación estética curada profesionalmente con un solo clic.',
+    select: 'Selecciona un ambiente...',
+    calm: 'Hipnótico y Calmo',
+    party: 'Fiesta Energética',
+    psychedelic: 'Viaje Psicodélico',
+    ambient: 'Enfoque Ambiental'
   },
   recognitionSource: 'Fuente de IA',
   lyricsPosition: 'Posición de Letras',
@@ -180,18 +191,23 @@ export const es = {
   },
   helpModal: {
     title: 'Guía de Aura Vision',
+    tabs: {
+        guide: 'Guía',
+        shortcuts: 'Atajos',
+        about: 'Acerca de'
+    },
     intro: 'Aura Vision transforma la entrada de tu micrófono en arte digital generativo utilizando análisis espectral avanzado.',
     shortcutsTitle: 'Atajos de Teclado',
     shortcutItems: {
-      toggleMic: 'Activar Micrófono [Space]',
-      fullscreen: 'Pantalla Completa [F]',
-      randomize: 'Aleatorizar [R]',
-      lyrics: 'Info de Canción [L]',
-      hideUi: 'Panel de Control [H]',
-      glow: 'Efecto Brillo [G]',
-      trails: 'Efecto Estelas [T]',
-      changeMode: 'Cambiar Modo [← →]',
-      changeTheme: 'Cambiar Tema [↑ ↓]'
+      toggleMic: 'Activar Micrófono',
+      fullscreen: 'Pantalla Completa',
+      randomize: 'Aleatorizar',
+      lyrics: 'Info de Canción',
+      hideUi: 'Panel de Control',
+      glow: 'Efecto Brillo',
+      trails: 'Efecto Estelas',
+      changeMode: 'Cambiar Modo',
+      changeTheme: 'Cambiar Tema'
     },
     howItWorksTitle: 'Comenzando',
     howItWorksSteps: [

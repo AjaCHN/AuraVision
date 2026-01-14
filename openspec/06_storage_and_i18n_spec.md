@@ -27,4 +27,4 @@
 - **作用域:** 影响 Gemini 搜索工具的地理偏移，提高本地歌曲识别率。
 
 ---
-*Aura Vision Storage & i18n - Version 0.5.2*
+*Aura Vision Storage & i18n - Version 0.5.3*

@@ -37,4 +37,4 @@
    - 渲染: 数据注入当前活动的渲染策略 (2D) 或传参给 Three.js 组件 (3D)。
 
 ---
-*Aura Vision Architecture - Version 0.5.2*
+*Aura Vision Architecture - Version 0.5.3*

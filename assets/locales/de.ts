@@ -35,6 +35,7 @@ export const de = {
     cycleColors: 'Wechselt automatisch und fließend zwischen Farbthemen.',
     colorInterval: 'Zeit in Sekunden vor dem sanften Überblenden zur nächsten Farbpalette.',
     reset: 'Setzt alle Anwendungseinstellungen auf die Werkseinstellungen zurück.',
+    confirmReset: 'Zurücksetzen bestätigen? Diese Aktion kann nicht rückgängig gemacht werden.',
     resetVisual: 'Setzt nur die Ästhetik (Geschwindigkeit, Leuchten, Spuren) zurück.',
     randomize: 'Erzeugt eine zufällige Kombination aus visuellem Modus und Farben.',
     fullscreen: 'Schaltet den immersiven Vollbildmodus um.',
@@ -74,6 +75,7 @@ export const de = {
   hideOptions: 'Einklappen',
   showOptions: 'Optionen',
   reset: 'System zurücksetzen',
+  confirmReset: 'Zurücksetzen bestätigen?',
   resetVisual: 'Ästhetik zurücksetzen',
   resetText: 'Text zurücksetzen',
   resetAudio: 'Audio zurücksetzen',
@@ -107,6 +109,15 @@ export const de = {
     low: 'Niedrig',
     med: 'Mittel',
     high: 'Hoch'
+  },
+  presets: {
+    title: 'Intelligente Presets',
+    hint: 'Wenden Sie eine professionell kuratierte ästhetische Kombination mit einem Klick an.',
+    select: 'Wählen Sie eine Stimmung...',
+    calm: 'Hypnotisch & Ruhig',
+    party: 'Energetische Party',
+    psychedelic: 'Psychedelischer Trip',
+    ambient: 'Umgebungsfokus'
   },
   recognitionSource: 'KI-Anbieter',
   lyricsPosition: 'Textposition',
@@ -180,18 +191,23 @@ export const de = {
   },
   helpModal: {
     title: 'Aura Vision Anleitung',
+    tabs: {
+        guide: 'Anleitung',
+        shortcuts: 'Kürzel',
+        about: 'Über'
+    },
     intro: 'Aura Vision verwandelt Ihren Mikrofoneingang mithilfe fortschrittlicher Spektralanalyse in reaktionsschnelle, generative digitale Kunst.',
     shortcutsTitle: 'Tastaturkürzel',
     shortcutItems: {
-      toggleMic: 'Audio-Eingang [Space]',
-      fullscreen: 'Vollbild [F]',
-      randomize: 'Zufall [R]',
-      lyrics: 'Song-Info [L]',
-      hideUi: 'Bedienfeld [H]',
-      glow: 'Leuchten [G]',
-      trails: 'Spuren [T]',
-      changeMode: 'Modus ändern [← →]',
-      changeTheme: 'Thema ändern [↑ ↓]'
+      toggleMic: 'Audio-Eingang',
+      fullscreen: 'Vollbild',
+      randomize: 'Zufall',
+      lyrics: 'Song-Info',
+      hideUi: 'Bedienfeld',
+      glow: 'Leuchten',
+      trails: 'Spuren',
+      changeMode: 'Modus ändern',
+      changeTheme: 'Thema ändern'
     },
     howItWorksTitle: 'Erste Schritte',
     howItWorksSteps: [

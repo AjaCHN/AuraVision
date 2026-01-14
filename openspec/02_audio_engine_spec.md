@@ -36,4 +36,4 @@
 - **流程:** 快照 -> Base64 -> Offline Context 解码 -> FFT 扫描 -> 特征 Set。
 
 ---
-*Aura Vision Audio Engine - Version 0.5.2*
+*Aura Vision Audio Engine - Version 0.5.3*

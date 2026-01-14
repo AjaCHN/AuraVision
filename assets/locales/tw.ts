@@ -35,6 +35,7 @@ export const tw = {
     cycleColors: '隨時間推移自動平滑過渡色彩主題。',
     colorInterval: '平滑過渡到下一個色彩主題前的停留時間（秒）。',
     reset: '將所有應用設定、語言及音訊選項恢復至原廠狀態。',
+    confirmReset: '確認重設？此操作無法復原。',
     resetVisual: '僅重置視覺參數（速度、光暈、殘影）至預設值。',
     randomize: '隨機生成一套意想不到的模式與配色組合。',
     fullscreen: '進入沉浸式全螢幕互動模式。',
@@ -75,6 +76,7 @@ export const tw = {
   hideOptions: '收起',
   showOptions: '顯示設定',
   reset: '重置全域設定',
+  confirmReset: '確認重設？',
   resetVisual: '重置視覺參數',
   resetText: '重置文字設定',
   resetAudio: '重置音訊設定',
@@ -108,6 +110,15 @@ export const tw = {
     low: '低',
     med: '中',
     high: '高'
+  },
+  presets: {
+    title: '智慧預設',
+    hint: '一鍵應用由專家精心調校的視覺參數組合。',
+    select: '選擇一種心境...',
+    calm: '催眠舒緩',
+    party: '動感派對',
+    psychedelic: '迷幻電子',
+    ambient: '靜謐氛圍'
   },
   recognitionSource: 'AI 辨識源',
   lyricsPosition: '歌詞顯示位置',
@@ -181,6 +192,11 @@ export const tw = {
   },
   helpModal: {
     title: 'Aura Vision 互動指南',
+    tabs: {
+        guide: '指南',
+        shortcuts: '快捷鍵',
+        about: '關於'
+    },
     intro: 'Aura Vision 是一款沉浸式的視聽互動工具，它利用高精度麥克風取樣，將音訊訊號即時轉化為數學生成的數位藝術。',
     shortcutsTitle: '控制快捷鍵',
     shortcutItems: {

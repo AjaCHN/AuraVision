@@ -35,6 +35,7 @@ export const fr = {
     cycleColors: 'Transitionne automatiquement et en douceur entre les thèmes de couleur.',
     colorInterval: 'Temps en secondes avant de se fondre doucement vers la palette suivante.',
     reset: 'Restaure tous les paramètres de l\'application aux valeurs d\'usine.',
+    confirmReset: 'Confirmer la réinitialisation ? Cette action est irréversible.',
     resetVisual: 'Réinitialise uniquement l\'esthétique (Vitesse, Lueur, Traînées) par défaut.',
     randomize: 'Génère une combinaison fortuite de mode visuel et de couleurs.',
     fullscreen: 'Active/désactive le mode plein écran immersif.',
@@ -74,6 +75,7 @@ export const fr = {
   hideOptions: 'Réduire',
   showOptions: 'Options',
   reset: 'Réinitialiser',
+  confirmReset: 'Confirmer ?',
   resetVisual: 'Réinit. Visuel',
   resetText: 'Réinit. Texte',
   resetAudio: 'Réinit. Audio',
@@ -107,6 +109,15 @@ export const fr = {
     low: 'Basse',
     med: 'Moyenne',
     high: 'Haute'
+  },
+  presets: {
+    title: 'Préréglages Intelligents',
+    hint: 'Appliquez une combinaison esthétique professionnelle en un clic.',
+    select: 'Choisissez une ambiance...',
+    calm: 'Hypnotique et Calme',
+    party: 'Fête Énergique',
+    psychedelic: 'Voyage Psychédélique',
+    ambient: 'Concentration Ambiante'
   },
   recognitionSource: 'Source IA',
   lyricsPosition: 'Position des Paroles',
@@ -180,18 +191,23 @@ export const fr = {
   },
   helpModal: {
     title: 'Guide Aura Vision',
+    tabs: {
+        guide: 'Guide',
+        shortcuts: 'Raccourcis',
+        about: 'À propos'
+    },
     intro: 'Aura Vision transforme votre entrée microphone en art numérique génératif hautement réactif grâce à une analyse spectrale avancée.',
     shortcutsTitle: 'Raccourcis Clavier',
     shortcutItems: {
-      toggleMic: 'Activer Microphone [Space]',
-      fullscreen: 'Plein Écran [F]',
-      randomize: 'Aléatoire [R]',
-      lyrics: 'Info Chanson [L]',
-      hideUi: 'Panneau de Contrôle [H]',
-      glow: 'Effet Lueur [G]',
-      trails: 'Effet Traînées [T]',
-      changeMode: 'Changer Mode [← →]',
-      changeTheme: 'Changer Thème [↑ ↓]'
+      toggleMic: 'Activer Microphone',
+      fullscreen: 'Plein Écran',
+      randomize: 'Aléatoire',
+      lyrics: 'Info Chanson',
+      hideUi: 'Panneau de Contrôle',
+      glow: 'Effet Lueur',
+      trails: 'Effet Traînées',
+      changeMode: 'Changer Mode',
+      changeTheme: 'Changer Thème'
     },
     howItWorksTitle: 'Commencer',
     howItWorksSteps: [

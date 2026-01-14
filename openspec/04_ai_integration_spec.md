@@ -26,4 +26,4 @@ AI 必须返回格式如下的 JSON：
 6. **缓存写入 (Cache Write):** 若 AI 识别成功，则将结果与音频指纹一同写入本地缓存，供未来快速检索。
 
 ---
-*Aura Vision AI Integration - Version 0.5.2*
+*Aura Vision AI Integration - Version 0.5.3*

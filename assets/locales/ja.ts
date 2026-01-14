@@ -35,6 +35,7 @@ export const ja = {
     cycleColors: '時間の経過とともにカラーテーマを自動的に滑らかに移行させます。',
     colorInterval: '次のカラーパレットに滑らかにブレンドするまでの時間（秒）。',
     reset: 'すべてのアプリケーション設定を工場出荷時の状態に戻します。',
+    confirmReset: 'リセットを確認しますか？この操作は元に戻せません。',
     resetVisual: '外観設定（速度、グロー、トレイル）のみをデフォルトに戻します。',
     randomize: 'ビジュアルモードと色の意外な組み合わせを生成します。',
     fullscreen: '没入型のフルスクリーンモードに切り替えます。',
@@ -74,6 +75,7 @@ export const ja = {
   hideOptions: '閉じる',
   showOptions: 'オプションを表示',
   reset: '全体リセット',
+  confirmReset: 'リセットしますか？',
   resetVisual: 'ビジュアルリセット',
   resetText: 'テキストリセット',
   resetAudio: 'オーディオリセット',
@@ -107,6 +109,15 @@ export const ja = {
     low: '低',
     med: '中',
     high: '高'
+  },
+  presets: {
+    title: 'スマートプリセット',
+    hint: '専門家が厳選した美的組み合わせをワンクリックで適用します。',
+    select: 'ムードを選択...',
+    calm: '催眠的で穏やか',
+    party: 'エネルギッシュなパーティー',
+    psychedelic: 'サイケデリック・トリップ',
+    ambient: 'アンビエント・フォーカス'
   },
   recognitionSource: 'AIプロバイダー',
   lyricsPosition: '歌詞の位置',
@@ -180,18 +191,23 @@ export const ja = {
   },
   helpModal: {
     title: 'Aura Vision ガイド',
+    tabs: {
+        guide: 'ガイド',
+        shortcuts: 'ショートカット',
+        about: '概要'
+    },
     intro: 'Aura Visionは、デバイスのマイクを使用して音楽と同期したリアルタイムのアートを生成する没入型の視聴覚体験です。',
     shortcutsTitle: 'ショートカットキー',
     shortcutItems: {
-      toggleMic: 'マイク開始/停止 [Space]',
-      fullscreen: '全画面切替 [F]',
-      randomize: 'ランダム設定 [R]',
-      lyrics: 'AI曲情報 [L]',
-      hideUi: '設定パネル [H]',
-      glow: 'グロー切替 [G]',
-      trails: '残像切替 [T]',
-      changeMode: 'モード変更 [← →]',
-      changeTheme: 'テーマ変更 [↑ ↓]'
+      toggleMic: 'マイク開始/停止',
+      fullscreen: '全画面切替',
+      randomize: 'ランダム設定',
+      lyrics: 'AI曲情報',
+      hideUi: '設定パネル',
+      glow: 'グロー切替',
+      trails: '残像切替',
+      changeMode: 'モード変更',
+      changeTheme: 'テーマ変更'
     },
     howItWorksTitle: '使い方',
     howItWorksSteps: [

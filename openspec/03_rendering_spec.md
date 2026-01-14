@@ -39,4 +39,4 @@
   3. 确保所有渲染逻辑引用合法的颜色索引。
 
 ---
-*Aura Vision Rendering - Version 0.5.2*
+*Aura Vision Rendering - Version 0.5.3*

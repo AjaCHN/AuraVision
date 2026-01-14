@@ -35,6 +35,7 @@ export const ko = {
     cycleColors: '시간에 따라 색상 테마를 자동으로 부드럽게 전환합니다.',
     colorInterval: '다음 색상 팔레트로 부드럽게 혼합되기 전까지의 시간(초)입니다.',
     reset: '모든 애플리케이션 설정을 공장 초기값으로 복원합니다.',
+    confirmReset: '초기화하시겠습니까? 이 작업은 되돌릴 수 없습니다.',
     resetVisual: '시각적 요소(속도, 광선, 잔상)만 기본값으로 재설정합니다.',
     randomize: '시각 모드와 색상의 뜻밖의 조합을 생성합니다.',
     fullscreen: '몰입형 전체 화면 모드를 토글합니다.',
@@ -74,6 +75,7 @@ export const ko = {
   hideOptions: '접기',
   showOptions: '옵션 펼치기',
   reset: '시스템 초기화',
+  confirmReset: '초기화하시겠습니까?',
   resetVisual: '시각 효과 초기화',
   resetText: '텍스트 초기화',
   resetAudio: '오디오 초기화',
@@ -107,6 +109,15 @@ export const ko = {
     low: '낮음',
     med: '중간',
     high: '높음'
+  },
+  presets: {
+    title: '스마트 프리셋',
+    hint: '전문가가 선별한 미적 조합을 원클릭으로 적용합니다.',
+    select: '분위기 선택...',
+    calm: '최면과 평온',
+    party: '에너제틱 파티',
+    psychedelic: '사이키델릭 트립',
+    ambient: '앰비언트 포커스'
   },
   recognitionSource: 'AI 제공자',
   lyricsPosition: '가사 위치',
@@ -180,18 +191,23 @@ export const ko = {
   },
   helpModal: {
     title: 'Aura Vision 가이드',
+    tabs: {
+        guide: '가이드',
+        shortcuts: '단축키',
+        about: '정보'
+    },
     intro: 'Aura Vision은 마이크 입력을 고도의 실시간 분석을 통해 수학적으로 생성된 시각 예술로 변환합니다.',
     shortcutsTitle: '키보드 단축키',
     shortcutItems: {
-      toggleMic: '마이크 활성/비활성 [Space]',
-      fullscreen: '전체 화면 토글 [F]',
-      randomize: '스타일 무작위화 [R]',
-      lyrics: '노래 정보 표시 [L]',
-      hideUi: '제어판 토글 [H]',
-      glow: '네온 효과 [G]',
-      trails: '모션 잔상 [T]',
-      changeMode: '모드 변경 [← →]',
-      changeTheme: '테마 변경 [↑ ↓]'
+      toggleMic: '마이크 활성/비활성',
+      fullscreen: '전체 화면 토글',
+      randomize: '스타일 무작위화',
+      lyrics: '노래 정보 표시',
+      hideUi: '제어판 토글',
+      glow: '네온 효과',
+      trails: '모션 잔상',
+      changeMode: '모드 변경',
+      changeTheme: '테마 변경'
     },
     howItWorksTitle: '시작하기',
     howItWorksSteps: [

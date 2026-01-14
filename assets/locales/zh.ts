@@ -35,6 +35,7 @@ export const zh = {
     cycleColors: '随时间推移自动平滑过渡色彩主题。',
     colorInterval: '平滑过渡到下一个色彩主题前的停留时间（秒）。',
     reset: '将所有应用配置、语言及音频选项恢复至出厂状态。',
+    confirmReset: '确认重置？此操作不可撤销。',
     resetVisual: '仅重置视觉参数（速度、光晕、拖尾）至默认值。',
     randomize: '随机生成一套意想不到的模式与配色组合。',
     fullscreen: '进入沉浸式全屏交互模式。',
@@ -75,6 +76,7 @@ export const zh = {
   hideOptions: '收起',
   showOptions: '显示设置',
   reset: '重置全局设置',
+  confirmReset: '确认重置？',
   resetVisual: '重置视觉参数',
   resetText: '重置文字设置',
   resetAudio: '重置音频设置',
@@ -108,6 +110,15 @@ export const zh = {
     low: '低',
     med: '中',
     high: '高'
+  },
+  presets: {
+    title: '智能预设',
+    hint: '一键应用由专家精心调校的视觉参数组合。',
+    select: '选择一种心境...',
+    calm: '催眠舒缓',
+    party: '动感派对',
+    psychedelic: '迷幻电子',
+    ambient: '静谧氛围'
   },
   recognitionSource: 'AI 识别源',
   lyricsPosition: '歌词显示位置',
@@ -181,6 +192,11 @@ export const zh = {
   },
   helpModal: {
     title: 'Aura Vision 交互指南',
+    tabs: {
+        guide: '指南',
+        shortcuts: '快捷键',
+        about: '关于'
+    },
     intro: 'Aura Vision 是一款沉浸式的视听交互工具，它利用高精度麦克风采样，将音频信号实时转化为数学生成的数字艺术。',
     shortcutsTitle: '快捷操作键',
     shortcutItems: {
