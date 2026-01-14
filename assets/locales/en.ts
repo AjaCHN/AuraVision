@@ -41,7 +41,8 @@ export const en = {
     help: 'View keyboard shortcuts and documentation.',
     mic: 'Activate or mute microphone input.',
     device: 'Select the hardware audio input source.',
-    monitor: 'Route audio input to speakers (Caution: may cause feedback loop).'
+    monitor: 'Route audio input to speakers (Caution: may cause feedback loop).',
+    wakeLock: 'Prevent the screen from turning off or dimming while the visualizer is active.'
   },
   visualizerMode: 'Visualizer Mode',
   styleTheme: 'Visual Theme',
@@ -112,6 +113,7 @@ export const en = {
       center: 'Center',
       bottom: 'Bottom'
   },
+  wakeLock: 'Stay Awake',
   system: {
     shortcuts: {
       mic: 'Mic',

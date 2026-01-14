@@ -41,7 +41,8 @@ export const de = {
     help: 'Tastaturkürzel und Dokumentation anzeigen.',
     mic: 'Mikrofoneingang aktivieren oder stummschalten.',
     device: 'Wählen Sie die Hardware-Audioeingangsquelle.',
-    monitor: 'Audioeingang auf Lautsprecher leiten (Vorsicht: Rückkopplungsgefahr).'
+    monitor: 'Audioeingang auf Lautsprecher leiten (Vorsicht: Rückkopplungsgefahr).',
+    wakeLock: 'Verhindert, dass der Bildschirm ausgeschaltet oder gedimmt wird, während der Visualizer aktiv ist.'
   },
   visualizerMode: 'Visualizer-Modus',
   styleTheme: 'Visuelles Thema',
@@ -112,6 +113,7 @@ export const de = {
       center: 'Mitte',
       bottom: 'Unten'
   },
+  wakeLock: 'Wach bleiben',
   system: {
     shortcuts: {
       mic: 'Mikro',

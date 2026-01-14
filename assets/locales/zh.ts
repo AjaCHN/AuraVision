@@ -42,7 +42,8 @@ export const zh = {
     mic: '启动或静音系统麦克风信号。',
     device: '选择当前活动的音频输入硬件。',
     monitor: '通过扬声器监听输入信号（警告：可能产生啸叫）。',
-    hideCursor: '自动隐藏鼠标指针以获得纯净视觉。'
+    hideCursor: '自动隐藏鼠标指针以获得纯净视觉。',
+    wakeLock: '启用后，只要可视化处于活动状态，屏幕将保持常亮。'
   },
   visualizerMode: '可视化模式',
   styleTheme: '视觉风格',
@@ -113,6 +114,7 @@ export const zh = {
       center: '居中',
       bottom: '底部'
   },
+  wakeLock: '禁止屏幕休眠',
   system: {
     shortcuts: {
       mic: '麦克风',

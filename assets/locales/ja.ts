@@ -41,7 +41,8 @@ export const ja = {
     help: 'キーボードショートカットとドキュメントを表示します。',
     mic: 'マイク入力を有効化またはミュートします。',
     device: 'ハードウェアオーディオ入力ソースを選択します。',
-    monitor: 'オーディオ入力をスピーカーに出力します（ハウリングに注意）。'
+    monitor: 'オーディオ入力をスピーカーに出力します（ハウリングに注意）。',
+    wakeLock: 'ビジュアライザーが動作中、画面のスリープを無効にします。'
   },
   visualizerMode: 'ビジュアライザモード',
   styleTheme: 'ビジュアルテーマ',
@@ -93,7 +94,7 @@ export const ja = {
   textProperties: 'タイポグラフィとレイアウト',
   customTextPlaceholder: 'テキストを入力',
   showText: '表示切り替え',
-  pulseBeat: 'ビート連動',
+  pulseBeat: 'ビート連동',
   textSize: 'フォントサイズ',
   textRotation: '回転角度',
   textFont: 'フォントファミリー',
@@ -112,6 +113,7 @@ export const ja = {
       center: '中央',
       bottom: '下'
   },
+  wakeLock: 'スリープ防止',
   system: {
     shortcuts: {
       mic: 'マイク',
@@ -211,7 +213,7 @@ export const ja = {
       },
       ai: {
         title: 'Gemini AI インテリジェンス',
-        desc: 'Google Gemini 3によるリアルタイムの曲識別とムード分析。'
+        desc: 'Google Gemini 3によるリアルタイム의 曲識別とムード分析。'
       },
       privacy: {
         title: 'プライバシー優先',

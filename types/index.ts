@@ -51,6 +51,7 @@ export interface VisualizerSettings {
   fftSize: number;
   quality: 'low' | 'med' | 'high';
   monitor: boolean;
+  wakeLock: boolean; // Prevent screen sleep
   // Custom Text Settings
   customText: string;
   showCustomText: boolean;

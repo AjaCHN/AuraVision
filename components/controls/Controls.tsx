@@ -315,6 +315,8 @@ const Controls: React.FC<ControlsProps> = ({
                     <SystemSettingsPanel 
                       language={language}
                       setLanguage={setLanguage}
+                      settings={settings}
+                      setSettings={setSettings}
                       resetSettings={resetSettings}
                       t={t}
                     />

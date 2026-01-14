@@ -1,12 +1,12 @@
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import VisualizerCanvas from './visualizers/VisualizerCanvas';
 import ThreeVisualizer from './visualizers/ThreeVisualizer';
 import Controls from './controls/Controls';
 import SongOverlay from './ui/SongOverlay';
 import CustomTextOverlay from './ui/CustomTextOverlay';
 import LyricsOverlay from './ui/LyricsOverlay';
-import { OnboardingOverlay } from './ui/OnboardingOverlay'; // Import new component
+import { OnboardingOverlay } from './ui/OnboardingOverlay'; 
 import { VisualizerMode, SongInfo, LyricsStyle, Language, VisualizerSettings, Region } from '../types';
 import { COLOR_THEMES } from '../constants';
 import { identifySongFromAudio } from '../services/geminiService';
@@ -14,7 +14,7 @@ import { TRANSLATIONS } from '../i18n';
 import { useAudio } from '../hooks/useAudio';
 
 const STORAGE_PREFIX = 'av_v1_'; 
-const ONBOARDING_KEY = 'av_v1_has_onboarded'; // New key for onboarding state
+const ONBOARDING_KEY = 'av_v1_has_onboarded'; 
 const DEFAULT_MODE = VisualizerMode.PLASMA; 
 const DEFAULT_THEME_INDEX = 1; 
 const DEFAULT_SETTINGS: VisualizerSettings = {
@@ -31,6 +31,7 @@ const DEFAULT_SETTINGS: VisualizerSettings = {
   fftSize: 512, 
   quality: 'high',
   monitor: false,
+  wakeLock: true, // Default to true as visualizers are often left running
   customText: 'AURA',
   showCustomText: false,
   textPulse: true,
@@ -38,7 +39,7 @@ const DEFAULT_SETTINGS: VisualizerSettings = {
   customTextSize: 12,
   customTextFont: 'Inter, sans-serif',
   customTextOpacity: 0.35,
-  customTextColor: '#ffffff', // Default white
+  customTextColor: '#ffffff', 
   lyricsPosition: 'center',
   recognitionProvider: 'GEMINI'
 };
@@ -53,6 +54,8 @@ const App: React.FC = () => {
     return !localStorage.getItem(ONBOARDING_KEY);
   });
   
+  const wakeLockRef = useRef<any>(null);
+
   const getStorage = useCallback(<T,>(key: string, fallback: T): T => {
     if (typeof window === 'undefined') return fallback;
     const fullKey = STORAGE_PREFIX + key;
@@ -107,6 +110,46 @@ const App: React.FC = () => {
 
   const [isIdentifying, setIsIdentifying] = useState(false);
   const [currentSong, setCurrentSong] = useState<SongInfo | null>(null);
+
+  // --- Screen Wake Lock Logic ---
+  const requestWakeLock = useCallback(async () => {
+    if ('wakeLock' in navigator && settings.wakeLock && hasStarted) {
+      try {
+        // Release existing lock if any
+        if (wakeLockRef.current) {
+            await wakeLockRef.current.release();
+            wakeLockRef.current = null;
+        }
+        wakeLockRef.current = await (navigator as any).wakeLock.request('screen');
+        console.log('[WakeLock] Screen Wake Lock is active');
+      } catch (err: any) {
+        console.warn(`[WakeLock] Failed to request lock: ${err.name}, ${err.message}`);
+      }
+    }
+  }, [settings.wakeLock, hasStarted]);
+
+  useEffect(() => {
+    if (settings.wakeLock && hasStarted) {
+      requestWakeLock();
+    } else if (wakeLockRef.current) {
+      wakeLockRef.current.release().then(() => {
+        wakeLockRef.current = null;
+        console.log('[WakeLock] Released');
+      });
+    }
+
+    const handleVisibilityChange = () => {
+      if (wakeLockRef.current !== null && document.visibilityState === 'visible') {
+        requestWakeLock();
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => {
+        document.removeEventListener('visibilitychange', handleVisibilityChange);
+        if (wakeLockRef.current) wakeLockRef.current.release();
+    };
+  }, [settings.wakeLock, hasStarted, requestWakeLock]);
 
   useEffect(() => {
     const data = { 

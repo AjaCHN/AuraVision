@@ -41,7 +41,8 @@ export const fr = {
     help: 'Voir les raccourcis clavier et la documentation.',
     mic: 'Active ou coupe l\'entrée microphone.',
     device: 'Sélectionnez la source d\'entrée audio matérielle.',
-    monitor: 'Dirige l\'entrée audio vers les haut-parleurs (Attention : risque de larsen).'
+    monitor: 'Dirige l\'entrée audio vers les haut-parleurs (Attention : risque de larsen).',
+    wakeLock: 'Empêche l\'écran de s\'éteindre ou de s\'assombrir pendant que le visualiseur est actif.'
   },
   visualizerMode: 'Mode Visualiseur',
   styleTheme: 'Thème Visuel',
@@ -112,6 +113,7 @@ export const fr = {
       center: 'Centre',
       bottom: 'Bas'
   },
+  wakeLock: 'Rester éveillé',
   system: {
     shortcuts: {
       mic: 'Micro',

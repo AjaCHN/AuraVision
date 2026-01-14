@@ -42,7 +42,8 @@ export const tw = {
     mic: '啟動或靜音系統麥克風訊號。',
     device: '選擇當前活動的音訊輸入硬體。',
     monitor: '透過揚聲器監聽輸入訊號（警告：可能產生回音）。',
-    hideCursor: '自動隱藏滑鼠游標以獲得純淨視覺。'
+    hideCursor: '自動隱藏滑鼠游標以獲得純淨視覺。',
+    wakeLock: '啟用後，只要視覺化處於活動狀態，螢幕將保持常亮。'
   },
   visualizerMode: '視覺化模式',
   styleTheme: '視覺風格',
@@ -89,7 +90,7 @@ export const tw = {
   appInfo: '關於應用',
   appDescription: '一個基於即時頻域分析與 Gemini AI 語意辨識的沉浸式音樂視覺化套件。',
   version: '版本號',
-  defaultMic: '系統預設麥克風',
+  defaultMic: '系統預設麥크風',
   customText: '自訂文字內容',
   textProperties: '排版與佈局',
   customTextPlaceholder: '輸入文字',
@@ -113,6 +114,7 @@ export const tw = {
       center: '居中',
       bottom: '底部'
   },
+  wakeLock: '禁止螢幕休眠',
   system: {
     shortcuts: {
       mic: '麥克風',
@@ -192,7 +194,7 @@ export const tw = {
       fftSize: '決定了頻譜分析的顆粒度，即評段數量。'
     },
     projectInfoTitle: '專案簡介',
-    projectInfoText: '由 Google Gemini 3 Flash 模型、React 19 以及硬體加速的 WebGL 技術棧強力驅動。',
+    projectInfoText: '由 Google Gemini 3 Flash 專案、React 19 以及硬體加速的 WebGL 技術棧強力驅動。',
     privacyTitle: '隱私與安全',
     privacyText: '音訊分析完全在本地完成。僅在辨識歌曲時，會將加密的頻率特徵臨時發送至雲端，絕不儲存任何原始錄音。',
     version: '發布版本'

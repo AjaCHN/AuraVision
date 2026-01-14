@@ -41,7 +41,8 @@ export const es = {
     help: 'Ver atajos de teclado y documentación.',
     mic: 'Activa o silencia la entrada del micrófono.',
     device: 'Selecciona la fuente de entrada de audio de hardware.',
-    monitor: 'Envía la entrada de audio a los altavoces (Precaución: puede causar retroalimentación).'
+    monitor: 'Envía la entrada de audio a los altavoces (Precaución: puede causar retroalimentación).',
+    wakeLock: 'Evita que la pantalla se apague o se atenúe mientras el visualizador está activo.'
   },
   visualizerMode: 'Modo Visualizador',
   styleTheme: 'Tema Visual',
@@ -112,6 +113,7 @@ export const es = {
       center: 'Centro',
       bottom: 'Abajo'
   },
+  wakeLock: 'No dormir',
   system: {
     shortcuts: {
       mic: 'Mic',

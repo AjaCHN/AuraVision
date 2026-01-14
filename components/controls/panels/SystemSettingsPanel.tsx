@@ -1,22 +1,25 @@
 
 import React from 'react';
-import { Language } from '../../../types';
+import { Language, VisualizerSettings } from '../../../types';
 import { APP_VERSION } from '../../../constants';
-import { CustomSelect } from '../ControlWidgets';
+import { CustomSelect, SettingsToggle } from '../ControlWidgets';
 
 interface SystemSettingsPanelProps {
   language: Language;
   setLanguage: (lang: Language) => void;
+  settings: VisualizerSettings;
+  setSettings: (settings: VisualizerSettings) => void;
   resetSettings: () => void;
   t: any;
 }
 
 export const SystemSettingsPanel: React.FC<SystemSettingsPanelProps> = ({
-  language, setLanguage, resetSettings, t
+  language, setLanguage, settings, setSettings, resetSettings, t
 }) => {
   // Defensive access to nested translation keys to prevent black screen crashes
   const h = t?.helpModal || {};
   const s = h?.shortcutItems || {};
+  const hints = t?.hints || {};
 
   return (
     <>
@@ -24,7 +27,7 @@ export const SystemSettingsPanel: React.FC<SystemSettingsPanelProps> = ({
         <CustomSelect 
           label={t?.language || "Language"} 
           value={language} 
-          hintText={t?.hints?.language} 
+          hintText={hints?.language} 
           options={[
              { value: 'en', label: 'English' },
              { value: 'zh', label: '简体中文' },
@@ -37,6 +40,16 @@ export const SystemSettingsPanel: React.FC<SystemSettingsPanelProps> = ({
           ]} 
           onChange={(val) => setLanguage(val as Language)} 
         />
+
+        <div className="pt-2">
+            <SettingsToggle 
+                label={t?.wakeLock || "Stay Awake"} 
+                value={settings.wakeLock} 
+                onChange={() => setSettings({...settings, wakeLock: !settings.wakeLock})}
+                hintText={hints?.wakeLock}
+                statusText={settings.wakeLock ? (t?.common?.active || "Active") : (t?.common?.off || "OFF")}
+            />
+        </div>
         
         <div className="space-y-4 mt-auto">
             <button onClick={resetSettings} className="w-full py-4 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400 font-bold text-xs uppercase tracking-widest hover:bg-red-500/20 transition-all flex items-center justify-center gap-2 group">
