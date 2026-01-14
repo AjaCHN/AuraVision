@@ -189,7 +189,7 @@ export const tw = {
       glow: '基於螢幕空間的後期泛光強度。',
       trails: '控制像素在畫面上的停留時間，產生殘影。',
       smoothing: '音訊資料的阻尼係數，越高則過渡越圓滑。',
-      fftSize: '決定了頻譜分析的顆粒度，即頻段數量。'
+      fftSize: '決定了頻譜分析的顆粒度，即評段數量。'
     },
     projectInfoTitle: '專案簡介',
     projectInfoText: '由 Google Gemini 3 Flash 模型、React 19 以及硬體加速的 WebGL 技術棧強力驅動。',

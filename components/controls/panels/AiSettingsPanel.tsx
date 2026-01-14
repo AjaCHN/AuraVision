@@ -22,7 +22,7 @@ const BetaBadge = ({ label }: { label?: string }) => (
 export const AiSettingsPanel: React.FC<AiSettingsPanelProps> = ({
   settings, setSettings, showLyrics, setShowLyrics, resetAiSettings, t
 }) => {
-  // Use robust safe fallbacks for nested objects to prevent rendering crashes
+  // Enhanced robust safe fallbacks for nested objects to prevent rendering crashes in specific locales
   const common = t?.common || {};
   const regions = t?.regions || {};
   const lyricsStyles = t?.lyricsStyles || {};
@@ -32,11 +32,11 @@ export const AiSettingsPanel: React.FC<AiSettingsPanelProps> = ({
   return (
     <>
       {/* Column 1: Core Recognition Settings */}
-      <TooltipArea text={hints.lyrics || "Lyrics Recognition"}>
+      <TooltipArea text={hints?.lyrics || "Lyrics Recognition"}>
         <div className="p-4 h-full flex flex-col border-b lg:border-b-0 lg:border-r border-white/5 pt-6 space-y-5">
           <div className="flex items-center">
              <span className="text-xs font-bold uppercase text-white/50 tracking-[0.25em]">{t?.lyrics || "Lyrics"}</span>
-             <BetaBadge label={common.beta} />
+             <BetaBadge label={common?.beta} />
           </div>
           
           <SettingsToggle 
@@ -44,7 +44,7 @@ export const AiSettingsPanel: React.FC<AiSettingsPanelProps> = ({
              value={showLyrics}
              onChange={() => setShowLyrics(!showLyrics)}
              activeColor="green"
-             hintText={`${hints.lyrics || "Enable AI Lyrics"} [L]`}
+             hintText={`${hints?.lyrics || "Enable AI Lyrics"} [L]`}
           />
           
           <div className="space-y-4 pt-1">
@@ -64,7 +64,7 @@ export const AiSettingsPanel: React.FC<AiSettingsPanelProps> = ({
              <CustomSelect 
                label={t?.region || "Region"} 
                value={settings.region || 'global'} 
-               hintText={hints.region} 
+               hintText={hints?.region} 
                options={Object.keys(REGION_NAMES).map(r => ({ value: r, label: regions[r] || r }))} 
                onChange={(val) => setSettings({...settings, region: val as Region})} 
              />
@@ -76,13 +76,13 @@ export const AiSettingsPanel: React.FC<AiSettingsPanelProps> = ({
       <div className="p-4 space-y-4 h-full flex flex-col border-b lg:border-b-0 lg:border-r border-white/5 pt-6">
         <div className="flex items-center mb-1">
              <span className="text-xs font-bold uppercase text-white/50 tracking-[0.25em]">{t?.displaySettings || "Display"}</span>
-             <BetaBadge label={common.beta} />
+             <BetaBadge label={common?.beta} />
         </div>
 
         <CustomSelect 
           label={`${t?.lyrics || "Lyrics"} ${t?.styleTheme || "Style"}`} 
           value={settings.lyricsStyle || LyricsStyle.KARAOKE} 
-          hintText={hints.lyricsStyle} 
+          hintText={hints?.lyricsStyle} 
           options={Object.values(LyricsStyle).map(s => ({ value: s, label: lyricsStyles[s] || s }))} 
           onChange={(val) => setSettings({...settings, lyricsStyle: val as LyricsStyle})} 
         />
@@ -91,9 +91,9 @@ export const AiSettingsPanel: React.FC<AiSettingsPanelProps> = ({
             label={t?.lyricsPosition || "Position"}
             value={settings.lyricsPosition || 'center'}
             options={[
-                { value: 'top', label: positions.top || "Top" },
-                { value: 'center', label: positions.center || "Center" },
-                { value: 'bottom', label: positions.bottom || "Bottom" }
+                { value: 'top', label: positions?.top || "Top" },
+                { value: 'center', label: positions?.center || "Center" },
+                { value: 'bottom', label: positions?.bottom || "Bottom" }
             ]}
             onChange={(val) => setSettings({...settings, lyricsPosition: val})}
         />

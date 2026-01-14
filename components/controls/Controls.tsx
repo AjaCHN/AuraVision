@@ -82,16 +82,17 @@ const Controls: React.FC<ControlsProps> = ({
     const handleWake = () => setIsIdle(false);
     const handleSleep = () => setIsIdle(true);
 
-    document.addEventListener('mousemove', handleWake);
-    document.addEventListener('mousedown', handleWake);
-    document.addEventListener('keydown', handleWake);
+    // Using window listeners to detect mouse leaving the viewport area
+    window.addEventListener('mousemove', handleWake);
+    window.addEventListener('mousedown', handleWake);
+    window.addEventListener('keydown', handleWake);
     document.addEventListener('mouseenter', handleWake);
     document.addEventListener('mouseleave', handleSleep);
 
     return () => {
-      document.removeEventListener('mousemove', handleWake);
-      document.removeEventListener('mousedown', handleWake);
-      document.removeEventListener('keydown', handleWake);
+      window.removeEventListener('mousemove', handleWake);
+      window.removeEventListener('mousedown', handleWake);
+      window.removeEventListener('keydown', handleWake);
       document.removeEventListener('mouseenter', handleWake);
       document.removeEventListener('mouseleave', handleSleep);
     };
@@ -186,7 +187,7 @@ const Controls: React.FC<ControlsProps> = ({
       {!isExpanded && (
         <div className="fixed bottom-8 left-0 w-full z-[110] flex justify-center pointer-events-none px-4">
           <div 
-            className={`flex items-center bg-black/60 backdrop-blur-3xl border border-white/10 rounded-full p-2 pr-6 shadow-[0_15px_40px_rgba(0,0,0,0.5)] hover:scale-105 transition-all duration-700 animate-fade-in-up pointer-events-auto ${isIdle ? 'opacity-[0.25] translate-y-2' : 'opacity-100 translate-y-0'}`}
+            className={`flex items-center bg-black/60 backdrop-blur-3xl border border-white/10 rounded-full p-2 pr-6 shadow-[0_15px_40px_rgba(0,0,0,0.5)] hover:scale-105 transition-all duration-700 animate-fade-in-up pointer-events-auto ${isIdle ? 'opacity-[0.05] translate-y-3' : 'opacity-100 translate-y-0'}`}
           >
              {/* Main Mic Toggle Button */}
              <TooltipArea text={`${isListening ? t.stopMic : t.startMic} [Space]`}>

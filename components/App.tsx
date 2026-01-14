@@ -88,9 +88,16 @@ const App: React.FC = () => {
 
   const [lyricsStyle, setLyricsStyle] = useState<LyricsStyle>(() => getStorage('lyricsStyle', DEFAULT_LYRICS_STYLE));
   const [showLyrics, setShowLyrics] = useState<boolean>(() => getStorage('showLyrics', DEFAULT_SHOW_LYRICS));
-  const [language, setLanguage] = useState<Language>(() => getStorage('language', DEFAULT_LANGUAGE));
+  const [language, setLanguage] = useState<Language>(() => getLanguageFromStorage());
   const [region, setRegion] = useState<Region>(() => getStorage('region', detectDefaultRegion()));
   const [selectedDeviceId, setSelectedDeviceId] = useState<string>(() => getStorage('deviceId', ''));
+
+  function getLanguageFromStorage(): Language {
+      const saved = getStorage<Language>('language', DEFAULT_LANGUAGE);
+      // Validate saved language against translations
+      if (TRANSLATIONS[saved]) return saved;
+      return DEFAULT_LANGUAGE;
+  }
 
   const { 
     isListening, 
@@ -276,7 +283,7 @@ const App: React.FC = () => {
   }, [isListening, mediaStream, showLyrics, performIdentification]);
 
   const isThreeMode = mode === VisualizerMode.SILK || mode === VisualizerMode.LIQUID || mode === VisualizerMode.TERRAIN;
-  const t = TRANSLATIONS[language];
+  const t = TRANSLATIONS[language] || TRANSLATIONS[DEFAULT_LANGUAGE];
 
   // Render Onboarding if needed
   if (showOnboarding) {
@@ -293,7 +300,13 @@ const App: React.FC = () => {
     return (
       <div className="min-h-[100dvh] bg-black flex items-center justify-center p-6 text-center overflow-y-auto">
         <div className="max-w-md space-y-8 animate-fade-in-up my-auto">
-          <h1 className="text-5xl font-black text-white bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500" style={{ WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+          {/* Enhanced Title Rendering for Dark Mode and cross-browser compatibility */}
+          <h1 className="text-5xl font-black bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 pb-2 block" 
+              style={{ 
+                  WebkitBackgroundClip: 'text', 
+                  WebkitTextFillColor: 'transparent',
+                  color: 'white' // Fallback color
+              }}>
             {t?.welcomeTitle || "Aura Vision"}
           </h1>
           <p className="text-gray-400 text-sm leading-relaxed">{t?.welcomeText || "Translate audio into generative art."}</p>
