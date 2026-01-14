@@ -46,21 +46,25 @@ const LyricsOverlay: React.FC<LyricsOverlayProps> = ({ settings, song, showLyric
   const getPositionClasses = () => {
       const pos = settings.lyricsPosition || 'mc';
       const map: Record<string, string> = {
-          tl: 'top-24 left-8 text-left items-start',
-          tc: 'top-24 left-1/2 -translate-x-1/2 text-center items-center',
-          tr: 'top-24 right-8 text-right items-end',
-          ml: 'top-1/2 left-8 -translate-y-1/2 text-left items-start',
-          mc: 'top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center items-center',
-          mr: 'top-1/2 right-8 -translate-y-1/2 text-right items-end',
-          bl: 'bottom-32 left-8 text-left items-start',
-          bc: 'bottom-32 left-1/2 -translate-x-1/2 text-center items-center',
-          br: 'bottom-32 right-8 text-right items-end',
+          // BUG FIX: Switched from absolute positioning (top/left) to Flexbox alignment (justify/items)
+          // to make the position selector work correctly with the parent flex container.
+          // Vertical alignment: justify-start (top), justify-center (middle), justify-end (bottom)
+          // Horizontal alignment (for flex-col): items-start (left), items-center (center), items-end (right)
+          tl: 'justify-start items-start text-left',
+          tc: 'justify-start items-center text-center',
+          tr: 'justify-start items-end text-right',
+          ml: 'justify-center items-start text-left',
+          mc: 'justify-center items-center text-center',
+          mr: 'justify-center items-end text-right',
+          bl: 'justify-end items-start text-left',
+          bc: 'justify-end items-center text-center',
+          br: 'justify-end items-end text-right',
       };
       return map[pos] || map.mc;
   };
 
   return (
-    <div className={`pointer-events-none fixed inset-0 z-10 flex flex-col px-6 ${getPositionClasses()}`}>
+    <div className={`pointer-events-none fixed inset-0 z-10 flex flex-col px-6 pt-24 pb-32 ${getPositionClasses()}`}>
       <div ref={containerRef} className="transition-transform duration-75 ease-out select-none max-w-4xl">
          {lines.map((line, i) => <p key={i} className={textClass} style={fontStyle}>{line}</p>)}
       </div>
