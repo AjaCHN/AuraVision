@@ -5,7 +5,7 @@
 [English](README.md) | [在线演示](https://aura-vision.vercel.app/)
 
 <p align="center">
-  <img src="https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?q=80&w=1200&auto=format&fit=crop" alt="Aura Vision 横幅" width="100%" />
+  <img src="./assets/images/aura-banner.jpg" alt="Aura Vision 横幅" width="100%" />
 </p>
 
 <p align="center">
@@ -24,7 +24,7 @@
 
 | 流光绸缎 (WebGL) | 液态星球 (3D) | 流体等离子 (2D) |
 | :---: | :---: | :---: |
-| ![流光](https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=400&h=300&fit=crop) | ![星球](https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=400&h=300&fit=crop) | ![等离子](https://images.unsplash.com/photo-1470225620780-dba8ba36b745?q=80&w=400&h=300&fit=crop) |
+| ![流光](./assets/images/mode-silk.jpg) | ![星球](./assets/images/mode-liquid.jpg) | ![等离子](./assets/images/mode-plasma.jpg) |
 
 ---
 
