@@ -1,4 +1,4 @@
-import 'react';
+import * as React from 'react';
 
 export type Language = 'en' | 'zh' | 'tw' | 'ja' | 'es' | 'ko' | 'de' | 'fr';
 
@@ -93,9 +93,12 @@ export interface AudioDevice {
   label: string;
 }
 
+// FIX: Correctly augment JSX.IntrinsicElements to extend React's built-in types.
+// This prevents overwriting the standard HTML element types (like div, span, etc.)
+// and resolves all JSX-related type errors across the application.
 declare global {
   namespace JSX {
-    interface IntrinsicElements {
+    interface IntrinsicElements extends React.JSX.IntrinsicElements {
       mesh: any;
       group: any;
       pointLight: any;
@@ -110,26 +113,6 @@ declare global {
       meshPhysicalMaterial: any;
       planeGeometry: any;
       icosahedronGeometry: any;
-    }
-  }
-
-  namespace React {
-    namespace JSX {
-      interface IntrinsicElements {
-        mesh: any;
-        group: any;
-        pointLight: any;
-        spotLight: any;
-        ambientLight: any;
-        primitive: any;
-        color: any;
-        fog: any;
-        circleGeometry: any;
-        meshBasicMaterial: any;
-        meshStandardMaterial: any;
-        meshPhysicalMaterial: any;
-        planeGeometry: any;
-      }
     }
   }
 }

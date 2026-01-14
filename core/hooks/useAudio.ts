@@ -95,6 +95,13 @@ export const useAudio = ({ settings, language }: UseAudioProps) => {
         node.fftSize = settings.fftSize;
         node.smoothingTimeConstant = settings.smoothing;
 
+        // The audio graph for synthesized audio must be connected to the destination
+        // for the browser to process it. Connect via a GainNode with gain=0 to keep it silent.
+        const silentDestination = context.createGain();
+        silentDestination.gain.value = 0;
+        node.connect(silentDestination);
+        silentDestination.connect(context.destination);
+
         const demoGraph = createDemoAudioGraph(context, node);
         demoGraph.start();
         demoGraphRef.current = demoGraph;
