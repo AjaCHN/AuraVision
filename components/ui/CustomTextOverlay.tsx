@@ -75,8 +75,6 @@ const CustomTextOverlay: React.FC<CustomTextOverlayProps> = ({ settings, analyse
         className="text-white font-black tracking-widest uppercase transition-transform duration-75 ease-out select-none inline-block origin-center"
         style={{ 
             fontSize: `min(${sizeVw}vw, ${sizePx}px)`, 
-            // Removed mix-blend-overlay. Added strong drop shadow and text stroke effect for contrast on any background.
-            textShadow: '0 0 30px rgba(0,0,0,0.9), 0 0 10px rgba(0,0,0,0.8)',
             WebkitTextStroke: '1px rgba(0,0,0,0.3)',
             whiteSpace: 'pre-wrap',
             lineHeight: 1.1,

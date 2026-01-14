@@ -184,14 +184,14 @@ const Controls: React.FC<ControlsProps> = ({
       <HelpModal isOpen={showHelp} onClose={() => setShowHelp(false)} language={language} />
 
       {isIdentifying && (
-        <div className="fixed top-8 left-8 z-40 bg-black/60 backdrop-blur-2xl border border-blue-500/30 rounded-full px-6 py-3.5 flex items-center gap-4 shadow-[0_15px_40px_rgba(0,0,0,0.6)] animate-pulse">
+        <div className="fixed top-8 left-8 z-[110] bg-black/60 backdrop-blur-2xl border border-blue-500/30 rounded-full px-6 py-3.5 flex items-center gap-4 shadow-[0_15px_40px_rgba(0,0,0,0.6)] animate-pulse">
            <div className="w-2.5 h-2.5 bg-blue-400 rounded-full animate-ping" />
            <span className="text-xs font-bold uppercase tracking-[0.25em] text-blue-100">{t.identifying}</span>
         </div>
       )}
 
       {!isExpanded && (
-        <div className="fixed bottom-8 left-0 w-full z-30 flex justify-center pointer-events-none px-4">
+        <div className="fixed bottom-8 left-0 w-full z-[110] flex justify-center pointer-events-none px-4">
           <div 
             className={`flex items-center bg-black/60 backdrop-blur-3xl border border-white/10 rounded-full p-2 pr-6 shadow-[0_15px_40px_rgba(0,0,0,0.5)] hover:scale-105 transition-all duration-700 animate-fade-in-up pointer-events-auto ${isIdle ? 'opacity-[0.25] translate-y-2' : 'opacity-100 translate-y-0'}`}
           >
@@ -226,7 +226,7 @@ const Controls: React.FC<ControlsProps> = ({
 
       {isExpanded && (
         <div 
-          className={`fixed bottom-0 left-0 w-full z-40 bg-[#050505] border-t border-white/10 transition-all duration-700 shadow-[0_-25px_100px_rgba(0,0,0,0.9)] opacity-100`}
+          className={`fixed bottom-0 left-0 w-full z-[120] bg-[#050505] border-t border-white/10 transition-all duration-700 shadow-[0_-25px_100px_rgba(0,0,0,0.9)] opacity-100`}
         >
           <div className="max-h-[70vh] overflow-y-auto custom-scrollbar p-4 md:p-6">
             <div className="max-w-5xl mx-auto space-y-4">
