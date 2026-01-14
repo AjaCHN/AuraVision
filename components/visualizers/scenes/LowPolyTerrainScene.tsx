@@ -27,8 +27,8 @@ export const LowPolyTerrainScene: React.FC<SceneProps> = ({ analyser, colors, se
   const targetColor = useRef(new THREE.Color());
 
   useFrame(({ clock }) => {
-     // 1. Color Lerping - Slower factor (0.002) for smoother transitions
-     const lerpSpeed = 0.002;
+     // 1. Color Lerping - Slower factor (0.0005) for smoother transitions
+     const lerpSpeed = 0.0005;
      c0.current.lerp(targetColor.current.set(colors[0]), lerpSpeed);
      c1.current.lerp(targetColor.current.set(colors[1] || '#ffffff'), lerpSpeed);
      c2.current.lerp(targetColor.current.set(colors[2] || '#1a1a2e'), lerpSpeed);
