@@ -48,7 +48,6 @@ const DEFAULT_LANGUAGE: Language = 'en';
 
 const App: React.FC = () => {
   const [hasStarted, setHasStarted] = useState(false);
-  // Check if user has seen onboarding
   const [showOnboarding, setShowOnboarding] = useState(() => {
     if (typeof window === 'undefined') return false;
     return !localStorage.getItem(ONBOARDING_KEY);
@@ -82,7 +81,6 @@ const App: React.FC = () => {
   
   const [settings, setSettings] = useState<VisualizerSettings>(() => {
     const saved = getStorage('settings', DEFAULT_SETTINGS);
-    // Safety check: override text layer visibility if not explicitly true to ensure "disabled by default"
     return { ...DEFAULT_SETTINGS, ...saved, showCustomText: saved?.showCustomText ?? false };
   });
 
@@ -208,7 +206,6 @@ const App: React.FC = () => {
   }, []);
 
 
-  // Auto Mode Cycle
   useEffect(() => {
     let interval: number | undefined;
     if (isListening && settings.autoRotate) {
@@ -221,7 +218,6 @@ const App: React.FC = () => {
     return () => clearInterval(interval);
   }, [isListening, settings.autoRotate, settings.rotateInterval, mode]);
 
-  // Auto Color Cycle
   useEffect(() => {
     let interval: number | undefined;
     if (isListening && settings.cycleColors) {
@@ -235,7 +231,6 @@ const App: React.FC = () => {
     return () => clearInterval(interval);
   }, [isListening, settings.cycleColors, settings.colorInterval, colorTheme]);
 
-  // Restart microphone when device changes
   useEffect(() => {
     if (isListening) {
       startMicrophone(selectedDeviceId);
@@ -280,6 +275,7 @@ const App: React.FC = () => {
 
   const isThreeMode = mode === VisualizerMode.SILK || mode === VisualizerMode.LIQUID || mode === VisualizerMode.TERRAIN;
   const t = TRANSLATIONS[language] || TRANSLATIONS[DEFAULT_LANGUAGE];
+  const errors = t?.errors || {};
 
   if (showOnboarding) {
     return (
@@ -295,13 +291,12 @@ const App: React.FC = () => {
     return (
       <div className="min-h-[100dvh] bg-black flex items-center justify-center p-6 text-center overflow-y-auto">
         <div className="max-w-md space-y-8 animate-fade-in-up my-auto">
-          {/* Enhanced Title Rendering with explicit fills and padding to prevent cut-off in dark mode */}
           <h1 
             className="text-5xl font-black bg-clip-text bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 pb-4 block" 
             style={{ 
               WebkitBackgroundClip: 'text', 
               WebkitTextFillColor: 'transparent',
-              color: 'white', // Fallback
+              color: 'white',
               lineHeight: '1.2'
             }}
           >
@@ -322,7 +317,6 @@ const App: React.FC = () => {
   return (
     <div className={`h-[100dvh] bg-black overflow-hidden relative ${settings.hideCursor ? 'cursor-none' : ''}`}>
       
-      {/* Error Notification Toast */}
       {errorMessage && (
         <div className="fixed top-24 left-1/2 -translate-x-1/2 z-50 bg-red-900/90 text-white px-6 py-4 rounded-xl shadow-2xl flex items-center gap-4 backdrop-blur-md max-w-md border border-red-500/50 animate-fade-in-up">
             <div className="p-2 bg-red-500 rounded-full">
@@ -331,7 +325,7 @@ const App: React.FC = () => {
                 </svg>
             </div>
             <div className="flex-1">
-                <p className="font-bold text-sm text-red-100">{t?.errors?.title || "Error"}</p>
+                <p className="font-bold text-sm text-red-100">{errors?.title || "Error"}</p>
                 <p className="text-xs text-red-200/80 leading-snug">{errorMessage}</p>
             </div>
             <button onClick={() => setErrorMessage(null)} className="p-2 hover:bg-white/10 rounded-full transition-colors">
