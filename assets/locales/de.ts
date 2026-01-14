@@ -162,7 +162,7 @@ export const de = {
   helpModal: {
     title: 'Aura Vision Anleitung',
     intro: 'Aura Vision verwandelt Ihren Mikrofoneingang mithilfe fortschrittlicher Spektralanalyse in reaktionsschnelle, generative digitale Kunst.',
-    shortcutsTitle: 'Tastatursteuerung',
+    shortcutsTitle: 'Tastaturkürzel',
     shortcutItems: {
       toggleMic: 'Audio-Eingang umschalten',
       fullscreen: 'Vollbild',
@@ -195,5 +195,32 @@ export const de = {
     privacyTitle: 'Datenschutzrichtlinie',
     privacyText: 'Audio wird lokal analysiert. Temporäre Hochfrequenz-Schnappschüsse werden nur zur Identifikation an Gemini gesendet.',
     version: 'Release'
+  },
+  onboarding: {
+    welcome: 'Willkommen bei Aura Vision',
+    subtitle: 'KI-Musikvisualisierung der nächsten Generation',
+    selectLanguage: 'Sprache wählen',
+    next: 'Weiter',
+    skip: 'Überspringen',
+    finish: 'Starten',
+    features: {
+      title: 'Hauptfunktionen',
+      visuals: {
+        title: 'Immersive Visuals',
+        desc: '8+ physikbasierte WebGL-Engines, betrieben von Three.js.'
+      },
+      ai: {
+        title: 'Gemini KI-Intelligenz',
+        desc: 'Echtzeit-Songidentifikation und Stimmungserkennung powered by Google Gemini 3.'
+      },
+      privacy: {
+        title: 'Datenschutz zuerst',
+        desc: 'Lokale Spektralanalyse. Audiodaten werden niemals auf Servern gespeichert.'
+      }
+    },
+    shortcuts: {
+      title: 'Schnellsteuerung',
+      desc: 'Meistern Sie das Erlebnis mit diesen Tasten.'
+    }
   }
 };

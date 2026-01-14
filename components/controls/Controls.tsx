@@ -55,7 +55,6 @@ const Controls: React.FC<ControlsProps> = ({
   const [activeTab, setActiveTab] = useState<TabType>('visual');
   const [showHelp, setShowHelp] = useState(false);
   const [isIdle, setIsIdle] = useState(false);
-  const idleTimerRef = useRef<number | null>(null);
   const t = TRANSLATIONS[language];
 
   // Sync function to bridge the gap between App.tsx separate states and Settings object
@@ -80,28 +79,21 @@ const Controls: React.FC<ControlsProps> = ({
   };
 
   useEffect(() => {
-    const handleActivity = () => {
-      setIsIdle(false);
-      if (idleTimerRef.current) window.clearTimeout(idleTimerRef.current);
-      idleTimerRef.current = window.setTimeout(() => {
-        setIsIdle(true);
-      }, 3000);
-    };
-    const handleMouseLeave = () => setIsIdle(true);
-    const handleMouseEnter = () => handleActivity();
-    document.addEventListener('mousemove', handleActivity);
-    document.addEventListener('mousedown', handleActivity);
-    document.addEventListener('keydown', handleActivity);
-    document.addEventListener('mouseleave', handleMouseLeave);
-    document.addEventListener('mouseenter', handleMouseEnter);
-    handleActivity();
+    const handleWake = () => setIsIdle(false);
+    const handleSleep = () => setIsIdle(true);
+
+    document.addEventListener('mousemove', handleWake);
+    document.addEventListener('mousedown', handleWake);
+    document.addEventListener('keydown', handleWake);
+    document.addEventListener('mouseenter', handleWake);
+    document.addEventListener('mouseleave', handleSleep);
+
     return () => {
-      document.removeEventListener('mousemove', handleActivity);
-      document.removeEventListener('mousedown', handleActivity);
-      document.removeEventListener('keydown', handleActivity);
-      document.removeEventListener('mouseleave', handleMouseLeave);
-      document.removeEventListener('mouseenter', handleMouseEnter);
-      if (idleTimerRef.current) window.clearTimeout(idleTimerRef.current);
+      document.removeEventListener('mousemove', handleWake);
+      document.removeEventListener('mousedown', handleWake);
+      document.removeEventListener('keydown', handleWake);
+      document.removeEventListener('mouseenter', handleWake);
+      document.removeEventListener('mouseleave', handleSleep);
     };
   }, []);
 
@@ -197,7 +189,7 @@ const Controls: React.FC<ControlsProps> = ({
             className={`flex items-center bg-black/60 backdrop-blur-3xl border border-white/10 rounded-full p-2 pr-6 shadow-[0_15px_40px_rgba(0,0,0,0.5)] hover:scale-105 transition-all duration-700 animate-fade-in-up pointer-events-auto ${isIdle ? 'opacity-[0.25] translate-y-2' : 'opacity-100 translate-y-0'}`}
           >
              {/* Main Mic Toggle Button */}
-             <TooltipArea text={isListening ? t.stopMic : t.startMic}>
+             <TooltipArea text={`${isListening ? t.stopMic : t.startMic} [Space]`}>
                 <button 
                   onClick={toggleMicrophone} 
                   className={`w-12 h-12 rounded-full flex items-center justify-center transition-all duration-500 ${isListening ? 'bg-indigo-600/80 backdrop-blur-xl shadow-lg shadow-indigo-600/30 text-white' : 'bg-white/10 hover:bg-white/20 text-white/40 hover:text-white'}`}
@@ -217,7 +209,7 @@ const Controls: React.FC<ControlsProps> = ({
              <div className="h-6 w-px bg-white/10 mx-3" />
 
              {/* Randomize Button (Style consistent with fullscreen) */}
-             <TooltipArea text={t.randomize}>
+             <TooltipArea text={`${t.randomize} [R]`}>
                <button 
                  onClick={randomizeSettings} 
                  className="text-white/40 hover:text-white transition-colors mr-4"
@@ -229,7 +221,7 @@ const Controls: React.FC<ControlsProps> = ({
              </TooltipArea>
 
              {/* Fullscreen Button */}
-             <TooltipArea text={t.helpModal?.shortcutItems?.fullscreen || t.hints.fullscreen}>
+             <TooltipArea text={`${t.hints.fullscreen} [F]`}>
                <button onClick={toggleFullscreen} className="text-white/40 hover:text-white transition-colors">
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
@@ -238,7 +230,7 @@ const Controls: React.FC<ControlsProps> = ({
              </TooltipArea>
 
              {/* Expand Button */}
-             <TooltipArea text={t.showOptions}>
+             <TooltipArea text={`${t.showOptions} [H]`}>
                <button onClick={() => setIsExpanded(true)} className="text-sm font-bold uppercase tracking-[0.2em] text-white/60 hover:text-white transition-colors flex items-center gap-2 pl-4">
                  <span>{t.showOptions}</span>
                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 opacity-40" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 15l7-7 7 7" /></svg>
@@ -268,8 +260,8 @@ const Controls: React.FC<ControlsProps> = ({
                 </div>
                 
                 <div className="flex items-center gap-3">
-                  <ActionButton onClick={randomizeSettings} hintText={t.hints.randomize} icon={<svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>} />
-                  <ActionButton onClick={toggleFullscreen} hintText={t.hints.fullscreen} icon={<svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" /></svg>} />
+                  <ActionButton onClick={randomizeSettings} hintText={`${t.hints.randomize} [R]`} icon={<svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>} />
+                  <ActionButton onClick={toggleFullscreen} hintText={`${t.hints.fullscreen} [F]`} icon={<svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" /></svg>} />
                   <ActionButton onClick={() => setShowHelp(true)} hintText={t.hints.help} icon={<svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>} />
                   <button onClick={() => setIsExpanded(false)} className="w-12 h-10 flex items-center justify-center bg-blue-600 rounded-xl text-white shadow-[0_12px_40px_rgba(37,99,235,0.3)] hover:bg-blue-500 hover:scale-[1.05] active:scale-[0.95] transition-all duration-300">
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" /></svg>

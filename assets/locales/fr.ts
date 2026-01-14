@@ -195,5 +195,32 @@ export const fr = {
     privacyTitle: 'Politique de Confidentialité',
     privacyText: 'L\'audio est analysé localmente. Des instantanés temporaires sont envoyés à Gemini uniquement pour l\'identification.',
     version: 'Version'
+  },
+  onboarding: {
+    welcome: 'Bienvenue sur Aura Vision',
+    subtitle: 'Visualisation Musicale IA Nouvelle Génération',
+    selectLanguage: 'Choisir la langue',
+    next: 'Suivant',
+    skip: 'Passer',
+    finish: 'Commencer',
+    features: {
+      title: 'Fonctionnalités Clés',
+      visuals: {
+        title: 'Visuels Immersifs',
+        desc: '8+ moteurs physiques WebGL basés sur Three.js.'
+      },
+      ai: {
+        title: 'Intelligence Gemini IA',
+        desc: 'Identification de chansons en temps réel et détection d\'humeur propulsées par Google Gemini 3.'
+      },
+      privacy: {
+        title: 'Confidentialité Avant Tout',
+        desc: 'Analyse spectrale locale. Les données audio ne sont jamais stockées sur des serveurs.'
+      }
+    },
+    shortcuts: {
+      title: 'Contrôles Rapides',
+      desc: 'Maîtrisez l\'expérience avec ces touches.'
+    }
   }
 };

@@ -104,6 +104,14 @@ export const tw = {
     med: '中',
     high: '高'
   },
+  recognitionSource: 'AI 辨識源',
+  lyricsPosition: '歌詞顯示位置',
+  simulatedDemo: '模擬演示 (Demo)',
+  positions: {
+      top: '頂部',
+      center: '居中',
+      bottom: '底部'
+  },
   system: {
     shortcuts: {
       mic: '麥克風',
@@ -187,5 +195,32 @@ export const tw = {
     privacyTitle: '隱私與安全',
     privacyText: '音訊分析完全在本地完成。僅在辨識歌曲時，會將加密的頻率特徵臨時發送至雲端，絕不儲存任何原始錄音。',
     version: '發布版本'
+  },
+  onboarding: {
+    welcome: '歡迎使用 Aura Vision',
+    subtitle: '下一代 AI 音樂視覺化引擎',
+    selectLanguage: '選擇語言',
+    next: '下一步',
+    skip: '跳過',
+    finish: '開始體驗',
+    features: {
+      title: '核心特性',
+      visuals: {
+        title: '沉浸式視覺',
+        desc: '8+ 種基於 Three.js 開發的 WebGL 物理渲染引擎。'
+      },
+      ai: {
+        title: 'Gemini AI 智慧',
+        desc: '由 Google Gemini 3 驅動的即時曲目辨識與情緒分析。'
+      },
+      privacy: {
+        title: '隱私優先',
+        desc: '本地頻譜分析。音訊資料絕不傳送至任何伺服器。'
+      }
+    },
+    shortcuts: {
+      title: '快捷操作',
+      desc: '使用以下按鍵快速掌控全域體驗。'
+    }
   }
 };

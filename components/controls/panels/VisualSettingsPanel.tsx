@@ -80,13 +80,13 @@ export const VisualSettingsPanel: React.FC<VisualSettingsPanelProps> = ({
                     label={t.glow} 
                     value={settings.glow} 
                     onChange={() => setSettings({...settings, glow: !settings.glow})} 
-                    hintText={t.hints.glow}
+                    hintText={`${t.hints.glow} [G]`}
                 />
                 <SettingsToggle 
                     label={t.trails} 
                     value={settings.trails} 
                     onChange={() => setSettings({...settings, trails: !settings.trails})} 
-                    hintText={t.hints.trails}
+                    hintText={`${t.hints.trails} [T]`}
                 />
             </div>
             

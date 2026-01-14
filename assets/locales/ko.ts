@@ -162,7 +162,7 @@ export const ko = {
   helpModal: {
     title: 'Aura Vision 가이드',
     intro: 'Aura Vision는 고급 스펙트럼 분석을 사용하여 마이크 입력을 반응성 높은 제너레이티브 디지털 아트로 변환합니다.',
-    shortcutsTitle: '키보드 상호 작용',
+    shortcutsTitle: '키보드 단축키',
     shortcutItems: {
       toggleMic: '오디오 입력 토글',
       fullscreen: '전체 화면',
@@ -195,5 +195,32 @@ export const ko = {
     privacyTitle: '개인정보 보호정책',
     privacyText: '오디오는 로컬에서 분석됩니다. 임시 고주파 스냅샷은 식별 목적으로만 Gemini로 전송됩니다.',
     version: '릴리스'
+  },
+  onboarding: {
+    welcome: 'Aura Vision에 오신 것을 환영합니다',
+    subtitle: '차세대 AI 음악 시각화 엔진',
+    selectLanguage: '언어 선택',
+    next: '다음',
+    skip: '건너뛰기',
+    finish: '시작하기',
+    features: {
+      title: '핵심 기능',
+      visuals: {
+        title: '몰입형 비주얼',
+        desc: 'Three.js 기반의 8가지 이상의 WebGL 물리 렌더링 엔진.'
+      },
+      ai: {
+        title: 'Gemini AI 지능',
+        desc: 'Google Gemini 3로 구동되는 실시간 노래 식별 및 무드 감지.'
+      },
+      privacy: {
+        title: '개인정보 보호 최우선',
+        desc: '로컬 스펙트럼 분석. 오디오 데이터는 서버에 저장되지 않습니다.'
+      }
+    },
+    shortcuts: {
+      title: '빠른 제어',
+      desc: '다음 키로 경험을 마스터하세요.'
+    }
   }
 };

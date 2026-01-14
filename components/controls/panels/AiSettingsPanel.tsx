@@ -37,6 +37,7 @@ export const AiSettingsPanel: React.FC<AiSettingsPanelProps> = ({
              value={showLyrics}
              onChange={() => setShowLyrics(!showLyrics)}
              activeColor="green"
+             hintText={`${t.hints.lyrics} [L]`}
           />
           
           <div className="space-y-4 pt-1">

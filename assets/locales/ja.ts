@@ -195,5 +195,32 @@ export const ja = {
     privacyTitle: 'プライバシー',
     privacyText: 'オーディオはローカルで処理されます。曲の識別のために一時的にデータが送信されますが、保存はされません。',
     version: 'リリース'
+  },
+  onboarding: {
+    welcome: 'Aura Visionへようこそ',
+    subtitle: '次世代AI音楽ビジュアライザー',
+    selectLanguage: '言語を選択',
+    next: '次へ',
+    skip: 'スキップ',
+    finish: '始める',
+    features: {
+      title: '主な機能',
+      visuals: {
+        title: '没入型ビジュアル',
+        desc: 'Three.jsによる8種類以上のWebGL物理レンダリングエンジン。'
+      },
+      ai: {
+        title: 'Gemini AI インテリジェンス',
+        desc: 'Google Gemini 3によるリアルタイムの曲識別とムード分析。'
+      },
+      privacy: {
+        title: 'プライバシー優先',
+        desc: 'ローカルスペクトル分析。音声データがサーバーに保存されることはありません。'
+      }
+    },
+    shortcuts: {
+      title: 'クイックコントロール',
+      desc: 'キーボードショートカットで体験をマスターしましょう。'
+    }
   }
 };
