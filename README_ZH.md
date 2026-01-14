@@ -2,10 +2,10 @@
 
 ### AI 驱动的 3D 音乐可视化与曲目识别系统 (v0.4.1)
 
-[English](README.md) | [在线演示](https://aura.tanox.net/)
+[English](README.md) | [在线演示](https://aura-vision.vercel.app/)
 
 <p align="center">
-  <img src="./assets/images/preview_main.png" alt="Aura Vision 横幅" width="100%" />
+  <img src="./assets/images/aura-banner.jpg" alt="Aura Vision 横幅" width="100%" />
 </p>
 
 <p align="center">
@@ -22,9 +22,9 @@
 
 ## 📸 视觉展示
 
-| 流光绸缎 (WebGL) | 液态星球 (3D) | 流体等离子 (2D) |
+| 流光绸缎 (WebGL) | 液态星球 (3D) | 低多边形山脉 (3D) |
 | :---: | :---: | :---: |
-| ![流光](./assets/images/mode-silk.jpg) | ![星球](./assets/images/mode-liquid.jpg) | ![等离子](./assets/images/mode-plasma.jpg) |
+| ![流光](./assets/images/mode-silk.jpg) | ![星球](./assets/images/mode-liquid.jpg) | ![地形](./assets/images/mode-terrain.jpg) |
 
 ---
 

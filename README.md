@@ -2,10 +2,10 @@
 
 ### AI-Powered 3D Music Visualizer & Identifier (v0.4.1)
 
-[中文文档](README_ZH.md) | [Live Demo](https://aura.tanox.net/)
+[中文文档](README_ZH.md) | [Live Demo](https://aura-vision.vercel.app/)
 
 <p align="center">
-  <img src="assets/images/preview_main.png" alt="Aura Vision Banner" width="100%" />
+  <img src="./assets/images/aura-banner.jpg" alt="Aura Vision Banner" width="100%" />
 </p>
 
 <p align="center">
@@ -22,9 +22,9 @@
 
 ## 📸 Visual Showcase
 
-| Silk Waves (WebGL) | Liquid Sphere (3D) | Plasma Flow (2D) |
+| Silk Waves (WebGL) | Liquid Sphere (3D) | Low-Poly Terrain (3D) |
 | :---: | :---: | :---: |
-| ![Silk](./assets/images/mode-silk.jpg) | ![Liquid](./assets/images/mode-liquid.jpg) | ![Plasma](./assets/images/mode-plasma.jpg) |
+| ![Silk](./assets/images/mode-silk.jpg) | ![Liquid](./assets/images/mode-liquid.jpg) | ![Terrain](./assets/images/mode-terrain.jpg) |
 
 ---
 
