@@ -1,5 +1,5 @@
 
-import { GoogleGenAI } from "@google/genai";
+import { GoogleGenAI, Type } from "@google/genai";
 import { GEMINI_MODEL, REGION_NAMES } from '../constants';
 import { SongInfo, Language, Region } from '../types';
 import { generateFingerprint, saveToLocalCache, findLocalMatch } from './fingerprintService';
@@ -29,28 +29,40 @@ export const identifySongFromAudio = async (
     try {
         const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
         const regionName = region === 'global' ? 'Global' : (REGION_NAMES[region] || region);
-        const systemInstruction = `You are a Music Expert. Identify song from clip. Market: ${regionName}. Return raw JSON: {title, artist, lyricsSnippet, mood, identified}.`;
+        // FIX: Updated system instruction to be more descriptive and removed JSON-specific instructions, as responseSchema handles that.
+        const systemInstruction = `You are a Music Expert. Identify the song from the provided audio clip, considering the target music market is '${regionName}'. Provide the song title, artist, a short snippet of lyrics, and the overall mood. If you cannot identify it, set 'identified' to false.`;
 
+        // FIX: Updated generateContent call to use responseSchema for reliable JSON output.
         const response = await ai.models.generateContent({
           model: GEMINI_MODEL,
-          contents: { parts: [{ inlineData: { mimeType: mimeType, data: base64Audio } }, { text: "Identify this song. JSON ONLY." }] },
-          config: { tools: [{ googleSearch: {} }], systemInstruction: systemInstruction }
+          contents: { parts: [{ inlineData: { mimeType: mimeType, data: base64Audio } }, { text: "Identify this song." }] },
+          config: { 
+            tools: [{ googleSearch: {} }], 
+            systemInstruction: systemInstruction,
+            responseMimeType: "application/json",
+            responseSchema: {
+              type: Type.OBJECT,
+              properties: {
+                title: { type: Type.STRING, description: "The title of the song." },
+                artist: { type: Type.STRING, description: "The artist of the song." },
+                lyricsSnippet: { type: Type.STRING, description: "A short, relevant snippet of the lyrics." },
+                mood: { type: Type.STRING, description: "A single word or short phrase describing the mood (e.g., 'Energetic', 'Melancholy')." },
+                identified: { type: Type.BOOLEAN, description: "Set to true if the song was successfully identified, otherwise false." },
+              },
+              required: ['title', 'artist', 'identified']
+            }
+          }
         });
 
         const text = response.text;
         if (!text) return null;
 
-        // More robust JSON extraction
-        const jsonStart = text.indexOf('{');
-        const jsonEnd = text.lastIndexOf('}') + 1;
+        // FIX: The response text is now guaranteed to be a JSON string, so we can parse it directly.
+        const songInfo: SongInfo = JSON.parse(text.trim());
         
-        if (jsonStart === -1 || jsonEnd <= jsonStart) {
-            console.error("[AI] No valid JSON found in response:", text);
-            return null;
+        if (!songInfo.identified) {
+          return null;
         }
-
-        const jsonStr = text.substring(jsonStart, jsonEnd);
-        const songInfo: SongInfo = JSON.parse(jsonStr);
 
         const groundingChunks = response.candidates?.[0]?.groundingMetadata?.groundingChunks;
         if (groundingChunks) {

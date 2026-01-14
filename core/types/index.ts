@@ -1,5 +1,5 @@
-// FIX: Removed unnecessary React import and changed ThreeElements to a type-only import
-// to correctly augment the global JSX namespace for React Three Fiber.
+import * as React from 'react';
+// FIX: Added a React import to ensure the JSX namespace is correctly resolved for react-three-fiber type augmentation.
 import type { ThreeElements } from '@react-three/fiber';
 
 export type Language = 'en' | 'zh' | 'tw' | 'ja' | 'es' | 'ko' | 'de' | 'fr';

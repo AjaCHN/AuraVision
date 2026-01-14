@@ -76,6 +76,8 @@ const App: React.FC = () => {
   const [isUnsupported, setIsUnsupported] = useState(false);
   
   const wakeLockRef = useRef<any>(null);
+  const rotateIntervalRef = useRef<number | null>(null);
+  const colorIntervalRef = useRef<number | null>(null);
 
   const [language, setLanguage] = useState<Language>(() => { 
     const saved = getStorage<Language>('language', DEFAULT_LANGUAGE); 
@@ -132,6 +134,36 @@ const App: React.FC = () => {
     document.addEventListener('visibilitychange', handleVisibilityChange);
     return () => { document.removeEventListener('visibilitychange', handleVisibilityChange); if (wakeLockRef.current) wakeLockRef.current.release(); };
   }, [settings.wakeLock, hasStarted, requestWakeLock]);
+  
+  useEffect(() => {
+    if (settings.autoRotate) {
+      rotateIntervalRef.current = window.setInterval(() => {
+        setMode(currentMode => {
+          const modes = Object.values(VisualizerMode);
+          const currentIndex = modes.indexOf(currentMode);
+          const nextIndex = (currentIndex + 1) % modes.length;
+          return modes[nextIndex];
+        });
+      }, settings.rotateInterval * 1000);
+    } else if (rotateIntervalRef.current) {
+      clearInterval(rotateIntervalRef.current);
+      rotateIntervalRef.current = null;
+    }
+    return () => { if (rotateIntervalRef.current) clearInterval(rotateIntervalRef.current); };
+  }, [settings.autoRotate, settings.rotateInterval]);
+
+  useEffect(() => {
+    if (settings.cycleColors) {
+      colorIntervalRef.current = window.setInterval(() => {
+        const randomIndex = Math.floor(Math.random() * COLOR_THEMES.length);
+        setColorTheme(COLOR_THEMES[randomIndex]);
+      }, settings.colorInterval * 1000);
+    } else if (colorIntervalRef.current) {
+      clearInterval(colorIntervalRef.current);
+      colorIntervalRef.current = null;
+    }
+    return () => { if (colorIntervalRef.current) clearInterval(colorIntervalRef.current); };
+  }, [settings.cycleColors, settings.colorInterval]);
 
   useEffect(() => {
     setStorage('mode', mode); setStorage('theme', colorTheme); setStorage('settings', settings);
