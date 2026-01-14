@@ -183,7 +183,8 @@ const Controls: React.FC<ControlsProps> = ({
     <>
       <HelpModal isOpen={showHelp} onClose={() => setShowHelp(false)} language={language} />
 
-      {isIdentifying && (
+      {/* Only show "Identifying..." if the process is active AND the user has the feature enabled */}
+      {isIdentifying && showLyrics && (
         <div className="fixed top-8 left-8 z-[110] bg-black/60 backdrop-blur-2xl border border-blue-500/30 rounded-full px-6 py-3.5 flex items-center gap-4 shadow-[0_15px_40px_rgba(0,0,0,0.6)] animate-pulse">
            <div className="w-2.5 h-2.5 bg-blue-400 rounded-full animate-ping" />
            <span className="text-xs font-bold uppercase tracking-[0.25em] text-blue-100">{t.identifying}</span>

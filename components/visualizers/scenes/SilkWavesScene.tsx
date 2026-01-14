@@ -34,8 +34,8 @@ export const SilkWavesScene: React.FC<SceneProps> = ({ analyser, colors, setting
   }, [settings.quality]);
 
   useFrame((state) => {
-    // 1. Color Lerping - Slower factor (0.005) for smoother transitions
-    const lerpSpeed = 0.005;
+    // 1. Color Lerping - Slower factor (0.002) for smoother transitions
+    const lerpSpeed = 0.002;
     c0.current.lerp(targetColor.current.set(colors[0]), lerpSpeed);
     c1.current.lerp(targetColor.current.set(colors[1]), lerpSpeed);
     c2.current.lerp(targetColor.current.set(colors[2] || '#ffffff'), lerpSpeed);
