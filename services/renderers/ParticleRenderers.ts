@@ -3,17 +3,36 @@ import { IVisualizerRenderer, VisualizerSettings } from '../../types';
 import { getAverage } from '../audioUtils';
 
 export class ParticlesRenderer implements IVisualizerRenderer {
-  private particles: Array<{x: number, y: number, vx: number, vy: number, life: number, size: number}> = [];
-  init() { this.particles = []; }
+  // Store 3D coordinates (x, y, z) and previous screen coordinates (px, py) for smooth trails
+  private particles: Array<{
+    x: number; 
+    y: number; 
+    z: number; 
+    px: number; // Previous projected X
+    py: number; // Previous projected Y
+    size: number;
+    colorOffset: number;
+  }> = [];
+
+  init() { 
+    this.particles = []; 
+  }
+
   draw(ctx: CanvasRenderingContext2D, data: Uint8Array, w: number, h: number, colors: string[], settings: VisualizerSettings, rotation: number) {
     if (colors.length === 0) return;
-    // Strictly linear movement: No wobble in center
-    const centerX = w / 2; 
-    const centerY = h / 2;
+
+    // 1. Dynamic Wandering Origin (Moving Center)
+    // Moves the vanishing point in a figure-8 pattern based on time/rotation
+    const time = rotation * 0.5;
+    const centerX = w / 2 + Math.sin(time) * (w * 0.15);
+    const centerY = h / 2 + Math.cos(time * 0.7) * (h * 0.15);
     
-    let mids = getAverage(data, 10, 50) / 255;
-    let bass = getAverage(data, 0, 10) / 255;
+    // Audio Analysis
+    const mids = getAverage(data, 10, 50) / 255;
+    const bass = getAverage(data, 0, 10) / 255;
+    const highs = getAverage(data, 100, 200) / 255;
     
+    // Background Glow
     if (settings.glow) {
         ctx.save();
         ctx.fillStyle = colors[1] || colors[0];
@@ -24,48 +43,90 @@ export class ParticlesRenderer implements IVisualizerRenderer {
     }
     
     // Quality-based limiting
-    const maxParticles = settings.quality === 'high' ? 200 : settings.quality === 'med' ? 120 : 60;
+    const maxParticles = settings.quality === 'high' ? 300 : settings.quality === 'med' ? 180 : 80;
     
-    while (this.particles.length < maxParticles) {
-        this.particles.push({
-            x: (Math.random() - 0.5) * w * 2, 
-            y: (Math.random() - 0.5) * h * 2,
-            life: w * (Math.random() * 0.5 + 0.5), 
-            vx: w, vy: 0, size: Math.random() * 2 + 0.5
-        });
-    }
-    const warpSpeed = (0.5 + (mids * 40)) * settings.speed * settings.sensitivity;
-    
-    for (let i = this.particles.length - 1; i >= 0; i--) {
-        const p = this.particles[i];
-        p.life -= warpSpeed;
-        if (p.life <= 10) {
-            p.x = (Math.random() - 0.5) * w * 2;
-            p.y = (Math.random() - 0.5) * h * 2;
-            p.life = w;
-            continue;
+    // Initialize Particles (3D Space: x/y from -w to w, z from 0 to w)
+    if (this.particles.length === 0) {
+        for (let i = 0; i < maxParticles; i++) {
+            this.particles.push(this.createParticle(w, h, Math.random() * w));
         }
+    } else if (this.particles.length < maxParticles) {
+        // Add more if needed
+        this.particles.push(this.createParticle(w, h, w));
+    } else if (this.particles.length > maxParticles) {
+        this.particles = this.particles.slice(0, maxParticles);
+    }
+
+    // Audio-reactive Speed
+    // Base speed + audio reaction. 'speed' slider acts as a multiplier.
+    const moveSpeed = (2 + (mids * 40) + (highs * 20)) * settings.speed * settings.sensitivity;
+    
+    ctx.lineCap = 'round';
+
+    for (let i = 0; i < this.particles.length; i++) {
+        const p = this.particles[i];
         
-        const safeLife = Math.max(0.1, p.life);
-        const scale = 250 / safeLife;
-        
-        const rx = p.x;
-        const ry = p.y;
-        const sx = centerX + rx * scale;
-        const sy = centerY + ry * scale;
-        
+        // Move particle towards viewer (decrease Z)
+        p.z -= moveSpeed;
+
+        // Reset if it passes the viewer or goes too far behind
+        if (p.z <= 1) {
+            const newP = this.createParticle(w, h, w);
+            this.particles[i] = newP;
+            // Prevent drawing a line across the screen on reset
+            continue; 
+        }
+
+        // 3D to 2D Projection
+        // Simple perspective projection formula
+        const k = 128.0 / p.z; // Field of view factor
+        const px = (p.x * k) + centerX;
+        const py = (p.y * k) + centerY;
+
         // Skip drawing if outside canvas (Optimization)
-        if (sx < 0 || sx > w || sy < 0 || sy > h) continue;
-        
-        ctx.globalAlpha = Math.min(1, p.life > w * 0.8 ? (w - p.life) / (w * 0.2) : p.life / 50);
-        ctx.fillStyle = warpSpeed > 10 ? (colors[i % colors.length] || '#fff') : '#fff';
-        ctx.beginPath();
-        // Dynamic size: Low quality = slightly larger particles to compensate for fewer count
-        const sizeMult = settings.quality === 'low' ? 2.5 : 1.5;
-        ctx.arc(sx, sy, p.size * scale * sizeMult, 0, Math.PI * 2);
-        ctx.fill();
+        // Check both current and previous to ensure we catch lines entering/leaving
+        const isOutside = (px < 0 || px > w || py < 0 || py > h) && (p.px < 0 || p.px > w || p.py < 0 || p.py > h);
+
+        if (!isOutside) {
+            // Calculate scale/size based on proximity
+            const scale = (1 - p.z / w);
+            const size = p.size * k * (settings.quality === 'low' ? 2 : 1);
+            
+            // Dynamic Color
+            const colorIdx = Math.floor(i % colors.length);
+            ctx.strokeStyle = colors[colorIdx];
+            ctx.lineWidth = size;
+
+            // Opacity based on depth (fade in as they appear far away)
+            const alpha = Math.min(1, (w - p.z) / (w * 0.3));
+            ctx.globalAlpha = alpha;
+
+            // DRAW LINE from Previous Frame Position to Current Position
+            // This creates the smooth, connected trail effect
+            ctx.beginPath();
+            ctx.moveTo(p.px, p.py);
+            ctx.lineTo(px, py);
+            ctx.stroke();
+        }
+
+        // Update previous position for next frame
+        p.px = px;
+        p.py = py;
     }
     ctx.globalAlpha = 1.0;
+  }
+
+  // Helper to create a random particle in 3D space
+  private createParticle(w: number, h: number, z: number) {
+      return {
+          x: (Math.random() - 0.5) * w * 2, // Spread wider than screen to cover corners
+          y: (Math.random() - 0.5) * h * 2,
+          z: z,
+          px: w / 2, // Initial previous pos (center) to avoid jump artifacts
+          py: h / 2,
+          size: Math.random() * 1.5 + 0.5,
+          colorOffset: Math.random()
+      };
   }
 }
 
