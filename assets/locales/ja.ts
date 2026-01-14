@@ -1,3 +1,4 @@
+
 import { VisualizerMode, LyricsStyle } from '../../core/types';
 
 export const ja = {
@@ -162,6 +163,8 @@ export const ja = {
     [VisualizerMode.NEBULA]: 'ディープ・ネブラ',
     [VisualizerMode.KALEIDOSCOPE]: '万華鏡',
     [VisualizerMode.LASERS]: 'コンサート・レーザー',
+    [VisualizerMode.FLUID_CURVES]: '極光之舞',
+    [VisualizerMode.MACRO_BUBBLES]: '微観液泡',
     [VisualizerMode.SILK]: 'シルク・ウェーブ',
     [VisualizerMode.LIQUID]: 'リキッド・スフィア',
     [VisualizerMode.TERRAIN]: 'ローポリ・テレイン'
@@ -204,6 +207,7 @@ export const ja = {
     subtitle: '次世代AI音楽ビジュアライザー',
     selectLanguage: '言語を選択',
     next: '次へ',
+    back: '戻る',
     skip: 'スキップ',
     finish: '始める',
     features: {

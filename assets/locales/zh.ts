@@ -164,6 +164,8 @@ export const zh = {
     [VisualizerMode.NEBULA]: '深空星云',
     [VisualizerMode.KALEIDOSCOPE]: '迷幻万花筒',
     [VisualizerMode.LASERS]: '舞台激光矩阵',
+    [VisualizerMode.FLUID_CURVES]: '极光之舞',
+    [VisualizerMode.MACRO_BUBBLES]: '微观液泡',
     [VisualizerMode.SILK]: '流光绸缎 (WebGL)',
     [VisualizerMode.LIQUID]: '液态星球 (WebGL)',
     [VisualizerMode.TERRAIN]: '低多边形山脈 (WebGL)'
@@ -208,13 +210,14 @@ export const zh = {
     projectInfoText: '由 Google Gemini 3 Flash 模型、React 19 以及硬件加速的 WebGL 技术栈强力驱动。',
     privacyTitle: '隐私与安全',
     privacyText: '音频分析完全在本地完成。仅在识别歌曲时，会将加密的频率特征临时发送至云端，绝不存储或上传任何原始录音数据。',
-    version: '发布版本'
+    version: '版本号'
   },
   onboarding: {
     welcome: '欢迎使用 Aura Vision',
     subtitle: '下一代 AI 音乐可视化引擎',
     selectLanguage: '选择语言',
     next: '下一步',
+    back: '返回',
     skip: '跳过',
     finish: '开始体验',
     features: {

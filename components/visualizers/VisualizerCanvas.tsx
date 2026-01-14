@@ -1,4 +1,3 @@
-
 import React, { useRef, useEffect } from 'react';
 import { 
   VisualizerMode, 
@@ -8,7 +7,7 @@ import {
 import { 
   BarsRenderer, RingsRenderer, ParticlesRenderer, TunnelRenderer, 
   PlasmaRenderer, ShapesRenderer, NebulaRenderer, 
-  KaleidoscopeRenderer, LasersRenderer
+  KaleidoscopeRenderer, LasersRenderer, FluidCurvesRenderer, MacroBubblesRenderer
 } from '../../core/services/visualizerStrategies';
 import { lerpHex } from '../../core/services/colorUtils';
 
@@ -38,6 +37,8 @@ const VisualizerCanvas: React.FC<VisualizerCanvasProps> = ({
     [VisualizerMode.NEBULA]: new NebulaRenderer(),
     [VisualizerMode.KALEIDOSCOPE]: new KaleidoscopeRenderer(),
     [VisualizerMode.LASERS]: new LasersRenderer(),
+    [VisualizerMode.FLUID_CURVES]: new FluidCurvesRenderer(),
+    [VisualizerMode.MACRO_BUBBLES]: new MacroBubblesRenderer(),
   });
 
   useEffect(() => {
@@ -79,6 +80,8 @@ const VisualizerCanvas: React.FC<VisualizerCanvasProps> = ({
     if (mode === VisualizerMode.PLASMA) alpha = 0.15;
     if (mode === VisualizerMode.PARTICLES) alpha = 0.06;
     if (mode === VisualizerMode.NEBULA) alpha = 0.08;
+    if (mode === VisualizerMode.FLUID_CURVES) alpha = 0.1;
+    if (mode === VisualizerMode.MACRO_BUBBLES) alpha = 0.25;
     
     if (settings.trails) {
         ctx.fillStyle = `rgba(0, 0, 0, ${alpha})`; 
@@ -89,7 +92,7 @@ const VisualizerCanvas: React.FC<VisualizerCanvasProps> = ({
     
     // 3. Glow Logic
     if (settings.glow) {
-        ctx.shadowBlur = mode === VisualizerMode.PLASMA ? 30 : 15;
+        ctx.shadowBlur = (mode === VisualizerMode.PLASMA || mode === VisualizerMode.FLUID_CURVES) ? 30 : 15;
         ctx.shadowColor = smoothedColors[0] || '#ffffff';
     } else {
         ctx.shadowBlur = 0;

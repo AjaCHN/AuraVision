@@ -1,3 +1,4 @@
+
 import { VisualizerMode, LyricsStyle } from '../../core/types';
 
 export const es = {
@@ -162,6 +163,8 @@ export const es = {
     [VisualizerMode.NEBULA]: 'Nebulosa Profunda',
     [VisualizerMode.KALEIDOSCOPE]: 'Caleidoscopio',
     [VisualizerMode.LASERS]: 'Láseres de Concierto',
+    [VisualizerMode.FLUID_CURVES]: 'Ondas de Seda',
+    [VisualizerMode.MACRO_BUBBLES]: 'Burbujas Macro',
     [VisualizerMode.SILK]: 'Ondas de Seda',
     [VisualizerMode.LIQUID]: 'Esfera Líquida',
     [VisualizerMode.TERRAIN]: 'Terreno Low-Poly'
@@ -204,6 +207,7 @@ export const es = {
     subtitle: 'Visualización de Música con IA de Nueva Generación',
     selectLanguage: 'Seleccionar Idioma',
     next: 'Siguiente',
+    back: 'Volver',
     skip: 'Omitir',
     finish: 'Comenzar',
     features: {

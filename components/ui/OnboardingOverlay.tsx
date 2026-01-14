@@ -61,7 +61,14 @@ export const OnboardingOverlay: React.FC<OnboardingOverlayProps> = ({ language, 
           )}
         </div>
         <div className="p-8 pt-4 border-t border-white/5 flex justify-between items-center bg-black/20">
-          {step > 0 ? <button onClick={() => setStep(s => s - 1)} className="text-white/40 hover:text-white text-sm font-bold uppercase transition-colors">← Back</button> : <div />}
+          {step > 0 ? (
+            <button onClick={() => setStep(s => s - 1)} className="text-white/40 hover:text-white text-sm font-bold uppercase transition-colors flex items-center gap-1">
+              <span>←</span>
+              <span>{t.back || 'Back'}</span>
+            </button>
+          ) : (
+            <div />
+          )}
           <div className="flex gap-2">{[0, 1, 2].map(i => <div key={i} className={`w-2 h-2 rounded-full ${step === i ? 'bg-white' : 'bg-white/20'}`} />)}</div>
           <button onClick={step === 2 ? onComplete : () => setStep(s => s + 1)} className="bg-white text-black px-6 py-2 rounded-full font-bold text-sm hover:scale-105 transition-transform shadow-lg shadow-white/10">{step === 2 ? t.finish : t.next}</button>
         </div>

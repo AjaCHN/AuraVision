@@ -1,3 +1,4 @@
+
 import { VisualizerMode, LyricsStyle } from '../../core/types';
 
 export const ko = {
@@ -162,6 +163,8 @@ export const ko = {
     [VisualizerMode.NEBULA]: '깊은 성운',
     [VisualizerMode.KALEIDOSCOPE]: '만화경',
     [VisualizerMode.LASERS]: '콘서트 레이저',
+    [VisualizerMode.FLUID_CURVES]: '오로라의 춤',
+    [VisualizerMode.MACRO_BUBBLES]: '미세 액포',
     [VisualizerMode.SILK]: '실크 웨이브',
     [VisualizerMode.LIQUID]: '액체 구체',
     [VisualizerMode.TERRAIN]: '로우 폴리 지형'
@@ -204,6 +207,7 @@ export const ko = {
     subtitle: '차세대 AI 음악 시각화 엔진',
     selectLanguage: '언어 선택',
     next: '다음',
+    back: '뒤로',
     skip: '건너뛰기',
     finish: '시작하기',
     features: {

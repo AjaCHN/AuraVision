@@ -1,3 +1,4 @@
+
 import { VisualizerMode, LyricsStyle } from '../../core/types';
 
 export const tw = {
@@ -163,6 +164,8 @@ export const tw = {
     [VisualizerMode.NEBULA]: '深空星云',
     [VisualizerMode.KALEIDOSCOPE]: '迷幻萬花筒',
     [VisualizerMode.LASERS]: '舞台雷射矩陣',
+    [VisualizerMode.FLUID_CURVES]: '極光之舞',
+    [VisualizerMode.MACRO_BUBBLES]: '微觀液泡',
     [VisualizerMode.SILK]: '流光綢緞 (WebGL)',
     [VisualizerMode.LIQUID]: '液態星球 (WebGL)',
     [VisualizerMode.TERRAIN]: '低多邊形山脈 (WebGL)'
@@ -214,6 +217,7 @@ export const tw = {
     subtitle: '下一代 AI 音樂視覺化引擎',
     selectLanguage: '選擇語言',
     next: '下一步',
+    back: '返回',
     skip: '跳過',
     finish: '開始體驗',
     features: {

@@ -1,5 +1,5 @@
-
 import { IVisualizerRenderer, VisualizerSettings } from '../../types/index';
+import { getAverage } from '../audioUtils';
 
 export class BarsRenderer implements IVisualizerRenderer {
   init() {}
@@ -50,5 +50,134 @@ export class RingsRenderer implements IVisualizerRenderer {
         ctx.arc(centerX, centerY, radius, startAngle, endAngle);
         ctx.stroke();
     }
+  }
+}
+
+/**
+ * Inspired by Image 1: Fluid, flowing gradients with smooth curves.
+ */
+export class FluidCurvesRenderer implements IVisualizerRenderer {
+  init() {}
+  draw(ctx: CanvasRenderingContext2D, data: Uint8Array, w: number, h: number, colors: string[], settings: VisualizerSettings, rotation: number) {
+    if (colors.length === 0) return;
+    const bass = getAverage(data, 0, 10) * settings.sensitivity / 255;
+    const mids = getAverage(data, 20, 60) * settings.sensitivity / 255;
+    
+    ctx.save();
+    ctx.globalCompositeOperation = 'screen';
+    
+    const layerCount = settings.quality === 'high' ? 5 : 3;
+    const time = rotation * settings.speed;
+
+    for (let i = 0; i < layerCount; i++) {
+      const color = colors[i % colors.length];
+      ctx.fillStyle = color;
+      ctx.globalAlpha = 0.2 + bass * 0.3;
+      
+      ctx.beginPath();
+      ctx.moveTo(0, h);
+      
+      const segments = 6;
+      const step = w / segments;
+      
+      for (let s = 0; s <= segments; s++) {
+        const x = s * step;
+        const offset = Math.sin(x * 0.005 + time + i) * (h * 0.15);
+        const audioBump = Math.cos(x * 0.01 + time * 1.5) * (bass * 120);
+        const y = h * (0.4 + i * 0.1) + offset + audioBump;
+        
+        if (s === 0) {
+          ctx.lineTo(x, y);
+        } else {
+          const px = (s - 0.5) * step;
+          const py = h * (0.4 + i * 0.1) + Math.sin(px * 0.005 + time + i) * (h * 0.15) + (bass * 100);
+          ctx.quadraticCurveTo(px, py, x, y);
+        }
+      }
+      
+      ctx.lineTo(w, h);
+      ctx.closePath();
+      ctx.fill();
+    }
+    
+    ctx.restore();
+  }
+}
+
+/**
+ * Inspired by Image 2: Macro photography of liquid bubbles with highlights.
+ */
+export class MacroBubblesRenderer implements IVisualizerRenderer {
+  private bubbles: Array<{ x: number, y: number, r: number, vx: number, vy: number, colorIdx: number }> = [];
+  
+  init() {
+    this.bubbles = [];
+  }
+  
+  draw(ctx: CanvasRenderingContext2D, data: Uint8Array, w: number, h: number, colors: string[], settings: VisualizerSettings, rotation: number) {
+    if (colors.length === 0) return;
+    
+    const bass = getAverage(data, 0, 10) * settings.sensitivity / 255;
+    const highs = getAverage(data, 120, 200) * settings.sensitivity / 255;
+    const count = settings.quality === 'high' ? 40 : 20;
+
+    if (this.bubbles.length === 0) {
+      for (let i = 0; i < count; i++) {
+        this.bubbles.push({
+          x: Math.random() * w,
+          y: Math.random() * h,
+          r: 20 + Math.random() * 80,
+          vx: (Math.random() - 0.5) * 2,
+          vy: (Math.random() - 0.5) * 2,
+          colorIdx: Math.floor(Math.random() * colors.length)
+        });
+      }
+    }
+
+    ctx.save();
+    
+    this.bubbles.forEach((b, i) => {
+      // Movement
+      b.x += b.vx * settings.speed * (1 + bass * 2);
+      b.y += b.vy * settings.speed * (1 + bass * 2);
+      
+      // Wrap around
+      if (b.x < -b.r) b.x = w + b.r;
+      if (b.x > w + b.r) b.x = -b.r;
+      if (b.y < -b.r) b.y = h + b.r;
+      if (b.y > h + b.r) b.y = -b.r;
+
+      const dynamicR = b.r * (1 + bass * 0.5);
+      const color = colors[b.colorIdx % colors.length];
+      
+      // Main bubble body
+      const gradient = ctx.createRadialGradient(b.x, b.y, dynamicR * 0.2, b.x, b.y, dynamicR);
+      gradient.addColorStop(0, color);
+      gradient.addColorStop(0.8, color);
+      gradient.addColorStop(1, 'rgba(0,0,0,0)');
+      
+      ctx.globalAlpha = 0.6 + highs * 0.4;
+      ctx.fillStyle = gradient;
+      ctx.beginPath();
+      ctx.arc(b.x, b.y, dynamicR, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Highlights (Sparkle from Image 2)
+      ctx.globalAlpha = 0.8;
+      ctx.strokeStyle = 'white';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.arc(b.x - dynamicR * 0.3, b.y - dynamicR * 0.3, dynamicR * 0.4, -Math.PI * 0.75, -Math.PI * 0.25);
+      ctx.stroke();
+      
+      if (highs > 0.4) {
+          ctx.fillStyle = 'white';
+          ctx.beginPath();
+          ctx.arc(b.x + dynamicR * 0.4, b.y - dynamicR * 0.2, 3 * highs * settings.sensitivity, 0, Math.PI * 2);
+          ctx.fill();
+      }
+    });
+
+    ctx.restore();
   }
 }

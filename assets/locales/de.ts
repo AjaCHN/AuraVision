@@ -1,3 +1,4 @@
+
 import { VisualizerMode, LyricsStyle } from '../../core/types';
 
 export const de = {
@@ -162,6 +163,8 @@ export const de = {
     [VisualizerMode.NEBULA]: 'Tiefer Nebel',
     [VisualizerMode.KALEIDOSCOPE]: 'Kaleidoskop',
     [VisualizerMode.LASERS]: 'Konzert-Laser',
+    [VisualizerMode.FLUID_CURVES]: 'Tanz der Polarlichter',
+    [VisualizerMode.MACRO_BUBBLES]: 'Mikro-Vakuolen',
     [VisualizerMode.SILK]: 'Seidenwellen',
     [VisualizerMode.LIQUID]: 'Flüssige Sphäre',
     [VisualizerMode.TERRAIN]: 'Low-Poly Terrain'
@@ -204,6 +207,7 @@ export const de = {
     subtitle: 'KI-Musikvisualisierung der nächsten Generation',
     selectLanguage: 'Sprache wählen',
     next: 'Weiter',
+    back: 'Zurück',
     skip: 'Überspringen',
     finish: 'Starten',
     features: {

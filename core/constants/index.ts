@@ -13,6 +13,8 @@ export const VISUALIZER_PRESETS = {
   [VisualizerMode.NEBULA]: { name: 'Deep Nebula', description: 'Dense, swirling clouds of color' },
   [VisualizerMode.KALEIDOSCOPE]: { name: 'Kaleidoscope', description: 'Psychedelic mandala patterns' },
   [VisualizerMode.LASERS]: { name: 'Concert Lasers', description: 'Converging sweeping light beams' },
+  [VisualizerMode.FLUID_CURVES]: { name: 'Aura Waves', description: 'Ethereal flowing gradients' },
+  [VisualizerMode.MACRO_BUBBLES]: { name: 'Macro Bubbles', description: 'Organic liquid cellular patterns' },
   [VisualizerMode.SILK]: { name: 'Silk Waves', description: 'Iridescent flowing fabric (WebGL)' },
   [VisualizerMode.LIQUID]: { name: 'Liquid Sphere', description: 'Ferrofluid-like reactive matter (WebGL)' },
   [VisualizerMode.TERRAIN]: { name: 'Low-Poly Terrain', description: 'Flying over reactive mountains (WebGL)' }

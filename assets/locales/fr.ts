@@ -1,3 +1,4 @@
+
 import { VisualizerMode, LyricsStyle } from '../../core/types';
 
 export const fr = {
@@ -162,6 +163,8 @@ export const fr = {
     [VisualizerMode.NEBULA]: 'Nébuleuse Profonde',
     [VisualizerMode.KALEIDOSCOPE]: 'Kaléidoscope',
     [VisualizerMode.LASERS]: 'Lasers de Concert',
+    [VisualizerMode.FLUID_CURVES]: 'Danse des Aurores',
+    [VisualizerMode.MACRO_BUBBLES]: 'Micro-vacuoles',
     [VisualizerMode.SILK]: 'Vagues de Soie',
     [VisualizerMode.LIQUID]: 'Sphère Liquide',
     [VisualizerMode.TERRAIN]: 'Terrain Low-Poly'
@@ -204,6 +207,7 @@ export const fr = {
     subtitle: 'Visualisation Musicale IA',
     selectLanguage: 'Choisir la langue',
     next: 'Suivant',
+    back: 'Retour',
     skip: 'Passer',
     finish: 'Commencer',
     features: {

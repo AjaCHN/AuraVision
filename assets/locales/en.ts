@@ -163,6 +163,8 @@ export const en = {
     [VisualizerMode.NEBULA]: 'Deep Nebula',
     [VisualizerMode.KALEIDOSCOPE]: 'Kaleidoscope',
     [VisualizerMode.LASERS]: 'Concert Lasers',
+    [VisualizerMode.FLUID_CURVES]: 'Aura Waves',
+    [VisualizerMode.MACRO_BUBBLES]: 'Macro Bubbles',
     [VisualizerMode.SILK]: 'Silk Waves',
     [VisualizerMode.LIQUID]: 'Liquid Sphere',
     [VisualizerMode.TERRAIN]: 'Low-Poly Terrain'
@@ -214,6 +216,7 @@ export const en = {
     subtitle: 'Next-Gen AI Music Visualization',
     selectLanguage: 'Select Language',
     next: 'Next',
+    back: 'Back',
     skip: 'Skip',
     finish: 'Get Started',
     features: {

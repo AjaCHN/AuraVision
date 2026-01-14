@@ -13,7 +13,9 @@ export enum VisualizerMode {
   RINGS = 'RINGS',
   NEBULA = 'NEBULA', 
   KALEIDOSCOPE = 'KALEIDOSCOPE',
-  LASERS = 'LASERS',   
+  LASERS = 'LASERS',
+  FLUID_CURVES = 'FLUID_CURVES',
+  MACRO_BUBBLES = 'MACRO_BUBBLES',
   // WebGL Modes
   SILK = 'SILK',
   LIQUID = 'LIQUID',
