@@ -82,7 +82,8 @@ const App: React.FC = () => {
   
   const [settings, setSettings] = useState<VisualizerSettings>(() => {
     const saved = getStorage('settings', DEFAULT_SETTINGS);
-    return { ...DEFAULT_SETTINGS, ...saved };
+    // Safety check: override text layer visibility if not explicitly true to ensure "disabled by default"
+    return { ...DEFAULT_SETTINGS, ...saved, showCustomText: saved?.showCustomText ?? false };
   });
 
   const [lyricsStyle, setLyricsStyle] = useState<LyricsStyle>(() => getStorage('lyricsStyle', DEFAULT_LYRICS_STYLE));
@@ -292,9 +293,11 @@ const App: React.FC = () => {
     return (
       <div className="min-h-[100dvh] bg-black flex items-center justify-center p-6 text-center overflow-y-auto">
         <div className="max-w-md space-y-8 animate-fade-in-up my-auto">
-          <h1 className="text-5xl font-black bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500">{t.welcomeTitle}</h1>
-          <p className="text-gray-400 text-sm leading-relaxed">{t.welcomeText}</p>
-          <button onClick={() => { setHasStarted(true); startMicrophone(selectedDeviceId); }} className="px-8 py-4 bg-white text-black font-bold rounded-2xl hover:scale-105 transition-all">{t.startExperience}</button>
+          <h1 className="text-5xl font-black text-white bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500" style={{ WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+            {t?.welcomeTitle || "Aura Vision"}
+          </h1>
+          <p className="text-gray-400 text-sm leading-relaxed">{t?.welcomeText || "Translate audio into generative art."}</p>
+          <button onClick={() => { setHasStarted(true); startMicrophone(selectedDeviceId); }} className="px-8 py-4 bg-white text-black font-bold rounded-2xl hover:scale-105 transition-all">{t?.startExperience || "Start"}</button>
           {errorMessage && (
              <div className="mt-4 p-3 bg-red-500/20 text-red-200 text-sm rounded-lg border border-red-500/30">
                  {errorMessage}
@@ -317,7 +320,7 @@ const App: React.FC = () => {
                 </svg>
             </div>
             <div className="flex-1">
-                <p className="font-bold text-sm text-red-100">{t.errors.title}</p>
+                <p className="font-bold text-sm text-red-100">{t?.errors?.title || "Error"}</p>
                 <p className="text-xs text-red-200/80 leading-snug">{errorMessage}</p>
             </div>
             <button onClick={() => setErrorMessage(null)} className="p-2 hover:bg-white/10 rounded-full transition-colors">

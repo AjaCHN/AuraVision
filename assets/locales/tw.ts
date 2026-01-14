@@ -146,7 +146,7 @@ export const tw = {
     [VisualizerMode.BARS]: '鏡像頻譜分析',
     [VisualizerMode.PARTICLES]: '速激星空',
     [VisualizerMode.TUNNEL]: '幾何時空隧道',
-    [VisualizerMode.SHAPES]: '抽象幾極演化',
+    [VisualizerMode.SHAPES]: '抽象幾何演化',
     [VisualizerMode.RINGS]: '霓虹共振環',
     [VisualizerMode.NEBULA]: '深空星云',
     [VisualizerMode.KALEIDOSCOPE]: '迷幻萬花筒',
