@@ -93,6 +93,7 @@ export const ja = {
   textSize: 'フォントサイズ',
   textRotation: '回転角度',
   textFont: 'フォントファミリー',
+  textOpacity: '不透明度',
   quality: '画質',
   qualities: {
     low: '低',
@@ -177,7 +178,7 @@ export const ja = {
       smoothing: '反応の滑らかさの調整。',
       fftSize: 'スペクトラムの解像度。'
     },
-    projectInfoTitle: 'エンジン',
+    projectInfoTitle: 'プロジェクト概要',
     projectInfoText: 'Google Gemini 3 Flash、React 19、WebGLを搭載。',
     privacyTitle: 'プライバシー',
     privacyText: 'オーディオはローカルで処理されます。曲の識別のために一時的にデータが送信されますが、保存はされません。',

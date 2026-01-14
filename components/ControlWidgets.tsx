@@ -165,8 +165,8 @@ export const SettingsToggle = ({ label, statusText, value, onChange, hintText, c
          {hintText && <FloatingTooltip text={hintText} visible={isHovered} anchorRef={containerRef} />}
          <div className="flex flex-col">
            {/* Increased font size */}
-           <span className="text-[11px] font-black uppercase text-white/70 tracking-widest">{label}</span>
-           <span className={`text-[10px] font-bold mt-0.5 transition-colors ${value ? 'text-white' : 'text-white/30'}`}>{statusText}</span>
+           <span className="text-[11px] font-bold uppercase text-white/70 tracking-widest">{label}</span>
+           <span className={`text-[10px] font-medium mt-0.5 transition-colors ${value ? 'text-white' : 'text-white/30'}`}>{statusText}</span>
          </div>
          <button onClick={(e) => { e.stopPropagation(); onChange(); }} className={`w-10 h-5 rounded-full relative transition-all duration-500 ${bgClass}`}>
            <div className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow-lg transition-all duration-500 ${value ? 'translate-x-[20px]' : 'translate-x-0'}`} />
@@ -193,7 +193,7 @@ export const Slider = ({ label, value, min, max, step, onChange, icon, hintText,
         onMouseLeave={() => setIsHovered(false)}
       >
         <FloatingTooltip text={hintText} visible={isHovered} anchorRef={containerRef} />
-        <div className="flex justify-between items-end text-[11px] text-white/50 uppercase font-black tracking-widest group-hover:text-white/80 transition-colors">
+        <div className="flex justify-between items-end text-[11px] text-white/50 uppercase font-bold tracking-widest group-hover:text-white/80 transition-colors">
           <span className="flex items-center gap-2">
             {icon} <span className="font-bold">{label}</span>
           </span>
@@ -205,6 +205,7 @@ export const Slider = ({ label, value, min, max, step, onChange, icon, hintText,
           <input 
             type="range" min={min} max={max} step={step} value={value} 
             onPointerDown={(e) => e.stopPropagation()} 
+            // 阻止键盘事件冒泡，确保左右箭头仅控制滑块，不触发全局快捷键
             onKeyDown={(e) => e.stopPropagation()} 
             onChange={(e) => onChange(parseFloat(e.target.value))} 
             className="w-full h-1 bg-transparent cursor-pointer appearance-none relative z-10" 
@@ -247,7 +248,7 @@ export const ControlPanelButton = ({ onClick, label, active, hintText }: { onCli
         {hintText && <FloatingTooltip text={hintText} visible={isHovered} anchorRef={buttonRef} /> }
         <button 
           onClick={onClick} 
-          className={`w-full py-3 rounded-xl border text-[11px] font-black uppercase tracking-[0.15em] transition-all duration-300 ${active ? 'bg-white/15 border-white/30 text-white shadow-[inset_0_2px_10px_rgba(255,255,255,0.05)]' : 'bg-white/[0.04] border-transparent text-white/40 hover:text-white hover:bg-white/10'}`}
+          className={`w-full py-3 rounded-xl border text-[11px] font-bold uppercase tracking-[0.15em] transition-all duration-300 ${active ? 'bg-white/15 border-white/30 text-white shadow-[inset_0_2px_10px_rgba(255,255,255,0.05)]' : 'bg-white/[0.04] border-transparent text-white/40 hover:text-white hover:bg-white/10'}`}
         >
           {label}
         </button>

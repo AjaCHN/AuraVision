@@ -12,10 +12,31 @@ export const identifySongFromAudio = async (
   base64Audio: string, 
   mimeType: string, 
   language: Language = 'en', 
-  region: Region = 'global'
+  region: Region = 'global',
+  provider: 'GEMINI' | 'MOCK' = 'GEMINI'
 ): Promise<SongInfo | null> => {
   
-  // 1. 生成指纹并尝试本地匹配
+  // 0. MOCK Provider for Demo/Dev
+  if (provider === 'MOCK') {
+      await new Promise(resolve => setTimeout(resolve, 1500)); // Simulate latency
+      const mockSongs = [
+          { title: "Midnight City", artist: "M83", lyrics: "Waiting in the car\nWaiting for a ride in the dark\nThe night city grows\nLook and see her eyes, they glow", mood: "Electric" },
+          { title: "Blinding Lights", artist: "The Weeknd", lyrics: "I've been on my own for long enough\nMaybe you can show me how to love, maybe\nI'm going through withdrawals\nYou don't even have to do too much", mood: "Retro" },
+          { title: "Levitating", artist: "Dua Lipa", lyrics: "If you wanna run away with me, I know a galaxy\nAnd I can take you for a ride\nI had a premonition that we fell into a rhythm\nWhere the music don't stop for life", mood: "Funky" }
+      ];
+      const random = mockSongs[Math.floor(Math.random() * mockSongs.length)];
+      return {
+          title: random.title,
+          artist: random.artist,
+          lyricsSnippet: random.lyrics,
+          mood: random.mood,
+          identified: true,
+          matchSource: 'MOCK',
+          searchUrl: 'https://google.com'
+      };
+  }
+
+  // 1. 生成指纹并尝试本地匹配 (Only for Gemini path)
   let features: number[] = [];
   try {
     features = await generateFingerprint(base64Audio);

@@ -93,11 +93,20 @@ export const en = {
   textSize: 'Font Size',
   textRotation: 'Rotation',
   textFont: 'Font Family',
+  textOpacity: 'Opacity',
   quality: 'Visual Quality',
   qualities: {
     low: 'Low',
     med: 'Medium',
     high: 'High'
+  },
+  recognitionSource: 'AI Provider',
+  lyricsPosition: 'Lyrics Position',
+  simulatedDemo: 'Simulated (Demo)',
+  positions: {
+      top: 'Top',
+      center: 'Center',
+      bottom: 'Bottom'
   },
   system: {
     shortcuts: {
@@ -177,7 +186,7 @@ export const en = {
       smoothing: 'Temporal damping of the frequency data.',
       fftSize: 'Sub-band count for spectral resolution.'
     },
-    projectInfoTitle: 'Core Engine',
+    projectInfoTitle: 'Project Description',
     projectInfoText: 'Powered by Google Gemini 3 Flash, React 19, and hardware-accelerated WebGL.',
     privacyTitle: 'Privacy Policy',
     privacyText: 'Audio is analyzed locally. Temporary high-frequency snapshots are sent to Gemini solely for identification.',

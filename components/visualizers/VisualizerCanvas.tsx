@@ -54,7 +54,8 @@ const VisualizerCanvas: React.FC<VisualizerCanvasProps> = ({
     if (!ctx) return;
 
     // Smoothly interpolate colors towards target props.colors
-    const lerpFactor = 0.05; // Adjust for transition speed
+    // Reduced from 0.05 to 0.008 for extremely slow, breathing-like transition
+    const lerpFactor = 0.008; 
     const smoothedColors = currentColorsRef.current.map((curr, i) => {
         const target = colors[i] || colors[0] || '#ffffff';
         return lerpHex(curr, target, lerpFactor);

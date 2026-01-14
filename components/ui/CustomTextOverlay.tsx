@@ -23,6 +23,8 @@ const CustomTextOverlay: React.FC<CustomTextOverlayProps> = ({ settings, analyse
     }
 
     const animate = () => {
+      const baseOpacity = settings.customTextOpacity !== undefined ? settings.customTextOpacity : 1.0;
+
       if (textRef.current && analyser && settings.textPulse) {
         const dataArray = new Uint8Array(analyser.frequencyBinCount);
         analyser.getByteFrequencyData(dataArray);
@@ -40,13 +42,16 @@ const CustomTextOverlay: React.FC<CustomTextOverlayProps> = ({ settings, analyse
         
         // Combine transforms: Rotation first, then Scale
         textRef.current.style.transform = `rotate(${rotation}deg) scale(${scale})`;
-        // Increase base opacity to ensure visibility
-        textRef.current.style.opacity = `${0.8 + bass * 0.2}`;
+        
+        // Calculate pulse intensity and combine with user slider
+        const pulseEffect = 0.6 + bass * 0.4; 
+        textRef.current.style.opacity = `${pulseEffect * baseOpacity}`;
+
       } else if (textRef.current) {
         // Static state if pulse disabled
         const rotation = settings.customTextRotation || 0;
         textRef.current.style.transform = `rotate(${rotation}deg) scale(1)`;
-        textRef.current.style.opacity = '1.0';
+        textRef.current.style.opacity = `${0.9 * baseOpacity}`;
       }
       requestRef.current = requestAnimationFrame(animate);
     };
@@ -56,7 +61,7 @@ const CustomTextOverlay: React.FC<CustomTextOverlayProps> = ({ settings, analyse
     return () => {
       if (requestRef.current) cancelAnimationFrame(requestRef.current);
     };
-  }, [settings.showCustomText, settings.customText, settings.textPulse, settings.sensitivity, settings.customTextRotation, analyser]);
+  }, [settings.showCustomText, settings.customText, settings.textPulse, settings.sensitivity, settings.customTextRotation, settings.customTextOpacity, analyser]);
 
   if (!settings.showCustomText || !settings.customText) return null;
 

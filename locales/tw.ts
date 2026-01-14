@@ -93,6 +93,7 @@ export const tw = {
   textSize: '字體大小',
   textRotation: '旋轉角度',
   textFont: '字體樣式',
+  textOpacity: '不透明度',
   quality: '渲染畫質',
   qualities: {
     low: '低',
@@ -177,7 +178,7 @@ export const tw = {
       smoothing: '音訊資料的阻尼係數，越高則過渡越圓滑。',
       fftSize: '決定了頻譜分析的顆粒度，即頻段數量。'
     },
-    projectInfoTitle: '核心引擎',
+    projectInfoTitle: '專案簡介',
     projectInfoText: '由 Google Gemini 3 Flash 模型、React 19 以及硬體加速的 WebGL 技術棧強力驅動。',
     privacyTitle: '隱私與安全',
     privacyText: '音訊分析完全在本地完成。僅在辨識歌曲時，會將加密的頻率特徵臨時發送至雲端，絕不儲存任何原始錄音。',

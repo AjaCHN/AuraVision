@@ -132,8 +132,9 @@ export const CustomSelect = ({ label, value, options, onChange, hintText }: { la
   );
 };
 
-export const SettingsToggle = ({ label, value, onChange, hintText, children, activeColor = 'blue' }: { 
-  label: string, 
+export const SettingsToggle = ({ label, statusText, value, onChange, hintText, children, activeColor = 'blue' }: { 
+  label: string,
+  statusText?: string, 
   value: boolean, 
   onChange: () => void, 
   hintText?: string, 
@@ -162,6 +163,7 @@ export const SettingsToggle = ({ label, value, onChange, hintText, children, act
          {hintText && <FloatingTooltip text={hintText} visible={isHovered} anchorRef={containerRef} />}
          <div className="flex flex-col justify-center">
            <span className="text-xs font-black uppercase text-white/70 tracking-widest">{label}</span>
+           {statusText && <span className={`text-[10px] font-medium mt-0.5 transition-colors ${value ? 'text-white' : 'text-white/30'}`}>{statusText}</span>}
          </div>
          <button onClick={(e) => { e.stopPropagation(); onChange(); }} className={`w-10 h-5 rounded-full relative transition-all duration-500 ${bgClass}`}>
            <div className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow-lg transition-all duration-500 ${value ? 'translate-x-[20px]' : 'translate-x-0'}`} />

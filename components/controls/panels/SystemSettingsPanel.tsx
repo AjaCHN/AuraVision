@@ -53,7 +53,7 @@ export const SystemSettingsPanel: React.FC<SystemSettingsPanelProps> = ({
       <div className="p-4 flex flex-col h-full overflow-y-auto custom-scrollbar space-y-4 col-span-2">
           {/* Project Info Section */}
           <div className="bg-white/[0.04] p-3 rounded-xl border border-white/5">
-             <h4 className="text-xs font-black text-blue-400 uppercase tracking-widest mb-2 flex items-center gap-1.5">
+             <h4 className="text-xs font-bold text-blue-400 uppercase tracking-widest mb-2 flex items-center gap-1.5">
                <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                {h.projectInfoTitle}
              </h4>
@@ -64,7 +64,7 @@ export const SystemSettingsPanel: React.FC<SystemSettingsPanelProps> = ({
 
           {/* Shortcuts Expanded List */}
           <div className="space-y-2">
-             <h4 className="text-xs font-black text-purple-400 uppercase tracking-widest ml-1">{h.shortcutsTitle}</h4>
+             <h4 className="text-xs font-bold text-purple-400 uppercase tracking-widest ml-1">{h.shortcutsTitle}</h4>
              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                 <ShortcutItem label={s.toggleMic} k="Space" />
                 <ShortcutItem label={s.fullscreen} k="F" />

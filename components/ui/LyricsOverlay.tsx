@@ -59,7 +59,7 @@ const LyricsOverlay: React.FC<LyricsOverlayProps> = ({ settings, song, showLyric
   const lines = text.split('\n').slice(0, 6);
 
   // Dynamic styling based on mode
-  let containerClass = "flex flex-col items-center justify-center text-center transition-transform duration-75 ease-out select-none";
+  let containerClass = "flex flex-col items-center text-center transition-transform duration-75 ease-out select-none px-4";
   let textClass = "";
   let fontStyle: React.CSSProperties = {};
 
@@ -74,8 +74,16 @@ const LyricsOverlay: React.FC<LyricsOverlayProps> = ({ settings, song, showLyric
      fontStyle = { fontSize: 'min(4vw, 36px)', lineHeight: 1.4 };
   }
 
+  // Positioning Logic
+  let positionClass = "justify-center"; // Default center
+  if (settings.lyricsPosition === 'top') {
+      positionClass = "justify-start pt-32 lg:pt-24";
+  } else if (settings.lyricsPosition === 'bottom') {
+      positionClass = "justify-end pb-48 lg:pb-36";
+  }
+
   return (
-    <div className="pointer-events-none fixed inset-0 z-10 flex items-center justify-center overflow-hidden">
+    <div className={`pointer-events-none fixed inset-0 z-10 flex ${positionClass} overflow-hidden`}>
       {/* Background radial gradient to improve readability on busy visualizers */}
       <div className="absolute inset-0 bg-radial-gradient from-black/40 to-transparent opacity-60 pointer-events-none" />
       

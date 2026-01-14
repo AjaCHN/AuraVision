@@ -78,7 +78,7 @@ export const zh = {
   wrongSong: '识别有误？点击重试',
   hideCursor: '隐藏鼠标指针',
   customColor: '自定义颜色',
-  randomizeTooltip: '随机视觉设置 (快捷键: R)',
+  randomizeTooltip: '随机视觉设置 (快捷鍵: R)',
   smoothing: '动态平滑度',
   fftSize: '频域分辨率 (FFT)',
   appInfo: '关于应用',
@@ -93,11 +93,20 @@ export const zh = {
   textSize: '字体大小',
   textRotation: '旋转角度',
   textFont: '字体样式',
+  textOpacity: '不透明度',
   quality: '渲染画质',
   qualities: {
     low: '低',
     med: '中',
     high: '高'
+  },
+  recognitionSource: 'AI 识别源',
+  lyricsPosition: '歌词显示位置',
+  simulatedDemo: '模拟演示 (Demo)',
+  positions: {
+      top: '顶部',
+      center: '居中',
+      bottom: '底部'
   },
   system: {
     shortcuts: {
@@ -177,7 +186,7 @@ export const zh = {
       smoothing: '音频数据的阻尼系数，越高则过渡越圆滑。',
       fftSize: '决定了频谱分析的颗粒度，即频段数量。'
     },
-    projectInfoTitle: '核心引擎',
+    projectInfoTitle: '项目简介',
     projectInfoText: '由 Google Gemini 3 Flash 模型、React 19 以及硬件加速的 WebGL 技术栈强力驱动。',
     privacyTitle: '隐私与安全',
     privacyText: '音频分析完全在本地完成。仅在识别歌曲时，会将加密的频率特征临时发送至云端，绝不存储任何原始录音。',

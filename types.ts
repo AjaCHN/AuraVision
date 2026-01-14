@@ -34,7 +34,7 @@ export interface SongInfo {
   mood?: string;
   identified: boolean;
   searchUrl?: string;
-  matchSource?: 'AI' | 'LOCAL';
+  matchSource?: 'AI' | 'LOCAL' | 'MOCK';
 }
 
 export interface VisualizerSettings {
@@ -58,6 +58,12 @@ export interface VisualizerSettings {
   customTextRotation: number; // degrees -180 to 180
   customTextSize: number; // Scale factor 1 to 100
   customTextFont: string;
+  customTextOpacity: number; // 0.0 to 1.0
+  // AI & Lyrics Settings
+  lyricsPosition: 'top' | 'center' | 'bottom';
+  recognitionProvider: 'GEMINI' | 'MOCK';
+  lyricsStyle?: LyricsStyle;
+  region?: Region;
 }
 
 export interface VisualizerConfig {

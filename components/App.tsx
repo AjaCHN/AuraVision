@@ -34,7 +34,10 @@ const DEFAULT_SETTINGS: VisualizerSettings = {
   textPulse: true,
   customTextRotation: 0,
   customTextSize: 12,
-  customTextFont: 'Inter, sans-serif'
+  customTextFont: 'Inter, sans-serif',
+  customTextOpacity: 1.0,
+  lyricsPosition: 'center',
+  recognitionProvider: 'GEMINI'
 };
 const DEFAULT_LYRICS_STYLE = LyricsStyle.KARAOKE; 
 const DEFAULT_SHOW_LYRICS = false;

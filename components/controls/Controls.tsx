@@ -58,6 +58,19 @@ const Controls: React.FC<ControlsProps> = ({
   const idleTimerRef = useRef<number | null>(null);
   const t = TRANSLATIONS[language];
 
+  // Sync function to bridge the gap between App.tsx separate states and Settings object
+  const handleAiSettingsChange = (newSettings: VisualizerSettings) => {
+      setSettings(newSettings);
+      if (newSettings.lyricsStyle !== lyricsStyle) setLyricsStyle(newSettings.lyricsStyle as LyricsStyle);
+      if (newSettings.region !== region) setRegion(newSettings.region as Region);
+  };
+
+  const aiPanelSettings = {
+      ...settings,
+      lyricsStyle,
+      region
+  };
+
   const toggleFullscreen = () => {
     if (!document.fullscreenElement) {
       document.documentElement.requestFullscreen();
@@ -95,7 +108,6 @@ const Controls: React.FC<ControlsProps> = ({
   // Keyboard Shortcuts Handler
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      // Ignore if user is typing in an input
       const target = e.target as HTMLElement;
       if (target.tagName === 'INPUT' || target.tagName === 'SELECT' || target.tagName === 'TEXTAREA') return;
       if (e.ctrlKey || e.altKey || e.metaKey) return;
@@ -164,6 +176,9 @@ const Controls: React.FC<ControlsProps> = ({
     setMode, setColorTheme, setSettings, setShowLyrics, setIsExpanded
   ]);
 
+  // Adjust font size for Chinese/Traditional Chinese
+  const tabFontSize = (language === 'zh' || language === 'tw') ? 'text-xs' : 'text-[10px]';
+
   return (
     <>
       <HelpModal isOpen={showHelp} onClose={() => setShowHelp(false)} language={language} />
@@ -171,7 +186,7 @@ const Controls: React.FC<ControlsProps> = ({
       {isIdentifying && (
         <div className="fixed top-8 left-8 z-40 bg-black/60 backdrop-blur-2xl border border-blue-500/30 rounded-full px-6 py-3.5 flex items-center gap-4 shadow-[0_15px_40px_rgba(0,0,0,0.6)] animate-pulse">
            <div className="w-2.5 h-2.5 bg-blue-400 rounded-full animate-ping" />
-           <span className="text-xs font-black uppercase tracking-[0.25em] text-blue-100">{t.identifying}</span>
+           <span className="text-xs font-bold uppercase tracking-[0.25em] text-blue-100">{t.identifying}</span>
         </div>
       )}
 
@@ -197,11 +212,11 @@ const Controls: React.FC<ControlsProps> = ({
 
              <button onClick={toggleFullscreen} className="text-white/40 hover:text-white transition-colors" title={t.hints.fullscreen}>
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M20 8V4m0 0h-4M4 16v4m0 0h4M20 16v4m0 0h-4" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
                 </svg>
              </button>
 
-             <button onClick={() => setIsExpanded(true)} className="text-sm font-black uppercase tracking-[0.2em] text-white/60 hover:text-white transition-colors flex items-center gap-2 pl-4">
+             <button onClick={() => setIsExpanded(true)} className="text-sm font-bold uppercase tracking-[0.2em] text-white/60 hover:text-white transition-colors flex items-center gap-2 pl-4">
                <span>{t.showOptions}</span>
                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 opacity-40" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 15l7-7 7 7" /></svg>
              </button>
@@ -211,7 +226,7 @@ const Controls: React.FC<ControlsProps> = ({
 
       {isExpanded && (
         <div 
-          className={`fixed bottom-0 left-0 w-full z-40 bg-neutral-950/95 border-t border-white/10 transition-all duration-700 shadow-[0_-25px_100px_rgba(0,0,0,0.9)] opacity-100 backdrop-blur-xl`}
+          className={`fixed bottom-0 left-0 w-full z-40 bg-[#050505] border-t border-white/10 transition-all duration-700 shadow-[0_-25px_100px_rgba(0,0,0,0.9)] opacity-100`}
         >
           <div className="max-h-[70vh] overflow-y-auto custom-scrollbar p-4 md:p-6">
             <div className="max-w-5xl mx-auto space-y-4">
@@ -221,7 +236,7 @@ const Controls: React.FC<ControlsProps> = ({
                     <button 
                       key={tab} 
                       onClick={() => setActiveTab(tab)} 
-                      className={`px-5 py-2.5 rounded-lg text-[10px] font-black uppercase tracking-[0.2em] transition-all duration-300 flex-shrink-0 ${activeTab === tab ? 'bg-white/20 text-white shadow-lg' : 'text-white/40 hover:text-white hover:bg-white/5'}`}
+                      className={`px-5 py-2.5 rounded-lg ${tabFontSize} font-bold uppercase tracking-[0.2em] transition-all duration-300 flex-shrink-0 ${activeTab === tab ? 'bg-white/20 text-white shadow-lg' : 'text-white/40 hover:text-white hover:bg-white/5'}`}
                     >
                       {t.tabs[tab]}
                     </button>
@@ -230,7 +245,7 @@ const Controls: React.FC<ControlsProps> = ({
                 
                 <div className="flex items-center gap-3">
                   <ActionButton onClick={randomizeSettings} hintText={t.hints.randomize} icon={<svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>} />
-                  <ActionButton onClick={toggleFullscreen} hintText={t.hints.fullscreen} icon={<svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M20 8V4m0 0h-4M4 16v4m0 0h4M20 16v4m0 0h-4" /></svg>} />
+                  <ActionButton onClick={toggleFullscreen} hintText={t.hints.fullscreen} icon={<svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" /></svg>} />
                   <ActionButton onClick={() => setShowHelp(true)} hintText={t.hints.help} icon={<svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>} />
                   <button onClick={() => setIsExpanded(false)} className="w-12 h-10 flex items-center justify-center bg-blue-600 rounded-xl text-white shadow-[0_12px_40px_rgba(37,99,235,0.3)] hover:bg-blue-500 hover:scale-[1.05] active:scale-[0.95] transition-all duration-300">
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" /></svg>
@@ -275,12 +290,10 @@ const Controls: React.FC<ControlsProps> = ({
                   )}
                   {activeTab === 'ai' && (
                     <AiSettingsPanel 
+                      settings={aiPanelSettings}
+                      setSettings={handleAiSettingsChange}
                       showLyrics={showLyrics}
                       setShowLyrics={setShowLyrics}
-                      lyricsStyle={lyricsStyle}
-                      setLyricsStyle={setLyricsStyle}
-                      region={region}
-                      setRegion={setRegion}
                       resetAiSettings={resetAiSettings}
                       t={t}
                     />
