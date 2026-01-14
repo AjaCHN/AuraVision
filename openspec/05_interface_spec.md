@@ -1,3 +1,4 @@
+
 # OpenSpec: UI/UX 与交互规范
 
 ## 1. 视觉层级 (Z-Index)
@@ -38,4 +39,4 @@
 - 滑块 (Sliders): 支持连续拖拽且在移动端禁用页面回弹。
 
 ---
-*Aura Vision Interface - Version 0.4.1*
+*Aura Vision Interface - Version 0.4.2*
