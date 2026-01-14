@@ -93,12 +93,12 @@ export interface AudioDevice {
   label: string;
 }
 
-// FIX: Correctly augment JSX.IntrinsicElements to extend React's built-in types.
-// This prevents overwriting the standard HTML element types (like div, span, etc.)
-// and resolves all JSX-related type errors across the application.
+// FIX: The `extends React.JSX.IntrinsicElements` clause was removed as it created a circular
+// reference, which caused TypeScript to discard the base definitions. Augmentation
+// is now correctly handled by TypeScript's declaration merging, resolving all JSX type errors.
 declare global {
   namespace JSX {
-    interface IntrinsicElements extends React.JSX.IntrinsicElements {
+    interface IntrinsicElements {
       mesh: any;
       group: any;
       pointLight: any;

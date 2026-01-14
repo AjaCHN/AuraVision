@@ -1,3 +1,4 @@
+
 import { IVisualizerRenderer, VisualizerSettings } from '../../types/index';
 import { getAverage } from '../audioUtils';
 
@@ -61,7 +62,6 @@ export class FluidCurvesRenderer implements IVisualizerRenderer {
   draw(ctx: CanvasRenderingContext2D, data: Uint8Array, w: number, h: number, colors: string[], settings: VisualizerSettings, rotation: number) {
     if (colors.length === 0) return;
     const bass = getAverage(data, 0, 10) * settings.sensitivity / 255;
-    const mids = getAverage(data, 20, 60) * settings.sensitivity / 255;
     
     ctx.save();
     ctx.globalCompositeOperation = 'screen';
@@ -74,26 +74,37 @@ export class FluidCurvesRenderer implements IVisualizerRenderer {
       ctx.fillStyle = color;
       ctx.globalAlpha = 0.2 + bass * 0.3;
       
-      ctx.beginPath();
-      ctx.moveTo(0, h);
-      
-      const segments = 6;
+      const segments = 20; // Increased segments for smoothness
       const step = w / segments;
-      
+      const points = [];
+
+      // 1. Calculate all points for the curve
       for (let s = 0; s <= segments; s++) {
         const x = s * step;
-        const offset = Math.sin(x * 0.005 + time + i) * (h * 0.15);
-        const audioBump = Math.cos(x * 0.01 + time * 1.5) * (bass * 120);
+        const offset = Math.sin(x * 0.005 + time + i * 0.5) * (h * 0.15);
+        const audioBump = Math.cos(x * 0.01 + time * 1.5 + i) * (bass * 120);
         const y = h * (0.4 + i * 0.1) + offset + audioBump;
-        
-        if (s === 0) {
-          ctx.lineTo(x, y);
-        } else {
-          const px = (s - 0.5) * step;
-          const py = h * (0.4 + i * 0.1) + Math.sin(px * 0.005 + time + i) * (h * 0.15) + (bass * 100);
-          ctx.quadraticCurveTo(px, py, x, y);
-        }
+        points.push({ x, y });
       }
+
+      // 2. Draw the smooth, filled curve
+      ctx.beginPath();
+      ctx.moveTo(0, h);
+      ctx.lineTo(points[0].x, points[0].y);
+
+      for (let j = 0; j < points.length - 1; j++) {
+        const xc = (points[j].x + points[j + 1].x) / 2;
+        const yc = (points[j].y + points[j + 1].y) / 2;
+        ctx.quadraticCurveTo(points[j].x, points[j].y, xc, yc);
+      }
+      
+      // Curve to the last point to ensure it's included
+      ctx.quadraticCurveTo(
+        points[points.length - 1].x,
+        points[points.length - 1].y,
+        points[points.length - 1].x,
+        points[points.length - 1].y
+      );
       
       ctx.lineTo(w, h);
       ctx.closePath();
