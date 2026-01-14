@@ -165,38 +165,38 @@ export const zh = {
   helpModal: {
     title: 'Aura Vision 交互指南',
     intro: 'Aura Vision 是一款沉浸式的视听交互工具，它利用高精度麦克风采样，将音频信号实时转化为数学生成的数字艺术。',
-    shortcutsTitle: '控制快捷键',
+    shortcutsTitle: '快捷操作键',
     shortcutItems: {
-      toggleMic: '开启/关闭 音频采集',
-      fullscreen: '切换全屏模式',
-      randomize: '随机生成美学方案',
-      lyrics: '显示/隐藏 识别信息',
-      hideUi: '显示/隐藏 控制面板',
-      glow: '开关霓虹光晕',
-      trails: '开关动态拖尾',
-      changeMode: '顺序切换可视化模式',
-      changeTheme: '顺序切换颜色主题'
+      toggleMic: '麦克风',
+      fullscreen: '全屏',
+      randomize: '随机',
+      lyrics: '曲目识别',
+      hideUi: '显示/隐藏面板',
+      glow: '霓虹光晕',
+      trails: '动态拖尾',
+      changeMode: '切换模式',
+      changeTheme: '切换配色'
     },
-    howItWorksTitle: '使用流程',
+    howItWorksTitle: '使用说明',
     howItWorksSteps: [
-      '1. 授权麦克风权限以开启频域分析。',
-      '2. 在感应器附近播放高保真音频。',
-      '3. 视觉引擎将针对不同频段（低音/中音/高音）做出即时反应。',
-      '4. AI 每隔约 30 秒会抓取一段特征码，联网识别歌曲并同步元数据。'
+      '授权麦克风权限以开启实时频域分析。',
+      '在输入设备附近播放高保真音频。',
+      '视觉引擎将根据低音、中音和高频振幅做出即时物理反馈。',
+      'AI 识别功能每 30-45 秒会自动抓取音频特征码进行联网解析。'
     ],
-    settingsTitle: '参数定义',
+    settingsTitle: '核心参数指南',
     settingsDesc: {
       sensitivity: '控制视觉元素对振幅反应的增益。',
       speed: '调节生成算法在时间维度上的演化速率。',
-      glow: '基于屏幕空间的后期泛光强度。',
-      trails: '控制像素在画面上的停留时间，产生拖尾。',
-      smoothing: '音频数据的阻尼系数，越高则过渡越圆滑。',
-      fftSize: '决定了频谱分析的颗粒度，即频段数量。'
+      glow: '后期处理中的全域泛光强度，增强氛围感。',
+      trails: '控制像素在画面上的停留时间，产生运动模糊效果。',
+      smoothing: '音频数据的平滑系数，越高则过渡越圆滑。',
+      fftSize: '决定了频谱分析的颗粒度，即频段采样数量。'
     },
     projectInfoTitle: '项目简介',
     projectInfoText: '由 Google Gemini 3 Flash 模型、React 19 以及硬件加速的 WebGL 技术栈强力驱动。',
     privacyTitle: '隐私与安全',
-    privacyText: '音频分析完全在本地完成。仅在识别歌曲时，会将加密的频率特征临时发送至云端，绝不存储任何原始录音。',
+    privacyText: '音频分析完全在本地完成。仅在识别歌曲时，会将加密的频率特征临时发送至云端，绝不存储或上传任何原始录音数据。',
     version: '发布版本'
   },
   onboarding: {

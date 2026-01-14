@@ -43,7 +43,7 @@ interface ControlsProps {
 
 type TabType = 'visual' | 'text' | 'audio' | 'ai' | 'system';
 
-const IDLE_TIMEOUT = 3000; // 3 seconds per spec
+const IDLE_TIMEOUT = 3000; 
 
 const Controls: React.FC<ControlsProps> = ({
   currentMode, setMode, colorTheme, setColorTheme, toggleMicrophone,
@@ -75,12 +75,15 @@ const Controls: React.FC<ControlsProps> = ({
     }
   };
 
+  // 修复：确保 expanded 状态变化时立即刷新状态
   const resetIdleTimer = useCallback(() => {
-    setIsIdle(false);
     if (idleTimerRef.current) {
       window.clearTimeout(idleTimerRef.current);
     }
-    // Only start timer if the controls are not expanded
+    
+    setIsIdle(false);
+
+    // 面板展开时，禁止启动闲置计时器
     if (!isExpanded) {
       idleTimerRef.current = window.setTimeout(() => {
         setIsIdle(true);
@@ -89,7 +92,8 @@ const Controls: React.FC<ControlsProps> = ({
   }, [isExpanded]);
 
   useEffect(() => {
-    const events = ['mousemove', 'mousedown', 'keydown', 'touchstart', 'touchmove', 'scroll'];
+    // 修复：增加更多的交互监听以覆盖平板端浏览器行为
+    const events = ['mousemove', 'mousedown', 'keydown', 'touchstart', 'touchmove', 'scroll', 'wheel'];
     
     const handleActivity = () => resetIdleTimer();
     const handleSleep = () => setIsIdle(true);
@@ -98,7 +102,7 @@ const Controls: React.FC<ControlsProps> = ({
     window.addEventListener('blur', handleSleep);
     window.addEventListener('focus', handleActivity);
     
-    // Initial timer
+    // 初始化计时器
     resetIdleTimer();
 
     return () => {
