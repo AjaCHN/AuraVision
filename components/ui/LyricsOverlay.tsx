@@ -31,16 +31,24 @@ const LyricsOverlay: React.FC<LyricsOverlayProps> = ({ settings, song, showLyric
   const lines = text.split('\n').slice(0, 6);
 
   let textClass = "";
-  let fontStyle: React.CSSProperties = {};
+  let fontStyle: React.CSSProperties = {
+    fontFamily: settings.lyricsFont || 'Inter, sans-serif',
+  };
+  
+  const baseSizeVw = settings.lyricsFontSize || 4;
+
   if (lyricsStyle === LyricsStyle.KARAOKE) {
      textClass = "font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-300 via-white to-purple-300 drop-shadow-[0_0_15px_rgba(255,255,255,0.5)]";
-     fontStyle = { fontFamily: '"Inter", sans-serif', fontSize: 'min(5vw, 48px)', lineHeight: 1.3 };
+     const sizeVw = baseSizeVw;
+     fontStyle = { ...fontStyle, fontSize: `min(${sizeVw}vw, ${sizeVw * 12}px)`, lineHeight: 1.3 };
   } else if (lyricsStyle === LyricsStyle.MINIMAL) {
      textClass = "font-mono text-white/80 tracking-[0.2em]";
-     fontStyle = { fontSize: 'min(2.5vw, 20px)', lineHeight: 1.8 };
+     const sizeVw = baseSizeVw * 0.6;
+     fontStyle = { ...fontStyle, fontSize: `min(${sizeVw}vw, ${sizeVw * 8.5}px)`, lineHeight: 1.8 };
   } else {
      textClass = "font-serif italic text-white drop-shadow-md";
-     fontStyle = { fontSize: 'min(4vw, 36px)', lineHeight: 1.4 };
+     const sizeVw = baseSizeVw * 0.9;
+     fontStyle = { ...fontStyle, fontSize: `min(${sizeVw}vw, ${sizeVw * 10}px)`, lineHeight: 1.4 };
   }
 
   const getPositionClasses = () => {

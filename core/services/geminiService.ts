@@ -28,11 +28,11 @@ export const identifySongFromAudio = async (
     try {
         const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
         const regionName = region === 'global' ? 'Global' : (REGION_NAMES[region] || region);
-        const systemInstruction = `You are an expert music identification service. Your task is to analyze the provided audio clip and identify the song. The target music market is '${regionName}'. You must return the song's title, artist, a brief and relevant snippet of the lyrics, and a single-word descriptor for the mood (e.g., 'Energetic', 'Melancholy'). If you are unable to identify the song with high confidence, you MUST set the 'identified' field to false and return null or empty strings for the other fields.`;
+        const systemInstruction = `You are an expert music identification service. Your task is to analyze the provided audio clip's melody, harmony, rhythm, and any discernible lyrics to identify the song. The target music market is '${regionName}'. You must return the song's title, artist, a brief and relevant snippet of the lyrics, and a single-word descriptor for the mood (e.g., 'Energetic', 'Melancholy'). If you are unable to identify the song with high confidence, you MUST return 'identified': false and null or empty strings for the other fields.`;
 
         const response = await ai.models.generateContent({
           model: GEMINI_MODEL,
-          contents: { parts: [{ inlineData: { mimeType: mimeType, data: base64Audio } }, { text: "Identify this song." }] },
+          contents: { parts: [{ inlineData: { mimeType: mimeType, data: base64Audio } }, { text: "Please identify the song from this audio clip." }] },
           config: { 
             tools: [{ googleSearch: {} }], 
             systemInstruction: systemInstruction,

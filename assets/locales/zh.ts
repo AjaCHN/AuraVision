@@ -111,6 +111,8 @@ export const zh = {
   },
   recognitionSource: 'AI 识别源',
   lyricsPosition: '歌词显示位置',
+  lyricsFont: '字体样式',
+  lyricsFontSize: '字体大小',
   simulatedDemo: '模拟演示 (Demo)',
   positions: {
       top: '顶部',

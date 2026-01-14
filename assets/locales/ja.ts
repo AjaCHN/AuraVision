@@ -110,6 +110,8 @@ export const ja = {
   },
   recognitionSource: 'AIプロバイダー',
   lyricsPosition: '歌詞の位置',
+  lyricsFont: 'フォントファミリー',
+  lyricsFontSize: 'フォントサイズ',
   simulatedDemo: 'シミュレーション (デモ)',
   positions: {
       top: '上',

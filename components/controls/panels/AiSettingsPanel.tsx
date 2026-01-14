@@ -1,7 +1,7 @@
 import React from 'react';
 import { LyricsStyle, Region, Position } from '../../../core/types';
-import { REGION_NAMES, getPositionOptions } from '../../../core/constants';
-import { CustomSelect, SettingsToggle, TooltipArea, PositionSelector } from '../ControlWidgets';
+import { REGION_NAMES, getPositionOptions, AVAILABLE_FONTS } from '../../../core/constants';
+import { CustomSelect, SettingsToggle, Slider, PositionSelector } from '../ControlWidgets';
 import { useAppContext } from '../../AppContext';
 
 const BetaBadge = ({ label }: { label?: string }) => (
@@ -46,6 +46,18 @@ export const AiSettingsPanel: React.FC = () => {
           hintText={hints?.lyricsStyle} 
           options={Object.values(LyricsStyle).map(s => ({ value: s, label: lyricsStyles[s] || s }))} 
           onChange={(val) => setSettings({...settings, lyricsStyle: val as LyricsStyle})} 
+        />
+        <CustomSelect 
+            label={t?.lyricsFont || "Font Family"} 
+            value={settings.lyricsFont || 'Inter, sans-serif'} 
+            options={AVAILABLE_FONTS} 
+            onChange={(val) => setSettings({...settings, lyricsFont: val})} 
+        />
+        <Slider 
+            label={t?.lyricsFontSize || "Font Size"} 
+            value={settings.lyricsFontSize ?? 4} 
+            min={1} max={8} step={0.5} 
+            onChange={(v: number) => setSettings({...settings, lyricsFontSize: v})} 
         />
       </div>
 

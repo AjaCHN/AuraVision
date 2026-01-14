@@ -110,6 +110,8 @@ export const es = {
   },
   recognitionSource: 'Fuente de IA',
   lyricsPosition: 'Posición de Letras',
+  lyricsFont: 'Familia de Fuentes',
+  lyricsFontSize: 'Tamaño de Fuente',
   simulatedDemo: 'Simulado (Demo)',
   positions: {
       top: 'Arriba',

@@ -111,6 +111,8 @@ export const tw = {
   },
   recognitionSource: 'AI 辨識源',
   lyricsPosition: '歌詞顯示位置',
+  lyricsFont: '字體樣式',
+  lyricsFontSize: '字體大小',
   simulatedDemo: '模擬演示 (Demo)',
   positions: {
       top: '頂部',

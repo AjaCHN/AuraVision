@@ -110,6 +110,8 @@ export const ko = {
   },
   recognitionSource: 'AI 제공자',
   lyricsPosition: '가사 위치',
+  lyricsFont: '글꼴',
+  lyricsFontSize: '글꼴 크기',
   simulatedDemo: '시뮬레이션 (데모)',
   positions: {
       top: '상단',

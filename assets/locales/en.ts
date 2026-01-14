@@ -110,6 +110,8 @@ export const en = {
   },
   recognitionSource: 'AI Provider',
   lyricsPosition: 'Lyrics Position',
+  lyricsFont: 'Font Family',
+  lyricsFontSize: 'Font Size',
   simulatedDemo: 'Simulated (Demo)',
   positions: {
       top: 'Top',

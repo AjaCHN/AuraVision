@@ -68,6 +68,8 @@ export interface VisualizerSettings {
   lyricsPosition: Position;
   recognitionProvider: 'GEMINI' | 'MOCK' | 'OPENAI' | 'CLAUDE' | 'GROK';
   lyricsStyle?: LyricsStyle;
+  lyricsFont?: string;
+  lyricsFontSize?: number;
   region?: Region;
 }
 

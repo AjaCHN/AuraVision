@@ -22,7 +22,18 @@ export const useIdentification = ({ language, region, provider, showLyrics }: Us
     setIsIdentifying(true);
     
     try {
-      const recorder = new MediaRecorder(stream);
+      let recorder: MediaRecorder;
+      try {
+        const recorderOptions = {
+          mimeType: 'audio/webm;codecs=opus',
+          bitsPerSecond: 128000
+        };
+        recorder = new MediaRecorder(stream, recorderOptions);
+      } catch (e) {
+        console.warn("High-quality MediaRecorder options not supported, falling back.", e);
+        recorder = new MediaRecorder(stream);
+      }
+
       const chunks: Blob[] = [];
       recorder.ondataavailable = (e) => chunks.push(e.data);
       recorder.onstop = async () => {
@@ -57,7 +68,7 @@ export const useIdentification = ({ language, region, provider, showLyrics }: Us
       recorder.start();
       setTimeout(() => {
         if (recorder.state === 'recording') recorder.stop();
-      }, 7000); 
+      }, 4000); 
     } catch (e) {
       console.error("Recording error:", e);
       // Ensure loading state is reset if recorder setup fails

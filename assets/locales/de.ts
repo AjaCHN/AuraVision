@@ -110,6 +110,8 @@ export const de = {
   },
   recognitionSource: 'KI-Anbieter',
   lyricsPosition: 'Textposition',
+  lyricsFont: 'Schriftfamilie',
+  lyricsFontSize: 'Schriftgröße',
   simulatedDemo: 'Simuliert (Demo)',
   positions: {
       top: 'Oben',

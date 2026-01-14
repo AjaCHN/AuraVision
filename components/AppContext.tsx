@@ -59,7 +59,7 @@ const DEFAULT_SETTINGS: VisualizerSettings = {
   quality: 'high', monitor: false, wakeLock: false, customText: 'AURA', showCustomText: false,
   textPulse: true, customTextRotation: 0, customTextSize: 12, customTextFont: 'Inter, sans-serif',
   customTextOpacity: 0.35, customTextColor: '#ffffff', customTextPosition: 'mc', lyricsPosition: 'mc',
-  recognitionProvider: 'GEMINI'
+  recognitionProvider: 'GEMINI', lyricsFont: 'Inter, sans-serif', lyricsFontSize: 4
 };
 
 // --- Provider Component ---

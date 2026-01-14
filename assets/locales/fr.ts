@@ -110,6 +110,8 @@ export const fr = {
   },
   recognitionSource: 'Source IA',
   lyricsPosition: 'Position des Paroles',
+  lyricsFont: 'Police de caractères',
+  lyricsFontSize: 'Taille de la police',
   simulatedDemo: 'Simulation (Démo)',
   positions: {
       top: 'Haut',

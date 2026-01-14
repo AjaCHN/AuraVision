@@ -43,7 +43,7 @@ export const useAiState = ({
     let interval: number;
     if (isListening && mediaStream && showLyrics && !isSimulating) {
       performIdentification(mediaStream);
-      interval = window.setInterval(() => performIdentification(mediaStream), 45000);
+      interval = window.setInterval(() => performIdentification(mediaStream), 20000);
     }
     return () => clearInterval(interval);
   }, [isListening, mediaStream, showLyrics, performIdentification, isSimulating]);
@@ -55,6 +55,8 @@ export const useAiState = ({
       ...p,
       lyricsPosition: initialSettings.lyricsPosition,
       recognitionProvider: initialSettings.recognitionProvider,
+      lyricsFont: initialSettings.lyricsFont,
+      lyricsFontSize: initialSettings.lyricsFontSize
     }));
   }, [setSettings, initialSettings]);
 
