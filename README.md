@@ -5,7 +5,7 @@
 [中文文档](README_ZH.md) | [Live Demo](https://aura-vision.vercel.app/)
 
 <p align="center">
-  <img src="./assets/images/aura-banner.jpg" alt="Aura Vision Banner" width="100%" />
+  <img src="assets/images/aura-banner.jpg" alt="Aura Vision Banner" width="100%" />
 </p>
 
 <p align="center">
@@ -24,7 +24,7 @@
 
 | Silk Waves (WebGL) | Liquid Sphere (3D) | Low-Poly Terrain (3D) |
 | :---: | :---: | :---: |
-| ![Silk](./assets/images/mode-silk.jpg) | ![Liquid](./assets/images/mode-liquid.jpg) | ![Terrain](./assets/images/mode-terrain.jpg) |
+| ![Silk](assets/images/mode-silk.jpg) | ![Liquid](assets/images/mode-liquid.jpg) | ![Terrain](assets/images/mode-terrain.jpg) |
 
 ---
 
