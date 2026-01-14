@@ -3,17 +3,21 @@ import { IVisualizerRenderer, VisualizerSettings } from '../../types/index';
 import { getAverage } from '../audioUtils';
 
 export class ParticlesRenderer implements IVisualizerRenderer {
-  private particles: Array<{ x: number; y: number; z: number; px: number; py: number; size: number; colorOffset: number; }> = [];
+  private particles: Array<{ x: number; y: number; z: number; px: number; py: number; size: number; vx: number; vy: number; }> = [];
   init() { this.particles = []; }
+
   draw(ctx: CanvasRenderingContext2D, data: Uint8Array, w: number, h: number, colors: string[], settings: VisualizerSettings, rotation: number) {
     if (colors.length === 0) return;
     const time = rotation * 0.5;
-    const centerX = w / 2 + Math.sin(time) * (w * 0.15);
-    const centerY = h / 2 + Math.cos(time * 0.7) * (h * 0.15);
-    const mids = getAverage(data, 10, 50) / 255;
+    
+    // Elegant Drift: The vanishing point now drifts slowly in a Lissajous curve pattern.
+    const centerX = w / 2 + Math.sin(time * 0.3) * (w * 0.2);
+    const centerY = h / 2 + Math.cos(time * 0.2) * (h * 0.2);
+    
     const bass = getAverage(data, 0, 10) / 255;
     const highs = getAverage(data, 100, 200) / 255;
-    const maxParticles = settings.quality === 'high' ? 300 : settings.quality === 'med' ? 180 : 80;
+    const maxParticles = settings.quality === 'high' ? 250 : settings.quality === 'med' ? 150 : 70;
+
     if (this.particles.length === 0) {
         for (let i = 0; i < maxParticles; i++) this.particles.push(this.createParticle(w, h, Math.random() * w));
     } else if (this.particles.length < maxParticles) {
@@ -21,32 +25,61 @@ export class ParticlesRenderer implements IVisualizerRenderer {
     } else if (this.particles.length > maxParticles) {
         this.particles = this.particles.slice(0, maxParticles);
     }
-    const moveSpeed = (2 + (mids * 40) + (highs * 20)) * settings.speed * settings.sensitivity;
+
+    // Speed is now more reactive to high frequencies
+    const moveSpeed = (1 + (bass * 10) + (highs * 40)) * settings.speed * settings.sensitivity;
+    
     ctx.lineCap = 'round';
     for (let i = 0; i < this.particles.length; i++) {
         const p = this.particles[i];
         p.z -= moveSpeed;
-        if (p.z <= 1) {
+        
+        // Curving Trajectories: Add a slight perpendicular velocity
+        p.x += p.vx * settings.speed;
+        p.y += p.vy * settings.speed;
+
+        if (p.z <= 1 || p.x > w || p.y > h) {
             this.particles[i] = this.createParticle(w, h, w);
             continue; 
         }
+
         const k = 128.0 / p.z;
         const px = (p.x * k) + centerX;
         const py = (p.y * k) + centerY;
-        const isOutside = (px < 0 || px > w || py < 0 || py > h) && (p.px < 0 || p.px > w || p.py < 0 || p.py > h);
-        if (!isOutside) {
-            const size = p.size * k * (settings.quality === 'low' ? 2 : 1);
-            ctx.strokeStyle = colors[i % colors.length];
+
+        if (px > 0 && px < w && py > 0 && py < h) {
+            const size = (1 + p.size) * k * (1 + bass * 1.5);
+            // Star-like Appearance: Brighter head, fainter tail
+            const g = ctx.createLinearGradient(p.px, p.py, px, py);
+            g.addColorStop(0, `${colors[i % colors.length]}00`);
+            g.addColorStop(0.7, `${colors[i % colors.length]}ff`);
+            
+            ctx.strokeStyle = g;
             ctx.lineWidth = size;
-            ctx.globalAlpha = Math.min(1, (w - p.z) / (w * 0.3));
-            ctx.beginPath(); ctx.moveTo(p.px, p.py); ctx.lineTo(px, py); ctx.stroke();
+            ctx.beginPath(); 
+            ctx.moveTo(p.px, p.py); 
+            ctx.lineTo(px, py); 
+            ctx.stroke();
         }
-        p.px = px; p.py = py;
+        p.px = px; 
+        p.py = py;
     }
-    ctx.globalAlpha = 1.0;
   }
+
   private createParticle(w: number, h: number, z: number) {
-      return { x: (Math.random() - 0.5) * w * 2, y: (Math.random() - 0.5) * h * 2, z: z, px: w / 2, py: h / 2, size: Math.random() * 1.5 + 0.5, colorOffset: Math.random() };
+      const angle = Math.random() * Math.PI * 2;
+      const radius = Math.random() * w * 0.1;
+      return { 
+          x: Math.cos(angle) * radius, 
+          y: Math.sin(angle) * radius, 
+          z: z, 
+          px: w / 2, 
+          py: h / 2, 
+          size: Math.random() * 1.5 + 0.5,
+          // Add sideways velocity for curved paths
+          vx: (Math.random() - 0.5) * 0.5,
+          vy: (Math.random() - 0.5) * 0.5,
+      };
   }
 }
 
@@ -55,10 +88,9 @@ export class NebulaRenderer implements IVisualizerRenderer {
     x: number; y: number; vx: number; vy: number; 
     life: number; maxLife: number; size: number; 
     colorIndex: number; rotation: number; rotationSpeed: number; 
-    noiseOffset: number; 
+    depth: number; // For parallax
   }> = [];
   private spriteCache: Record<string, HTMLCanvasElement> = {};
-  private spawnCenter = { x: 0, y: 0 };
 
   init() { 
     this.particles = []; 
@@ -73,9 +105,11 @@ export class NebulaRenderer implements IVisualizerRenderer {
     const ctx = canvas.getContext('2d');
     if (!ctx) return canvas;
     
+    // More complex sprite for a wispier, gaseous look
     const g = ctx.createRadialGradient(size/2, size/2, 0, size/2, size/2, size * 0.45);
-    g.addColorStop(0, `rgba(255,255,255,0.15)`); 
-    g.addColorStop(0.5, `rgba(255,255,255,0.05)`);
+    g.addColorStop(0, `rgba(255,255,255,0.2)`);
+    g.addColorStop(0.2, `rgba(255,255,255,0.1)`);
+    g.addColorStop(0.7, `rgba(255,255,255,0.02)`);
     g.addColorStop(1, 'rgba(255,255,255,0)');
     
     ctx.fillStyle = g; 
@@ -92,73 +126,70 @@ export class NebulaRenderer implements IVisualizerRenderer {
   }
 
   private resetParticle(p: any, w: number, h: number, colorsCount: number) {
-    // Bias spawn towards a moving focus point
-    const angle = Math.random() * Math.PI * 2;
-    const dist = Math.random() * (Math.min(w, h) * 0.4);
-    p.x = this.spawnCenter.x + Math.cos(angle) * dist;
-    p.y = this.spawnCenter.y + Math.sin(angle) * dist;
-    p.vx = (Math.random() - 0.5) * 0.5;
-    p.vy = (Math.random() - 0.5) * 0.5;
+    p.x = Math.random() * w;
+    p.y = Math.random() * h;
+    p.vx = 0;
+    p.vy = 0;
     p.life = 0;
-    p.maxLife = 1000 + Math.random() * 800;
-    p.size = (w * 0.25) + (Math.random() * w * 0.3);
+    p.maxLife = 2000 + Math.random() * 1500;
     p.colorIndex = Math.floor(Math.random() * colorsCount);
     p.rotation = Math.random() * Math.PI * 2;
-    p.rotationSpeed = (Math.random() - 0.5) * 0.003;
+    p.rotationSpeed = (Math.random() - 0.5) * 0.001;
+    // Parallax effect: depth determines size, speed, and alpha
+    p.depth = Math.random() * 0.6 + 0.4; // 0.4 (far) to 1.0 (near)
+    p.size = (w * 0.2) * p.depth + (Math.random() * w * 0.2);
   }
 
   draw(ctx: CanvasRenderingContext2D, data: Uint8Array, w: number, h: number, colors: string[], settings: VisualizerSettings, rotation: number) {
     if (colors.length === 0) return;
     
-    // Update global spawn center to drift slowly
-    this.spawnCenter.x = w/2 + Math.sin(rotation * 0.2) * (w * 0.2);
-    this.spawnCenter.y = h/2 + Math.cos(rotation * 0.15) * (h * 0.2);
-
     const bass = getAverage(data, 0, 15) / 255;
-    const maxParticles = settings.quality === 'high' ? 65 : settings.quality === 'med' ? 40 : 20;
+    const maxParticles = settings.quality === 'high' ? 50 : settings.quality === 'med' ? 30 : 15;
 
-    if (this.particles.length < maxParticles) {
-        const p = { x: 0, y: 0, vx: 0, vy: 0, life: 0, maxLife: 1, size: 0, colorIndex: 0, rotation: 0, rotationSpeed: 0, noiseOffset: Math.random() * 1000 };
-        // Initial spread
+    while (this.particles.length < maxParticles) {
+        const p = { x: 0, y: 0, vx: 0, vy: 0, life: 0, maxLife: 1, size: 0, colorIndex: 0, rotation: 0, rotationSpeed: 0, depth: 1 };
         this.resetParticle(p, w, h, colors.length);
         p.life = Math.random() * p.maxLife; 
         this.particles.push(p);
-    } else if (this.particles.length > maxParticles) {
-        this.particles = this.particles.slice(0, maxParticles);
     }
-
+    
     ctx.save(); 
     ctx.globalCompositeOperation = 'screen';
 
+    const vortexCenterX = w / 2 + Math.sin(rotation * 0.1) * 100;
+    const vortexCenterY = h / 2 + Math.cos(rotation * 0.1) * 100;
+
     for (let i = 0; i < this.particles.length; i++) {
         const p = this.particles[i]; 
-        p.life += settings.speed * 1.2;
+        p.life += settings.speed * p.depth; // Deeper particles live longer/move slower
         
-        // Fluid noise-like movement
-        const timeFactor = rotation * 0.3;
-        const driftX = Math.sin(p.x * 0.0015 + timeFactor) * 0.35;
-        const driftY = Math.cos(p.y * 0.0015 + timeFactor) * 0.35;
-        
-        p.vx = p.vx * 0.98 + driftX * settings.speed;
-        p.vy = p.vy * 0.98 + (driftY - 0.05) * settings.speed; 
-        
-        p.x += p.vx * (1 + bass * 4); 
-        p.y += p.vy * (1 + bass * 4);
-        p.rotation += p.rotationSpeed * (1 + bass * 2);
+        // Cosmic Wind & Vortex: Particles are drawn towards a moving center point.
+        const angleToCenter = Math.atan2(vortexCenterY - p.y, vortexCenterX - p.x);
+        const vortexStrength = 0.02 * p.depth;
+        const windX = Math.cos(angleToCenter) * vortexStrength;
+        const windY = Math.sin(angleToCenter) * vortexStrength;
 
-        if (p.life > p.maxLife) { 
+        p.vx = p.vx * 0.96 + windX * settings.speed;
+        p.vy = p.vy * 0.96 + windY * settings.speed; 
+        
+        p.x += p.vx * (1 + bass * 2); 
+        p.y += p.vy * (1 + bass * 2);
+        p.rotation += p.rotationSpeed * settings.speed;
+
+        if (p.life > p.maxLife || p.x < -p.size || p.x > w + p.size || p.y < -p.size || p.y > h + p.size) { 
           this.resetParticle(p, w, h, colors.length);
         }
 
         const fadeInOut = Math.sin((p.life / p.maxLife) * Math.PI); 
-        const dynamicAlpha = (0.05 + bass * 0.4) * fadeInOut * settings.sensitivity;
+        // Deeper particles are fainter
+        const dynamicAlpha = (0.1 + bass * 0.5) * fadeInOut * settings.sensitivity * p.depth;
         
         if (dynamicAlpha < 0.005) continue;
 
         const sprite = this.getSprite(colors[p.colorIndex % colors.length] || '#fff'); 
-        const finalSize = p.size * (1 + bass * 0.3 * settings.sensitivity);
+        const finalSize = p.size * (1 + bass * 0.5 * settings.sensitivity);
         
-        ctx.globalAlpha = Math.min(0.4, dynamicAlpha); 
+        ctx.globalAlpha = Math.min(0.5, dynamicAlpha); 
         ctx.save(); 
         ctx.translate(p.x, p.y); 
         ctx.rotate(p.rotation); 
