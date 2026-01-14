@@ -6,6 +6,7 @@ import Controls from './controls/Controls';
 import SongOverlay from './ui/SongOverlay';
 import CustomTextOverlay from './ui/CustomTextOverlay';
 import LyricsOverlay from './ui/LyricsOverlay';
+import { OnboardingOverlay } from './ui/OnboardingOverlay'; // Import new component
 import { VisualizerMode, SongInfo, LyricsStyle, Language, VisualizerSettings, Region } from '../types';
 import { COLOR_THEMES } from '../constants';
 import { identifySongFromAudio } from '../services/geminiService';
@@ -13,6 +14,7 @@ import { TRANSLATIONS } from '../i18n';
 import { useAudio } from '../hooks/useAudio';
 
 const STORAGE_PREFIX = 'av_v1_'; 
+const ONBOARDING_KEY = 'av_v1_has_onboarded'; // New key for onboarding state
 const DEFAULT_MODE = VisualizerMode.PLASMA; 
 const DEFAULT_THEME_INDEX = 1; 
 const DEFAULT_SETTINGS: VisualizerSettings = {
@@ -46,6 +48,11 @@ const DEFAULT_LANGUAGE: Language = 'en';
 
 const App: React.FC = () => {
   const [hasStarted, setHasStarted] = useState(false);
+  // Check if user has seen onboarding
+  const [showOnboarding, setShowOnboarding] = useState(() => {
+    if (typeof window === 'undefined') return false;
+    return !localStorage.getItem(ONBOARDING_KEY);
+  });
   
   const getStorage = useCallback(<T,>(key: string, fallback: T): T => {
     if (typeof window === 'undefined') return fallback;
@@ -73,8 +80,6 @@ const App: React.FC = () => {
   const [mode, setMode] = useState<VisualizerMode>(() => getStorage('mode', DEFAULT_MODE));
   const [colorTheme, setColorTheme] = useState<string[]>(() => getStorage('theme', COLOR_THEMES[DEFAULT_THEME_INDEX]));
   
-  // FIXED: Merge stored settings with defaults to ensure all keys (like colorInterval) exist.
-  // This prevents crashes when new features are added but old settings are in localStorage.
   const [settings, setSettings] = useState<VisualizerSettings>(() => {
     const saved = getStorage('settings', DEFAULT_SETTINGS);
     return { ...DEFAULT_SETTINGS, ...saved };
@@ -86,7 +91,6 @@ const App: React.FC = () => {
   const [region, setRegion] = useState<Region>(() => getStorage('region', detectDefaultRegion()));
   const [selectedDeviceId, setSelectedDeviceId] = useState<string>(() => getStorage('deviceId', ''));
 
-  // Use the new custom hook to handle all audio logic
   const { 
     isListening, 
     audioContext, 
@@ -118,6 +122,11 @@ const App: React.FC = () => {
     });
   }, [mode, colorTheme, settings, lyricsStyle, showLyrics, language, region, selectedDeviceId]);
 
+  const handleOnboardingComplete = () => {
+    localStorage.setItem(ONBOARDING_KEY, 'true');
+    setShowOnboarding(false);
+  };
+
   const randomizeSettings = useCallback(() => {
     const randomTheme = COLOR_THEMES[Math.floor(Math.random() * COLOR_THEMES.length)];
     setColorTheme(randomTheme);
@@ -136,7 +145,7 @@ const App: React.FC = () => {
 
   const resetAppSettings = useCallback(() => {
     Object.keys(localStorage).forEach(key => {
-      if (key.startsWith(STORAGE_PREFIX)) localStorage.removeItem(key);
+      if (key.startsWith(STORAGE_PREFIX) || key === ONBOARDING_KEY) localStorage.removeItem(key);
     });
     window.location.reload(); 
   }, []);
@@ -267,6 +276,17 @@ const App: React.FC = () => {
 
   const isThreeMode = mode === VisualizerMode.SILK || mode === VisualizerMode.LIQUID || mode === VisualizerMode.TERRAIN;
   const t = TRANSLATIONS[language];
+
+  // Render Onboarding if needed
+  if (showOnboarding) {
+    return (
+      <OnboardingOverlay 
+        language={language} 
+        setLanguage={setLanguage} 
+        onComplete={handleOnboardingComplete} 
+      />
+    );
+  }
 
   if (!hasStarted) {
     return (

@@ -34,7 +34,7 @@ export interface SongInfo {
   mood?: string;
   identified: boolean;
   searchUrl?: string;
-  matchSource?: 'AI' | 'LOCAL' | 'MOCK';
+  matchSource?: 'AI' | 'LOCAL' | 'MOCK' | 'GEMINI' | 'OPENAI' | 'CLAUDE' | 'GROK';
 }
 
 export interface VisualizerSettings {
@@ -62,7 +62,7 @@ export interface VisualizerSettings {
   customTextColor: string; // New: Custom text color
   // AI & Lyrics Settings
   lyricsPosition: 'top' | 'center' | 'bottom';
-  recognitionProvider: 'GEMINI' | 'MOCK';
+  recognitionProvider: 'GEMINI' | 'MOCK' | 'OPENAI' | 'CLAUDE' | 'GROK';
   lyricsStyle?: LyricsStyle;
   region?: Region;
 }

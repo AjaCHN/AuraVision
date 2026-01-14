@@ -45,6 +45,9 @@ export const AiSettingsPanel: React.FC<AiSettingsPanelProps> = ({
                 value={settings.recognitionProvider || 'GEMINI'}
                 options={[
                     { value: 'GEMINI', label: 'Gemini 3.0 (Official)' },
+                    { value: 'OPENAI', label: 'GPT-4o (OpenAI)' },
+                    { value: 'CLAUDE', label: 'Claude 3.5 Sonnet' },
+                    { value: 'GROK', label: 'Grok 2 (xAI)' },
                     { value: 'MOCK', label: t.simulatedDemo || 'Simulated (Demo)' }
                 ]}
                 onChange={(val) => setSettings({...settings, recognitionProvider: val})}

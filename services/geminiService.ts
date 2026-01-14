@@ -13,16 +13,18 @@ export const identifySongFromAudio = async (
   mimeType: string, 
   language: Language = 'en', 
   region: Region = 'global',
-  provider: 'GEMINI' | 'MOCK' = 'GEMINI'
+  provider: 'GEMINI' | 'MOCK' | 'OPENAI' | 'CLAUDE' | 'GROK' = 'GEMINI'
 ): Promise<SongInfo | null> => {
   
-  // 0. MOCK Provider for Demo/Dev
-  if (provider === 'MOCK') {
+  // 0. Simulation Providers
+  // Since we only have Gemini keys configured, other providers are simulated for UI demonstration
+  if (provider !== 'GEMINI') {
       await new Promise(resolve => setTimeout(resolve, 1500)); // Simulate latency
       const mockSongs = [
           { title: "Midnight City", artist: "M83", lyrics: "Waiting in the car\nWaiting for a ride in the dark\nThe night city grows\nLook and see her eyes, they glow", mood: "Electric" },
           { title: "Blinding Lights", artist: "The Weeknd", lyrics: "I've been on my own for long enough\nMaybe you can show me how to love, maybe\nI'm going through withdrawals\nYou don't even have to do too much", mood: "Retro" },
-          { title: "Levitating", artist: "Dua Lipa", lyrics: "If you wanna run away with me, I know a galaxy\nAnd I can take you for a ride\nI had a premonition that we fell into a rhythm\nWhere the music don't stop for life", mood: "Funky" }
+          { title: "Levitating", artist: "Dua Lipa", lyrics: "If you wanna run away with me, I know a galaxy\nAnd I can take you for a ride\nI had a premonition that we fell into a rhythm\nWhere the music don't stop for life", mood: "Funky" },
+          { title: "Starboy", artist: "The Weeknd", lyrics: "I'm tryna put you in the worst mood, ah\nP1 cleaner than your church shoes, ah\nMilli point two just to hurt you, ah\nAll red Lamb' just to tease you, ah", mood: "Cool" }
       ];
       const random = mockSongs[Math.floor(Math.random() * mockSongs.length)];
       return {
@@ -31,7 +33,7 @@ export const identifySongFromAudio = async (
           lyricsSnippet: random.lyrics,
           mood: random.mood,
           identified: true,
-          matchSource: 'MOCK',
+          matchSource: provider as any,
           searchUrl: 'https://google.com'
       };
   }

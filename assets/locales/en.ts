@@ -195,5 +195,32 @@ export const en = {
     privacyTitle: 'Privacy Policy',
     privacyText: 'Audio is analyzed locally. Temporary high-frequency snapshots are sent to Gemini solely for identification.',
     version: 'Release'
+  },
+  onboarding: {
+    welcome: 'Welcome to Aura Vision',
+    subtitle: 'Next-Gen AI Music Visualization',
+    selectLanguage: 'Select Language',
+    next: 'Next',
+    skip: 'Skip',
+    finish: 'Get Started',
+    features: {
+      title: 'Core Features',
+      visuals: {
+        title: 'Immersive Visuals',
+        desc: '8+ Physics-based WebGL engines powered by Three.js.'
+      },
+      ai: {
+        title: 'Gemini AI Intelligence',
+        desc: 'Real-time song identification and mood detection powered by Google Gemini 3.'
+      },
+      privacy: {
+        title: 'Privacy First',
+        desc: 'Local spectral analysis. Audio is never stored on servers.'
+      }
+    },
+    shortcuts: {
+      title: 'Quick Controls',
+      desc: 'Master the experience with these keys.'
+    }
   }
 };

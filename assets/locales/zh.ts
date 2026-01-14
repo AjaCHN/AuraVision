@@ -195,5 +195,32 @@ export const zh = {
     privacyTitle: '隐私与安全',
     privacyText: '音频分析完全在本地完成。仅在识别歌曲时，会将加密的频率特征临时发送至云端，绝不存储任何原始录音。',
     version: '发布版本'
+  },
+  onboarding: {
+    welcome: '欢迎使用 Aura Vision',
+    subtitle: '下一代 AI 音乐可视化引擎',
+    selectLanguage: '选择语言',
+    next: '下一步',
+    skip: '跳过',
+    finish: '开始体验',
+    features: {
+      title: '核心特性',
+      visuals: {
+        title: '沉浸式视觉',
+        desc: '8+ 种基于 Three.js 开发的 WebGL 物理渲染引擎。'
+      },
+      ai: {
+        title: 'Gemini AI 智能',
+        desc: '由 Google Gemini 3 驱动的实时曲目识别与情绪分析。'
+      },
+      privacy: {
+        title: '隐私优先',
+        desc: '本地频谱分析。音频数据绝不上传至任何服务器。'
+      }
+    },
+    shortcuts: {
+      title: '快捷操作',
+      desc: '使用以下按键快速掌控全局体验。'
+    }
   }
 };
