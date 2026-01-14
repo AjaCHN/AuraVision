@@ -23,13 +23,22 @@ export const useAudioPulse = ({
   const requestRef = useRef<number>(0);
 
   useEffect(() => {
-    if (!isEnabled) {
+    // This function runs when the hook is unmounted or when isEnabled becomes false.
+    const cleanup = () => {
       if (requestRef.current) cancelAnimationFrame(requestRef.current);
       if (elementRef.current) {
-        // Reset styles when disabled
-        elementRef.current.style.transform = '';
+        // PREVIOUS BUG: `elementRef.current.style.transform = ''` would erase all transforms,
+        // including rotation set by the component itself.
+        // FIX: Precisely remove only the scale transform, preserving others like rotate.
+        const existingTransform = elementRef.current.style.transform;
+        const newTransform = existingTransform.replace(/scale\([^)]*\)/, '').trim();
+        elementRef.current.style.transform = newTransform;
         elementRef.current.style.opacity = `${baseOpacity}`;
       }
+    };
+
+    if (!isEnabled) {
+      cleanup();
       return;
     }
 
@@ -45,7 +54,8 @@ export const useAudioPulse = ({
         const scale = 1 + (bassNormalized * pulseStrength * settings.sensitivity);
         const opacity = Math.min(1, (1.0 - opacityStrength + bassNormalized * opacityStrength) * baseOpacity);
 
-        // Directly apply styles, allowing other transform properties to be preserved
+        // Additive Transform: Read existing transforms, remove our own, then add it back.
+        // This ensures compatibility with other transforms like rotation.
         const existingTransform = elementRef.current.style.transform.replace(/scale\([^)]*\)/, '').trim();
         elementRef.current.style.transform = `${existingTransform} scale(${scale})`;
         elementRef.current.style.opacity = `${opacity}`;
@@ -55,6 +65,6 @@ export const useAudioPulse = ({
 
     requestRef.current = requestAnimationFrame(animate);
 
-    return () => cancelAnimationFrame(requestRef.current);
+    return cleanup;
   }, [isEnabled, analyser, settings.sensitivity, pulseStrength, opacityStrength, baseOpacity, elementRef]);
 };
