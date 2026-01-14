@@ -14,7 +14,7 @@ export const SystemSettingsPanel: React.FC = () => {
 
   return (
     <>
-      {/* 左侧：核心系统控制 */}
+      {/* 列一：核心系统控制 */}
       <div className="p-4 space-y-4 border-b lg:border-b-0 lg:border-r border-white/5 flex flex-col h-full pt-6">
         <CustomSelect 
           label={t?.language || "Language"} 
@@ -39,7 +39,7 @@ export const SystemSettingsPanel: React.FC = () => {
             />
         </div>
 
-        <div className="mt-auto space-y-4">
+        <div className="mt-auto pt-4">
             <button 
               onClick={resetSettings} 
               className="w-full py-4 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400 font-bold text-xs uppercase tracking-widest hover:bg-red-500/20 transition-all flex items-center justify-center gap-2 group"
@@ -49,17 +49,23 @@ export const SystemSettingsPanel: React.FC = () => {
               </svg>
               {t?.reset || "Reset App"}
             </button>
-            <div className="text-center">
-              <span className="text-[10px] text-white/20 font-mono tracking-widest uppercase">AURA VISION BUILD {APP_VERSION}</span>
-            </div>
         </div>
       </div>
 
-      {/* 右侧：说明与文档区域 */}
-      <div className="p-4 flex flex-col h-full overflow-y-auto custom-scrollbar space-y-5 col-span-2">
-          
-          {/* 项目简介与隐私 */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      {/* 列二：使用指南与信息 */}
+      <div className="p-4 flex flex-col h-full overflow-y-auto custom-scrollbar space-y-5 border-b lg:border-b-0 lg:border-r border-white/5 pt-6">
+          <div className="space-y-3">
+             <h4 className="text-[10px] font-black text-purple-400 uppercase tracking-[0.2em] ml-1">{h?.howItWorksTitle || "User Guide"}</h4>
+             <div className="flex flex-col gap-2">
+                {guideSteps.map((step: string, idx: number) => (
+                  <div key={idx} className="flex gap-3 items-start bg-white/[0.02] p-3 rounded-xl border border-white/5">
+                     <span className="shrink-0 w-5 h-5 rounded-full bg-purple-500/20 text-purple-400 flex items-center justify-center text-[10px] font-black">{idx + 1}</span>
+                     <p className="text-[11px] text-white/60 leading-snug">{step}</p>
+                  </div>
+                ))}
+             </div>
+          </div>
+          <div className="space-y-2 pt-4 border-t border-white/5">
             <div className="bg-white/[0.03] p-4 rounded-xl border border-white/5">
                <h4 className="text-[10px] font-black text-blue-400 uppercase tracking-widest mb-2 flex items-center gap-2">
                  <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -83,24 +89,13 @@ export const SystemSettingsPanel: React.FC = () => {
                <p className="text-[11px] text-white/50 leading-relaxed font-medium">{h?.privacyText || "Local analysis only."}</p>
             </div>
           </div>
-
-          {/* 快速使用指南 */}
-          <div className="space-y-3">
-             <h4 className="text-[10px] font-black text-purple-400 uppercase tracking-[0.2em] ml-1">{h?.howItWorksTitle || "User Guide"}</h4>
-             <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                {guideSteps.map((step: string, idx: number) => (
-                  <div key={idx} className="flex gap-3 items-start bg-white/[0.02] p-3 rounded-xl border border-white/5">
-                     <span className="shrink-0 w-5 h-5 rounded-full bg-purple-500/20 text-purple-400 flex items-center justify-center text-[10px] font-black">{idx + 1}</span>
-                     <p className="text-[11px] text-white/60 leading-snug">{step}</p>
-                  </div>
-                ))}
-             </div>
-          </div>
-
-          {/* 快捷键 */}
-          <div className="space-y-3 pt-2">
+      </div>
+      
+      {/* 列三：快捷键与版本信息 */}
+      <div className="p-4 flex flex-col h-full overflow-y-auto custom-scrollbar space-y-5 pt-6">
+          <div className="space-y-3 flex-1">
              <h4 className="text-[10px] font-black text-orange-400 uppercase tracking-[0.2em] ml-1">{h?.shortcutsTitle || "Keyboard Shortcuts"}</h4>
-             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+             <div className="grid grid-cols-2 gap-2">
                 <ShortcutItem label={s?.toggleMic || "Mic"} k="Space" />
                 <ShortcutItem label={s?.fullscreen || "FS"} k="F" />
                 <ShortcutItem label={s?.lyrics || "ID"} k="L" />
@@ -108,6 +103,9 @@ export const SystemSettingsPanel: React.FC = () => {
                 <ShortcutItem label={s?.randomize || "Rand"} k="R" />
                 <ShortcutItem label={s?.glow || "Glow"} k="G" />
              </div>
+          </div>
+          <div className="mt-auto pt-4 text-center">
+            <span className="text-[10px] text-white/20 font-mono tracking-widest uppercase">AURA VISION BUILD {APP_VERSION}</span>
           </div>
       </div>
     </>

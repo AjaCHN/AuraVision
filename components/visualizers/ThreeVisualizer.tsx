@@ -34,7 +34,7 @@ const ThreeVisualizer: React.FC<ThreeVisualizerProps> = ({ analyser, colors, set
       return 1.5;
   };
 
-  const dpr = settings.quality === 'low' ? 0.8 : settings.quality === 'med' ? 1.0 : Math.min(window.devicePixelRatio, 2);
+  const dpr = settings.quality === 'low' ? 0.8 : settings.quality === 'med' ? 1.2 : Math.min(window.devicePixelRatio, 2);
   const enableTiltShift = settings.quality === 'high' && (mode === VisualizerMode.LIQUID || mode === VisualizerMode.SILK);
   
   return (
@@ -62,7 +62,8 @@ const ThreeVisualizer: React.FC<ThreeVisualizerProps> = ({ analyser, colors, set
         {settings.glow && (
             <EffectComposer 
               multisampling={settings.quality === 'high' ? 8 : 0}
-              disableNormalPass={true}
+              // FIX: Corrected typo from `disableNormalPass` to `enableNormalPass` and set to false to maintain behavior.
+              enableNormalPass={false}
             >
                 <Bloom 
                     luminanceThreshold={0.4} 
