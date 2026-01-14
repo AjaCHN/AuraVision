@@ -1,4 +1,3 @@
-
 # OpenSpec: 持久化与本地化规范
 
 ## 1. 持久化存储 (LocalStorage)
@@ -21,3 +20,6 @@
 ## 3. 区域感知 (Region Awareness)
 - **自动检测:** 首次运行通过 `navigator.language` 自动选择匹配的市场区域。
 - **作用域:** 影响 Gemini 搜索工具的地理偏移，提高本地歌曲识别率。
+
+---
+*Aura Vision Storage & i18n - Version 0.4.3*

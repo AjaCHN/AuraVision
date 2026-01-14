@@ -1,4 +1,3 @@
-
 # OpenSpec: 渲染规范
 
 ## 1. 2D 策略模式渲染器
@@ -29,7 +28,7 @@
 
 ## 3. 后期处理管道 (Post-Processing)
 根据 `settings.quality` 动态挂载 Pass：
-- **High:** Bloom + Chromatic Aberration + TiltShift。
+- **High:** Bloom + Chromatic Aberration。若模式为 `LIQUID` 或 `SILK`，则额外应用 `TiltShift`。
 - **Low:** 仅 Bloom (禁用 Mipmap Blur 以加速)。
 
 ## 4. 动态演化与稳定性 (Evolution & Stability)
@@ -38,3 +37,6 @@
   1. 检查 `currentColors` 与 `targetColors` 长度。
   2. 若长度不一，使用当前数组的末位颜色填充或裁剪 `currentColors` 至目标长度。
   3. 确保所有渲染逻辑引用合法的颜色索引。
+
+---
+*Aura Vision Rendering - Version 0.4.3*

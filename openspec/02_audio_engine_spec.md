@@ -1,4 +1,3 @@
-
 # OpenSpec: 音频引擎规范
 
 ## 1. 采集规范
@@ -35,3 +34,6 @@
 - **特征维度:** 选取 0-4300Hz 范围内的优势峰值索引。
 - **匹配算法:** Jaccard 相似度（阈值 0.25）。
 - **流程:** 快照 -> Base64 -> Offline Context 解码 -> FFT 扫描 -> 特征 Set。
+
+---
+*Aura Vision Audio Engine - Version 0.4.3*

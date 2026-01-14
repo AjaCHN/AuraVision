@@ -1,7 +1,8 @@
 
+
 # Aura Vision 🎵👁️
 
-### AI 驱动的 3D 音乐可视化与曲目识别系统 (v0.4.2)
+### AI 驱动的 3D 音乐可视化与曲目识别系统 (v0.4.3)
 
 [English](README.md) | [在线演示](https://aura.tanox.net/)
 

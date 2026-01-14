@@ -1,4 +1,3 @@
-
 # OpenSpec: 系统架构规范
 
 ## 1. 核心技术栈
@@ -38,4 +37,4 @@
    - 渲染: 数据注入当前活动的渲染策略 (2D) 或传参给 Three.js 组件 (3D)。
 
 ---
-*Aura Vision Architecture - Version 0.4.2*
+*Aura Vision Architecture - Version 0.4.3*

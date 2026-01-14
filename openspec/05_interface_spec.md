@@ -1,12 +1,13 @@
-
 # OpenSpec: UI/UX 与交互规范
 
 ## 1. 视觉层级 (Z-Index)
 - **Z-0:** 核心渲染器 (Canvas/WebGL)。
-- **Z-20:** 歌曲信息与歌词徽章。
-- **Z-40:** 扩展设置面板 (Control Panel)。
-- **Z-100:** 自定义文字层 (Custom Text Overlay)。
-- **Z-130:** 引导页与帮助模态框。
+- **Z-10:** 歌词覆盖层 (`LyricsOverlay`)。
+- **Z-20:** 歌曲信息徽章 (`SongOverlay`)。
+- **Z-100:** 自定义文字层 (`CustomTextOverlay`)。
+- **Z-110:** 迷你控制条 (`MiniControls`)。
+- **Z-120:** 扩展设置面板 (`Controls Panel`)。
+- **Z-200:** 首次引导页 (`OnboardingOverlay`)。
 
 ## 2. 交互状态与闲置检测
 - **Idle Timeout:** 3000ms。
@@ -33,10 +34,11 @@
 - `L`: `setShowLyrics` (开启曲目识别)
 - `H`: `toggleExpanded` (隐藏/显示面板)
 - `G`: `toggleGlow` (光晕效果)
+- `T`: `toggleTrails` (拖尾效果)
 
 ## 5. 触控优化
 - 点击区域 (Hit Targets): 最小 `44x44px`。
 - 滑块 (Sliders): 支持连续拖拽且在移动端禁用页面回弹。
 
 ---
-*Aura Vision Interface - Version 0.4.2*
+*Aura Vision Interface - Version 0.4.3*
