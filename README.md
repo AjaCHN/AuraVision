@@ -1,7 +1,7 @@
 
 # Aura Vision 🎵👁️
 
-### AI-Powered 3D Music Visualizer & Identifier (v0.2.17)
+### AI-Powered 3D Music Visualizer & Identifier (v0.2.18)
 
 [中文文档](README_ZH.md) | [Live Demo](https://aura.tanox.net/)
 
@@ -13,8 +13,8 @@
 **Aura Vision** is a next-gen audio visualization experiment running entirely in your browser. It combines **WebGL** (Three.js) for stunning 3D generative art with **Google Gemini 3.0** for real-time AI music identification, mood detection, and lyric synchronization.
 
 <p align="center">
-  <img src="docs/preview_main.png" width="48%" alt="Aura Vision Main Interface" />
-  <img src="docs/preview_ui.png" width="48%" alt="Aura Vision Settings Panel" />
+  <img src="assets/images/preview_main.png" width="48%" alt="Aura Vision Main Interface" />
+  <img src="assets/images/preview_ui.png" width="48%" alt="Aura Vision Settings Panel" />
 </p>
 
 ---
@@ -25,6 +25,7 @@
 *   **🔍 Search Grounding:** Leverages **Google Search** tools to verify track metadata, ensuring high accuracy for global and obscure tracks.
 *   **🎨 8+ Visualization Engines:** Features mathematically generated modes including **Silk Waves** (Vertex Displacement), **Liquid Sphere**, **Neon Rings**, and **Tunnel**, driven by real-time FFT analysis.
 *   **⚡ Reactive Audio:** Smart algorithms detect silence/gaps to trigger immediate AI re-identification upon song changes.
+*   **🌊 Buttery Smooth Transitions:** Advanced color interpolation ensures zero-jump transitions between themes and modes.
 *   **🔒 Privacy First:** Audio analysis is performed locally via Web Audio API. Only temporary short clips are sent to Gemini for identification.
 
 ## 🛠️ Tech Stack

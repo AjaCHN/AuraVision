@@ -58,9 +58,12 @@ export interface VisualizerSettings {
   customTextRotation: number; // degrees -180 to 180
   customTextSize: number; // Scale factor 1 to 100
   customTextFont: string;
+  customTextOpacity: number;
   // AI & Lyrics Settings
   lyricsPosition: 'top' | 'center' | 'bottom';
   recognitionProvider: 'GEMINI' | 'MOCK';
+  lyricsStyle?: LyricsStyle;
+  region?: Region;
 }
 
 export interface VisualizerConfig {

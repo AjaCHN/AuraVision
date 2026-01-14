@@ -1,5 +1,5 @@
 
-import { VisualizerMode, LyricsStyle } from '../types';
+import { VisualizerMode, LyricsStyle } from '../../types';
 
 export const fr = {
   common: {
@@ -18,29 +18,29 @@ export const fr = {
     system: 'Système'
   },
   hints: {
-    mode: 'Choisissez un moteur de rendu mathématique pour les visuels.',
+    mode: 'Sélectionnez le moteur mathématique principal pour générer les visuels.',
     theme: 'Appliquez une palette de couleurs soignée à la scène.',
-    speed: 'Ajustez la vitesse globale d\'animation et de rotation.',
-    glow: 'Activez les effets de lueur néon (peut impacter les performances).',
-    trails: 'Activez le flou de mouvement pour des transitions plus douces.',
-    sensitivity: 'Ajustez la réactivité des visuels au volume audio.',
-    smoothing: 'Ajustez la rapidité de réaction des éléments aux changements.',
-    fftSize: 'Des valeurs plus élevées augmentent les détails mais nécessitent plus de puissance.',
-    lyrics: 'Activez la reconnaissance musicale par IA et l\'affichage des paroles.',
-    lyricsStyle: 'Changez la typographie et le style d\'animation des paroles.',
-    region: 'Filtrez les résultats de l\'IA basés sur des marchés musicaux spécifiques.',
-    autoRotate: 'Changez automatiquement de mode de visualisation toutes les 30s.',
-    rotateInterval: 'Définissez la durée (en secondes) pour chaque mode.',
-    cycleColors: 'Changez automatiquement de thème de couleur périodiquement.',
-    colorInterval: 'Durée de chaque thème de couleur.',
-    reset: 'Restaurez tous les paramètres de l\'application par défaut.',
-    resetVisual: 'Réinitialisez uniquement les paramètres visuels (vitesse, lueur, traînées).',
-    randomize: 'Générez une combinaison surprise de mode et de couleurs.',
-    fullscreen: 'Basculez l\'application en mode plein écran.',
-    help: 'Voir les raccourcis et la documentation détaillée du projet.',
-    mic: 'Démarrez ou arrêtez l\'écoute du microphone système.',
-    device: 'Sélectionnez le matériel d\'entrée audio à utiliser.',
-    monitor: 'Écoutez l\'entrée audio via vos haut-parleurs (peut provoquer un larsen).'
+    speed: 'Multiplicateur d\'échelle de temps. Les valeurs basses sont hypnotiques ; les hautes sont énergiques.',
+    glow: 'Active le bloom post-traitement. Désactivez pour améliorer les performances.',
+    trails: 'Contrôle la persistance des pixels. Des valeurs élevées créent un mouvement fluide, comme de la peinture.',
+    sensitivity: 'Contrôle le gain audio. Des valeurs élevées créent des réactions explosives aux sons subtils.',
+    smoothing: 'Amortissement temporel. Des valeurs élevées donnent un mouvement liquide ; basses sont nerveuses.',
+    fftSize: 'Résolution spectrale. 4096 fournit des détails fins mais utilise plus de CPU.',
+    lyrics: 'Active/désactive l\'identification de chanson et la récupération des paroles par IA.',
+    lyricsStyle: 'Personnalisez la présentation visuelle des paroles synchronisées.',
+    region: 'Oriente le moteur de recherche IA vers la musique de ce marché spécifique.',
+    autoRotate: 'Change automatiquement de moteur visuel.',
+    rotateInterval: 'Temps en secondes avant de passer au moteur visuel suivant.',
+    cycleColors: 'Transitionne automatiquement et en douceur entre les thèmes de couleur.',
+    colorInterval: 'Temps en secondes avant de se fondre doucement vers la palette suivante.',
+    reset: 'Restaure tous les paramètres de l\'application aux valeurs d\'usine.',
+    resetVisual: 'Réinitialise uniquement l\'esthétique (Vitesse, Lueur, Traînées) par défaut.',
+    randomize: 'Génère une combinaison fortuite de mode visuel et de couleurs.',
+    fullscreen: 'Active/désactive le mode plein écran immersif.',
+    help: 'Voir les raccourcis clavier et la documentation.',
+    mic: 'Active ou coupe l\'entrée microphone.',
+    device: 'Sélectionnez la source d\'entrée audio matérielle.',
+    monitor: 'Dirige l\'entrée audio vers les haut-parleurs (Attention : risque de larsen).'
   },
   visualizerMode: 'Mode Visualiseur',
   styleTheme: 'Thème Visuel',

@@ -42,3 +42,6 @@
 - **Med:** Bloom + Chromatic Aberration。
 - **Low:** 仅 Bloom (禁用 Mipmap Blur 以加速)。
 - **Motion Blur:** 通过 `globalAlpha` 控制 2D Canvas 的清除强度实现视觉持久。
+
+## 4. 动态演化 (Dynamic Evolution)
+- **色彩过渡:** 采用线性插值 (Lerp) 算法，系数设定为 `0.005`，消除颜色循环时的突变跳动，实现呼吸般的平滑过渡。

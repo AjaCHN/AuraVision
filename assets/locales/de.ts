@@ -1,5 +1,5 @@
 
-import { VisualizerMode, LyricsStyle } from '../types';
+import { VisualizerMode, LyricsStyle } from '../../types';
 
 export const de = {
   common: {
@@ -18,29 +18,29 @@ export const de = {
     system: 'System'
   },
   hints: {
-    mode: 'Wählen Sie eine mathematische Rendering-Engine für die Visuals.',
+    mode: 'Wählen Sie den mathematischen Kern für die Generierung von Visuals.',
     theme: 'Wenden Sie eine kuratierte Farbpalette auf die Szene an.',
-    speed: 'Passen Sie die globale Animations- und Rotationsgeschwindigkeit an.',
-    glow: 'Schalten Sie Neon-Bloom-Effekte ein/aus (kann die Leistung beeinträchtigen).',
-    trails: 'Schalten Sie Bewegungsunschärfe für weichere Übergänge ein.',
-    sensitivity: 'Feinabstimmung, wie stark die Visuals auf die Lautstärke reagieren.',
-    smoothing: 'Passen Sie an, wie schnell die Elemente auf Änderungen reagieren.',
-    fftSize: 'Höhere Werte erhöhen das Detail, erfordern aber mehr Rechenleistung.',
-    lyrics: 'Aktivieren Sie die KI-gestützte Songerkennung und Textanzeige.',
-    lyricsStyle: 'Ändern Sie Typografie und Animationsstil der Texte.',
-    region: 'Filtern Sie KI-Suchergebnisse basierend auf spezifischen Musikmärkten.',
-    autoRotate: 'Wechselt automatisch alle 30s durch die Visualizer-Modi.',
-    rotateInterval: 'Legen Sie die Dauer (in Sekunden) für jeden Modus fest.',
-    cycleColors: 'Wechseln Sie automatisch zwischen Farbthemen.',
-    colorInterval: 'Dauer für jedes Farbthema.',
-    reset: 'Setzen Sie alle Anwendungseinstellungen auf die Standardwerte zurück.',
-    resetVisual: 'Setzen Sie nur visuelle Parameter (Geschwindigkeit, Leuchten, Spuren) zurück.',
-    randomize: 'Erzeugen Sie eine Überraschungskombination aus Modus und Farben.',
-    fullscreen: 'Schalten Sie die Anwendung in den Vollbildmodus.',
-    help: 'Tastaturkürzel und detaillierte Projektdokumentation anzeigen.',
-    mic: 'Starten oder stoppen Sie das Abhören des Systemmikrofons.',
-    device: 'Wählen Sie die zu verwendende Audio-Eingangshardware.',
-    monitor: 'Hören Sie den Audioeingang über Ihre Lautsprecher (kann Rückkopplungen verursachen).'
+    speed: 'Multiplikator für den Zeitmaßstab. Niedrige Werte sind hypnotisch, hohe energiegeladen.',
+    glow: 'Aktiviert Post-Processing-Bloom. Deaktivieren für bessere Leistung.',
+    trails: 'Steuert die Pixel-Persistenz. Hohe Werte erzeugen flüssige, malerische Bewegungen.',
+    sensitivity: 'Steuert die Audioverstärkung. Hohe Werte erzeugen explosive Reaktionen auf leise Geräusche.',
+    smoothing: 'Zeitliche Dämpfung. Hohe Werte ergeben flüssige Bewegungen, niedrige sind zackig.',
+    fftSize: 'Spektrale Auflösung. 4096 bietet feine Details, verbraucht aber mehr CPU.',
+    lyrics: 'KI-gestützte Songidentifikation und Textabruf umschalten.',
+    lyricsStyle: 'Passen Sie die visuelle Darstellung der synchronisierten Texte an.',
+    region: 'Richtet die KI-Suchmaschine auf Musik dieses spezifischen Marktes aus.',
+    autoRotate: 'Wechselt automatisch durch verschiedene visuelle Engines.',
+    rotateInterval: 'Zeit in Sekunden vor dem Wechsel zur nächsten visuellen Engine.',
+    cycleColors: 'Wechselt automatisch und fließend zwischen Farbthemen.',
+    colorInterval: 'Zeit in Sekunden vor dem sanften Überblenden zur nächsten Farbpalette.',
+    reset: 'Setzt alle Anwendungseinstellungen auf die Werkseinstellungen zurück.',
+    resetVisual: 'Setzt nur die Ästhetik (Geschwindigkeit, Leuchten, Spuren) zurück.',
+    randomize: 'Erzeugt eine zufällige Kombination aus visuellem Modus und Farben.',
+    fullscreen: 'Schaltet den immersiven Vollbildmodus um.',
+    help: 'Tastaturkürzel und Dokumentation anzeigen.',
+    mic: 'Mikrofoneingang aktivieren oder stummschalten.',
+    device: 'Wählen Sie die Hardware-Audioeingangsquelle.',
+    monitor: 'Audioeingang auf Lautsprecher leiten (Vorsicht: Rückkopplungsgefahr).'
   },
   visualizerMode: 'Visualizer-Modus',
   styleTheme: 'Visuelles Thema',

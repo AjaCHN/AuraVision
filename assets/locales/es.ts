@@ -1,5 +1,5 @@
 
-import { VisualizerMode, LyricsStyle } from '../types';
+import { VisualizerMode, LyricsStyle } from '../../types';
 
 export const es = {
   common: {
@@ -18,29 +18,29 @@ export const es = {
     system: 'Sistema'
   },
   hints: {
-    mode: 'Elige un motor matemático de renderizado para los visuales.',
+    mode: 'Elige un motor matemático central para generar los visuales.',
     theme: 'Aplica una paleta de colores curada a la escena.',
-    speed: 'Ajusta la velocidad global de animación y rotación.',
-    glow: 'Activa efectos de resplandor neón (puede afectar el rendimiento).',
-    trails: 'Activa el desenfoque de movimiento para transiciones más suaves.',
-    sensitivity: 'Ajusta cuánto reaccionan los visuales al volumen del audio.',
-    smoothing: 'Ajusta qué tan rápido reaccionan los elementos a los cambios.',
-    fftSize: 'Valores más altos aumentan el detalle pero requieren más potencia.',
-    lyrics: 'Habilita el reconocimiento de canciones con IA y visualización de letras.',
-    lyricsStyle: 'Cambia la tipografía y el estilo de animación de las letras.',
-    region: 'Filtra resultados de IA basados en mercados musicales específicos.',
-    autoRotate: 'Cambia automáticamente los modos de visualización cada 30s.',
-    rotateInterval: 'Establece la duración (en segundos) de cada modo antes del cambio automático.',
-    cycleColors: 'Cambia automáticamente entre temas de color periódicamente.',
-    colorInterval: 'Duración de cada tema de color.',
-    reset: 'Restaura toda la configuración de la aplicación a los valores predeterminados.',
-    resetVisual: 'Solo restablece parámetros visuales (velocidad, brillo, estelas).',
-    randomize: 'Genera una combinación sorpresa de modo y colores.',
-    fullscreen: 'Alterna la aplicación al modo de pantalla completa.',
-    help: 'Ver atajos y documentación detallada del proyecto.',
-    mic: 'Inicia o detiene la escucha del micrófono del sistema.',
-    device: 'Selecciona qué dispositivo de entrada de audio utilizar.',
-    monitor: 'Escucha la entrada de audio a través de tus altavoces (puede causar retroalimentación).'
+    speed: 'Multiplicador de escala de tiempo. Valores bajos son hipnóticos; altos son enérgicos.',
+    glow: 'Habilita el resplandor de post-procesamiento. Desactiva para mejorar el rendimiento.',
+    trails: 'Controla la persistencia de píxeles. Valores altos crean movimiento fluido tipo pintura.',
+    sensitivity: 'Controla la ganancia de audio. Valores altos crean reacciones explosivas a sonidos sutiles.',
+    smoothing: 'Amortiguación temporal. Valores altos dan movimiento líquido; bajos son nerviosos.',
+    fftSize: 'Resolución espectral. 4096 proporciona gran detalle pero usa más CPU.',
+    lyrics: 'Alterna la identificación de canciones y obtención de letras con IA.',
+    lyricsStyle: 'Personaliza la presentación visual de las letras sincronizadas.',
+    region: 'Orienta el motor de búsqueda IA hacia la música de este mercado específico.',
+    autoRotate: 'Cicla automáticamente a través de diferentes motores visuales.',
+    rotateInterval: 'Tiempo en segundos antes de cambiar al siguiente motor visual.',
+    cycleColors: 'Transita automáticamente entre temas de color a lo largo del tiempo.',
+    colorInterval: 'Tiempo en segundos antes de mezclarse suavemente con la siguiente paleta.',
+    reset: 'Restaura toda la configuración de la aplicación a los valores de fábrica.',
+    resetVisual: 'Restablece solo la estética (Velocidad, Brillo, Estelas) a los valores predeterminados.',
+    randomize: 'Genera una combinación fortuita de modo visual y colores.',
+    fullscreen: 'Alterna el modo inmersivo de pantalla completa.',
+    help: 'Ver atajos de teclado y documentación.',
+    mic: 'Activa o silencia la entrada del micrófono.',
+    device: 'Selecciona la fuente de entrada de audio de hardware.',
+    monitor: 'Envía la entrada de audio a los altavoces (Precaución: puede causar retroalimentación).'
   },
   visualizerMode: 'Modo Visualizador',
   styleTheme: 'Tema Visual',

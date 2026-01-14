@@ -1,7 +1,7 @@
 
 # Aura Vision 🎵👁️
 
-### AI 驱动的 3D 音乐可视化与识别平台 (v0.2.17)
+### AI 驱动的 3D 音乐可视化与识别平台 (v0.2.18)
 
 [English](README.md) | [在线演示](https://aura.tanox.net/)
 
@@ -13,8 +13,8 @@
 **Aura Vision** 是一个完全基于浏览器的沉浸式视听实验。它结合了 **WebGL** (Three.js) 的实时生成艺术与 **Google Gemini 3.0** 的多模态 AI 能力，能够将麦克风捕捉的音频转化为震撼的视觉效果，并实时识别歌曲、检测情绪及同步歌词。
 
 <p align="center">
-  <img src="docs/preview_main.png" width="48%" alt="Aura Vision 主界面" />
-  <img src="docs/preview_ui.png" width="48%" alt="Aura Vision 设置面板" />
+  <img src="assets/images/preview_main.png" width="48%" alt="Aura Vision 主界面" />
+  <img src="assets/images/preview_ui.png" width="48%" alt="Aura Vision 设置面板" />
 </p>
 
 ---
@@ -25,6 +25,7 @@
 *   **🔍 搜索增强 (Grounding):** 集成 **Google Search** 工具进行实时元数据验证，大幅提升对中文歌曲、冷门曲目及混音版的识别准确率。
 *   **🎨 8+ 种视觉引擎:** 包含 **流光绸缎 (Silk Waves)**、**液态星球**、**霓虹光环**及**几何隧道**等多种基于 FFT 频谱分析的数学渲染模式。
 *   **⚡ 智能响应:** 内置静音检测算法，可在切歌时瞬间触发 AI 重新识别，无需漫长等待。
+*   **🌊 丝滑过渡:** 采用高精度色彩插值算法，确保在自动切换主题时视觉零跳动，如呼吸般自然。
 *   **🔒 隐私优先:** 频谱分析完全在本地完成。仅在识别请求时发送经过加密的短音频片段至 Gemini。
 
 ## 🛠️ 技术栈

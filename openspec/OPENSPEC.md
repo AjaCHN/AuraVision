@@ -31,4 +31,4 @@
 *   **重复索引**: `openspec/OPENSPEC.md`。
 
 ---
-*Aura Vision Project Specification - Version 0.2.17*
+*Aura Vision Project Specification - Version 0.2.18*

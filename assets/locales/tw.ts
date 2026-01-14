@@ -1,5 +1,5 @@
 
-import { VisualizerMode, LyricsStyle } from '../types';
+import { VisualizerMode, LyricsStyle } from '../../types';
 
 export const tw = {
   common: {
@@ -20,27 +20,27 @@ export const tw = {
   hints: {
     mode: '選擇用於生成視覺效果的數學渲染引擎。',
     theme: '應用精心調校的場景配色方案。',
-    speed: '調整全域動畫的演化與旋轉速率。',
-    glow: '開啟霓虹泛光效果（開啟後可能增加 GPU 負載）。',
-    trails: '開啟運動殘影效果，使視覺過渡更具流動感。',
-    sensitivity: '微調視覺元素對音訊振幅的響應靈敏度。',
-    smoothing: '調整數值平滑係數（數值越高，視覺起伏越柔和）。',
-    fftSize: '設定頻域解析度（越高越細膩，但更消耗效能）。',
+    speed: '時間流速倍率。低數值催眠舒緩，高數值動感強烈。',
+    glow: '開啟後期泛光（Bloom）。關閉可提升低階裝置效能。',
+    trails: '控制光影殘留時間。高數值可產生如油畫般的流動感。',
+    sensitivity: '控制音訊增益。數值越高，微弱的聲音也能引發劇烈的視覺爆發。',
+    smoothing: '時域阻尼係數。高數值如液體般柔順，低數值則反應銳利。',
+    fftSize: '頻譜採樣精度。4096 提供極致細節但消耗更多 CPU 資源。',
     lyrics: '啟用 AI 驅動的曲目辨識與歌詞同步展示。',
     lyricsStyle: '更改辨識結果及歌詞的排版風格。',
-    region: '針對特定音樂市場優化 AI 搜尋的演算法。',
-    autoRotate: '每隔 30 秒自動循環切換視覺化引擎。',
-    rotateInterval: '設定自動循環模式時的切換間隔時間（秒）。',
-    cycleColors: '定期自動切換不同的色彩主題。',
-    colorInterval: '每個色彩主題的持續時間。',
+    region: '針對特定音樂市場優化 AI 搜尋的匹配權重。',
+    autoRotate: '自動循環切換不同的視覺化引擎。',
+    rotateInterval: '自動切換到下一個視覺化引擎前的停留時間（秒）。',
+    cycleColors: '隨時間推移自動平滑過渡色彩主題。',
+    colorInterval: '平滑過渡到下一個色彩主題前的停留時間（秒）。',
     reset: '將所有應用設定、語言及音訊選項恢復至原廠狀態。',
-    resetVisual: '僅將視覺特效參數（速度、光暈、殘影）回歸預設。',
-    randomize: '透過隨機演算法生成一套高美學的模式與配色組合。',
+    resetVisual: '僅重置視覺參數（速度、光暈、殘影）至預設值。',
+    randomize: '隨機生成一套意想不到的模式與配色組合。',
     fullscreen: '進入沉浸式全螢幕互動模式。',
     help: '查看快捷鍵操作指南與專案詳細文件。',
-    mic: '啟動或停止採集系統麥克風訊號。',
+    mic: '啟動或靜音系統麥克風訊號。',
     device: '選擇當前活動的音訊輸入硬體。',
-    monitor: '透過揚聲器監聽音訊輸入（可能會產生回音）。'
+    monitor: '透過揚聲器監聽輸入訊號（警告：可能產生回音）。'
   },
   visualizerMode: '視覺化模式',
   styleTheme: '視覺風格',

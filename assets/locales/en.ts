@@ -1,5 +1,5 @@
 
-import { VisualizerMode, LyricsStyle } from '../types';
+import { VisualizerMode, LyricsStyle } from '../../types';
 
 export const en = {
   common: {
@@ -18,29 +18,29 @@ export const en = {
     system: 'System'
   },
   hints: {
-    mode: 'Choose a mathematical rendering engine for the visuals.',
+    mode: 'Select the core mathematical engine for generating visuals.',
     theme: 'Apply a curated color palette to the scene.',
-    speed: 'Adjust the global animation and rotation velocity.',
-    glow: 'Toggle neon bloom effects (may impact performance).',
-    trails: 'Toggle motion blur for smoother visual transitions.',
-    sensitivity: 'Fine-tune how much the visuals react to audio volume.',
-    smoothing: 'Adjust how quickly the elements react to changes.',
-    fftSize: 'Higher values increase detail but require more processing power.',
-    lyrics: 'Enable AI-powered song recognition and lyrics display.',
-    lyricsStyle: 'Change the typography and animation style of the lyrics.',
-    region: 'Filter AI search results based on specific music markets.',
-    autoRotate: 'Automatically cycle through visualizer modes every 30s.',
-    rotateInterval: 'Set the duration (in seconds) for each mode before auto-switching.',
-    cycleColors: 'Automatically switch between color themes periodically.',
-    colorInterval: 'Duration for each color theme.',
-    reset: 'Restore all application settings to defaults.',
-    resetVisual: 'Only reset visual parameters (speed, glow, trails) to defaults.',
-    randomize: 'Generate a surprise combination of mode and colors.',
-    fullscreen: 'Toggle the application to full-screen mode.',
-    help: 'View shortcuts and detailed project documentation.',
-    mic: 'Start or stop listening to the system microphone.',
-    device: 'Select which audio input hardware to use.',
-    monitor: 'Listen to the audio input through your speakers (may cause feedback).'
+    speed: 'Time-scale multiplier. Low values are hypnotic; high values are energetic.',
+    glow: 'Enable post-processing bloom. Disable to improve performance.',
+    trails: 'Controls pixel persistence. High values create fluid, paint-like motion.',
+    sensitivity: 'Controls audio gain. Higher values create explosive reactions to subtle sounds.',
+    smoothing: 'Temporal damping. Higher values yield liquid-like movement; lower is twitchy.',
+    fftSize: 'Spectral resolution. 4096 provides fine detail but uses more CPU.',
+    lyrics: 'Toggle AI-powered song identification and lyric fetching.',
+    lyricsStyle: 'Customize the visual presentation of the synchronized lyrics.',
+    region: 'Bias the AI search engine towards music from this specific market.',
+    autoRotate: 'Automatically cycle through different visual engines.',
+    rotateInterval: 'Time in seconds before switching to the next visual engine.',
+    cycleColors: 'Automatically transition between color themes over time.',
+    colorInterval: 'Time in seconds before smoothly blending to the next color palette.',
+    reset: 'Restore all application settings to factory defaults.',
+    resetVisual: 'Reset only aesthetics (Speed, Glow, Trails) to defaults.',
+    randomize: 'Generate a serendipitous combination of visual mode and colors.',
+    fullscreen: 'Toggle immersive full-screen mode.',
+    help: 'View keyboard shortcuts and documentation.',
+    mic: 'Activate or mute microphone input.',
+    device: 'Select the hardware audio input source.',
+    monitor: 'Route audio input to speakers (Caution: may cause feedback loop).'
   },
   visualizerMode: 'Visualizer Mode',
   styleTheme: 'Visual Theme',

@@ -1,16 +1,16 @@
 
 import { Language } from '../types';
-import { en } from '../locales/en';
-import { zh } from '../locales/zh';
-import { tw } from '../locales/tw';
-import { ja } from '../locales/ja';
-import { es } from '../locales/es';
-import { ko } from '../locales/ko';
-import { de } from '../locales/de';
-import { fr } from '../locales/fr';
+import { en } from '../assets/locales/en';
+import { zh } from '../assets/locales/zh';
+import { tw } from '../assets/locales/tw';
+import { ja } from '../assets/locales/ja';
+import { es } from '../assets/locales/es';
+import { ko } from '../assets/locales/ko';
+import { de } from '../assets/locales/de';
+import { fr } from '../assets/locales/fr';
 
 // Translation dictionary for supported languages
-// Aggregated from separate files in ./locales/
+// Aggregated from separate files in ../assets/locales/
 export const TRANSLATIONS: Record<Language, any> = {
   en,
   zh,

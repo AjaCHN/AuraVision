@@ -15,6 +15,10 @@
 ## 2. 目录结构 (Directory Structure)
 ```
 /
+├── assets/                # 静态资源
+│   ├── styles/            # 样式文件 (index.css)
+│   ├── locales/           # 语言文件
+│   └── images/            # 应用截图与图标 (preview_*.png)
 ├── components/
 │   ├── App.tsx            # 应用主组件 (原根目录 App.tsx)
 │   ├── controls/          # UI 控制层
@@ -31,17 +35,14 @@
 │   │   ├── LyricsOverlay.tsx
 │   │   ├── CustomTextOverlay.tsx
 │   │   └── HelpModal.tsx
-├── styles/                # 样式文件
-│   └── index.css
 ├── services/              # 业务逻辑服务
 ├── hooks/                 # React Hooks
 ├── types/                 # 全局类型定义
 │   └── index.ts
 ├── constants/             # 常量配置
 │   └── index.ts
-├── i18n/                  # 国际化字典
+├── i18n/                  # 国际化入口
 │   └── index.ts
-├── locales/               # 语言文件
 └── index.tsx              # 应用入口
 ```
 

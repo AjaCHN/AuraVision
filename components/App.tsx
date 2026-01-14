@@ -35,7 +35,7 @@ const DEFAULT_SETTINGS: VisualizerSettings = {
   customTextRotation: 0,
   customTextSize: 12,
   customTextFont: 'Inter, sans-serif',
-  customTextOpacity: 1.0,
+  customTextOpacity: 0.35,
   lyricsPosition: 'center',
   recognitionProvider: 'GEMINI'
 };
@@ -129,8 +129,7 @@ const App: React.FC = () => {
       sensitivity: 1.2 + Math.random() * 1.0,
       glow: Math.random() > 0.15,
       trails: Math.random() > 0.2,
-      smoothing: 0.7 + Math.random() * 0.2,
-      customTextRotation: (Math.random() > 0.8) ? (Math.random() * 20 - 10) : 0 // Occasional slight tilt
+      smoothing: 0.7 + Math.random() * 0.2
     }));
   }, []);
 
