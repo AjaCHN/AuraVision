@@ -1,4 +1,3 @@
-
 import { VisualizerMode, LyricsStyle } from '../../core/types';
 
 export const es = {
@@ -99,6 +98,7 @@ export const es = {
   textRotation: 'Rotación',
   textFont: 'Fuente',
   textOpacity: 'Opacidad',
+  textPosition: 'Posición',
   quality: 'Calidad Visual',
   qualities: {
     low: 'Baja',
@@ -111,7 +111,16 @@ export const es = {
   positions: {
       top: 'Arriba',
       center: 'Centro',
-      bottom: 'Abajo'
+      bottom: 'Abajo',
+      tl: 'Superior Izquierda',
+      tc: 'Superior Centro',
+      tr: 'Superior Derecha',
+      ml: 'Medio Izquierda',
+      mc: 'Centro',
+      mr: 'Medio Derecha',
+      bl: 'Inferior Izquierda',
+      bc: 'Inferior Centro',
+      br: 'Inferior Derecha'
   },
   wakeLock: 'No dormir',
   system: {
@@ -127,7 +136,8 @@ export const es = {
     accessDenied: 'Acceso denegado. Por favor revisa los permisos del micrófono.',
     noDevice: 'No se encontró dispositivo de entrada de audio.',
     deviceBusy: 'El dispositivo de audio está ocupado o no es válido.',
-    general: 'No se pudo acceder al dispositivo de audio.'
+    general: 'No se pudo acceder al dispositivo de audio.',
+    tryDemo: 'Pruebe el modo de demostración (sin audio)'
   },
   aiState: {
     active: 'Reconocimiento Activo',
@@ -163,39 +173,30 @@ export const es = {
   },
   helpModal: {
     title: 'Guía de Aura Vision',
-    intro: 'Aura Vision transforma la entrada de tu micrófono en arte digital generativo altamente receptivo utilizando análisis espectral avanzado.',
+    intro: 'Aura Vision transforma la entrada de tu micrófono en arte digital generativo utilizando análisis espectral avanzado.',
     shortcutsTitle: 'Atajos de Teclado',
     shortcutItems: {
-      toggleMic: 'Alternar Entrada de Audio',
-      fullscreen: 'Pantalla Completa',
-      randomize: 'Aleatorizar Estética',
-      lyrics: 'Alternar Info IA',
-      hideUi: 'Alternar Panel de Control',
-      glow: 'Alternar Brillo',
-      trails: 'Alternar Estelas',
-      changeMode: 'Cambiar Modo',
-      changeTheme: 'Cambiar Tema'
+      toggleMic: 'Activar Micrófono [Space]',
+      fullscreen: 'Pantalla Completa [F]',
+      randomize: 'Aleatorizar [R]',
+      lyrics: 'Info de Canción [L]',
+      hideUi: 'Panel de Control [H]',
+      glow: 'Efecto Brillo [G]',
+      trails: 'Efecto Estelas [T]',
+      changeMode: 'Cambiar Modo [← →]',
+      changeTheme: 'Cambiar Tema [↑ ↓]'
     },
     howItWorksTitle: 'Comenzando',
     howItWorksSteps: [
-      '1. Autoriza el acceso al micrófono para comenzar el análisis.',
-      '2. Reproduce audio de alta fidelidad cerca del sensor.',
-      '3. Los visuales responden en tiempo real a frecuencias específicas.',
-      '4. Cada 30s, la IA captura audio para identificar metadatos.'
+      'Autoriza el acceso al micrófono para comenzar el análisis.',
+      'Reproduce audio de alta fidelidad cerca del sensor.',
+      'Los visuales responden en tiempo real a frecuencias específicas.',
+      'Cada 30-45 segundos, la IA captura audio para identificar la canción.'
     ],
-    settingsTitle: 'Guía de Parámetros',
-    settingsDesc: {
-      sensitivity: 'Control de ganancia para elementos reactivos al audio.',
-      speed: 'Frecuencia temporal de los patrones generativos.',
-      glow: 'Intensidad del resplandor de post-procesamiento.',
-      trails: 'Acumulación temporal para movimiento fluido.',
-      smoothing: 'Amortiguación temporal de los datos de frecuencia.',
-      fftSize: 'Cantidad de sub-bandas para resolución espectral.'
-    },
-    projectInfoTitle: 'Motor Central',
-    projectInfoText: 'Impulsado por Google Gemini 3 Flash, React 19 y WebGL acelerado por hardware.',
-    privacyTitle: 'Política de Privacidad',
-    privacyText: 'El audio se analiza localmente. Se envían instantáneas temporales a Gemini únicamente para identificación.',
+    projectInfoTitle: 'Sobre el Proyecto',
+    projectInfoText: 'Impulsado por Google Gemini 3, React 19 y WebGL para una experiencia visual de alto rendimiento.',
+    privacyTitle: 'Privacidad',
+    privacyText: 'El análisis de audio es local. Solo se envían firmas digitales anónimas a Gemini para la identificación de música.',
     version: 'Lanzamiento'
   },
   onboarding: {

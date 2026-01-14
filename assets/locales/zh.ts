@@ -100,6 +100,7 @@ export const zh = {
   textRotation: '旋转角度',
   textFont: '字体样式',
   textOpacity: '不透明度',
+  textPosition: '显示位置',
   quality: '渲染画质',
   qualities: {
     low: '低',
@@ -112,7 +113,16 @@ export const zh = {
   positions: {
       top: '顶部',
       center: '居中',
-      bottom: '底部'
+      bottom: '底部',
+      tl: '左上',
+      tc: '中上',
+      tr: '右上',
+      ml: '左中',
+      mc: '正中',
+      mr: '右中',
+      bl: '左下',
+      bc: '中下',
+      br: '右下'
   },
   wakeLock: '禁止屏幕休眠',
   system: {
@@ -128,7 +138,8 @@ export const zh = {
     accessDenied: '无法访问麦克风，请检查浏览器权限。',
     noDevice: '未检测到音频输入设备。',
     deviceBusy: '音频设备被占用或无效。',
-    general: '无法访问音频设备。'
+    general: '无法访问音频设备。',
+    tryDemo: '进入演示模式 (无音频)'
   },
   aiState: {
     active: '识别功能已开启',

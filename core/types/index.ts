@@ -1,4 +1,3 @@
-
 import 'react';
 
 export type Language = 'en' | 'zh' | 'tw' | 'ja' | 'es' | 'ko' | 'de' | 'fr';
@@ -60,7 +59,8 @@ export interface VisualizerSettings {
   customTextFont: string;
   customTextOpacity: number;
   customTextColor: string;
-  lyricsPosition: 'top' | 'center' | 'bottom';
+  customTextPosition: 'tl' | 'tc' | 'tr' | 'ml' | 'mc' | 'mr' | 'bl' | 'bc' | 'br';
+  lyricsPosition: 'tl' | 'tc' | 'tr' | 'ml' | 'mc' | 'mr' | 'bl' | 'bc' | 'br';
   recognitionProvider: 'GEMINI' | 'MOCK' | 'OPENAI' | 'CLAUDE' | 'GROK';
   lyricsStyle?: LyricsStyle;
   region?: Region;
@@ -91,8 +91,6 @@ export interface AudioDevice {
   label: string;
 }
 
-// Augment both global JSX and React.JSX namespaces to ensure Three.js intrinsic elements
-// are recognized by TypeScript in React 18/19 environments using @react-three/fiber.
 declare global {
   namespace JSX {
     interface IntrinsicElements {
@@ -129,7 +127,6 @@ declare global {
         meshStandardMaterial: any;
         meshPhysicalMaterial: any;
         planeGeometry: any;
-        icosahedronGeometry: any;
       }
     }
   }

@@ -99,6 +99,7 @@ export const en = {
   textRotation: 'Rotation',
   textFont: 'Font Family',
   textOpacity: 'Opacity',
+  textPosition: 'Text Position',
   quality: 'Visual Quality',
   qualities: {
     low: 'Low',
@@ -111,7 +112,16 @@ export const en = {
   positions: {
       top: 'Top',
       center: 'Center',
-      bottom: 'Bottom'
+      bottom: 'Bottom',
+      tl: 'Top Left',
+      tc: 'Top Center',
+      tr: 'Top Right',
+      ml: 'Mid Left',
+      mc: 'Center',
+      mr: 'Mid Right',
+      bl: 'Bottom Left',
+      bc: 'Bottom Center',
+      br: 'Bottom Right'
   },
   wakeLock: 'Stay Awake',
   system: {
@@ -127,7 +137,8 @@ export const en = {
     accessDenied: 'Access denied. Please check your browser permissions for microphone.',
     noDevice: 'No audio input device found.',
     deviceBusy: 'Audio device is busy or invalid.',
-    general: 'Could not access audio device.'
+    general: 'Could not access audio device.',
+    tryDemo: 'Try Demo Mode (No Audio)'
   },
   aiState: {
     active: 'Recognition Active',

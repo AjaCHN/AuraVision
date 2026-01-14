@@ -2,6 +2,7 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { AudioDevice, VisualizerSettings, Language } from '../types';
 import { TRANSLATIONS } from '../i18n';
+import { createDemoAudioGraph } from '../services/audioSynthesis';
 
 interface UseAudioProps {
   settings: VisualizerSettings;
@@ -10,6 +11,7 @@ interface UseAudioProps {
 
 export const useAudio = ({ settings, language }: UseAudioProps) => {
   const [isListening, setIsListening] = useState(false);
+  const [isSimulating, setIsSimulating] = useState(false);
   const [audioContext, setAudioContext] = useState<AudioContext | null>(null);
   const [analyser, setAnalyser] = useState<AnalyserNode | null>(null);
   const [mediaStream, setMediaStream] = useState<MediaStream | null>(null);
@@ -17,6 +19,7 @@ export const useAudio = ({ settings, language }: UseAudioProps) => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const audioContextRef = useRef<AudioContext | null>(null);
+  const demoGraphRef = useRef<{ stop: () => void } | null>(null);
 
   useEffect(() => {
     if (analyser) {
@@ -37,6 +40,9 @@ export const useAudio = ({ settings, language }: UseAudioProps) => {
 
   const startMicrophone = useCallback(async (deviceId?: string) => {
     setErrorMessage(null);
+    setIsSimulating(false);
+    if (demoGraphRef.current) demoGraphRef.current.stop();
+
     try {
       const oldContext = audioContextRef.current;
       if (oldContext && oldContext.state !== 'closed') await oldContext.close();
@@ -51,8 +57,6 @@ export const useAudio = ({ settings, language }: UseAudioProps) => {
       });
       
       const context = new (window.AudioContext || (window as any).webkitAudioContext)();
-      
-      // Ensure the context is running (fixes auto-play policy issues)
       if (context.state === 'suspended') {
         await context.resume();
       }
@@ -69,22 +73,56 @@ export const useAudio = ({ settings, language }: UseAudioProps) => {
       setIsListening(true);
       updateAudioDevices();
     } catch (err: any) {
-      const t = TRANSLATIONS[language];
+      const t = TRANSLATIONS[language] || TRANSLATIONS['en'];
       setErrorMessage(err.name === 'NotAllowedError' ? t.errors.accessDenied : t.errors.general);
       setIsListening(false);
       console.error("[Audio] Access Error:", err);
     }
   }, [settings.fftSize, settings.smoothing, updateAudioDevices, language]);
 
+  const startDemoMode = useCallback(async () => {
+    try {
+        setErrorMessage(null);
+        if (demoGraphRef.current) demoGraphRef.current.stop();
+
+        const oldContext = audioContextRef.current;
+        if (oldContext && oldContext.state !== 'closed') await oldContext.close();
+
+        const context = new (window.AudioContext || (window as any).webkitAudioContext)();
+        if (context.state === 'suspended') await context.resume();
+
+        const node = context.createAnalyser();
+        node.fftSize = settings.fftSize;
+        node.smoothingTimeConstant = settings.smoothing;
+
+        const demoGraph = createDemoAudioGraph(context, node);
+        demoGraph.start();
+        demoGraphRef.current = demoGraph;
+
+        audioContextRef.current = context;
+        setAudioContext(context);
+        setAnalyser(node);
+        setMediaStream(null);
+        setIsListening(true);
+        setIsSimulating(true);
+    } catch (e) {
+        console.error("Demo mode synthesis failed", e);
+    }
+  }, [settings.fftSize, settings.smoothing]);
+
   const toggleMicrophone = (deviceId: string) => {
     if (isListening) {
-      mediaStream?.getTracks().forEach(t => t.stop());
+      if (mediaStream) {
+        mediaStream.getTracks().forEach(t => t.stop());
+      }
+      if (demoGraphRef.current) demoGraphRef.current.stop();
       audioContextRef.current?.close();
       setIsListening(false);
+      setIsSimulating(false);
     } else {
       startMicrophone(deviceId);
     }
   };
 
-  return { isListening, audioContext, analyser, mediaStream, audioDevices, errorMessage, setErrorMessage, startMicrophone, toggleMicrophone };
+  return { isListening, isSimulating, audioContext, analyser, mediaStream, audioDevices, errorMessage, setErrorMessage, startMicrophone, startDemoMode, toggleMicrophone };
 };

@@ -1,4 +1,3 @@
-
 import { VisualizerMode, LyricsStyle } from '../../core/types';
 
 export const fr = {
@@ -36,7 +35,7 @@ export const fr = {
     colorInterval: 'Temps en secondes avant de se fondre doucement vers la palette suivante.',
     reset: 'Restaure tous les paramètres de l\'application aux valeurs d\'usine.',
     resetVisual: 'Réinitialise uniquement l\'esthétique (Vitesse, Lueur, Traînées) par défaut.',
-    randomize: 'Génère une combinaison fortuita de mode visuel et de couleurs.',
+    randomize: 'Génère une combinaison fortuite de mode visuel et de couleurs.',
     fullscreen: 'Active/désactive le mode plein écran immersif.',
     help: 'Voir les raccourcis clavier et la documentation.',
     mic: 'Active ou coupe l\'entrée microphone.',
@@ -98,7 +97,8 @@ export const fr = {
   textSize: 'Taille de la police',
   textRotation: 'Rotation',
   textFont: 'Police',
-  textOpacity: 'Opacity',
+  textOpacity: 'Opacité',
+  textPosition: 'Position',
   quality: 'Qualité',
   qualities: {
     low: 'Basse',
@@ -111,7 +111,16 @@ export const fr = {
   positions: {
       top: 'Haut',
       center: 'Centre',
-      bottom: 'Bas'
+      bottom: 'Bas',
+      tl: 'Haut Gauche',
+      tc: 'Haut Milieu',
+      tr: 'Haut Droite',
+      ml: 'Milieu Gauche',
+      mc: 'Centré',
+      mr: 'Milieu Droite',
+      bl: 'Bas Gauche',
+      bc: 'Bas Milieu',
+      br: 'Bas Droite'
   },
   wakeLock: 'Rester éveillé',
   system: {
@@ -127,7 +136,8 @@ export const fr = {
     accessDenied: 'Accès refusé. Veuillez vérifier les permissions de votre navigateur.',
     noDevice: 'Aucun périphérique d\'entrée audio trouvé.',
     deviceBusy: 'Le périphérique audio est occupé ou invalide.',
-    general: 'Impossible d\'accéder au périphérique audio.'
+    general: 'Impossible d\'accéder au périphérique audio.',
+    tryDemo: 'Essayer le mode Démo (pas d\'audio)'
   },
   aiState: {
     active: 'Reconnaissance Active',
@@ -166,41 +176,32 @@ export const fr = {
     intro: 'Aura Vision transforme votre entrée microphone en art numérique génératif hautement réactif grâce à une analyse spectrale avancée.',
     shortcutsTitle: 'Raccourcis Clavier',
     shortcutItems: {
-      toggleMic: 'Entrée Audio On/Off',
-      fullscreen: 'Plein Écran',
-      randomize: 'Aléatoire',
-      lyrics: 'Info IA On/Off',
-      hideUi: 'Interface On/Off',
-      glow: 'Lueur On/Off',
-      trails: 'Traînées On/Off',
-      changeMode: 'Changer Mode',
-      changeTheme: 'Changer Thème'
+      toggleMic: 'Activer Microphone [Space]',
+      fullscreen: 'Plein Écran [F]',
+      randomize: 'Aléatoire [R]',
+      lyrics: 'Info Chanson [L]',
+      hideUi: 'Panneau de Contrôle [H]',
+      glow: 'Effet Lueur [G]',
+      trails: 'Effet Traînées [T]',
+      changeMode: 'Changer Mode [← →]',
+      changeTheme: 'Changer Thème [↑ ↓]'
     },
     howItWorksTitle: 'Commencer',
     howItWorksSteps: [
-      '1. Autorisez l\'accès au microphone pour commencer l\'analyse.',
-      '2. Jouez de l\'audio haute fidélité près du capteur.',
-      '3. Les visuels réagissent en temps réel à des fréquences spécifiques.',
-      '4. Toutes les 30s, l\'IA capture l\'audio pour identifier les métadonnées.'
+      'Autorisez l\'accès au microphone pour commencer l\'analyse.',
+      'Jouez de l\'audio haute fidélité près du capteur.',
+      'Les visuels réagissent en temps réel à des fréquences spécifiques.',
+      'Toutes les 30-45 secondes, l\'IA capture l\'audio pour identification.'
     ],
-    settingsTitle: 'Guide des Paramètres',
-    settingsDesc: {
-      sensitivity: 'Contrôle du gain pour les éléments réactifs à l\'audio.',
-      speed: 'Fréquence temporelle des motifs génératifs.',
-      glow: 'Intensité de la lueur en post-traitement.',
-      trails: 'Accumulation temporelle pour un mouvement fluide.',
-      smoothing: 'Amortissement temporel des données de fréquence.',
-      fftSize: 'Nombre de sous-bandes pour la résolution spectrale.'
-    },
-    projectInfoTitle: 'Moteur Principal',
-    projectInfoText: 'Propulsé par Google Gemini 3 Flash, React 19 et WebGL accéléré par le matériel.',
-    privacyTitle: 'Politique de Confidentialité',
-    privacyText: 'L\'audio est analysé localmente. Des instantanés temporaires sont envoyés à Gemini uniquement pour l\'identification.',
-    version: 'Version'
+    projectInfoTitle: 'À Propos',
+    projectInfoText: 'Propulsé par Google Gemini 3, React 19 et WebGL pour une expérience immersive.',
+    privacyTitle: 'Confidentialité',
+    privacyText: 'L\'analyse audio est locale. Seules des empreintes numériques cryptées sont envoyées à Gemini pour l\'identification musicale.',
+    version: 'Release'
   },
   onboarding: {
     welcome: 'Bienvenue sur Aura Vision',
-    subtitle: 'Visualisation Musicale IA Nouvelle Génération',
+    subtitle: 'Visualisation Musicale IA',
     selectLanguage: 'Choisir la langue',
     next: 'Suivant',
     skip: 'Passer',
@@ -208,20 +209,20 @@ export const fr = {
     features: {
       title: 'Fonctionnalités Clés',
       visuals: {
-        title: 'Visuels Immersifs',
+        title: 'Visuels',
         desc: '8+ moteurs physiques WebGL basés sur Three.js.'
       },
       ai: {
-        title: 'Intelligence Gemini IA',
-        desc: 'Identification de chansons en temps réel et détection d\'humeur propulsées par Google Gemini 3.'
+        title: 'Gemini IA',
+        desc: 'Identification de chansons en temps réel powered by Google Gemini 3.'
       },
       privacy: {
-        title: 'Confidentialité Avant Tout',
-        desc: 'Analyse spectrale locale. Les données audio ne sont jamais stockées sur des serveurs.'
+        title: 'Confidentialité',
+        desc: 'Analyse spectrale locale. Les données audio ne sont jamais stockées.'
       }
     },
     shortcuts: {
-      title: 'Contrôles Rapides',
+      title: 'Contrôles',
       desc: 'Maîtrisez l\'expérience avec ces touches.'
     }
   }

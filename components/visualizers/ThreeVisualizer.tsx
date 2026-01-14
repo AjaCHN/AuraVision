@@ -1,5 +1,4 @@
-
-import React, { useRef, Suspense } from 'react';
+import React, { Suspense } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { EffectComposer, Bloom, ChromaticAberration, TiltShift } from '@react-three/postprocessing';
 import * as THREE from 'three';
@@ -59,8 +58,7 @@ const ThreeVisualizer: React.FC<ThreeVisualizerProps> = ({ analyser, colors, set
         </Suspense>
         
         {settings.glow && (
-            // Changed disableNormalPass to enableNormalPass={false} to fix the type error
-            <EffectComposer enableNormalPass={false} multisampling={settings.quality === 'high' ? 2 : 0}>
+            <EffectComposer multisampling={settings.quality === 'high' ? 2 : 0}>
                 <Bloom 
                     luminanceThreshold={0.4} 
                     luminanceSmoothing={0.9} 

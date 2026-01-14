@@ -1,4 +1,3 @@
-
 import { VisualizerMode, LyricsStyle } from '../../core/types';
 
 export const ko = {
@@ -99,6 +98,7 @@ export const ko = {
   textRotation: '회전',
   textFont: '글꼴',
   textOpacity: '투명도',
+  textPosition: '위치',
   quality: '화질',
   qualities: {
     low: '낮음',
@@ -111,7 +111,16 @@ export const ko = {
   positions: {
       top: '상단',
       center: '중앙',
-      bottom: '하단'
+      bottom: '하단',
+      tl: '왼쪽 상단',
+      tc: '중앙 상단',
+      tr: '오른쪽 상단',
+      ml: '왼쪽 중앙',
+      mc: '정중앙',
+      mr: '오른쪽 중앙',
+      bl: '왼쪽 하단',
+      bc: '중앙 하단',
+      br: '오른쪽 하단'
   },
   wakeLock: '화면 꺼짐 방지',
   system: {
@@ -127,7 +136,8 @@ export const ko = {
     accessDenied: '접근이 거부되었습니다. 마이크 권한을 확인해주세요.',
     noDevice: '오디오 입력 장치를 찾을 수 없습니다.',
     deviceBusy: '오디오 장치가 사용 중이거나 유효하지 않습니다.',
-    general: '오디오 장치에 접근할 수 없습니다.'
+    general: '오디오 장치에 접근할 수 없습니다.',
+    tryDemo: '데모 모드 시도 (오디오 없음)'
   },
   aiState: {
     active: '인식 활성화됨',
@@ -163,39 +173,30 @@ export const ko = {
   },
   helpModal: {
     title: 'Aura Vision 가이드',
-    intro: 'Aura Vision는 고급 스펙트럼 분석을 사용하여 마이크 입력을 반응성 높은 제너레이티브 디지털 아트로 변환합니다.',
+    intro: 'Aura Vision은 마이크 입력을 고도의 실시간 분석을 통해 수학적으로 생성된 시각 예술로 변환합니다.',
     shortcutsTitle: '키보드 단축키',
     shortcutItems: {
-      toggleMic: '오디오 입력 토글',
-      fullscreen: '전체 화면',
-      randomize: '무작위 스타일',
-      lyrics: 'AI 정보 토글',
-      hideUi: '제어판 토글',
-      glow: '네온 효과 토글',
-      trails: '잔상 효과 토글',
-      changeMode: '모드 변경',
-      changeTheme: '테마 변경'
+      toggleMic: '마이크 활성/비활성 [Space]',
+      fullscreen: '전체 화면 토글 [F]',
+      randomize: '스타일 무작위화 [R]',
+      lyrics: '노래 정보 표시 [L]',
+      hideUi: '제어판 토글 [H]',
+      glow: '네온 효과 [G]',
+      trails: '모션 잔상 [T]',
+      changeMode: '모드 변경 [← →]',
+      changeTheme: '테마 변경 [↑ ↓]'
     },
     howItWorksTitle: '시작하기',
     howItWorksSteps: [
-      '1. 분석을 시작하려면 마이크 접근을 허용하세요.',
-      '2. 센서 근처에서 고음질 오디오를 재생하세요.',
-      '3. 시각 효과가 특정 주파수에 실시간으로 반응합니다.',
-      '4. 30초마다 AI가 오디오를 캡처하여 메타데이터를 식별합니다.'
+      '마이크 접근을 허용하여 오디오 분석을 시작하세요.',
+      '장치 근처에서 고음질 음악을 재생하세요.',
+      '저음, 중음, 고음의 주파수에 실시간으로 반응합니다.',
+      '약 30~45초마다 AI가 노래의 정보를 자동으로 식별합니다.'
     ],
-    settingsTitle: '매개변수 가이드',
-    settingsDesc: {
-      sensitivity: '오디오 반응 요소에 대한 게인 제어.',
-      speed: '생성 패턴의 시간적 빈도.',
-      glow: '후처리 블룸 강도.',
-      trails: '유동적인 움직임을 위한 시간적 축적.',
-      smoothing: '주파수 데이터의 시간적 댐핑.',
-      fftSize: '스펙트럼 해상도를 위한 서브 밴드 수.'
-    },
-    projectInfoTitle: '핵심 엔진',
-    projectInfoText: 'Google Gemini 3 Flash, React 19 및 하드웨어 가속 WebGL로 구동됩니다.',
-    privacyTitle: '개인정보 보호정책',
-    privacyText: '오디오는 로컬에서 분석됩니다. 임시 고주파 스냅샷은 식별 목적으로만 Gemini로 전송됩니다.',
+    projectInfoTitle: '프로젝트 정보',
+    projectInfoText: 'Google Gemini 3, React 19 및 하드웨어 가속 WebGL 기술을 결합하여 몰입형 시각 경험을 제공합니다.',
+    privacyTitle: '개인정보 보호',
+    privacyText: '오디오 분석은 전적으로 브라우저 내에서 로컬로 이루어집니다. 노래 식별 시에만 익명화된 주파수 특징 데이터가 Gemini로 전송됩니다.',
     version: '릴리스'
   },
   onboarding: {
@@ -208,20 +209,20 @@ export const ko = {
     features: {
       title: '핵심 기능',
       visuals: {
-        title: '몰입형 비주얼',
+        title: '비주얼',
         desc: 'Three.js 기반의 8가지 이상의 WebGL 물리 렌더링 엔진.'
       },
       ai: {
-        title: 'Gemini AI 지능',
+        title: 'Gemini AI',
         desc: 'Google Gemini 3로 구동되는 실시간 노래 식별 및 무드 감지.'
       },
       privacy: {
-        title: '개인정보 보호 최우선',
+        title: '개인정보',
         desc: '로컬 스펙트럼 분석. 오디오 데이터는 서버에 저장되지 않습니다.'
       }
     },
     shortcuts: {
-      title: '빠른 제어',
+      title: '단축키',
       desc: '다음 키로 경험을 마스터하세요.'
     }
   }

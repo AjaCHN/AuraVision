@@ -1,4 +1,3 @@
-
 import React, { useRef, useEffect } from 'react';
 import { VisualizerSettings, SongInfo, LyricsStyle } from '../../core/types';
 
@@ -51,16 +50,30 @@ const LyricsOverlay: React.FC<LyricsOverlayProps> = ({ settings, song, showLyric
      fontStyle = { fontSize: 'min(4vw, 36px)', lineHeight: 1.4 };
   }
 
-  let positionClass = settings.lyricsPosition === 'top' ? "justify-start pt-32 lg:pt-24" : settings.lyricsPosition === 'bottom' ? "justify-end pb-48 lg:pb-36" : "justify-center";
+  const getPositionClasses = () => {
+      const pos = settings.lyricsPosition || 'mc';
+      const map: Record<string, string> = {
+          tl: 'top-24 left-8 text-left items-start',
+          tc: 'top-24 left-1/2 -translate-x-1/2 text-center items-center',
+          tr: 'top-24 right-8 text-right items-end',
+          ml: 'top-1/2 left-8 -translate-y-1/2 text-left items-start',
+          mc: 'top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center items-center',
+          mr: 'top-1/2 right-8 -translate-y-1/2 text-right items-end',
+          bl: 'bottom-32 left-8 text-left items-start',
+          bc: 'bottom-32 left-1/2 -translate-x-1/2 text-center items-center',
+          br: 'bottom-32 right-8 text-right items-end',
+      };
+      return map[pos] || map.mc;
+  };
 
   return (
-    <div className={`pointer-events-none fixed inset-0 z-10 flex ${positionClass} overflow-hidden`}>
-      <div className="absolute inset-0 bg-black/40 opacity-60 pointer-events-none" />
-      <div ref={containerRef} className="flex flex-col items-center text-center transition-transform duration-75 ease-out select-none px-4">
+    <div className={`pointer-events-none fixed inset-0 z-10 flex flex-col px-6 ${getPositionClasses()}`}>
+      <div ref={containerRef} className="transition-transform duration-75 ease-out select-none max-w-4xl">
          {lines.map((line, i) => <p key={i} className={textClass} style={fontStyle}>{line}</p>)}
       </div>
     </div>
   );
 };
 
+// Added missing default export
 export default LyricsOverlay;

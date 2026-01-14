@@ -1,4 +1,3 @@
-
 import { VisualizerMode, LyricsStyle } from '../../core/types';
 
 export const de = {
@@ -19,13 +18,13 @@ export const de = {
     system: 'System'
   },
   hints: {
-    mode: 'Wählen Sie den mathematischen Kern für die Generierung von Visuals.',
+    mode: 'Wählen Sie den mathematischen Kern für die Generation von Visuals.',
     theme: 'Wenden Sie eine kuratierte Farbpalette auf die Szene an.',
-    speed: 'Multiplikator für den Zeitmaßstab. Niedrige Werte sind hypnotisch, hohe energiegeladen.',
+    speed: 'Zeit-Multiplikator. Niedrige Werte sind hypnotisch; hohe Werte sind energetisch.',
     glow: 'Aktiviert Post-Processing-Bloom. Deaktivieren für bessere Leistung.',
     trails: 'Steuert die Pixel-Persistenz. Hohe Werte erzeugen flüssige, malerische Bewegungen.',
-    sensitivity: 'Steuert die Audioverstärkung. Hohe Werte erzeugen explosive Reaktionen auf leise Geräusche.',
-    smoothing: 'Zeitliche Dämpfung. Hohe Werte ergeben flüssige Bewegungen, niedrige sind zackig.',
+    sensitivity: 'Steuert die Audioverstärkung. Höhere Werte erzeugen explosive Reaktionen auf leise Geräusche.',
+    smoothing: 'Zeitliche Dämpfung. Höhere Werte ergeben flüssige Bewegungen; niedriger ist zackig.',
     fftSize: 'Spektrale Auflösung. 4096 bietet feine Details, verbraucht aber mehr CPU.',
     lyrics: 'KI-gestützte Songidentifikation und Textabruf umschalten.',
     lyricsStyle: 'Passen Sie die visuelle Darstellung der synchronisierten Texte an.',
@@ -99,6 +98,7 @@ export const de = {
   textRotation: 'Drehung',
   textFont: 'Schriftart',
   textOpacity: 'Deckkraft',
+  textPosition: 'Position',
   quality: 'Qualität',
   qualities: {
     low: 'Niedrig',
@@ -111,7 +111,16 @@ export const de = {
   positions: {
       top: 'Oben',
       center: 'Mitte',
-      bottom: 'Unten'
+      bottom: 'Unten',
+      tl: 'Oben links',
+      tc: 'Oben mittig',
+      tr: 'Oben rechts',
+      ml: 'Mitte links',
+      mc: 'Zentriert',
+      mr: 'Mitte rechts',
+      bl: 'Unten links',
+      bc: 'Unten mittig',
+      br: 'Unten rechts'
   },
   wakeLock: 'Wach bleiben',
   system: {
@@ -127,7 +136,8 @@ export const de = {
     accessDenied: 'Zugriff verweigert. Bitte überprüfen Sie Ihre Browser-Berechtigungen.',
     noDevice: 'Kein Audio-Eingabegerät gefunden.',
     deviceBusy: 'Audiogerät ist beschäftigt oder ungültig.',
-    general: 'Zugriff auf Audiogerät nicht möglich.'
+    general: 'Zugriff auf Audiogerät nicht möglich.',
+    tryDemo: 'Demo-Modus versuchen (Kein Audio)'
   },
   aiState: {
     active: 'Erkennung aktiv',
@@ -166,36 +176,27 @@ export const de = {
     intro: 'Aura Vision verwandelt Ihren Mikrofoneingang mithilfe fortschrittlicher Spektralanalyse in reaktionsschnelle, generative digitale Kunst.',
     shortcutsTitle: 'Tastaturkürzel',
     shortcutItems: {
-      toggleMic: 'Audio-Eingang umschalten',
-      fullscreen: 'Vollbild',
-      randomize: 'Ästhetik randomisieren',
-      lyrics: 'KI-Info umschalten',
-      hideUi: 'Bedienfeld umschalten',
-      glow: 'Glühen umschalten',
-      trails: 'Spuren umschalten',
-      changeMode: 'Modus ändern',
-      changeTheme: 'Thema ändern'
+      toggleMic: 'Audio-Eingang [Space]',
+      fullscreen: 'Vollbild [F]',
+      randomize: 'Zufall [R]',
+      lyrics: 'Song-Info [L]',
+      hideUi: 'Bedienfeld [H]',
+      glow: 'Leuchten [G]',
+      trails: 'Spuren [T]',
+      changeMode: 'Modus ändern [← →]',
+      changeTheme: 'Thema ändern [↑ ↓]'
     },
     howItWorksTitle: 'Erste Schritte',
     howItWorksSteps: [
-      '1. Erlauben Sie den Mikrofonzugriff, um die Analyse zu starten.',
-      '2. Spielen Sie High-Fidelity-Audio in der Nähe des Sensors ab.',
-      '3. Visuals reagieren in Echtzeit auf bestimmte Frequenzen.',
-      '4. Alle 30s erstellt die KI einen Schnappschuss zur Identifikation.'
+      'Erlauben Sie den Mikrofonzugriff, um die Analyse zu starten.',
+      'Spielen Sie High-Fidelity-Audio in der Nähe des Sensors ab.',
+      'Visuals reagieren in Echtzeit auf bestimmte Frequenzen.',
+      'Alle 30-45 Sekunden erstellt die KI einen Schnappschuss zur Identifikation.'
     ],
-    settingsTitle: 'Parameter-Guide',
-    settingsDesc: {
-      sensitivity: 'Verstärkungsregelung für audio-reaktive Elemente.',
-      speed: 'Zeitliche Frequenz der generativen Muster.',
-      glow: 'Intensität des Nachbearbeitungs-Glühens.',
-      trails: 'Zeitliche Akkumulation für flüssige Bewegungen.',
-      smoothing: 'Zeitliche Dämpfung der Frequenzdaten.',
-      fftSize: 'Anzahl der Subbänder für spektrale Auflösung.'
-    },
-    projectInfoTitle: 'Core Engine',
-    projectInfoText: 'Angetrieben von Google Gemini 3 Flash, React 19 und hardwarebeschleunigtem WebGL.',
-    privacyTitle: 'Datenschutzrichtlinie',
-    privacyText: 'Audio wird lokal analysiert. Temporäre Hochfrequenz-Schnappschüsse werden nur zur Identifikation an Gemini gesendet.',
+    projectInfoTitle: 'Über Aura Vision',
+    projectInfoText: 'Dieses Projekt kombiniert Echtzeit-Spektralanalyse mit der Leistungsfähigkeit von Google Gemini 3, React 19 und WebGL für ein immersives Erlebnis.',
+    privacyTitle: 'Privatsphäre',
+    privacyText: 'Die Audioanalyse erfolgt ausschließlich lokal in Ihrem Browser. Nur zur Songerkennung werden verschlüsselte Frequenzmerkmale an Gemini gesendet.',
     version: 'Release'
   },
   onboarding: {
@@ -212,11 +213,11 @@ export const de = {
         desc: '8+ physikbasierte WebGL-Engines, betrieben von Three.js.'
       },
       ai: {
-        title: 'Gemini KI-Intelligenz',
+        title: 'Gemini KI',
         desc: 'Echtzeit-Songidentifikation und Stimmungserkennung powered by Google Gemini 3.'
       },
       privacy: {
-        title: 'Datenschutz zuerst',
+        title: 'Datenschutz',
         desc: 'Lokale Spektralanalyse. Audiodaten werden niemals auf Servern gespeichert.'
       }
     },

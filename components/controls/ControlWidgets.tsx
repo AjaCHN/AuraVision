@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 
@@ -14,9 +13,13 @@ export const FloatingTooltip = ({ text, visible, anchorRef }: TooltipProps) => {
   const [coords, setCoords] = useState<{ top: number; left: number } | null>(null);
   const [isAutoHidden, setIsAutoHidden] = useState(false);
 
+  // Detect mobile/touch devices
+  const isMobile = typeof window !== 'undefined' && 
+    ('ontouchstart' in window || navigator.maxTouchPoints > 0 || window.innerWidth <= 768);
+
   // Handle position updates
   useEffect(() => {
-    if (visible && anchorRef.current && text) {
+    if (!isMobile && visible && anchorRef.current && text) {
       const updatePosition = () => {
         if (anchorRef.current) {
           const rect = anchorRef.current.getBoundingClientRect();
@@ -36,11 +39,11 @@ export const FloatingTooltip = ({ text, visible, anchorRef }: TooltipProps) => {
         window.removeEventListener('resize', updatePosition);
       };
     }
-  }, [visible, anchorRef, text]);
+  }, [visible, anchorRef, text, isMobile]);
 
   // Handle 5-second auto-hide logic
   useEffect(() => {
-    if (visible) {
+    if (visible && !isMobile) {
       setIsAutoHidden(false);
       const timer = setTimeout(() => {
         setIsAutoHidden(true);
@@ -49,11 +52,10 @@ export const FloatingTooltip = ({ text, visible, anchorRef }: TooltipProps) => {
     } else {
       setIsAutoHidden(false);
     }
-  }, [visible]);
+  }, [visible, isMobile]);
 
-  // CRITICAL FIX: Prevent "reading properties of undefined (reading 'match')"
-  // ALSO: Support auto-hide state
-  if (!visible || !coords || !text || isAutoHidden) return null;
+  // Hide tooltips on mobile or if not visible/timed out
+  if (isMobile || !visible || !coords || !text || isAutoHidden) return null;
 
   // Safe parse: text is guaranteed to exist here
   const match = typeof text === 'string' ? text.match(/^(.*)\s?\[(.+)\]$/) : null;

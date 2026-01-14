@@ -1,4 +1,3 @@
-
 import { VisualizerMode, LyricsStyle } from '../../core/types';
 
 export const tw = {
@@ -90,7 +89,7 @@ export const tw = {
   appInfo: '關於應用',
   appDescription: '一個基於即時頻域分析與 Gemini AI 語意辨識的沉浸式音樂視覺化套件。',
   version: '版本號',
-  defaultMic: '系統預設麥크風',
+  defaultMic: '系統預設麥克風',
   customText: '自訂文字內容',
   textProperties: '排版與佈局',
   customTextPlaceholder: '輸入文字',
@@ -100,6 +99,7 @@ export const tw = {
   textRotation: '旋轉角度',
   textFont: '字體樣式',
   textOpacity: '不透明度',
+  textPosition: '顯示位置',
   quality: '渲染畫質',
   qualities: {
     low: '低',
@@ -112,7 +112,16 @@ export const tw = {
   positions: {
       top: '頂部',
       center: '居中',
-      bottom: '底部'
+      bottom: '底部',
+      tl: '左上',
+      tc: '中上',
+      tr: '右上',
+      ml: '左中',
+      mc: '正中',
+      mr: '右中',
+      bl: '左下',
+      bc: '中下',
+      br: '右下'
   },
   wakeLock: '禁止螢幕休眠',
   system: {
@@ -128,7 +137,8 @@ export const tw = {
     accessDenied: '無法存取麥克風，請檢查瀏覽器權限。',
     noDevice: '未偵測到音訊輸入裝置。',
     deviceBusy: '音訊裝置被佔用或無效。',
-    general: '無法存取音訊裝置。'
+    general: '無法存取音訊裝置。',
+    tryDemo: '嘗試演示模式 (無音訊)'
   },
   aiState: {
     active: '辨識功能已開啟',

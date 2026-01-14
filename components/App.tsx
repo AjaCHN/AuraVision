@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import VisualizerCanvas from './visualizers/VisualizerCanvas';
 import ThreeVisualizer from './visualizers/ThreeVisualizer';
@@ -7,13 +6,13 @@ import SongOverlay from './ui/SongOverlay';
 import CustomTextOverlay from './ui/CustomTextOverlay';
 import LyricsOverlay from './ui/LyricsOverlay';
 import { OnboardingOverlay } from './ui/OnboardingOverlay'; 
-import { VisualizerMode, SongInfo, LyricsStyle, Language, VisualizerSettings, Region } from '../core/types';
+import { VisualizerMode, LyricsStyle, Language, VisualizerSettings, Region } from '../core/types';
 import { COLOR_THEMES } from '../core/constants';
-import { identifySongFromAudio } from '../core/services/geminiService';
 import { TRANSLATIONS } from '../core/i18n';
 import { useAudio } from '../core/hooks/useAudio';
+import { useLocalStorage } from '../core/hooks/useLocalStorage';
+import { useIdentification } from '../core/hooks/useIdentification';
 
-const STORAGE_PREFIX = 'av_v1_'; 
 const ONBOARDING_KEY = 'av_v1_has_onboarded'; 
 const DEFAULT_MODE = VisualizerMode.PLASMA; 
 const DEFAULT_THEME_INDEX = 1; 
@@ -31,7 +30,7 @@ const DEFAULT_SETTINGS: VisualizerSettings = {
   fftSize: 512, 
   quality: 'high',
   monitor: false,
-  wakeLock: false, // Updated to false by default
+  wakeLock: false,
   customText: 'AURA',
   showCustomText: false,
   textPulse: true,
@@ -40,7 +39,8 @@ const DEFAULT_SETTINGS: VisualizerSettings = {
   customTextFont: 'Inter, sans-serif',
   customTextOpacity: 0.35,
   customTextColor: '#ffffff', 
-  lyricsPosition: 'center',
+  customTextPosition: 'mc',
+  lyricsPosition: 'mc',
   recognitionProvider: 'GEMINI'
 };
 const DEFAULT_LYRICS_STYLE = LyricsStyle.KARAOKE; 
@@ -48,6 +48,7 @@ const DEFAULT_SHOW_LYRICS = false;
 const DEFAULT_LANGUAGE: Language = 'en'; 
 
 const App: React.FC = () => {
+  const { getStorage, setStorage, clearStorage } = useLocalStorage();
   const [hasStarted, setHasStarted] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(() => {
     if (typeof window === 'undefined') return false;
@@ -55,21 +56,6 @@ const App: React.FC = () => {
   });
   
   const wakeLockRef = useRef<any>(null);
-
-  const getStorage = useCallback(<T,>(key: string, fallback: T): T => {
-    if (typeof window === 'undefined') return fallback;
-    const fullKey = STORAGE_PREFIX + key;
-    const saved = localStorage.getItem(fullKey);
-    if (saved !== null && saved !== 'undefined') {
-      try {
-        return JSON.parse(saved) as T;
-      } catch (e) {
-        console.warn(`Storage load failed for ${fullKey}:`, e);
-        return fallback;
-      }
-    }
-    return fallback;
-  }, []);
 
   const detectDefaultRegion = (): Region => {
     const lang = navigator.language.toLowerCase();
@@ -98,17 +84,23 @@ const App: React.FC = () => {
 
   const { 
     isListening, 
+    isSimulating,
     analyser, 
     mediaStream, 
     audioDevices, 
     errorMessage, 
     setErrorMessage,
     startMicrophone, 
+    startDemoMode,
     toggleMicrophone 
   } = useAudio({ settings, language });
 
-  const [isIdentifying, setIsIdentifying] = useState(false);
-  const [currentSong, setCurrentSong] = useState<SongInfo | null>(null);
+  const { isIdentifying, currentSong, setCurrentSong, performIdentification } = useIdentification({
+    language,
+    region,
+    provider: settings.recognitionProvider,
+    showLyrics
+  });
 
   const requestWakeLock = useCallback(async () => {
     if ('wakeLock' in navigator && settings.wakeLock && hasStarted) {
@@ -147,11 +139,15 @@ const App: React.FC = () => {
   }, [settings.wakeLock, hasStarted, requestWakeLock]);
 
   useEffect(() => {
-    const data = { mode, theme: colorTheme, settings, lyricsStyle, showLyrics, language, region, deviceId: selectedDeviceId };
-    Object.entries(data).forEach(([key, value]) => {
-      localStorage.setItem(STORAGE_PREFIX + key, JSON.stringify(value));
-    });
-  }, [mode, colorTheme, settings, lyricsStyle, showLyrics, language, region, selectedDeviceId]);
+    setStorage('mode', mode);
+    setStorage('theme', colorTheme);
+    setStorage('settings', settings);
+    setStorage('lyricsStyle', lyricsStyle);
+    setStorage('showLyrics', showLyrics);
+    setStorage('language', language);
+    setStorage('region', region);
+    setStorage('deviceId', selectedDeviceId);
+  }, [mode, colorTheme, settings, lyricsStyle, showLyrics, language, region, selectedDeviceId, setStorage]);
 
   const handleOnboardingComplete = () => {
     localStorage.setItem(ONBOARDING_KEY, 'true');
@@ -175,53 +171,71 @@ const App: React.FC = () => {
   }, []);
 
   const resetAppSettings = useCallback(() => {
-    Object.keys(localStorage).forEach(key => {
-      if (key.startsWith(STORAGE_PREFIX) || key === ONBOARDING_KEY) localStorage.removeItem(key);
-    });
+    clearStorage();
+    localStorage.removeItem(ONBOARDING_KEY);
     window.location.reload(); 
-  }, []);
+  }, [clearStorage]);
 
   const resetVisualSettings = useCallback(() => {
     setMode(DEFAULT_MODE);
     setColorTheme(COLOR_THEMES[DEFAULT_THEME_INDEX]);
-    setSettings(prev => ({ ...prev, speed: DEFAULT_SETTINGS.speed, sensitivity: DEFAULT_SETTINGS.sensitivity, glow: DEFAULT_SETTINGS.glow, trails: DEFAULT_SETTINGS.trails, autoRotate: DEFAULT_SETTINGS.autoRotate, cycleColors: DEFAULT_SETTINGS.cycleColors, smoothing: DEFAULT_SETTINGS.smoothing, hideCursor: DEFAULT_SETTINGS.hideCursor, quality: DEFAULT_SETTINGS.quality }));
+    setSettings(prev => ({ 
+      ...prev, 
+      speed: DEFAULT_SETTINGS.speed, 
+      sensitivity: DEFAULT_SETTINGS.sensitivity, 
+      glow: DEFAULT_SETTINGS.glow, 
+      trails: DEFAULT_SETTINGS.trails, 
+      autoRotate: DEFAULT_SETTINGS.autoRotate, 
+      cycleColors: DEFAULT_SETTINGS.cycleColors, 
+      smoothing: DEFAULT_SETTINGS.smoothing, 
+      hideCursor: DEFAULT_SETTINGS.hideCursor, 
+      quality: DEFAULT_SETTINGS.quality 
+    }));
   }, []);
 
-  const performIdentification = useCallback(async (stream: MediaStream) => {
-    if (!showLyrics || isIdentifying) return;
-    setIsIdentifying(true);
-    try {
-      const recorder = new MediaRecorder(stream);
-      const chunks: Blob[] = [];
-      recorder.ondataavailable = (e) => chunks.push(e.data);
-      recorder.onstop = async () => {
-        const mimeType = recorder.mimeType || 'audio/webm';
-        const blob = new Blob(chunks, { type: mimeType });
-        const reader = new FileReader();
-        reader.readAsDataURL(blob);
-        reader.onloadend = async () => {
-          const base64Data = (reader.result as string).split(',')[1];
-          const info = await identifySongFromAudio(base64Data, mimeType, language, region, settings.recognitionProvider);
-          if (info && info.identified) setCurrentSong(info);
-          setIsIdentifying(false);
-        };
-      };
-      recorder.start();
-      setTimeout(() => recorder.state === 'recording' && recorder.stop(), 7000); 
-    } catch (e) {
-      console.error("Recording error:", e);
-      setIsIdentifying(false);
-    }
-  }, [showLyrics, isIdentifying, language, region, settings.recognitionProvider]);
+  const resetTextSettings = useCallback(() => {
+    setSettings(prev => ({
+      ...prev,
+      customText: DEFAULT_SETTINGS.customText,
+      showCustomText: DEFAULT_SETTINGS.showCustomText,
+      textPulse: DEFAULT_SETTINGS.textPulse,
+      customTextRotation: DEFAULT_SETTINGS.customTextRotation,
+      customTextSize: DEFAULT_SETTINGS.customTextSize,
+      customTextFont: DEFAULT_SETTINGS.customTextFont,
+      customTextOpacity: DEFAULT_SETTINGS.customTextOpacity,
+      customTextColor: DEFAULT_SETTINGS.customTextColor,
+      customTextPosition: DEFAULT_SETTINGS.customTextPosition
+    }));
+  }, []);
+
+  const resetAudioSettings = useCallback(() => {
+    setSettings(prev => ({
+      ...prev,
+      sensitivity: DEFAULT_SETTINGS.sensitivity,
+      smoothing: DEFAULT_SETTINGS.smoothing,
+      fftSize: DEFAULT_SETTINGS.fftSize
+    }));
+  }, []);
+
+  const resetAiSettings = useCallback(() => {
+    setShowLyrics(DEFAULT_SHOW_LYRICS);
+    setLyricsStyle(DEFAULT_LYRICS_STYLE);
+    setRegion(detectDefaultRegion());
+    setSettings(prev => ({
+      ...prev,
+      lyricsPosition: DEFAULT_SETTINGS.lyricsPosition,
+      recognitionProvider: DEFAULT_SETTINGS.recognitionProvider
+    }));
+  }, []);
 
   useEffect(() => {
     let interval: number;
-    if (isListening && mediaStream && showLyrics) {
+    if (isListening && mediaStream && showLyrics && !isSimulating) {
       performIdentification(mediaStream);
       interval = window.setInterval(() => performIdentification(mediaStream), 45000);
     }
     return () => clearInterval(interval);
-  }, [isListening, mediaStream, showLyrics, performIdentification]);
+  }, [isListening, mediaStream, showLyrics, performIdentification, isSimulating]);
 
   const isThreeMode = mode === VisualizerMode.SILK || mode === VisualizerMode.LIQUID || mode === VisualizerMode.TERRAIN;
   const t = TRANSLATIONS[language] || TRANSLATIONS[DEFAULT_LANGUAGE];
@@ -234,8 +248,13 @@ const App: React.FC = () => {
         <div className="max-w-md space-y-8 animate-fade-in-up">
           <h1 className="text-5xl font-black bg-clip-text bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 pb-4 text-transparent" style={{ WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>{t?.welcomeTitle || "Aura Vision"}</h1>
           <p className="text-gray-400 text-sm">{t?.welcomeText || "Translate audio into generative art."}</p>
-          <button onClick={() => { setHasStarted(true); startMicrophone(selectedDeviceId); }} className="px-8 py-4 bg-white text-black font-bold rounded-2xl hover:scale-105 transition-all">{t?.startExperience || "Start"}</button>
-          {errorMessage && <div className="mt-4 p-3 bg-red-500/20 text-red-200 text-sm rounded-lg border border-red-500/30">{errorMessage}</div>}
+          <div className="flex flex-col gap-3">
+             <button onClick={() => { setHasStarted(true); startMicrophone(selectedDeviceId); }} className="px-8 py-4 bg-white text-black font-bold rounded-2xl hover:scale-105 transition-all">{t?.startExperience || "Start"}</button>
+             <button onClick={() => { setHasStarted(true); startDemoMode(); }} className="px-8 py-3 bg-white/10 text-white font-bold rounded-2xl hover:bg-white/20 transition-all text-sm border border-white/10">
+                {t?.errors?.tryDemo || "Try Demo Mode"}
+             </button>
+          </div>
+          {errorMessage && <div className="p-3 bg-red-500/20 text-red-200 text-xs rounded-lg border border-red-500/30 leading-relaxed">{errorMessage}</div>}
         </div>
       </div>
     );
@@ -244,9 +263,18 @@ const App: React.FC = () => {
   return (
     <div className={`h-[100dvh] bg-black overflow-hidden relative ${settings.hideCursor ? 'cursor-none' : ''}`}>
       {errorMessage && (
-        <div className="fixed top-24 left-1/2 -translate-x-1/2 z-50 bg-red-900/90 text-white px-6 py-4 rounded-xl border border-red-500/50 animate-fade-in-up flex items-center gap-4">
-            <div className="flex-1 text-xs">{errorMessage}</div>
-            <button onClick={() => setErrorMessage(null)} className="p-2 hover:bg-white/10 rounded-full"><svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg></button>
+        <div className="fixed top-24 left-1/2 -translate-x-1/2 z-[150] bg-red-900/90 text-white px-6 py-4 rounded-xl border border-red-500/50 animate-fade-in-up flex flex-col sm:flex-row items-center gap-4 shadow-2xl max-w-[90vw]">
+            <div className="flex-1 text-xs font-medium">{errorMessage}</div>
+            <div className="flex items-center gap-3">
+               <button onClick={startDemoMode} className="whitespace-nowrap px-4 py-2 bg-white/20 hover:bg-white/30 rounded-lg text-xs font-bold transition-colors">{t?.errors?.tryDemo || "Demo Mode"}</button>
+               <button onClick={() => setErrorMessage(null)} className="p-2 hover:bg-white/10 rounded-full"><svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg></button>
+            </div>
+        </div>
+      )}
+      {isSimulating && (
+        <div className="fixed top-8 left-1/2 -translate-x-1/2 z-[140] bg-blue-600/20 backdrop-blur-md border border-blue-500/30 px-4 py-1.5 rounded-full flex items-center gap-2 pointer-events-none">
+            <div className="w-1.5 h-1.5 bg-blue-400 rounded-full animate-pulse"/>
+            <span className="text-[10px] font-bold uppercase tracking-widest text-blue-200">Demo Mode</span>
         </div>
       )}
       {isThreeMode ? <ThreeVisualizer analyser={analyser} mode={mode} colors={colorTheme} settings={settings} /> : <VisualizerCanvas analyser={analyser} mode={mode} colors={colorTheme} settings={settings} />}
@@ -259,7 +287,7 @@ const App: React.FC = () => {
         lyricsStyle={lyricsStyle} setLyricsStyle={setLyricsStyle} showLyrics={showLyrics} setShowLyrics={setShowLyrics}
         language={language} setLanguage={setLanguage} region={region} setRegion={setRegion}
         settings={settings} setSettings={setSettings} resetSettings={resetAppSettings}
-        resetVisualSettings={resetVisualSettings} resetTextSettings={() => {}} resetAudioSettings={() => {}} resetAiSettings={() => {}} randomizeSettings={randomizeSettings}
+        resetVisualSettings={resetVisualSettings} resetTextSettings={resetTextSettings} resetAudioSettings={resetAudioSettings} resetAiSettings={resetAiSettings} randomizeSettings={randomizeSettings}
         audioDevices={audioDevices} selectedDeviceId={selectedDeviceId} onDeviceChange={setSelectedDeviceId}
       />
     </div>

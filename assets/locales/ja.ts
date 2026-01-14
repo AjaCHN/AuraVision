@@ -1,4 +1,3 @@
-
 import { VisualizerMode, LyricsStyle } from '../../core/types';
 
 export const ja = {
@@ -94,11 +93,12 @@ export const ja = {
   textProperties: 'タイポグラフィとレイアウト',
   customTextPlaceholder: 'テキストを入力',
   showText: '表示切り替え',
-  pulseBeat: 'ビート連동',
+  pulseBeat: 'ビート連動',
   textSize: 'フォントサイズ',
   textRotation: '回転角度',
   textFont: 'フォントファミリー',
   textOpacity: '不透明度',
+  textPosition: '位置',
   quality: '画質',
   qualities: {
     low: '低',
@@ -111,7 +111,16 @@ export const ja = {
   positions: {
       top: '上',
       center: '中央',
-      bottom: '下'
+      bottom: '下',
+      tl: '左上',
+      tc: '中央上',
+      tr: '右上',
+      ml: '中央左',
+      mc: '中央',
+      mr: '中央右',
+      bl: '左下',
+      bc: '中央下',
+      br: '右下'
   },
   wakeLock: 'スリープ防止',
   system: {
@@ -127,7 +136,8 @@ export const ja = {
     accessDenied: 'アクセスが拒否されました。マイクの権限を確認してください。',
     noDevice: 'オーディオ入力デバイスが見つかりません。',
     deviceBusy: 'デバイスが使用中または無効です。',
-    general: 'オーディオデバイスにアクセスできません。'
+    general: 'オーディオデバイスにアクセスできません。',
+    tryDemo: 'デモモードを試す (オーディオなし)'
   },
   aiState: {
     active: '認識機能が有効',
@@ -166,36 +176,27 @@ export const ja = {
     intro: 'Aura Visionは、デバイスのマイクを使用して音楽と同期したリアルタイムのアートを生成する没入型の視聴覚体験です。',
     shortcutsTitle: 'ショートカットキー',
     shortcutItems: {
-      toggleMic: 'マイク開始 / 停止',
-      fullscreen: '全画面切替',
-      randomize: 'ランダム設定',
-      lyrics: 'AI情報 表示 / 非表示',
-      hideUi: 'パネル 表示 / 非表示',
-      glow: 'グロー切替',
-      trails: '残像切替',
-      changeMode: 'モード変更',
-      changeTheme: 'テーマ変更'
+      toggleMic: 'マイク開始/停止 [Space]',
+      fullscreen: '全画面切替 [F]',
+      randomize: 'ランダム設定 [R]',
+      lyrics: 'AI曲情報 [L]',
+      hideUi: '設定パネル [H]',
+      glow: 'グロー切替 [G]',
+      trails: '残像切替 [T]',
+      changeMode: 'モード変更 [← →]',
+      changeTheme: 'テーマ変更 [↑ ↓]'
     },
     howItWorksTitle: '使い方',
     howItWorksSteps: [
-      '1. マイクの使用を許可します。',
-      '2. 高品質のオーディオを再生します。',
-      '3. 周波数とビートに即座に反応します。',
-      '4. 約30秒ごとにAIが曲を識別します。'
+      'マイクの使用を許可して解析を開始します。',
+      'デバイスの近くで音楽を再生してください。',
+      '低音、中音、高音の周波数に即座に反応します。',
+      '約30〜45秒ごとにAIが曲の情報を識別します。'
     ],
-    settingsTitle: '設定ガイド',
-    settingsDesc: {
-      sensitivity: '音量に対する反応の感度。',
-      speed: 'アニメーションの変化の速さ。',
-      glow: 'ネオングローの効果強度。',
-      trails: '滑らかな動きのための残像量。',
-      smoothing: '反応の滑らかさの調整。',
-      fftSize: '解像度 (FFT)。'
-    },
-    projectInfoTitle: 'プロジェクト概要',
-    projectInfoText: 'Google Gemini 3 Flash、React 19、WebGLを搭載。',
+    projectInfoTitle: 'プロジェクトについて',
+    projectInfoText: 'Google Gemini 3、React 19、WebGLを組み合わせた、最先端のオーディオビジュアル体験です。',
     privacyTitle: 'プライバシー',
-    privacyText: 'オーディオはローカルで処理されます。曲の識別のために一時的にデータが送信されますが、保存はされません。',
+    privacyText: '音声解析は完全にローカルで実行されます。曲の識別のために、特徴データのみが暗号化されてGeminiに送信されます。',
     version: 'リリース'
   },
   onboarding: {
@@ -213,7 +214,7 @@ export const ja = {
       },
       ai: {
         title: 'Gemini AI インテリジェンス',
-        desc: 'Google Gemini 3によるリアルタイム의 曲識別とムード分析。'
+        desc: 'Google Gemini 3によるリアルタイムの曲識別とムード分析。'
       },
       privacy: {
         title: 'プライバシー優先',

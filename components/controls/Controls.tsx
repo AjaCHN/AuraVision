@@ -1,7 +1,6 @@
 
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { VisualizerMode, LyricsStyle, Language, VisualizerSettings, Region, AudioDevice } from '../../core/types';
-import { VISUALIZER_PRESETS, COLOR_THEMES } from '../../core/constants';
 import { TRANSLATIONS } from '../../core/i18n';
 import HelpModal from '../ui/HelpModal';
 import { ActionButton, TooltipArea } from './ControlWidgets';
@@ -11,6 +10,7 @@ import { AudioSettingsPanel } from './panels/AudioSettingsPanel';
 import { AiSettingsPanel } from './panels/AiSettingsPanel';
 import { SystemSettingsPanel } from './panels/SystemSettingsPanel';
 import { CustomTextSettingsPanel } from './panels/CustomTextSettingsPanel';
+import { useIdleTimer } from '../../core/hooks/useIdleTimer';
 
 interface ControlsProps {
   currentMode: VisualizerMode;
@@ -43,8 +43,6 @@ interface ControlsProps {
 
 type TabType = 'visual' | 'text' | 'audio' | 'ai' | 'system';
 
-const IDLE_TIMEOUT = 3000; 
-
 const Controls: React.FC<ControlsProps> = ({
   currentMode, setMode, colorTheme, setColorTheme, toggleMicrophone,
   isListening, isIdentifying, lyricsStyle, setLyricsStyle, showLyrics, setShowLyrics,
@@ -55,8 +53,8 @@ const Controls: React.FC<ControlsProps> = ({
   const [isExpanded, setIsExpanded] = useState(false);
   const [activeTab, setActiveTab] = useState<TabType>('visual');
   const [showHelp, setShowHelp] = useState(false);
-  const [isIdle, setIsIdle] = useState(false);
-  const idleTimerRef = useRef<number | null>(null);
+  
+  const { isIdle } = useIdleTimer(isExpanded);
   const t = TRANSLATIONS[language] || TRANSLATIONS['en'];
 
   const handleAiSettingsChange = (newSettings: VisualizerSettings) => {
@@ -74,44 +72,6 @@ const Controls: React.FC<ControlsProps> = ({
       document.exitFullscreen();
     }
   };
-
-  // 修复：确保 expanded 状态变化时立即刷新状态
-  const resetIdleTimer = useCallback(() => {
-    if (idleTimerRef.current) {
-      window.clearTimeout(idleTimerRef.current);
-    }
-    
-    setIsIdle(false);
-
-    // 面板展开时，禁止启动闲置计时器
-    if (!isExpanded) {
-      idleTimerRef.current = window.setTimeout(() => {
-        setIsIdle(true);
-      }, IDLE_TIMEOUT);
-    }
-  }, [isExpanded]);
-
-  useEffect(() => {
-    // 修复：增加更多的交互监听以覆盖平板端浏览器行为
-    const events = ['mousemove', 'mousedown', 'keydown', 'touchstart', 'touchmove', 'scroll', 'wheel'];
-    
-    const handleActivity = () => resetIdleTimer();
-    const handleSleep = () => setIsIdle(true);
-
-    events.forEach(evt => window.addEventListener(evt, handleActivity, { passive: true }));
-    window.addEventListener('blur', handleSleep);
-    window.addEventListener('focus', handleActivity);
-    
-    // 初始化计时器
-    resetIdleTimer();
-
-    return () => {
-      events.forEach(evt => window.removeEventListener(evt, handleActivity));
-      window.removeEventListener('blur', handleSleep);
-      window.removeEventListener('focus', handleActivity);
-      if (idleTimerRef.current) window.clearTimeout(idleTimerRef.current);
-    };
-  }, [resetIdleTimer]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {

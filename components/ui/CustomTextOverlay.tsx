@@ -43,8 +43,25 @@ const CustomTextOverlay: React.FC<CustomTextOverlayProps> = ({ settings, analyse
 
   if (!settings.showCustomText || !settings.customText) return null;
 
+  // Position mapping
+  const getPositionClasses = () => {
+      const pos = settings.customTextPosition || 'mc';
+      const map: Record<string, string> = {
+          tl: 'top-8 left-8 text-left items-start',
+          tc: 'top-8 left-1/2 -translate-x-1/2 text-center items-center',
+          tr: 'top-8 right-8 text-right items-end',
+          ml: 'top-1/2 left-8 -translate-y-1/2 text-left items-start',
+          mc: 'top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center items-center',
+          mr: 'top-1/2 right-8 -translate-y-1/2 text-right items-end',
+          bl: 'bottom-8 left-8 text-left items-start',
+          bc: 'bottom-8 left-1/2 -translate-x-1/2 text-center items-center',
+          br: 'bottom-8 right-8 text-right items-end',
+      };
+      return map[pos] || map.mc;
+  };
+
   return (
-    <div className="pointer-events-none fixed top-1/2 left-1/2 z-[100] w-full text-center flex items-center justify-center" style={{ transform: 'translate(-50%, -50%)' }}>
+    <div className={`pointer-events-none fixed z-[100] flex flex-col ${getPositionClasses()}`}>
       <div ref={textRef} className="font-black tracking-widest uppercase transition-transform duration-75 ease-out select-none inline-block origin-center"
         style={{ 
             color: settings.customTextColor || '#ffffff',
