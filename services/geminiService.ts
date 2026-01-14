@@ -55,7 +55,7 @@ export const identifySongFromAudio = async (
         3. **IMPORTANT**: Prioritize songs that are popular or trending in the "${regionName}" market.
         4. Detect the mood (e.g., Energetic, Melancholic, Chill).
         5. ${outputInstruction}
-        6. Return strictly a raw JSON object. Do not use Markdown formatting.
+        6. Return strictly a raw JSON object. Do not include any conversational text or markdown code blocks (like \`\`\`json).
 
         JSON Structure:
         {
@@ -80,15 +80,13 @@ export const identifySongFromAudio = async (
                 }
               },
               {
-                text: "Identify this song."
+                text: "Identify this song. Return ONLY JSON."
               }
             ]
           },
           config: {
             tools: [{ googleSearch: {} }],
             systemInstruction: systemInstruction,
-            // responseSchema is incompatible with googleSearch in some contexts or returns text chunks
-            // We parse manually below
           }
         });
 
@@ -99,12 +97,20 @@ export const identifySongFromAudio = async (
         
         let songInfo: SongInfo;
         try {
-            // Clean up Markdown if present (e.g. ```json ... ```)
-            let cleanText = response.text.trim();
-            if (cleanText.startsWith('```')) {
-                cleanText = cleanText.replace(/^```(json)?\n/, '').replace(/\n```$/, '');
+            // Robust JSON extraction: Find the first '{' and the last '}'
+            const text = response.text;
+            const startIndex = text.indexOf('{');
+            const endIndex = text.lastIndexOf('}');
+            
+            if (startIndex !== -1 && endIndex !== -1 && endIndex > startIndex) {
+                const jsonStr = text.substring(startIndex, endIndex + 1);
+                songInfo = JSON.parse(jsonStr);
+            } else {
+                // Fallback: try standard cleanup if regex fails (though the above handles most cases)
+                let cleanText = text.trim();
+                cleanText = cleanText.replace(/```json/g, '').replace(/```/g, '');
+                songInfo = JSON.parse(cleanText);
             }
-            songInfo = JSON.parse(cleanText);
         } catch (e) {
             console.error("[Recognition] Failed to parse JSON", response.text);
             return null;

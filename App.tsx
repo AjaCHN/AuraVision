@@ -1,16 +1,16 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
-import VisualizerCanvas from './components/visualizers/VisualizerCanvas';
-import ThreeVisualizer from './components/visualizers/ThreeVisualizer';
-import Controls from './components/controls/Controls';
-import SongOverlay from './components/ui/SongOverlay';
-import CustomTextOverlay from './components/ui/CustomTextOverlay';
-import LyricsOverlay from './components/ui/LyricsOverlay';
-import { VisualizerMode, SongInfo, LyricsStyle, Language, VisualizerSettings, Region } from './types';
-import { COLOR_THEMES } from './constants';
-import { identifySongFromAudio } from './services/geminiService';
-import { TRANSLATIONS } from './i18n';
-import { useAudio } from './hooks/useAudio';
+import VisualizerCanvas from './visualizers/VisualizerCanvas';
+import ThreeVisualizer from './visualizers/ThreeVisualizer';
+import Controls from './controls/Controls';
+import SongOverlay from './ui/SongOverlay';
+import CustomTextOverlay from './ui/CustomTextOverlay';
+import LyricsOverlay from './ui/LyricsOverlay';
+import { VisualizerMode, SongInfo, LyricsStyle, Language, VisualizerSettings, Region } from '../types';
+import { COLOR_THEMES } from '../constants';
+import { identifySongFromAudio } from '../services/geminiService';
+import { TRANSLATIONS } from '../i18n';
+import { useAudio } from '../hooks/useAudio';
 
 const STORAGE_PREFIX = 'av_v1_'; 
 const DEFAULT_MODE = VisualizerMode.PLASMA; 
@@ -326,3 +326,4 @@ const App: React.FC = () => {
 };
 
 export default App;
+    

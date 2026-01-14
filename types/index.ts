@@ -50,7 +50,6 @@ export interface VisualizerSettings {
   smoothing: number;
   fftSize: number;
   quality: 'low' | 'med' | 'high';
-  monitor: boolean;
   // Custom Text Settings
   customText: string;
   showCustomText: boolean;

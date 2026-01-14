@@ -1,12 +1,12 @@
 
 import { SongInfo } from '../types';
 
-const STORAGE_KEY = 'av_fingerprints_v1'; // Changed from sv_fingerprints_v1
+const STORAGE_KEY = 'av_fingerprints_v1';
 const MAX_CACHE_SIZE = 50;
-const SIMILARITY_THRESHOLD = 0.25; // Jaccard threshold (low because clips vary in content)
+const SIMILARITY_THRESHOLD = 0.25;
 
 interface FingerprintEntry {
-  features: number[]; // Set of dominant frequency bins
+  features: number[]; 
   song: SongInfo;
   timestamp: number;
 }
@@ -16,6 +16,7 @@ interface FingerprintEntry {
  * Uses OfflineAudioContext to perform fast FFT analysis.
  */
 export const generateFingerprint = async (base64Audio: string): Promise<number[]> => {
+  let audioCtx: AudioContext | null = null;
   try {
     // 1. Convert Base64 to ArrayBuffer
     const binaryString = window.atob(base64Audio);
@@ -26,18 +27,9 @@ export const generateFingerprint = async (base64Audio: string): Promise<number[]
 
     // 2. Decode Audio
     // Note: Creating a new context is cheap, but decoding takes a moment.
-    // CRITICAL FIX: We must close this context immediately after decoding, 
-    // otherwise Chrome will throw "The number of hardware contexts provided (6) has been reached".
-    const audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
+    audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
     const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
     
-    // Immediately release the hardware context to prevent leaks
-    try {
-        await audioCtx.close();
-    } catch (e) {
-        console.warn("Error closing temporary decoding context", e);
-    }
-
     // 3. Setup Offline Analysis
     const offlineCtx = new OfflineAudioContext(1, audioBuffer.length, audioBuffer.sampleRate);
     const source = offlineCtx.createBufferSource();
@@ -91,6 +83,15 @@ export const generateFingerprint = async (base64Audio: string): Promise<number[]
   } catch (e) {
     console.error("Fingerprint generation failed", e);
     return [];
+  } finally {
+    // Immediately release the hardware context to prevent leaks
+    if (audioCtx) {
+        try {
+            await audioCtx.close();
+        } catch (e) {
+            console.warn("Error closing temporary decoding context", e);
+        }
+    }
   }
 };
 
@@ -159,7 +160,6 @@ export const findLocalMatch = (features: number[]): SongInfo | null => {
     }
 
     if (bestScore >= SIMILARITY_THRESHOLD && bestMatch) {
-        // console.log(`Local match found: ${bestMatch.title} (Score: ${bestScore.toFixed(2)})`);
         return bestMatch;
     }
 

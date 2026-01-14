@@ -17,7 +17,6 @@ export const useAudio = ({ settings, language }: UseAudioProps) => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const audioContextRef = useRef<AudioContext | null>(null);
-  const monitorGainNodeRef = useRef<GainNode | null>(null);
 
   // Sync Analyser settings
   useEffect(() => {
@@ -28,14 +27,6 @@ export const useAudio = ({ settings, language }: UseAudioProps) => {
       }
     }
   }, [settings.smoothing, settings.fftSize, analyser]);
-
-  // Handle monitor gain
-  useEffect(() => {
-    if (monitorGainNodeRef.current && audioContextRef.current) {
-        const targetGain = settings.monitor ? 1 : 0;
-        monitorGainNodeRef.current.gain.setTargetAtTime(targetGain, audioContextRef.current.currentTime, 0.1);
-    }
-  }, [settings.monitor]);
 
   // Auto-resume AudioContext on visibility change (Mobile Safari fix)
   useEffect(() => {
@@ -124,13 +115,9 @@ export const useAudio = ({ settings, language }: UseAudioProps) => {
       node.smoothingTimeConstant = settings.smoothing;
       
       src.connect(node);
-
-      const monitorNode = context.createGain();
-      monitorNode.gain.value = settings.monitor ? 1 : 0;
-      src.connect(monitorNode);
-      monitorNode.connect(context.destination);
-      monitorGainNodeRef.current = monitorNode;
       
+      // Removed monitor node logic to prevent feedback loops
+
       audioContextRef.current = context;
       setAudioContext(context);
       setAnalyser(node);
@@ -153,7 +140,7 @@ export const useAudio = ({ settings, language }: UseAudioProps) => {
       
       setErrorMessage(msg);
     }
-  }, [settings.fftSize, settings.smoothing, settings.monitor, updateAudioDevices, language]);
+  }, [settings.fftSize, settings.smoothing, updateAudioDevices, language]);
 
   const toggleMicrophone = useCallback((deviceId: string) => {
     if (isListening) {

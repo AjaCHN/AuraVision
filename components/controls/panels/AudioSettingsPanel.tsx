@@ -34,15 +34,6 @@ export const AudioSettingsPanel: React.FC<AudioSettingsPanelProps> = ({
         <button onClick={toggleMicrophone} className={`w-full py-4 rounded-xl font-black text-xs uppercase tracking-[0.2em] transition-all duration-300 ${isListening ? 'bg-red-500/15 text-red-400 border border-red-500/30' : 'bg-blue-600 text-white shadow-xl shadow-blue-600/20 hover:bg-blue-500 hover:scale-[1.02]'}`}>
           {isListening ? t.stopMic : t.startMic}
         </button>
-        
-        <SettingsToggle 
-            label={t.monitorAudio} 
-            statusText={settings.monitor ? t.common.active : t.common.muted}
-            value={settings.monitor}
-            onChange={() => setSettings({...settings, monitor: !settings.monitor})}
-            hintText={t.hints.monitor}
-            activeColor="red"
-        />
       </div>
       <div className="p-4 space-y-6 border-b lg:border-b-0 lg:border-r border-white/5">
         <Slider label={t.sensitivity} hintText={t.hints.sensitivity} value={settings.sensitivity} min={0.5} max={4.0} step={0.1} onChange={(v:any) => setSettings({...settings, sensitivity: v})} />
