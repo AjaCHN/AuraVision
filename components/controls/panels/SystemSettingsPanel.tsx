@@ -1,20 +1,13 @@
+
 import React from 'react';
-import { Language, VisualizerSettings } from '../../../core/types';
+import { Language } from '../../../core/types';
 import { APP_VERSION } from '../../../core/constants';
 import { CustomSelect, SettingsToggle } from '../ControlWidgets';
+import { useAppContext } from '../../App';
 
-interface SystemSettingsPanelProps {
-  language: Language;
-  setLanguage: (lang: Language) => void;
-  settings: VisualizerSettings;
-  setSettings: (settings: VisualizerSettings) => void;
-  resetSettings: () => void;
-  t: any;
-}
-
-export const SystemSettingsPanel: React.FC<SystemSettingsPanelProps> = ({
-  language, setLanguage, settings, setSettings, resetSettings, t
-}) => {
+export const SystemSettingsPanel: React.FC = () => {
+  const { language, setLanguage, settings, setSettings, resetSettings, t } = useAppContext();
+  
   const h = t?.helpModal || {};
   const s = h?.shortcutItems || {};
   const hints = t?.hints || {};

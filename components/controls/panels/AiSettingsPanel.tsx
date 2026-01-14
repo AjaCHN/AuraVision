@@ -1,15 +1,12 @@
+
 import React from 'react';
-import { LyricsStyle, Region, VisualizerSettings } from '../../../core/types';
+import { LyricsStyle, Region, Position } from '../../../core/types';
 import { REGION_NAMES } from '../../../core/constants';
-import { CustomSelect, SettingsToggle, TooltipArea } from '../ControlWidgets';
+import { CustomSelect, SettingsToggle, TooltipArea, PositionSelector } from '../ControlWidgets';
+import { useAppContext } from '../../App';
 
 interface AiSettingsPanelProps {
-  settings: VisualizerSettings;
-  setSettings: (settings: VisualizerSettings) => void;
-  showLyrics: boolean;
-  setShowLyrics: (show: boolean) => void;
-  resetAiSettings: () => void;
-  t: any;
+  // Props are now sourced from context
 }
 
 const BetaBadge = ({ label }: { label?: string }) => (
@@ -18,7 +15,8 @@ const BetaBadge = ({ label }: { label?: string }) => (
   </span>
 );
 
-export const AiSettingsPanel: React.FC<AiSettingsPanelProps> = ({ settings, setSettings, showLyrics, setShowLyrics, resetAiSettings, t }) => {
+export const AiSettingsPanel: React.FC<AiSettingsPanelProps> = () => {
+  const { settings, setSettings, showLyrics, setShowLyrics, resetAiSettings, t } = useAppContext();
   const common = t?.common || {};
   const regions = t?.regions || {};
   const lyricsStyles = t?.lyricsStyles || {};
@@ -36,6 +34,10 @@ export const AiSettingsPanel: React.FC<AiSettingsPanelProps> = ({ settings, setS
     { value: 'bc', label: positions?.bc || "Bottom Center" },
     { value: 'br', label: positions?.br || "Bottom Right" },
   ];
+  
+  const handleLyricsPositionChange = (value: Position) => {
+    setSettings({ ...settings, lyricsPosition: value });
+  };
 
   return (
     <>
@@ -69,23 +71,15 @@ export const AiSettingsPanel: React.FC<AiSettingsPanelProps> = ({ settings, setS
         />
       </div>
 
-      {/* 第三列：位置设置与重置 (歌词位置移动到此处) */}
+      {/* 第三列：位置设置与重置 */}
       <div className="p-4 space-y-6 h-full flex flex-col pt-6">
-        <div className="space-y-3">
-          <span className="text-[10px] font-black uppercase text-white/50 tracking-[0.15em] block ml-1">{t?.lyricsPosition || "Position"}</span>
-          <div className="grid grid-cols-3 gap-1 bg-white/[0.02] p-2 rounded-xl border border-white/5 max-w-[160px]">
-              {positionOptions.map(pos => (
-                <button 
-                  key={pos.value} 
-                  onClick={() => setSettings({...settings, lyricsPosition: pos.value as any})}
-                  title={pos.label}
-                  className={`aspect-square rounded flex items-center justify-center transition-all ${settings.lyricsPosition === pos.value ? 'bg-green-600 text-white shadow-lg' : 'bg-white/5 text-white/20 hover:text-white/40'}`}
-                >
-                  <div className={`w-1.5 h-1.5 rounded-full ${settings.lyricsPosition === pos.value ? 'bg-white' : 'bg-white/20'}`} />
-                </button>
-              ))}
-          </div>
-        </div>
+        <PositionSelector
+          label={t?.lyricsPosition || "Position"}
+          value={settings.lyricsPosition}
+          onChange={handleLyricsPositionChange}
+          options={positionOptions}
+          activeColor="green"
+        />
         
         <div className="mt-auto">
           <button onClick={resetAiSettings} className="w-full py-2.5 bg-white/[0.04] rounded-lg text-xs font-bold uppercase tracking-widest text-white/50 hover:text-white flex items-center justify-center gap-2 transition-colors border border-transparent hover:border-white/10">

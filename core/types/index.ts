@@ -1,9 +1,12 @@
+
 import * as React from 'react';
 import type { ThreeElements } from '@react-three/fiber';
 
 export type Language = 'en' | 'zh' | 'tw' | 'ja' | 'es' | 'ko' | 'de' | 'fr';
 
 export type Region = 'global' | 'US' | 'CN' | 'JP' | 'KR' | 'EU' | 'LATAM';
+
+export type Position = 'tl' | 'tc' | 'tr' | 'ml' | 'mc' | 'mr' | 'bl' | 'bc' | 'br';
 
 export enum VisualizerMode {
   BARS = 'BARS',
@@ -62,8 +65,8 @@ export interface VisualizerSettings {
   customTextFont: string;
   customTextOpacity: number;
   customTextColor: string;
-  customTextPosition: 'tl' | 'tc' | 'tr' | 'ml' | 'mc' | 'mr' | 'bl' | 'bc' | 'br';
-  lyricsPosition: 'tl' | 'tc' | 'tr' | 'ml' | 'mc' | 'mr' | 'bl' | 'bc' | 'br';
+  customTextPosition: Position;
+  lyricsPosition: Position;
   recognitionProvider: 'GEMINI' | 'MOCK' | 'OPENAI' | 'CLAUDE' | 'GROK';
   lyricsStyle?: LyricsStyle;
   region?: Region;
@@ -96,8 +99,9 @@ export interface AudioDevice {
 
 declare global {
   namespace JSX {
-    // FIX: Augmented IntrinsicElements with ThreeElements to provide types for R3F components,
-    // while also extending React's standard JSX elements to avoid breaking HTML tags.
-    interface IntrinsicElements extends React.JSX.IntrinsicElements, ThreeElements {}
+    // FIX: Augmented IntrinsicElements with ThreeElements to provide types for R3F components.
+    // TypeScript's declaration merging will handle combining these with standard HTML element types,
+    // resolving the circular reference issue from extending React.JSX.IntrinsicElements.
+    interface IntrinsicElements extends ThreeElements {}
   }
 }

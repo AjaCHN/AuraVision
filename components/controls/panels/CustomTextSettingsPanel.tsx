@@ -1,17 +1,12 @@
 
 import React from 'react';
-import { VisualizerSettings } from '../../../core/types';
 import { AVAILABLE_FONTS } from '../../../core/constants';
-import { SettingsToggle, Slider, CustomSelect } from '../ControlWidgets';
+import { SettingsToggle, Slider, CustomSelect, PositionSelector } from '../ControlWidgets';
+import { useAppContext } from '../../App';
+import { Position } from '../../../core/types';
 
-interface CustomTextSettingsPanelProps {
-  settings: VisualizerSettings;
-  setSettings: (settings: VisualizerSettings) => void;
-  resetTextSettings: () => void;
-  t: any;
-}
-
-export const CustomTextSettingsPanel: React.FC<CustomTextSettingsPanelProps> = ({ settings, setSettings, resetTextSettings, t }) => {
+export const CustomTextSettingsPanel: React.FC = () => {
+  const { settings, setSettings, resetTextSettings, t } = useAppContext();
   const positions = t?.positions || {};
   
   const positionOptions = [
@@ -25,6 +20,10 @@ export const CustomTextSettingsPanel: React.FC<CustomTextSettingsPanelProps> = (
     { value: 'bc', label: positions?.bc || "Bottom Center" },
     { value: 'br', label: positions?.br || "Bottom Right" },
   ];
+
+  const handleTextPositionChange = (value: Position) => {
+    setSettings({ ...settings, customTextPosition: value });
+  };
 
   const colorPresets = [
     '#ffffff', '#00e5ff', '#00ff41', '#ff007f', '#ffcc00', '#ff9500', '#af52de',
@@ -54,7 +53,7 @@ export const CustomTextSettingsPanel: React.FC<CustomTextSettingsPanelProps> = (
         </div>
       </div>
 
-      {/* 第二列：文字颜色 (调换到此处) */}
+      {/* 第二列：文字颜色 */}
       <div className="p-4 h-full flex flex-col border-b lg:border-b-0 lg:border-r border-white/5 pt-6">
          <div className="space-y-4">
             <span className="text-[10px] font-black uppercase text-white/50 tracking-[0.25em] block ml-1">{t?.customColor || 'TEXT COLOR'}</span>
@@ -76,7 +75,8 @@ export const CustomTextSettingsPanel: React.FC<CustomTextSettingsPanelProps> = (
                           key={c} 
                           onClick={() => setSettings({...settings, customTextColor: c})} 
                           className={`w-6 h-6 rounded-full border transition-all ${settings.customTextColor === c ? 'border-white scale-125 z-10' : 'border-white/10 hover:scale-110'}`} 
-                          style={{backgroundColor: c}} 
+                          style={{backgroundColor: c}}
+                          aria-label={`Color ${c}`}
                         />
                     ))}
                 </div>
@@ -84,21 +84,16 @@ export const CustomTextSettingsPanel: React.FC<CustomTextSettingsPanelProps> = (
          </div>
       </div>
 
-      {/* 第三列：排版与布局 + 重置按钮 (调换到此处) */}
+      {/* 第三列：排版与布局 + 重置按钮 */}
       <div className="p-4 h-full flex flex-col pt-6 space-y-5">
          <span className="text-[10px] font-black uppercase text-white/50 tracking-[0.25em] block ml-1 -mb-2">{t?.textProperties || "Layout"}</span>
-         <div className="grid grid-cols-3 gap-1 bg-white/[0.02] p-2 rounded-xl border border-white/5 max-w-[160px]">
-            {positionOptions.map(pos => (
-              <button 
-                key={pos.value} 
-                onClick={() => setSettings({...settings, customTextPosition: pos.value as any})}
-                title={pos.label}
-                className={`aspect-square rounded flex items-center justify-center transition-all ${settings.customTextPosition === pos.value ? 'bg-blue-600 text-white shadow-lg' : 'bg-white/5 text-white/20 hover:text-white/40'}`}
-              >
-                <div className={`w-1.5 h-1.5 rounded-full ${settings.customTextPosition === pos.value ? 'bg-white' : 'bg-white/20'}`} />
-              </button>
-            ))}
-         </div>
+         <PositionSelector
+            label=""
+            value={settings.customTextPosition}
+            onChange={handleTextPositionChange}
+            options={positionOptions}
+            activeColor="blue"
+          />
          <Slider label={t?.textSize || "Size"} value={settings.customTextSize ?? 12} min={2} max={60} step={1} onChange={(v: number) => setSettings({...settings, customTextSize: v})} />
          <Slider label={t?.textRotation || "Rotate"} value={settings.customTextRotation ?? 0} min={-180} max={180} step={5} onChange={(v: number) => setSettings({...settings, customTextRotation: v})} unit="°" />
          <Slider label={t?.textOpacity || "Opacity"} value={settings.customTextOpacity ?? 1.0} min={0} max={1} step={0.05} onChange={(v: number) => setSettings({...settings, customTextOpacity: v})} />

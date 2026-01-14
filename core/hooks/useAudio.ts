@@ -95,8 +95,6 @@ export const useAudio = ({ settings, language }: UseAudioProps) => {
         node.fftSize = settings.fftSize;
         node.smoothingTimeConstant = settings.smoothing;
 
-        // The audio graph for synthesized audio must be connected to the destination
-        // for the browser to process it. Connect via a GainNode with gain=0 to keep it silent.
         const silentDestination = context.createGain();
         silentDestination.gain.value = 0;
         node.connect(silentDestination);
@@ -117,7 +115,7 @@ export const useAudio = ({ settings, language }: UseAudioProps) => {
     }
   }, [settings.fftSize, settings.smoothing]);
 
-  const toggleMicrophone = (deviceId: string) => {
+  const toggleMicrophone = useCallback((deviceId: string) => {
     if (isListening) {
       if (mediaStream) {
         mediaStream.getTracks().forEach(t => t.stop());
@@ -129,7 +127,7 @@ export const useAudio = ({ settings, language }: UseAudioProps) => {
     } else {
       startMicrophone(deviceId);
     }
-  };
+  }, [isListening, mediaStream, startMicrophone]);
 
   return { isListening, isSimulating, audioContext, analyser, mediaStream, audioDevices, errorMessage, setErrorMessage, startMicrophone, startDemoMode, toggleMicrophone };
 };

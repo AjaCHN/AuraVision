@@ -1,23 +1,12 @@
 
 import React from 'react';
-import { VisualizerMode, VisualizerSettings } from '../../../core/types';
+import { VisualizerMode } from '../../../core/types';
 import { VISUALIZER_PRESETS, COLOR_THEMES } from '../../../core/constants';
 import { SettingsToggle, Slider } from '../ControlWidgets';
+import { useAppContext } from '../../App';
 
-interface VisualSettingsPanelProps {
-  currentMode: VisualizerMode;
-  setMode: (mode: VisualizerMode) => void;
-  colorTheme: string[];
-  setColorTheme: (theme: string[]) => void;
-  settings: VisualizerSettings;
-  setSettings: (settings: VisualizerSettings) => void;
-  resetVisualSettings: () => void;
-  t: any;
-}
-
-export const VisualSettingsPanel: React.FC<VisualSettingsPanelProps> = ({
-  currentMode, setMode, colorTheme, setColorTheme, settings, setSettings, resetVisualSettings, t
-}) => {
+export const VisualSettingsPanel: React.FC = () => {
+  const { mode: currentMode, setMode, colorTheme, setColorTheme, settings, setSettings, resetVisualSettings, t } = useAppContext();
   const hints = t?.hints || {};
   const modes = t?.modes || {};
   const qualities = t?.qualities || {};
@@ -28,7 +17,7 @@ export const VisualSettingsPanel: React.FC<VisualSettingsPanelProps> = ({
         <span className="text-xs font-bold uppercase text-white/50 tracking-[0.25em] block ml-1 mb-3 flex-shrink-0">{t?.visualizerMode || "Visualizer Mode"}</span>
         <div className="grid grid-cols-2 gap-2 flex-1 overflow-y-auto custom-scrollbar p-1 pr-2 content-start">
            {Object.keys(VISUALIZER_PRESETS).map(m => (
-             <button key={m} onClick={() => setMode(m as VisualizerMode)} className={`px-3 py-3 rounded-lg text-xs font-bold uppercase tracking-widest border transition-all duration-300 ${currentMode === m ? 'bg-white/20 border-white/40 text-white' : 'bg-white/[0.04] border-transparent text-white/40 hover:text-white'}`}>
+             <button key={m} onClick={() => setMode(m as VisualizerMode)} aria-pressed={currentMode === m} className={`px-3 py-3 rounded-lg text-xs font-bold uppercase tracking-widest border transition-all duration-300 ${currentMode === m ? 'bg-white/20 border-white/40 text-white' : 'bg-white/[0.04] border-transparent text-white/40 hover:text-white'}`}>
                {modes[m as VisualizerMode] || m}
              </button>
            ))}
@@ -38,7 +27,7 @@ export const VisualSettingsPanel: React.FC<VisualSettingsPanelProps> = ({
                 <span className="text-xs font-bold uppercase text-white/40 tracking-wider whitespace-nowrap">{t?.quality || "Quality"}</span>
                 <div className="flex-1 flex bg-white/[0.04] rounded-lg p-0.5 border border-white/5 max-w-[180px]">
                 {(['low', 'med', 'high'] as const).map(q => (
-                    <button key={q} onClick={() => setSettings({...settings, quality: q})} className={`flex-1 py-1.5 rounded text-xs font-bold uppercase tracking-widest transition-all ${settings.quality === q ? 'bg-white/20 text-white' : 'text-white/30 hover:text-white/70'}`}>{qualities[q] || q}</button>
+                    <button key={q} onClick={() => setSettings({...settings, quality: q})} aria-pressed={settings.quality === q} className={`flex-1 py-1.5 rounded text-xs font-bold uppercase tracking-widest transition-all ${settings.quality === q ? 'bg-white/20 text-white' : 'text-white/30 hover:text-white/70'}`}>{qualities[q] || q}</button>
                 ))}
                 </div>
             </div>
@@ -48,12 +37,12 @@ export const VisualSettingsPanel: React.FC<VisualSettingsPanelProps> = ({
         <span className="text-xs font-bold uppercase text-white/50 tracking-[0.25em] block ml-1 mb-3 flex-shrink-0">{t?.styleTheme || "Visual Theme"}</span>
         <div className="flex flex-wrap gap-3 p-1 flex-1 overflow-y-auto custom-scrollbar content-start">
           {COLOR_THEMES.map((theme, i) => (
-            <button key={i} onClick={() => setColorTheme(theme)} className={`w-9 h-9 rounded-full flex-shrink-0 transition-all duration-300 ${JSON.stringify(colorTheme) === JSON.stringify(theme) ? 'ring-2 ring-white/80 scale-110 shadow-[0_0_20px_rgba(255,255,255,0.3)]' : 'opacity-60 hover:opacity-100'}`} style={{background: `linear-gradient(135deg, ${theme[0]}, ${theme[1]})` }} />
+            <button key={i} onClick={() => setColorTheme(theme)} aria-label={`Theme ${i+1}`} className={`w-9 h-9 rounded-full flex-shrink-0 transition-all duration-300 ${JSON.stringify(colorTheme) === JSON.stringify(theme) ? 'ring-2 ring-white/80 scale-110 shadow-[0_0_20px_rgba(255,255,255,0.3)]' : 'opacity-60 hover:opacity-100'}`} style={{background: `linear-gradient(135deg, ${theme[0]}, ${theme[1]})` }} />
           ))}
         </div>
         <div className="space-y-4 pt-4 border-t border-white/5 mt-auto">
-          <Slider label={t?.speed || "Speed"} hintText={hints?.speed} value={settings.speed} min={0.1} max={3.0} step={0.1} onChange={(v:any) => setSettings({...settings, speed: v})} />
-          <Slider label={t?.sensitivity || "Sensitivity"} hintText={hints?.sensitivity} value={settings.sensitivity} min={0.5} max={4.0} step={0.1} onChange={(v:any) => setSettings({...settings, sensitivity: v})} />
+          <Slider label={t?.speed || "Speed"} hintText={hints?.speed} value={settings.speed} min={0.1} max={3.0} step={0.1} onChange={(v: number) => setSettings({...settings, speed: v})} />
+          <Slider label={t?.sensitivity || "Sensitivity"} hintText={hints?.sensitivity} value={settings.sensitivity} min={0.5} max={4.0} step={0.1} onChange={(v: number) => setSettings({...settings, sensitivity: v})} />
         </div>
       </div>
       <div id="container-visual-toggles" className="flex flex-col p-4 space-y-4 overflow-y-auto custom-scrollbar h-full">
