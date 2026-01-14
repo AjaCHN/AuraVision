@@ -39,7 +39,8 @@ export const ko = {
     fullscreen: '전체 화면 모드로 전환합니다.',
     help: '단축키 및 자세한 프로젝트 문서를 봅니다.',
     mic: '시스템 마이크 청취를 시작하거나 중지합니다.',
-    device: '사용할 오디오 입력 하드웨어를 선택합니다.'
+    device: '사용할 오디오 입력 하드웨어를 선택합니다.',
+    monitor: '스피커를 통해 오디오 입력을 모니터링합니다 (하울링이 발생할 수 있습니다).'
   },
   visualizerMode: '비주얼라이저 모드',
   styleTheme: '비주얼 테마',
@@ -52,6 +53,7 @@ export const ko = {
   rotateInterval: '간격 (초)',
   cycleColors: '색상 자동 순환',
   colorInterval: '간격 (초)',
+  monitorAudio: '오디오 모니터링',
   audioInput: '입력 장치',
   lyrics: '가사',
   showLyrics: 'AI 인식 활성화',
@@ -93,11 +95,20 @@ export const ko = {
   textSize: '글꼴 크기',
   textRotation: '회전',
   textFont: '글꼴',
+  textOpacity: '투명도',
   quality: '화질',
   qualities: {
     low: '낮음',
     med: '중간',
     high: '높음'
+  },
+  recognitionSource: 'AI 제공자',
+  lyricsPosition: '가사 위치',
+  simulatedDemo: '시뮬레이션 (데모)',
+  positions: {
+      top: '상단',
+      center: '중앙',
+      bottom: '하단'
   },
   system: {
     shortcuts: {

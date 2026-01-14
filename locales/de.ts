@@ -39,7 +39,8 @@ export const de = {
     fullscreen: 'Schalten Sie die Anwendung in den Vollbildmodus.',
     help: 'Tastaturkürzel und detaillierte Projektdokumentation anzeigen.',
     mic: 'Starten oder stoppen Sie das Abhören des Systemmikrofons.',
-    device: 'Wählen Sie die zu verwendende Audio-Eingangshardware.'
+    device: 'Wählen Sie die zu verwendende Audio-Eingangshardware.',
+    monitor: 'Hören Sie den Audioeingang über Ihre Lautsprecher (kann Rückkopplungen verursachen).'
   },
   visualizerMode: 'Visualizer-Modus',
   styleTheme: 'Visuelles Thema',
@@ -52,6 +53,7 @@ export const de = {
   rotateInterval: 'Intervall (s)',
   cycleColors: 'Farb-Zyklus',
   colorInterval: 'Intervall (s)',
+  monitorAudio: 'Audio überwachen',
   audioInput: 'Eingabegerät',
   lyrics: 'Songtexte',
   showLyrics: 'KI aktivieren',
@@ -93,11 +95,20 @@ export const de = {
   textSize: 'Schriftgröße',
   textRotation: 'Drehung',
   textFont: 'Schriftart',
+  textOpacity: 'Deckkraft',
   quality: 'Qualität',
   qualities: {
     low: 'Niedrig',
     med: 'Mittel',
     high: 'Hoch'
+  },
+  recognitionSource: 'KI-Anbieter',
+  lyricsPosition: 'Textposition',
+  simulatedDemo: 'Simuliert (Demo)',
+  positions: {
+      top: 'Oben',
+      center: 'Mitte',
+      bottom: 'Unten'
   },
   system: {
     shortcuts: {

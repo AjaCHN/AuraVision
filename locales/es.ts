@@ -39,7 +39,8 @@ export const es = {
     fullscreen: 'Alterna la aplicación al modo de pantalla completa.',
     help: 'Ver atajos y documentación detallada del proyecto.',
     mic: 'Inicia o detiene la escucha del micrófono del sistema.',
-    device: 'Selecciona qué dispositivo de entrada de audio utilizar.'
+    device: 'Selecciona qué dispositivo de entrada de audio utilizar.',
+    monitor: 'Escucha la entrada de audio a través de tus altavoces (puede causar retroalimentación).'
   },
   visualizerMode: 'Modo Visualizador',
   styleTheme: 'Tema Visual',
@@ -52,6 +53,7 @@ export const es = {
   rotateInterval: 'Intervalo (s)',
   cycleColors: 'Ciclo de Colores',
   colorInterval: 'Intervalo (s)',
+  monitorAudio: 'Monitor de Audio',
   audioInput: 'Dispositivo de Entrada',
   lyrics: 'Letras',
   showLyrics: 'Habilitar IA',
@@ -93,11 +95,20 @@ export const es = {
   textSize: 'Tamaño de Fuente',
   textRotation: 'Rotación',
   textFont: 'Fuente',
+  textOpacity: 'Opacidad',
   quality: 'Calidad Visual',
   qualities: {
     low: 'Baja',
     med: 'Media',
     high: 'Alta'
+  },
+  recognitionSource: 'Fuente de IA',
+  lyricsPosition: 'Posición de Letras',
+  simulatedDemo: 'Simulado (Demo)',
+  positions: {
+      top: 'Arriba',
+      center: 'Centro',
+      bottom: 'Abajo'
   },
   system: {
     shortcuts: {

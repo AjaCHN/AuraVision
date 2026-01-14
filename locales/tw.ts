@@ -39,7 +39,8 @@ export const tw = {
     fullscreen: '進入沉浸式全螢幕互動模式。',
     help: '查看快捷鍵操作指南與專案詳細文件。',
     mic: '啟動或停止採集系統麥克風訊號。',
-    device: '選擇當前活動的音訊輸入硬體。'
+    device: '選擇當前活動的音訊輸入硬體。',
+    monitor: '透過揚聲器監聽音訊輸入（可能會產生回音）。'
   },
   visualizerMode: '視覺化模式',
   styleTheme: '視覺風格',
@@ -52,6 +53,7 @@ export const tw = {
   rotateInterval: '切換間隔 (秒)',
   cycleColors: '自動循環配色',
   colorInterval: '切換間隔 (秒)',
+  monitorAudio: '音訊監聽',
   audioInput: '輸入來源選擇',
   lyrics: 'AI 曲目辨識',
   showLyrics: '啟用自動辨識',

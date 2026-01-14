@@ -1,7 +1,7 @@
 
 # Aura Vision 🎵👁️
 
-### AI-Powered 3D Music Visualizer & Identifier
+### AI-Powered 3D Music Visualizer & Identifier (v0.2.17)
 
 [中文文档](README_ZH.md) | [Live Demo](https://aura.tanox.net/)
 

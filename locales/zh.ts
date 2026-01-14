@@ -39,7 +39,8 @@ export const zh = {
     fullscreen: '进入沉浸式全屏交互模式。',
     help: '查看快捷键操作指南与项目详细文档。',
     mic: '启动或停止采集系统麦克风信号。',
-    device: '选择当前活动的音频输入硬件。'
+    device: '选择当前活动的音频输入硬件。',
+    monitor: '通过扬声器监听音频输入（可能会产生回音）。'
   },
   visualizerMode: '可视化模式',
   styleTheme: '视觉风格',
@@ -52,6 +53,7 @@ export const zh = {
   rotateInterval: '切换间隔 (秒)',
   cycleColors: '自动循环配色',
   colorInterval: '切换间隔 (秒)',
+  monitorAudio: '音频监听',
   audioInput: '输入源选择',
   lyrics: 'AI 曲目识别',
   showLyrics: '启用自动识别',

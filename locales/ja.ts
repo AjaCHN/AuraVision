@@ -39,7 +39,8 @@ export const ja = {
     fullscreen: 'フルスクリーンモードに切り替えます。',
     help: 'ショートカットとドキュメントを表示します。',
     mic: 'マイクの入力を開始または停止します。',
-    device: '使用するオーディオ入力デバイスを選択します。'
+    device: '使用するオーディオ入力デバイスを選択します。',
+    monitor: 'スピーカーから音声入力をモニタリングします（ハウリングの原因になる可能性があります）。'
   },
   visualizerMode: 'ビジュアライザモード',
   styleTheme: 'ビジュアルテーマ',
@@ -52,6 +53,7 @@ export const ja = {
   rotateInterval: '間隔 (秒)',
   cycleColors: '自動カラー切替',
   colorInterval: '間隔 (秒)',
+  monitorAudio: '音声モニター',
   audioInput: '入力ソース',
   lyrics: 'AI曲識別',
   showLyrics: '自動識別を有効にする',

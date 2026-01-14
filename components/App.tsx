@@ -147,6 +147,7 @@ const App: React.FC = () => {
     setSettings(prev => ({
       ...prev,
       speed: DEFAULT_SETTINGS.speed,
+      sensitivity: DEFAULT_SETTINGS.sensitivity, // Added sensitivity to visual reset
       glow: DEFAULT_SETTINGS.glow,
       trails: DEFAULT_SETTINGS.trails,
       autoRotate: DEFAULT_SETTINGS.autoRotate,
@@ -165,7 +166,8 @@ const App: React.FC = () => {
       textPulse: DEFAULT_SETTINGS.textPulse,
       customTextRotation: DEFAULT_SETTINGS.customTextRotation,
       customTextSize: DEFAULT_SETTINGS.customTextSize,
-      customTextFont: DEFAULT_SETTINGS.customTextFont
+      customTextFont: DEFAULT_SETTINGS.customTextFont,
+      customTextOpacity: DEFAULT_SETTINGS.customTextOpacity
     }));
   }, []);
 
@@ -184,6 +186,11 @@ const App: React.FC = () => {
     setShowLyrics(DEFAULT_SHOW_LYRICS);
     setLyricsStyle(DEFAULT_LYRICS_STYLE);
     setRegion(detectDefaultRegion());
+    setSettings(prev => ({
+      ...prev,
+      lyricsPosition: DEFAULT_SETTINGS.lyricsPosition,
+      recognitionProvider: DEFAULT_SETTINGS.recognitionProvider
+    }));
   }, []);
 
 
@@ -235,7 +242,7 @@ const App: React.FC = () => {
         reader.readAsDataURL(blob);
         reader.onloadend = async () => {
           const base64Data = (reader.result as string).split(',')[1];
-          const info = await identifySongFromAudio(base64Data, mimeType, language, region);
+          const info = await identifySongFromAudio(base64Data, mimeType, language, region, settings.recognitionProvider);
           if (info && info.identified) setCurrentSong(info);
           setIsIdentifying(false);
         };
@@ -246,7 +253,7 @@ const App: React.FC = () => {
       console.error("Recording error:", e);
       setIsIdentifying(false);
     }
-  }, [showLyrics, isIdentifying, language, region]);
+  }, [showLyrics, isIdentifying, language, region, settings.recognitionProvider]);
 
   useEffect(() => {
     let interval: number;

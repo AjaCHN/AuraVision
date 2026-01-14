@@ -24,7 +24,6 @@ export const AiSettingsPanel: React.FC<AiSettingsPanelProps> = ({
              label={t.lyrics}
              value={showLyrics}
              onChange={() => setShowLyrics(!showLyrics)}
-             statusText={showLyrics ? t.aiState.active : t.aiState.enable}
              activeColor="green"
           />
           <div className="mt-4 space-y-4">

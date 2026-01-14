@@ -39,7 +39,8 @@ export const en = {
     fullscreen: 'Toggle the application to full-screen mode.',
     help: 'View shortcuts and detailed project documentation.',
     mic: 'Start or stop listening to the system microphone.',
-    device: 'Select which audio input hardware to use.'
+    device: 'Select which audio input hardware to use.',
+    monitor: 'Listen to the audio input through your speakers (may cause feedback).'
   },
   visualizerMode: 'Visualizer Mode',
   styleTheme: 'Visual Theme',
@@ -52,6 +53,7 @@ export const en = {
   rotateInterval: 'Interval (s)',
   cycleColors: 'Auto-Cycle Colors',
   colorInterval: 'Interval (s)',
+  monitorAudio: 'Monitor Audio',
   audioInput: 'Input Device',
   lyrics: 'Lyrics',
   showLyrics: 'Enable AI Recognition',
