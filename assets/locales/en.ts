@@ -1,5 +1,4 @@
 
-
 import { VisualizerMode, LyricsStyle } from '../../core/types';
 
 export const en = {
@@ -194,13 +193,13 @@ export const en = {
   modes: {
     [VisualizerMode.PLASMA]: 'Plasma Flow',
     [VisualizerMode.BARS]: 'Frequency Bars',
-    [VisualizerMode.PARTICLES]: 'Starfield',
+    [VisualizerMode.PARTICLES]: 'Starfield (Drift)',
     [VisualizerMode.TUNNEL]: 'Geometric Tunnel',
     [VisualizerMode.RINGS]: 'Neon Rings',
     [VisualizerMode.NEBULA]: 'Deep Nebula',
     [VisualizerMode.LASERS]: 'Concert Lasers',
     [VisualizerMode.FLUID_CURVES]: 'Aura Waves',
-    [VisualizerMode.MACRO_BUBBLES]: 'Macro Bubbles',
+    [VisualizerMode.MACRO_BUBBLES]: 'Macro Bubbles (DoF)',
     [VisualizerMode.SILK]: 'Silk Waves',
     [VisualizerMode.LIQUID]: 'Liquid Sphere',
     [VisualizerMode.TERRAIN]: 'Low-Poly Terrain'

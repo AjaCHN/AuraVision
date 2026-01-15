@@ -189,13 +189,13 @@ export const ja = {
   modes: {
     [VisualizerMode.PLASMA]: 'プラズマ・フロウ',
     [VisualizerMode.BARS]: 'スペクトラム・バー',
-    [VisualizerMode.PARTICLES]: 'スターフィールド',
+    [VisualizerMode.PARTICLES]: 'インターステラー (漂流)',
     [VisualizerMode.TUNNEL]: 'ジオメトリック・トンネル',
     [VisualizerMode.RINGS]: 'ネオン・リング',
     [VisualizerMode.NEBULA]: 'ディープ・ネブラ',
     [VisualizerMode.LASERS]: 'コンサート・レーザー',
-    [VisualizerMode.FLUID_CURVES]: '極光之舞',
-    [VisualizerMode.MACRO_BUBBLES]: '微観液泡',
+    [VisualizerMode.FLUID_CURVES]: 'オーロラ・ダンス',
+    [VisualizerMode.MACRO_BUBBLES]: 'マイクロバブル (被写界深度)',
     [VisualizerMode.SILK]: 'シルク・ウェーブ',
     [VisualizerMode.LIQUID]: 'リキッド・スフィア',
     [VisualizerMode.TERRAIN]: 'ローポリ・テレイン'

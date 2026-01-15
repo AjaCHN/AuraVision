@@ -1,12 +1,12 @@
 
 # Aura Vision 🎵👁️
 
-### AI-Powered 3D Music Visualizer & Identifier (v0.6.8)
+### AI-Powered 3D Music Visualizer & Identifier (v0.7.0)
 
 [中文文档](README_ZH.md) | [Live Demo](https://aura.tanox.net/)
 
 <p align="center">
-  <img src="./assets/images/banner.jpg" alt="Aura Vision Banner" width="100%" />
+  <img src="./assets/images/aura-banner.jpg" alt="Aura Vision Banner" width="100%" />
 </p>
 
 <p align="center">
@@ -21,14 +21,21 @@
 
 ---
 
+### ✨ v0.7.0 Feature: Aurora Dynamics
+
+*   **🌌 Fluid Curves Optimization:** The "Aura Waves" (Fluid Curves) mode has been mathematically tuned. Waveforms are now horizontally stretched by **50%**, reducing frequency density to create majestic, sweeping visuals reminiscent of the Aurora Borealis.
+*   **🌍 Localization Fixes:** Corrected translation issues for Spanish (duplicate mode names) and Japanese (incorrect characters).
+*   **📚 Spec Synchronization:** Updated OpenSpec rendering documentation to include Fluid Curves algorithms.
+
+### ✨ v0.6.9 Patch: I18n & Spec Sync
+
+*   **🌍 Internationalization Polish:** Refined translations for Chinese (Traditional), Japanese, and English.
+*   **📚 Documentation Sync:** Aligned OpenSpec architecture documents with the latest codebase changes.
+
 ### ✨ v0.6.8 Patch: Visual Engine Polish
 
-*   **🌌 Starfield (Particles):** Implemented dynamic origin drift (Lissajous movement) and optimized maximum velocity by 50% for a smoother, "interstellar cruise" experience rather than a chaotic warp drive.
-*   **🫧 Macro Bubbles:** Added Depth of Field (DoF) simulation. Bubbles now feature dynamic sharpness, bokeh-style highlights, and rim lighting based on their virtual depth and size.
-
-### ✨ v0.6.7 Patch: Deployment Fix
-
-*   **🔧 Build Configuration:** Aligned Vite build output directory (`dist` -> `build`) to match project documentation and common deployment platform configurations (Vercel/Netlify).
+*   **🌌 Starfield (Particles):** Implemented dynamic origin drift and optimized velocity.
+*   **🫧 Macro Bubbles:** Added Depth of Field (DoF) simulation.
 
 ---
 
@@ -37,6 +44,30 @@
 | Silk Waves (WebGL) | Liquid Sphere (3D) | Low-Poly Terrain (3D) |
 | :---: | :---: | :---: |
 | ![Silk](./assets/images/showcase-silk.jpg) | ![Liquid](./assets/images/showcase-liquid.jpg) | ![Terrain](./assets/images/showcase-terrain.jpg) |
+
+---
+
+## 🎮 How to Use
+
+**🚀 Instant Access:** Simply open the **[Live Demo](https://aura.tanox.net/)** on any modern device (Desktop, Tablet, or Mobile) using a browser like Chrome, Edge, or Safari. No installation required.
+
+1.  **Grant Permissions:** Click "Start" or the microphone icon and allow the browser to access your audio input.
+2.  **Play Music:** Play high-fidelity audio from speakers or a nearby device. The visuals react to the microphone input in real-time.
+3.  **Explore Modes:** Open the **Options** panel (or press `H`) to switch between 12+ visual engines and color themes.
+4.  **AI Recognition:** Press `L` or toggle "AI Recognition" to identify the current song and analyze its mood (Requires Gemini API Key).
+
+### ⌨️ Keyboard Shortcuts
+
+| Key | Action |
+| :--- | :--- |
+| **Space** | Toggle Microphone Input |
+| **F** | Toggle Fullscreen Mode |
+| **R** | Randomize Visuals & Colors |
+| **L** | Toggle AI Lyrics/Info |
+| **H** | Toggle Control Panel |
+| **G** | Toggle Glow Effect (Bloom) |
+| **T** | Toggle Motion Trails |
+| **← / →** | Cycle Visual Modes |
 
 ---
 

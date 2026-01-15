@@ -195,13 +195,13 @@ export const tw = {
   modes: {
     [VisualizerMode.PLASMA]: '流體電漿',
     [VisualizerMode.BARS]: '鏡像頻譜分析',
-    [VisualizerMode.PARTICLES]: '速激星空',
+    [VisualizerMode.PARTICLES]: '星際穿越', // Updated from '速激星空'
     [VisualizerMode.TUNNEL]: '幾何時空隧道',
     [VisualizerMode.RINGS]: '霓虹共振環',
     [VisualizerMode.NEBULA]: '深空星云',
     [VisualizerMode.LASERS]: '舞台雷射矩陣',
     [VisualizerMode.FLUID_CURVES]: '極光之舞',
-    [VisualizerMode.MACRO_BUBBLES]: '微觀液泡',
+    [VisualizerMode.MACRO_BUBBLES]: '微觀液泡 (景深)', // Added DoF hint
     [VisualizerMode.SILK]: '流光綢緞 (WebGL)',
     [VisualizerMode.LIQUID]: '液態星球 (WebGL)',
     [VisualizerMode.TERRAIN]: '低多邊形山脈 (WebGL)'

@@ -1,3 +1,11 @@
+
+/**
+ * File: core/types/index.ts
+ * Version: 0.7.0
+ * Author: Aura Vision Team
+ * Copyright (c) 2024 Aura Vision. All rights reserved.
+ */
+
 import * as React from 'react';
 import { ThreeElements } from '@react-three/fiber';
 

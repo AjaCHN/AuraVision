@@ -23,4 +23,4 @@
     *   API 配置、构建流程、多平台托管与生产安全。
 
 ---
-*Aura Vision Project Specification - Version 0.6.8*
+*Aura Vision Project Specification - Version 0.7.0*

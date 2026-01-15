@@ -1,4 +1,11 @@
 
+/**
+ * File: components/AppContext.tsx
+ * Version: 0.7.0
+ * Author: Aura Vision Team
+ * Copyright (c) 2024 Aura Vision. All rights reserved.
+ */
+
 import React, { useState, useEffect, useCallback, useRef, createContext, useContext, useMemo } from 'react';
 import { VisualizerMode, LyricsStyle, Language, VisualizerSettings, Region, AudioDevice, SongInfo, SmartPreset } from '../core/types';
 import { useAudio } from '../core/hooks/useAudio';

@@ -1,19 +1,26 @@
 
+/**
+ * File: core/constants/index.ts
+ * Version: 0.7.0
+ * Author: Aura Vision Team
+ * Copyright (c) 2024 Aura Vision. All rights reserved.
+ */
+
 import { VisualizerMode, Region, Position, SmartPreset } from '../types';
 
-export const APP_VERSION = '0.6.8';
+export const APP_VERSION = '0.7.0';
 export const GEMINI_MODEL = 'gemini-3-flash-preview';
 
 export const VISUALIZER_PRESETS = {
   [VisualizerMode.PLASMA]: { name: 'Plasma Flow', description: 'Fluid liquid color gradients' },
   [VisualizerMode.BARS]: { name: 'Frequency Bars', description: 'Classic spectrum analyzer' },
-  [VisualizerMode.PARTICLES]: { name: 'Starfield', description: 'Particles accelerated by treble' },
+  [VisualizerMode.PARTICLES]: { name: 'Starfield', description: 'Drifting particles with Lissajous physics' },
   [VisualizerMode.TUNNEL]: { name: 'Geometric Tunnel', description: '3D deep space tunnel' },
   [VisualizerMode.RINGS]: { name: 'Neon Rings', description: 'Concentric circles reactive to mids' },
   [VisualizerMode.NEBULA]: { name: 'Deep Nebula', description: 'Dense, swirling clouds of color' },
   [VisualizerMode.LASERS]: { name: 'Concert Lasers', description: 'Converging sweeping light beams' },
   [VisualizerMode.FLUID_CURVES]: { name: 'Aura Waves', description: 'Ethereal flowing gradients' },
-  [VisualizerMode.MACRO_BUBBLES]: { name: 'Macro Bubbles', description: 'Organic liquid cellular patterns' },
+  [VisualizerMode.MACRO_BUBBLES]: { name: 'Macro Bubbles', description: 'Liquid bubbles with Depth of Field (DoF)' },
   [VisualizerMode.SILK]: { name: 'Silk Waves', description: 'Iridescent flowing fabric (WebGL)' },
   [VisualizerMode.LIQUID]: { name: 'Liquid Sphere', description: 'Ferrofluid-like reactive matter (WebGL)' },
   [VisualizerMode.TERRAIN]: { name: 'Low-Poly Terrain', description: 'Flying over reactive mountains (WebGL)' }

@@ -194,7 +194,7 @@ export const es = {
     [VisualizerMode.RINGS]: 'Anillos de Neón',
     [VisualizerMode.NEBULA]: 'Nebulosa Profunda',
     [VisualizerMode.LASERS]: 'Láseres de Concierto',
-    [VisualizerMode.FLUID_CURVES]: 'Ondas de Seda',
+    [VisualizerMode.FLUID_CURVES]: 'Danza de la Aurora',
     [VisualizerMode.MACRO_BUBBLES]: 'Burbujas Macro',
     [VisualizerMode.SILK]: 'Ondas de Seda',
     [VisualizerMode.LIQUID]: 'Esfera Líquida',

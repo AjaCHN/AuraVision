@@ -1,4 +1,11 @@
 
+/**
+ * File: vite.config.ts
+ * Version: 0.7.0
+ * Author: Aura Vision Team
+ * Copyright (c) 2024 Aura Vision. All rights reserved.
+ */
+
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 

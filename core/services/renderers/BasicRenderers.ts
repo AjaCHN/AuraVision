@@ -117,10 +117,14 @@ export class FluidCurvesRenderer implements IVisualizerRenderer {
       for (let i = 0; i < layerCount; i++) {
         this.layerOffsets.push({
           phase: Math.random() * Math.PI * 2,       // Random phase shift
-          freq1: 0.003 + Math.random() * 0.004, // Random frequency for base wave
-          freq2: 0.008 + Math.random() * 0.005, // Random frequency for audio bumps
+          // Reduced frequency to stretch waves horizontally (approx 50% wider)
+          // Was: 0.003 + rand * 0.004
+          freq1: 0.002 + Math.random() * 0.0025, // Base wave - wider
+          // Was: 0.008 + rand * 0.005
+          freq2: 0.005 + Math.random() * 0.0035, // Detail wave - wider
           vert: (Math.random() - 0.5) * 0.15,   // Random vertical offset
-          speedMult: 0.7 + Math.random() * 0.6    // Random speed multiplier for parallax
+          // Drastically increased speed variance for stronger parallax effect (0.2x to 2.4x)
+          speedMult: 0.2 + Math.random() * 2.2
         });
       }
     }

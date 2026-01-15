@@ -1,3 +1,11 @@
+
+/**
+ * File: tailwind.config.js
+ * Version: 0.7.0
+ * Author: Aura Vision Team
+ * Copyright (c) 2024 Aura Vision. All rights reserved.
+ */
+
 /** @type {import('tailwindcss').Config} */
 export default {
   content: [

@@ -1,4 +1,11 @@
 
+/**
+ * File: index.tsx
+ * Version: 0.7.0
+ * Author: Aura Vision Team
+ * Copyright (c) 2024 Aura Vision. All rights reserved.
+ */
+
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import App from './components/App';

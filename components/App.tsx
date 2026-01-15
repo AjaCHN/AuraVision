@@ -1,3 +1,11 @@
+
+/**
+ * File: components/App.tsx
+ * Version: 0.7.0
+ * Author: Aura Vision Team
+ * Copyright (c) 2024 Aura Vision. All rights reserved.
+ */
+
 import React, { useEffect, useState } from 'react';
 import VisualizerCanvas from './visualizers/VisualizerCanvas';
 import ThreeVisualizer from './visualizers/ThreeVisualizer';
