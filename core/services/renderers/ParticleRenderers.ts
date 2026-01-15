@@ -1,4 +1,3 @@
-
 import { IVisualizerRenderer, VisualizerSettings } from '../../types/index';
 import { getAverage } from '../audioUtils';
 
@@ -16,12 +15,12 @@ export class ParticlesRenderer implements IVisualizerRenderer {
     
     const bass = getAverage(data, 0, 10) / 255;
     const highs = getAverage(data, 100, 200) / 255;
-    const maxParticles = settings.quality === 'high' ? 250 : settings.quality === 'med' ? 150 : 70;
+    const maxParticles = settings.quality === 'high' ? 150 : settings.quality === 'med' ? 80 : 40;
 
     if (this.particles.length === 0) {
-        for (let i = 0; i < maxParticles; i++) this.particles.push(this.createParticle(w, h, Math.random() * w));
+        for (let i = 0; i < maxParticles; i++) this.particles.push(this.createParticle(w, h, Math.random() * w, centerX, centerY));
     } else if (this.particles.length < maxParticles) {
-        this.particles.push(this.createParticle(w, h, w));
+        this.particles.push(this.createParticle(w, h, w, centerX, centerY));
     } else if (this.particles.length > maxParticles) {
         this.particles = this.particles.slice(0, maxParticles);
     }
@@ -39,42 +38,43 @@ export class ParticlesRenderer implements IVisualizerRenderer {
         p.y += p.vy * settings.speed;
 
         if (p.z <= 1 || p.x > w || p.y > h) {
-            this.particles[i] = this.createParticle(w, h, w);
+            this.particles[i] = this.createParticle(w, h, w, centerX, centerY);
             continue; 
         }
 
         const k = 128.0 / p.z;
-        const px = (p.x * k) + centerX;
-        const py = (p.y * k) + centerY;
+        const new_px = (p.x * k) + centerX;
+        const new_py = (p.y * k) + centerY;
 
-        if (px > 0 && px < w && py > 0 && py < h) {
+        if (new_px > 0 && new_px < w && new_py > 0 && new_py < h) {
             const size = (1 + p.size) * k * (1 + bass * 1.5);
             // Star-like Appearance: Brighter head, fainter tail
-            const g = ctx.createLinearGradient(p.px, p.py, px, py);
-            g.addColorStop(0, `${colors[i % colors.length]}00`);
-            g.addColorStop(0.7, `${colors[i % colors.length]}ff`);
+            const g = ctx.createLinearGradient(p.px, p.py, new_px, new_py);
+            const color = colors[i % colors.length];
+            g.addColorStop(0, `${color}00`);
+            g.addColorStop(0.7, `${color}ff`);
             
             ctx.strokeStyle = g;
             ctx.lineWidth = size;
             ctx.beginPath(); 
             ctx.moveTo(p.px, p.py); 
-            ctx.lineTo(px, py); 
+            ctx.lineTo(new_px, new_py); 
             ctx.stroke();
         }
-        p.px = px; 
-        p.py = py;
+        p.px = new_px; 
+        p.py = new_py;
     }
   }
 
-  private createParticle(w: number, h: number, z: number) {
+  private createParticle(w: number, h: number, z: number, px: number, py: number) {
       const angle = Math.random() * Math.PI * 2;
       const radius = Math.random() * w * 0.1;
       return { 
           x: Math.cos(angle) * radius, 
           y: Math.sin(angle) * radius, 
           z: z, 
-          px: w / 2, 
-          py: h / 2, 
+          px: px,
+          py: py,
           size: Math.random() * 1.5 + 0.5,
           // Add sideways velocity for curved paths
           vx: (Math.random() - 0.5) * 0.5,

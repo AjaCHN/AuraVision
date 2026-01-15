@@ -72,11 +72,10 @@ const AppContent: React.FC = () => {
       {isThreeMode ? <ThreeVisualizer analyser={analyser} mode={mode} colors={colorTheme} settings={settings} /> : <VisualizerCanvas analyser={analyser} mode={mode} colors={colorTheme} settings={settings} />}
       <CustomTextOverlay settings={settings} analyser={analyser} />
       <LyricsOverlay settings={settings} song={currentSong} showLyrics={showLyrics} lyricsStyle={lyricsStyle} analyser={analyser} />
-      {/* FIX: Removed unused `lyricsStyle` prop from `SongOverlay` which was causing a TypeScript error. */}
       <SongOverlay song={currentSong} showLyrics={showLyrics} language={language} onRetry={() => mediaStream && performIdentification(mediaStream)} onClose={() => setCurrentSong(null)} analyser={analyser} sensitivity={settings.sensitivity} />
       <Controls />
       <div className="fixed bottom-4 right-4 z-50 pointer-events-none text-white/20 text-[10px] font-mono uppercase tracking-widest">
-        v{APP_VERSION}
+        AURA VISION v{APP_VERSION}
       </div>
     </div>
   );

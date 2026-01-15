@@ -46,7 +46,9 @@ const getMoodStyle = (mood: string | undefined | null) => {
 const SongOverlay: React.FC<SongOverlayProps> = ({ song, showLyrics, language, onRetry, onClose, analyser, sensitivity = 1.0 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const moodStyle = useMemo(() => song && song.mood ? getMoodStyle(song.mood) : getMoodStyle('default'), [song]);
-  const isEnabled = showLyrics && !!song && song.identified;
+  
+  // Hide song card if it's a preview mode (used only for lyrics positioning)
+  const isEnabled = showLyrics && !!song && song.identified && song.matchSource !== 'PREVIEW';
 
   useAudioPulse({
     elementRef: containerRef,
@@ -70,19 +72,19 @@ const SongOverlay: React.FC<SongOverlayProps> = ({ song, showLyrics, language, o
           <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
         </button>
         <div className="relative z-10">
-            <h2 className="text-white font-bold text-xl md:text-2xl tracking-tight pr-6 break-words">{song.title}</h2>
-            <p className="text-blue-300 text-sm md:text-base font-medium pr-6 break-words">{song.artist}</p>
-            {song.mood && (
+            <h2 className="text-white font-bold text-xl md:text-2xl tracking-tight pr-6 break-words">{song!.title}</h2>
+            <p className="text-blue-300 text-sm md:text-base font-medium pr-6 break-words">{song!.artist}</p>
+            {song!.mood && (
               <div className="flex items-center gap-2 mt-2">
                 <div className={`inline-flex items-center gap-1.5 px-2.5 py-1 bg-gradient-to-r ${moodStyle.badgeGradient} border border-white/10 rounded-full`}>
                    <span className={moodStyle.textColor}>{moodStyle.icon}</span>
-                   <span className={`text-[10px] font-bold uppercase tracking-wider ${moodStyle.textColor}`}>{song.mood}</span>
+                   <span className={`text-[10px] font-bold uppercase tracking-wider ${moodStyle.textColor}`}>{song!.mood}</span>
                 </div>
               </div>
             )}
             <div className="flex items-center gap-4 mt-3 pt-2 border-t border-white/10 opacity-60 group-hover:opacity-100 transition-opacity">
-                {song.searchUrl && (
-                    <a href={song.searchUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-[10px] text-white/70 hover:text-blue-300 transition-colors">
+                {song!.searchUrl && (
+                    <a href={song!.searchUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-[10px] text-white/70 hover:text-blue-300 transition-colors">
                       <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" /></svg>
                       <span>Google</span>
                     </a>

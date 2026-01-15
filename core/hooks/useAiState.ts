@@ -10,7 +10,7 @@ const DEFAULT_SHOW_LYRICS = false;
 interface AiStateProps {
   language: Language;
   region: Region;
-  provider: 'GEMINI' | 'MOCK' | 'OPENAI' | 'CLAUDE' | 'GROK';
+  provider: 'GEMINI' | 'MOCK' | 'OPENAI' | 'CLAUDE' | 'GROK' | 'DEEPSEEK' | 'QWEN';
   isListening: boolean;
   isSimulating: boolean;
   mediaStream: MediaStream | null;

@@ -7,7 +7,7 @@
 以下文档位于 `openspec/` 目录下，代表了本项目的最新技术标准：
 
 1.  **[01 架构与设计规范](./01_architecture_spec.md)**
-    *   技术栈、核心生命周期、模块化数据流。包含针对预览环境的样式兼容性处理及静态资源定义。
+    *   技术栈、核心生命周期、模块化数据流。
 2.  **[02 音频引擎与信号规范](./02_audio_engine_spec.md)**
     *   Web Audio 采集、FFT 分析、声学指纹特征提取算法。
 3.  **[03 视觉生成渲染规范](./03_rendering_spec.md)**
@@ -20,4 +20,4 @@
     *   LocalStorage Schema、多语言字典结构与区域偏好。
 
 ---
-*Aura Vision Project Specification - Version 0.5.3*
+*Aura Vision Project Specification - Version 0.5.5*

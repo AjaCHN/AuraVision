@@ -38,7 +38,7 @@ export interface SongInfo {
   mood?: string;
   identified: boolean;
   searchUrl?: string;
-  matchSource?: 'AI' | 'LOCAL' | 'MOCK' | 'GEMINI' | 'OPENAI' | 'CLAUDE' | 'GROK';
+  matchSource?: 'AI' | 'LOCAL' | 'MOCK' | 'GEMINI' | 'OPENAI' | 'CLAUDE' | 'GROK' | 'DEEPSEEK' | 'QWEN' | 'PREVIEW';
 }
 
 export interface VisualizerSettings {
@@ -66,7 +66,8 @@ export interface VisualizerSettings {
   customTextColor: string;
   customTextPosition: Position;
   lyricsPosition: Position;
-  recognitionProvider: 'GEMINI' | 'MOCK' | 'OPENAI' | 'CLAUDE' | 'GROK';
+  recognitionProvider: 'GEMINI' | 'MOCK' | 'OPENAI' | 'CLAUDE' | 'GROK' | 'DEEPSEEK' | 'QWEN';
+  aiApiKey?: string;
   lyricsStyle?: LyricsStyle;
   lyricsFont?: string;
   lyricsFontSize?: number;

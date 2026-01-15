@@ -55,12 +55,12 @@ export const useAppContext = () => {
 // --- Constants & Defaults ---
 
 const DEFAULT_SETTINGS: VisualizerSettings = {
-  sensitivity: 1.5, speed: 1.0, glow: true, trails: true, autoRotate: false, rotateInterval: 30,
-  cycleColors: false, colorInterval: 45, hideCursor: false, smoothing: 0.8, fftSize: 512, 
+  sensitivity: 1.5, speed: 1.0, glow: false, trails: true, autoRotate: false, rotateInterval: 30,
+  cycleColors: false, colorInterval: 10, hideCursor: false, smoothing: 0.8, fftSize: 512, 
   quality: 'high', monitor: false, wakeLock: false, customText: 'AURA', showCustomText: false,
   textPulse: true, customTextRotation: 0, customTextSize: 12, customTextFont: 'Inter, sans-serif',
   customTextOpacity: 0.35, customTextColor: '#ffffff', customTextPosition: 'mc', lyricsPosition: 'mc',
-  recognitionProvider: 'GEMINI', lyricsFont: 'Inter, sans-serif', lyricsFontSize: 4
+  recognitionProvider: 'GEMINI', lyricsFont: 'Inter, sans-serif', lyricsFontSize: 4, aiApiKey: ''
 };
 
 // --- Provider Component ---

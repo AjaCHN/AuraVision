@@ -1,8 +1,6 @@
-
-
 # Aura Vision 🎵👁️
 
-### AI-Powered 3D Music Visualizer & Identifier (v0.5.3)
+### AI-Powered 3D Music Visualizer & Identifier (v0.5.5)
 
 [中文文档](README_ZH.md) | [Live Demo](https://aura.tanox.net/)
 
@@ -22,14 +20,12 @@
 
 ---
 
-### ✨ What's New in v0.5.3: The UX Overhaul
+### ✨ What's New in v0.5.5: UI Polish & Layout Tuning
 
-This release introduces a major user experience enhancement, focusing on intuitive control and professional aesthetics.
-
-*   **🎨 Smart Presets:** Instantly apply professionally curated visual styles like "Hypnotic & Calm" or "Energetic Party" with a single click.
-*   **👁️ Visual Mode Previews:** No more guesswork! Each visualizer mode now features an animated preview card, showing you exactly what to expect.
-*   **統一 UI Controls:** All numerical inputs now use a consistent, unified slider component for a smoother workflow.
-*   **📚 Centralized Help Center:** A new "Help & Info" modal provides a clean, organized space for guides, shortcuts, and app details.
+*   **⚡ Integrated Toggles:** "Show Text" toggle is now merged into the header for quicker access.
+*   **📊 Optimized Audio Panel:** FFT Resolution and processing parameters are grouped together for better workflow.
+*   **📐 UI Symmetry:** Action buttons across all panels are now bottom-aligned for visual consistency.
+*   **🌏 Multi-region Sync:** Final polish on i18n strings across all 8 supported languages.
 
 ---
 
@@ -54,7 +50,7 @@ Aura Vision is designed for professional and casual environments:
 ## ✨ Key Features
 
 *   **🧠 Gemini 3.0 Integration:** Real-time song recognition and semantic mood analysis.
-*   **🎨 12+ Generative Engines:** From classic frequency bars to advanced WebGL physics scenes, now with **interactive previews**.
+*   **🎨 14+ Generative Engines:** From classic frequency bars to advanced WebGL physics scenes.
 *   **🎶 Smart Aesthetic Presets:** One-click access to professionally designed visual moods.
 *   **🔠 Reactive Typography:** Dynamic custom text that pulses and rotates with the bass.
 *   **🌍 Multi-language Support:** Localized for Global, CN, JP, KR, EU, and LATAM markets.

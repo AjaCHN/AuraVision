@@ -236,10 +236,11 @@ export class MacroBubblesRenderer implements IVisualizerRenderer {
       
       // Volumetric body
       const bodyGradient = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, dynamicR);
-      bodyGradient.addColorStop(0, `${color}10`);
-      bodyGradient.addColorStop(0.5, `${color}40`);
-      bodyGradient.addColorStop(0.9, `${color}88`);
-      bodyGradient.addColorStop(1, `${color}00`);
+      bodyGradient.addColorStop(0, `${color}1A`);      // Alpha ~10%
+      bodyGradient.addColorStop(0.5, `${color}4D`);     // Alpha ~30%
+      bodyGradient.addColorStop(0.8, `${color}99`);     // Alpha ~60% -> This is the bright rim
+      bodyGradient.addColorStop(0.95, `${color}33`);    // Alpha ~20% -> Start of a smoother fade
+      bodyGradient.addColorStop(1, `${color}00`);      // Alpha 0%
       
       ctx.fillStyle = bodyGradient;
       ctx.beginPath();
@@ -254,7 +255,8 @@ export class MacroBubblesRenderer implements IVisualizerRenderer {
           const highlightR = dynamicR * 0.5;
           const highlightGradient = ctx.createRadialGradient(highlightX, highlightY, 0, highlightX, highlightY, highlightR);
           highlightGradient.addColorStop(0, `rgba(255, 255, 255, ${highlightStrength * 0.5})`);
-          highlightGradient.addColorStop(0.3, `rgba(255, 255, 255, ${highlightStrength * 0.2})`);
+          highlightGradient.addColorStop(0.4, `rgba(255, 255, 255, ${highlightStrength * 0.25})`);
+          highlightGradient.addColorStop(0.8, `rgba(255, 255, 255, ${highlightStrength * 0.05})`);
           highlightGradient.addColorStop(1, `rgba(255, 255, 255, 0)`);
           
           ctx.fillStyle = highlightGradient;

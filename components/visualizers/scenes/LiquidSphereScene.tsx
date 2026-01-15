@@ -17,6 +17,7 @@ export const LiquidSphereScene: React.FC<SceneProps> = ({ analyser, colors, sett
   const light1Ref = useRef<THREE.PointLight>(null);
   const light2Ref = useRef<THREE.PointLight>(null);
   const rectLightRef = useRef<THREE.RectAreaLight>(null);
+  const starsRef = useRef<THREE.Group>(null);
 
   const { bass: reactivity, treble: vibration, smoothedColors } = useAudioReactive({ analyser, colors, settings });
   const [c0, c1] = smoothedColors;
@@ -60,6 +61,11 @@ export const LiquidSphereScene: React.FC<SceneProps> = ({ analyser, colors, sett
         rectLightRef.current.intensity = 2 + vibration * 15;
         rectLightRef.current.lookAt(0,0,0);
     }
+    
+    if (starsRef.current) {
+        starsRef.current.rotation.y += 0.0001 * settings.speed;
+        starsRef.current.rotation.z += 0.00005 * settings.speed;
+    }
 
 
     if (!meshRef.current) return;
@@ -93,7 +99,9 @@ export const LiquidSphereScene: React.FC<SceneProps> = ({ analyser, colors, sett
       <color attach="background" args={['#030303']} />
       <Suspense fallback={null}>
         <Environment preset="night" />
-        <Stars radius={100} depth={50} count={5000} factor={4} saturation={0} fade speed={1} />
+        <group ref={starsRef}>
+          <Stars radius={100} depth={50} count={5000} factor={4} saturation={0} fade speed={1} />
+        </group>
       </Suspense>
       <ambientLight intensity={0.2} />
       <pointLight ref={light1Ref} position={[20, 20, 20]} intensity={15} distance={100} />

@@ -23,6 +23,7 @@ export const AudioSettingsPanel: React.FC = () => {
 
   return (
     <>
+      {/* Col 1: Device Management */}
       <div className="p-4 pt-6 h-full flex flex-col space-y-4 border-b lg:border-b-0 lg:border-r border-white/5">
          <CustomSelect 
             label={t?.audioInput || "Input Device"}
@@ -35,19 +36,43 @@ export const AudioSettingsPanel: React.FC = () => {
           {isListening ? (t?.stopMic || "Stop") : (t?.startMic || "Start")}
         </button>
       </div>
-      <div className="p-4 pt-6 h-full flex flex-col space-y-6 border-b lg:border-b-0 lg:border-r border-white/5">
-        <SteppedSlider label={t?.sensitivity || "Sensitivity"} hintText={hints?.sensitivity} options={[{value:settings.sensitivity, label:settings.sensitivity.toFixed(1)}]} value={settings.sensitivity} min={0.5} max={4.0} step={0.1} onChange={(v: number) => setSettings({...settings, sensitivity: v})} />
-        <SteppedSlider label={t?.smoothing || "Smoothing"} hintText={hints?.smoothing} options={[{value:settings.smoothing, label:settings.smoothing.toFixed(2)}]} value={settings.smoothing} min={0} max={0.95} step={0.01} onChange={(v: number) => setSettings({...settings, smoothing: v})} />
-        <button onClick={resetAudioSettings} className="w-full py-2.5 mt-auto bg-white/[0.04] rounded-lg text-xs font-bold uppercase tracking-widest text-white/50 hover:text-white flex items-center justify-center gap-2"><svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 opacity-60" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>{t?.resetAudio || "Reset Audio"}</button>
+
+      {/* Col 2: Core Processing Parameters */}
+      <div className="p-4 pt-6 h-full flex flex-col border-b lg:border-b-0 lg:border-r border-white/5">
+        <div className="space-y-6 flex-grow overflow-y-auto custom-scrollbar pr-2">
+          <SteppedSlider label={t?.sensitivity || "Sensitivity"} hintText={hints?.sensitivity} options={[{value:settings.sensitivity, label:settings.sensitivity.toFixed(1)}]} value={settings.sensitivity} min={0.5} max={4.0} step={0.1} onChange={(v: number) => setSettings({...settings, sensitivity: v})} />
+          <SteppedSlider label={t?.smoothing || "Smoothing"} hintText={hints?.smoothing} options={[{value:settings.smoothing, label:settings.smoothing.toFixed(2)}]} value={settings.smoothing} min={0} max={0.95} step={0.01} onChange={(v: number) => setSettings({...settings, smoothing: v})} />
+          
+          <div className="pt-4 border-t border-white/5">
+            <SteppedSlider
+                label={t?.fftSize || "Resolution"}
+                hintText={hints?.fftSize || "FFT Size"}
+                options={fftOptions}
+                value={settings.fftSize}
+                min={512}
+                max={4096}
+                step={512}
+                onChange={(val) => setSettings({...settings, fftSize: val})}
+            />
+          </div>
+        </div>
       </div>
-      <div className="p-4 pt-6 h-full flex flex-col space-y-4">
-          <SteppedSlider
-              label={t?.fftSize || "Resolution"}
-              hintText={hints?.fftSize || "FFT Size"}
-              options={fftOptions}
-              value={settings.fftSize}
-              onChange={(val) => setSettings({...settings, fftSize: val})}
-          />
+
+      {/* Col 3: Actions & Advanced Info */}
+      <div className="p-4 pt-6 h-full flex flex-col">
+          <div className="flex-grow">
+             <div className="p-4 bg-white/5 rounded-2xl border border-white/5">
+                <span className="text-[10px] font-bold text-white/30 uppercase tracking-widest leading-relaxed">
+                   {t?.language === 'zh' ? '高分辨率 FFT 会增加音频解析的精细度，但可能导致旧设备上的 CPU 占用率上升。' : 'High resolution FFT improves spectral detail but increases CPU load on older devices.'}
+                </span>
+             </div>
+          </div>
+          <div className="mt-auto pt-4">
+            <button onClick={resetAudioSettings} className="w-full py-3 bg-white/[0.04] rounded-xl text-xs font-bold uppercase tracking-widest text-white/50 hover:text-white flex items-center justify-center gap-2 border border-transparent hover:border-white/10 transition-colors">
+               <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5 opacity-60" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
+               {t?.resetAudio || "Reset Audio"}
+            </button>
+          </div>
       </div>
     </>
   );

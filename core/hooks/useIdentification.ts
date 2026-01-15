@@ -5,7 +5,7 @@ import { identifySongFromAudio } from '../services/geminiService';
 interface UseIdentificationProps {
   language: Language;
   region: Region;
-  provider: 'GEMINI' | 'MOCK' | 'OPENAI' | 'CLAUDE' | 'GROK';
+  provider: 'GEMINI' | 'MOCK' | 'OPENAI' | 'CLAUDE' | 'GROK' | 'DEEPSEEK' | 'QWEN';
   showLyrics: boolean;
 }
 
