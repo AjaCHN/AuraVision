@@ -1,3 +1,4 @@
+
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
@@ -5,7 +6,7 @@ export default defineConfig({
   plugins: [react()],
   base: './',
   build: {
-    outDir: 'dist', // 使用标准 dist 目录
+    outDir: 'build', // Changed to 'build' to match documentation and standard deployment expectations
     target: 'esnext',
     minify: 'esbuild',
     sourcemap: false

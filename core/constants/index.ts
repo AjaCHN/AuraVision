@@ -1,7 +1,7 @@
 
 import { VisualizerMode, Region, Position, SmartPreset } from '../types';
 
-export const APP_VERSION = '0.6.6';
+export const APP_VERSION = '0.6.8';
 export const GEMINI_MODEL = 'gemini-3-flash-preview';
 
 export const VISUALIZER_PRESETS = {

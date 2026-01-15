@@ -1,3 +1,4 @@
+
 import { GoogleGenAI, Type } from "@google/genai";
 import { GEMINI_MODEL, REGION_NAMES } from '../constants';
 import { SongInfo, Language, Region } from '../types';
@@ -28,7 +29,13 @@ export const identifySongFromAudio = async (
 
   const callGemini = async (retryCount = 0): Promise<SongInfo | null> => {
     try {
-        const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+        const key = apiKey || process.env.API_KEY;
+        if (!key || key.trim() === '') {
+            console.warn("[AI] Missing API Key. Skipping identification.");
+            return null;
+        }
+
+        const ai = new GoogleGenAI({ apiKey: key });
         const regionName = region === 'global' ? 'Global' : (REGION_NAMES[region] || region);
         
         const systemInstruction = `

@@ -1,7 +1,7 @@
 
 # Aura Vision 🎵👁️
 
-### AI-Powered 3D Music Visualizer & Identifier (v0.6.6)
+### AI-Powered 3D Music Visualizer & Identifier (v0.6.7)
 
 [中文文档](README_ZH.md) | [Live Demo](https://aura.tanox.net/)
 
@@ -21,7 +21,11 @@
 
 ---
 
-### ✨ What's New in v0.6.6: Interface & Layout Polish
+### ✨ v0.6.7 Patch: Deployment Fix
+
+*   **🔧 Build Configuration:** Aligned Vite build output directory (`dist` -> `build`) to match project documentation and common deployment platform configurations (Vercel/Netlify). This fixes the 404 errors encountered after deployment.
+
+### ✨ What's New in v0.6.6
 
 *   **🔀 Optimized Navigation:** Reordered tabs to `Visual > Text > AI > Audio` for a more logical user flow.
 *   **🔠 Unified Typography:** Standardized font sizes across all control panels (12px) for a cleaner look.
