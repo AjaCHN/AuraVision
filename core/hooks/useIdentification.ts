@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import { SongInfo, Language, Region } from '../types';
 import { identifySongFromAudio } from '../services/geminiService';
 
@@ -12,69 +12,77 @@ interface UseIdentificationProps {
 export const useIdentification = ({ language, region, provider, showLyrics }: UseIdentificationProps) => {
   const [isIdentifying, setIsIdentifying] = useState(false);
   const [currentSong, setCurrentSong] = useState<SongInfo | null>(null);
-  // Ref to track the latest request, preventing race conditions.
+  
+  const isMounted = useRef(true);
   const latestRequestId = useRef(0);
+  const recorderRef = useRef<MediaRecorder | null>(null);
+
+  useEffect(() => {
+    isMounted.current = true;
+    return () => { 
+      isMounted.current = false; 
+      if (recorderRef.current && recorderRef.current.state === 'recording') {
+        recorderRef.current.stop();
+      }
+    };
+  }, []);
 
   const performIdentification = useCallback(async (stream: MediaStream) => {
-    if (!showLyrics || isIdentifying) return;
+    if (!showLyrics || isIdentifying || !stream.active) return;
     
     const requestId = ++latestRequestId.current;
     setIsIdentifying(true);
     
     try {
-      let recorder: MediaRecorder;
-      try {
-        const recorderOptions = {
-          mimeType: 'audio/webm;codecs=opus',
-          bitsPerSecond: 128000
-        };
-        recorder = new MediaRecorder(stream, recorderOptions);
-      } catch (e) {
-        console.warn("High-quality MediaRecorder options not supported, falling back.", e);
-        recorder = new MediaRecorder(stream);
-      }
+      const mimeType = 'audio/webm;codecs=opus';
+      const recorder = new MediaRecorder(stream, { mimeType });
+      recorderRef.current = recorder;
 
       const chunks: Blob[] = [];
-      recorder.ondataavailable = (e) => chunks.push(e.data);
+      recorder.ondataavailable = (e) => {
+        if (e.data.size > 0) chunks.push(e.data);
+      };
+
       recorder.onstop = async () => {
+        if (!isMounted.current || requestId !== latestRequestId.current || chunks.length === 0) {
+          setIsIdentifying(false);
+          return;
+        }
+
         try {
-          const mimeType = recorder.mimeType || 'audio/webm';
           const blob = new Blob(chunks, { type: mimeType });
           const reader = new FileReader();
-          reader.readAsDataURL(blob);
+          
           reader.onloadend = async () => {
-            // Ensure this is still the latest request before processing
-            if (requestId !== latestRequestId.current) {
-              console.log("Stale identification request ignored.");
-              return;
-            }
+            if (!isMounted.current || requestId !== latestRequestId.current) return;
+            
             const base64Data = (reader.result as string).split(',')[1];
             const info = await identifySongFromAudio(base64Data, mimeType, language, region, provider);
             
-            // Final check before setting state
-            if (requestId === latestRequestId.current && info && info.identified) {
-              setCurrentSong(info);
+            if (isMounted.current && requestId === latestRequestId.current) {
+              if (info && info.identified) {
+                setCurrentSong(info);
+              }
+              setIsIdentifying(false);
             }
           };
+          reader.readAsDataURL(blob);
         } catch (e) {
-          console.error("Error during identification processing:", e);
-        } finally {
-          // Ensure loading state is reset even if errors occur inside onloadend
-          if (requestId === latestRequestId.current) {
-            setIsIdentifying(false);
-          }
+          console.error("[AI] Process Error:", e);
+          setIsIdentifying(false);
         }
       };
+
       recorder.start();
+      
+      // Auto-stop after 6 seconds to capture enough spectral data
       setTimeout(() => {
         if (recorder.state === 'recording') recorder.stop();
-      }, 4000); 
+      }, 6000); 
+
     } catch (e) {
-      console.error("Recording error:", e);
-      // Ensure loading state is reset if recorder setup fails
-      if (requestId === latestRequestId.current) {
-         setIsIdentifying(false);
-      }
+      console.error("[AI] Recorder Error:", e);
+      setIsIdentifying(false);
     }
   }, [showLyrics, isIdentifying, language, region, provider]);
 

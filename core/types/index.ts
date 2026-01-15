@@ -113,25 +113,7 @@ export interface AudioDevice {
 }
 
 declare global {
-  // FIX: Switched from `JSX` to `React.JSX` namespace to correctly augment intrinsic elements
-  // for the modern JSX transform used by Vite's React plugin by default.
-  namespace React.JSX {
-    /**
-     * @zh
-     * 此处通过“声明合并” (declaration merging) 对全局的 JSX 命名空间进行扩展。
-     * 它将 `@react-three/fiber` 提供的 `ThreeElements` 类型（包含了所有 Three.js 的原生元素）
-     * 添加到标准的 `IntrinsicElements` 中。这一步至关重要，它使得 TypeScript 能够识别并正确
-     * 类型检查在 React 组件中使用的 Three.js 元素（例如 `<mesh>`, `<pointLight>`）。
-     * 采用这种全局扩展的方式，可以有效避免在某些打包器配置下可能出现的循环依赖或模块解析问题。
-     * 
-     * @en
-     * This declaration merging augments the global JSX namespace.
-     * It extends the standard `IntrinsicElements` (like 'div', 'span') with `ThreeElements`
-     * from `@react-three/fiber`. This is crucial for TypeScript to recognize and type-check
-     * Three.js primitive elements (e.g., `<mesh>`, `<pointLight>`) used as React components.
-     * This approach is preferred over extending `React.JSX.IntrinsicElements` directly, as it
-     * can avoid potential circular dependency or module resolution issues in some bundler setups.
-     */
+  namespace JSX {
     interface IntrinsicElements extends ThreeElements {}
   }
 }

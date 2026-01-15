@@ -33,22 +33,19 @@ export const useRenderLoop = ({
       const ctx = canvas.getContext('2d');
       if (!ctx) return;
 
-      // 1. Smooth Color Transition Logic (Optimized)
+      // 1. Smooth Color Transition Logic
       const lerpFactor = 0.05;
       const targetColors = colors.length > 0 ? colors : ['#ffffff'];
       const targetColorsRgb = targetColors.map(hexToRgb);
       
-      // BUG FIX: Correctly handle color array resizing to prevent visual jumps.
       if (currentColorsRgbRef.current.length !== targetColorsRgb.length) {
         const currentLength = currentColorsRgbRef.current.length;
         const targetLength = targetColorsRgb.length;
         if (currentLength < targetLength) {
-          // Array is growing: pad with the last known color for a smooth transition.
           const lastColor = currentColorsRgbRef.current[currentLength - 1] || targetColorsRgb[0];
           const padding = new Array(targetLength - currentLength).fill(lastColor);
           currentColorsRgbRef.current.push(...padding);
         } else {
-          // Array is shrinking: truncate it.
           currentColorsRgbRef.current.length = targetLength;
         }
       }
@@ -80,8 +77,8 @@ export const useRenderLoop = ({
           ctx.clearRect(0, 0, width, height);
       }
       
-      // 3. Glow Logic
-      if (settings.glow) {
+      // 3. Glow Logic - Disabled on Low quality due to high CPU cost of shadowBlur
+      if (settings.glow && settings.quality !== 'low') {
           ctx.shadowBlur = (mode === VisualizerMode.PLASMA || mode === VisualizerMode.FLUID_CURVES) ? 30 : 15;
           ctx.shadowColor = smoothedColorsHex[0] || '#ffffff';
       } else {

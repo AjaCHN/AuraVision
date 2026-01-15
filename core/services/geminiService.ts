@@ -16,27 +16,6 @@ export const identifySongFromAudio = async (
       return { title: "Midnight City", artist: "M83", lyricsSnippet: "Waiting in the car...", mood: "Electric", identified: true, matchSource: 'MOCK', searchUrl: 'https://google.com' };
   }
 
-  // Handle other providers (DeepSeek, Grok, Qwen, etc.)
-  if (provider !== 'GEMINI') {
-      console.log(`[AI] Using Provider: ${provider}`);
-      if (!apiKey) {
-          console.warn(`[AI] Missing API Key for ${provider}. Returning mock failure.`);
-          return null; 
-      }
-      
-      console.log(`[AI] Call to ${provider} simulated with API Key length: ${apiKey.length}`);
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      return { 
-          title: `Simulated Song (${provider})`, 
-          artist: "Unknown Artist", 
-          lyricsSnippet: "Lyrics detection requires backend integration...", 
-          mood: "Mysterious", 
-          identified: true, 
-          matchSource: provider 
-      };
-  }
-
   // GEMINI Implementation
   let features: number[] = [];
   try {
@@ -52,24 +31,22 @@ export const identifySongFromAudio = async (
         const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
         const regionName = region === 'global' ? 'Global' : (REGION_NAMES[region] || region);
         
-        // Improved Prompting Strategy for Regional Bias
         const systemInstruction = `
-          Role: Expert Music Identification AI.
-          Task: Identify the song in the audio clip.
+          You are a professional Music Intelligence Engine. Your task is to analyze audio snapshots and provide accurate metadata.
           
-          CONTEXT: The user is in the '${regionName}' market. 
-          INSTRUCTIONS:
-          1. Prioritize identifying songs popular, trending, or originating from the '${regionName}' region.
-          2. If the audio contains lyrics in a local language (e.g., Mandarin for CN, Japanese for JP, Korean for KR), match against the local database first.
-          3. Return the Title and Artist in the original script (e.g., Kanji, Hangul) if that is how it is commonly known in that region, unless the English localized title is significantly more recognizable globally.
-          4. Provide a brief, relevant snippet of the lyrics (3-4 lines).
-          5. Provide a single-word descriptor for the mood (e.g., 'Energetic', 'Melancholy', 'Ethereal').
-          6. If low confidence, return 'identified': false.
+          CONTEXT: User is in the '${regionName}' market. 
+          
+          GUIDELINES:
+          1. FOCUS: Even if the audio has background noise, identify the dominant musical track.
+          2. REGIONAL BIAS: Prioritize artists and songs trending in ${regionName}.
+          3. SCRIPT: Use the native script (Kanji, Hangul, Chinese) for the title and artist if appropriate for that market.
+          4. MOOD: Describe the aesthetic mood in one expressive word (e.g., 'Cyberpunk', 'Ethereal', 'Nostalgic').
+          5. OUTPUT: strictly follow the JSON schema. If the track is instrumental or unknown, set 'identified' to false.
         `;
 
         const response = await ai.models.generateContent({
           model: GEMINI_MODEL,
-          contents: { parts: [{ inlineData: { mimeType: mimeType, data: base64Audio } }, { text: "Identify this song." }] },
+          contents: { parts: [{ inlineData: { mimeType: mimeType, data: base64Audio } }, { text: "Identify the song and analyze its mood." }] },
           config: { 
             tools: [{ googleSearch: {} }], 
             systemInstruction: systemInstruction,
@@ -77,11 +54,11 @@ export const identifySongFromAudio = async (
             responseSchema: {
               type: Type.OBJECT,
               properties: {
-                title: { type: Type.STRING, description: "The title of the song." },
-                artist: { type: Type.STRING, description: "The artist of the song." },
-                lyricsSnippet: { type: Type.STRING, description: "A short, relevant snippet of the lyrics (3-4 lines)." },
-                mood: { type: Type.STRING, description: "A single word describing the mood." },
-                identified: { type: Type.BOOLEAN, description: "True if identified with confidence." },
+                title: { type: Type.STRING },
+                artist: { type: Type.STRING },
+                lyricsSnippet: { type: Type.STRING },
+                mood: { type: Type.STRING },
+                identified: { type: Type.BOOLEAN },
               },
               required: ['title', 'artist', 'identified']
             }
@@ -91,17 +68,8 @@ export const identifySongFromAudio = async (
         const text = response.text;
         if (!text) return null;
 
-        let songInfo: SongInfo;
-        try {
-          songInfo = JSON.parse(text.trim());
-        } catch (parseError) {
-          console.error("[AI] Failed to parse JSON response:", text, parseError);
-          return null; 
-        }
-        
-        if (!songInfo.identified) {
-          return null;
-        }
+        let songInfo: SongInfo = JSON.parse(text.trim());
+        if (!songInfo.identified) return null;
 
         const groundingChunks = response.candidates?.[0]?.groundingMetadata?.groundingChunks;
         if (groundingChunks) {
@@ -112,7 +80,7 @@ export const identifySongFromAudio = async (
         songInfo.matchSource = 'AI';
         return songInfo;
     } catch (error: any) {
-        console.error("[AI] Error identifying song:", error);
+        console.error("[AI] Error:", error);
         if (retryCount < 1) return callGemini(retryCount + 1);
         return null;
     }

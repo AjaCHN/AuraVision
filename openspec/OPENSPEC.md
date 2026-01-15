@@ -18,6 +18,8 @@
     *   状态转换逻辑、闲置隐藏策略（含平板触控深度支持）、快捷键映射表。
 6.  **[06 持久化与国际化规范](./06_storage_and_i18n_spec.md)**
     *   LocalStorage Schema、多语言字典结构与区域偏好。
+7.  **[07 部署与环境规范](./07_deployment_guide.md)**
+    *   API 配置、构建流程、多平台托管与生产安全。
 
 ---
-*Aura Vision Project Specification - Version 0.5.5*
+*Aura Vision Project Specification - Version 0.5.9*

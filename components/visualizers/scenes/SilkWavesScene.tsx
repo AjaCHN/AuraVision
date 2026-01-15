@@ -1,8 +1,9 @@
-import React, { useRef, useMemo } from 'react';
+import { useRef, useMemo } from 'react';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 import { VisualizerSettings } from '../../../core/types';
 import { useAudioReactive } from '../../../core/hooks/useAudioReactive';
+import { useAppContext } from '../../AppContext';
 
 interface SceneProps {
   analyser: AnalyserNode;
@@ -16,13 +17,12 @@ export const SilkWavesScene: React.FC<SceneProps> = ({ analyser, colors, setting
   const light1Ref = useRef<THREE.PointLight>(null);
   const light2Ref = useRef<THREE.PointLight>(null);
   const light3Ref = useRef<THREE.SpotLight>(null);
-
+  
+  const { isIdentifying } = useAppContext();
   const { bass, treble, smoothedColors } = useAudioReactive({ analyser, colors, settings });
 
   const geometry = useMemo(() => {
-    let segs = 24;
-    if (settings.quality === 'med') segs = 40;
-    if (settings.quality === 'high') segs = 60;
+    let segs = settings.quality === 'low' ? 24 : settings.quality === 'med' ? 40 : 64;
     return new THREE.PlaneGeometry(60, 60, segs, segs);
   }, [settings.quality]);
 
@@ -34,6 +34,13 @@ export const SilkWavesScene: React.FC<SceneProps> = ({ analyser, colors, setting
         materialRef.current.color = c0;
         materialRef.current.emissive = c1;
         materialRef.current.sheenColor = c2;
+        // AI Scanning effect
+        if (isIdentifying) {
+          const scanIntensity = Math.sin(time * 5) * 0.5 + 0.5;
+          materialRef.current.emissiveIntensity = 0.4 + scanIntensity * 0.6;
+        } else {
+          materialRef.current.emissiveIntensity = 0.4;
+        }
     }
     
     // Dynamic orbiting lights
@@ -58,6 +65,8 @@ export const SilkWavesScene: React.FC<SceneProps> = ({ analyser, colors, setting
     if (!meshRef.current) return;
     const positions = meshRef.current.geometry.attributes.position as THREE.BufferAttribute;
     
+    const scanTime = time * 2.0;
+
     for (let i = 0; i < positions.count; i++) {
         const x = positions.getX(i);
         const y = positions.getY(i);
@@ -67,11 +76,17 @@ export const SilkWavesScene: React.FC<SceneProps> = ({ analyser, colors, setting
         const dist = Math.sqrt(x*x + y*y); 
         const bassRipple = Math.sin(dist * 0.8 - time * 1.5) * bass * 3.0;
         
+        // AI Identification Wave
+        let idWave = 0;
+        if (isIdentifying) {
+          idWave = Math.sin(x * 0.5 - scanTime) * 2.0;
+        }
+        
         let trebleDetail = settings.quality !== 'low' 
             ? Math.cos(x * 1.8 + time * 0.6) * Math.sin(y * 2.2 + time * 0.5) * treble * 1.0 
             : 0;
             
-        positions.setZ(i, z1 + z2 + bassRipple + trebleDetail);
+        positions.setZ(i, z1 + z2 + bassRipple + trebleDetail + idWave);
     }
     positions.needsUpdate = true;
     meshRef.current.geometry.computeVertexNormals();

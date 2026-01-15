@@ -62,7 +62,6 @@ const ThreeVisualizer: React.FC<ThreeVisualizerProps> = ({ analyser, colors, set
         {settings.glow && (
             <EffectComposer 
               multisampling={settings.quality === 'high' ? 8 : 0}
-              // FIX: Corrected typo from `disableNormalPass` to `enableNormalPass` and set to false to maintain behavior.
               enableNormalPass={false}
             >
                 <Bloom 

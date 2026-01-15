@@ -119,6 +119,7 @@ export const SettingsToggle = memo(({ label, value, onChange, activeColor = 'blu
           className={`relative w-9 h-5 rounded-full transition-all duration-200 ease-in-out focus:outline-none flex items-center shrink-0 ${value ? activeBg : 'bg-white/10'}`}
           role="switch" 
           aria-checked={value}
+          aria-label={label}
         >
           <span className={`inline-block w-3 h-3 transform transition-transform duration-200 ease-in-out bg-white rounded-full ${value ? 'translate-x-5' : 'translate-x-1'}`} />
         </button>
@@ -146,6 +147,7 @@ export const Slider = memo(({ label, value, min, max, step, onChange, unit = '',
             value={value} 
             onChange={(e) => onChange(parseFloat(e.target.value))} 
             className="absolute w-full h-1.5 bg-white/10 rounded-lg appearance-none cursor-pointer z-10 opacity-0 group-hover:opacity-100 transition-opacity"
+            aria-label={label}
         />
         <div className="w-full h-1.5 bg-white/10 rounded-lg overflow-hidden relative">
             <div className="absolute top-0 left-0 h-full bg-blue-500" style={{ width: `${((value - min) / (max - min)) * 100}%` }} />
@@ -193,6 +195,7 @@ export const SteppedSlider = memo(({ label, value, min, max, step, onChange, opt
                     value={value} 
                     onChange={handleChange} 
                     className="absolute w-full h-full opacity-0 cursor-pointer z-20"
+                    aria-label={label}
                 />
                  <div className="w-full h-1.5 bg-white/10 rounded-lg overflow-hidden relative">
                     <div className="absolute top-0 left-0 h-full bg-blue-500" style={{ width: `${((value - min) / (max - min)) * 100}%` }} />
@@ -222,6 +225,7 @@ export const CustomSelect = memo(({ label, value, options, onChange, hintText }:
         value={value} 
         onChange={(e) => onChange(e.target.value)} 
         className="w-full bg-white/[0.04] border border-white/10 rounded-xl px-4 py-3 text-xs font-bold text-white uppercase tracking-wider appearance-none focus:outline-none focus:border-blue-500/50 transition-colors cursor-pointer"
+        aria-label={label}
       >
         {options.map(opt => (
           <option key={opt.value} value={opt.value} className="bg-[#0f0f11] text-white">{opt.label}</option>

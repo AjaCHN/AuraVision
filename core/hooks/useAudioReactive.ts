@@ -13,12 +13,14 @@ interface UseAudioReactiveProps {
 export const useAudioReactive = ({ analyser, colors, settings }: UseAudioReactiveProps) => {
   const dataArray = useRef(new Uint8Array(analyser.frequencyBinCount)).current;
   
-  const smoothedColors = useRef(colors.map(c => new THREE.Color(c))).current;
-  const targetColor = useRef(new THREE.Color());
+  const smoothedColorsRef = useRef(colors.map(c => new THREE.Color(c)));
+  const targetColorRef = useRef(new THREE.Color());
 
   const audioData = useRef({ bass: 0, mids: 0, treble: 0, volume: 0 }).current;
 
   useFrame(() => {
+    const smoothedColors = smoothedColorsRef.current;
+    
     // 1. Smooth Color Transition Logic
     const lerpSpeed = 0.05;
     
@@ -40,7 +42,7 @@ export const useAudioReactive = ({ analyser, colors, settings }: UseAudioReactiv
     }
 
     smoothedColors.forEach((color, i) => {
-      color.lerp(targetColor.current.set(colors[i] || colors[0] || '#ffffff'), lerpSpeed);
+      color.lerp(targetColorRef.current.set(colors[i] || colors[0] || '#ffffff'), lerpSpeed);
     });
 
     // 2. Audio Data Processing
@@ -51,5 +53,5 @@ export const useAudioReactive = ({ analyser, colors, settings }: UseAudioReactiv
     audioData.volume = getAverage(dataArray, 0, dataArray.length) / 255;
   });
 
-  return { ...audioData, smoothedColors };
+  return { ...audioData, smoothedColors: smoothedColorsRef.current };
 };

@@ -47,7 +47,6 @@ const SongOverlay: React.FC<SongOverlayProps> = ({ song, showLyrics, language, o
   const containerRef = useRef<HTMLDivElement>(null);
   const moodStyle = useMemo(() => song && song.mood ? getMoodStyle(song.mood) : getMoodStyle('default'), [song]);
   
-  // Hide song card if it's a preview mode (used only for lyrics positioning)
   const isEnabled = showLyrics && !!song && song.identified && song.matchSource !== 'PREVIEW';
 
   useAudioPulse({
@@ -65,7 +64,8 @@ const SongOverlay: React.FC<SongOverlayProps> = ({ song, showLyrics, language, o
     <div className="pointer-events-none fixed inset-0 z-20 overflow-hidden">
       <div 
         ref={containerRef}
-        className={`absolute top-8 left-8 bg-black/40 backdrop-blur-md border-l-4 ${moodStyle.borderColor} pl-4 py-3 pr-4 rounded-r-xl max-w-xs md:max-w-md transition-all duration-700 shadow-[0_4px_10px_rgba(0,0,0,0.5)] pointer-events-auto group origin-top-left`}
+        className={`absolute top-8 left-8 bg-black/40 backdrop-blur-md border-l-4 ${moodStyle.borderColor} pl-4 py-3 pr-4 rounded-r-xl max-w-xs md:max-w-md transition-all duration-700 shadow-[0_4px_10px_rgba(0,0,0,0.5)] pointer-events-auto group origin-top-left animate-fade-in-up`}
+        style={{ animationDuration: '0.8s' }}
       >
         <div className={`absolute inset-0 bg-gradient-to-r ${moodStyle.gradient} opacity-20 pointer-events-none rounded-r-xl`} />
         <button onClick={onClose} className="absolute top-2 right-2 p-1 rounded-full bg-black/20 hover:bg-white/20 text-white/40 hover:text-white opacity-0 group-hover:opacity-100 transition-all duration-300 z-20">
