@@ -1,4 +1,3 @@
-
 import { IVisualizerRenderer, VisualizerSettings } from '../../types/index';
 import { getAverage } from '../audioUtils';
 
@@ -95,7 +94,7 @@ export class RingsRenderer implements IVisualizerRenderer {
  * Inspired by Image 1: Fluid, flowing gradients with smooth curves.
  */
 export class FluidCurvesRenderer implements IVisualizerRenderer {
-  private layerOffsets: { phase: number; freq1: number; freq2: number; vert: number; }[] = [];
+  private layerOffsets: { phase: number; freq1: number; freq2: number; vert: number; speedMult: number; }[] = [];
   
   init() {
     this.layerOffsets = [];
@@ -119,7 +118,8 @@ export class FluidCurvesRenderer implements IVisualizerRenderer {
           phase: Math.random() * Math.PI * 2,       // Random phase shift
           freq1: 0.003 + Math.random() * 0.004, // Random frequency for base wave
           freq2: 0.008 + Math.random() * 0.005, // Random frequency for audio bumps
-          vert: (Math.random() - 0.5) * 0.15   // Random vertical offset
+          vert: (Math.random() - 0.5) * 0.15,   // Random vertical offset
+          speedMult: 0.7 + Math.random() * 0.6    // Random speed multiplier for parallax
         });
       }
     }
@@ -127,6 +127,7 @@ export class FluidCurvesRenderer implements IVisualizerRenderer {
     for (let i = 0; i < layerCount; i++) {
       const color = colors[i % colors.length];
       const offsets = this.layerOffsets[i];
+      const layerTime = time * offsets.speedMult; // Each layer has its own speed
 
       ctx.fillStyle = color;
       ctx.globalAlpha = 0.2 + bass * 0.3;
@@ -138,8 +139,8 @@ export class FluidCurvesRenderer implements IVisualizerRenderer {
       for (let s = 0; s <= segments; s++) {
         const x = s * step;
         // Apply randomized properties to make each wave unique and less uniform
-        const offset = Math.sin(x * offsets.freq1 + time + offsets.phase) * (h * 0.15);
-        const audioBump = Math.cos(x * offsets.freq2 + time * 1.5 + offsets.phase) * (bass * 120);
+        const offset = Math.sin(x * offsets.freq1 + layerTime + offsets.phase) * (h * 0.15);
+        const audioBump = Math.cos(x * offsets.freq2 + layerTime * 1.5 + offsets.phase) * (bass * 120);
         const y = h * (0.4 + i * 0.08 + offsets.vert) + offset + audioBump;
         points.push({ x, y });
       }
