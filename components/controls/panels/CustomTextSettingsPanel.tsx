@@ -17,7 +17,7 @@ export const CustomTextSettingsPanel: React.FC = () => {
     '#ffffff', '#00e5ff', '#00ff41', '#ff007f', '#ffcc00', '#ff9500', '#af52de',
     '#ffd700', '#c0c0c0', '#cd7f32', '#a0aec0', '#718096', '#4a5568', '#2d3748',
     '#feb2b2', '#faf089', '#9ae6b4', '#81e6d9', '#90cdf4', '#a3bffa', '#d6bcfa',
-    '#ff6b6b', '#4ecdc4', '#45b7d1', '#f9f7e8', '#61a0af', '#96ceb4', '#ffeead'
+    '#ff6b6b', '#4ecdc4', '#45b7d1' // Reduced by exactly 4 items from original 28
   ];
 
   return (

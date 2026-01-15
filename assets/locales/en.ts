@@ -119,7 +119,6 @@ export const en = {
     select: 'Select a mood...',
     calm: 'Hypnotic & Calm',
     party: 'Energetic Party',
-    psychedelic: 'Psychedelic Trip',
     ambient: 'Ambient Focus'
   },
   recognitionSource: 'AI Provider',
@@ -176,10 +175,8 @@ export const en = {
     [VisualizerMode.BARS]: 'Frequency Bars',
     [VisualizerMode.PARTICLES]: 'Starfield',
     [VisualizerMode.TUNNEL]: 'Geometric Tunnel',
-    [VisualizerMode.SHAPES]: 'Abstract Shapes',
     [VisualizerMode.RINGS]: 'Neon Rings',
     [VisualizerMode.NEBULA]: 'Deep Nebula',
-    [VisualizerMode.KALEIDOSCOPE]: 'Kaleidoscope',
     [VisualizerMode.LASERS]: 'Concert Lasers',
     [VisualizerMode.FLUID_CURVES]: 'Aura Waves',
     [VisualizerMode.MACRO_BUBBLES]: 'Macro Bubbles',
@@ -229,7 +226,7 @@ export const en = {
       fftSize: 'Sub-band count for spectral resolution.'
     },
     projectInfoTitle: 'Project Description',
-    projectInfoText: 'Powered by Google Gemini 3 Flash, React 19 and hardware-accelerated WebGL.',
+    projectInfoText: 'Powered by Google Gemini 3 Flash, React 18 and hardware-accelerated WebGL.',
     privacyTitle: 'Privacy Policy',
     privacyText: 'Audio is analyzed locally. Temporary high-frequency snapshots are sent to Gemini solely for identification.',
     version: 'Release'

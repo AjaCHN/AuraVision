@@ -4,6 +4,7 @@
 - **Node.js**: 推荐版本 18.x 或 20.x (LTS)。
 - **包管理器**: 推荐使用 `npm` (v9+) 或 `pnpm`。
 - **浏览器权限**: 由于 Web Audio API 和 `getUserMedia` 的安全性限制，应用**必须**在 `localhost` 或带有 `HTTPS` 协议的域名下运行，否则无法访问麦克风。
+- **React 锁定**: 本项目锁定 React 18.3.1 以确保与现有 3D 渲染组件的兼容性。
 
 ## 2. API 密钥配置 (Google Gemini)
 本项目核心功能（曲目识别、语义分析）依赖 Google Gemini API。
@@ -55,4 +56,4 @@ npm run build
 - **休眠锁**: 应用已集成 `WakeLock API`，但需确保在部署环境的权限策略中未禁用该功能。
 
 ---
-*Aura Vision Deployment Guide - Version 0.5.9*
+*Aura Vision Deployment Guide - Version 0.6.1*

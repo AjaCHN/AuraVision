@@ -38,8 +38,10 @@ const ThreeVisualizer: React.FC<ThreeVisualizerProps> = ({ analyser, colors, set
   const enableTiltShift = settings.quality === 'high' && (mode === VisualizerMode.LIQUID || mode === VisualizerMode.SILK);
   
   return (
-    <div className={`absolute inset-0 z-0 ${settings.hideCursor ? 'cursor-none' : ''}`}>
+    <div className="w-full h-full">
+      {/* 这里的 key={settings.quality} 确保画质切换时强制重绘 Canvas 实例，从而应用新的 antialias 和 powerPreference 设置 */}
       <Canvas 
+        key={settings.quality}
         camera={{ position: [0, 2, 16], fov: 55 }} 
         dpr={dpr} 
         shadows={false}

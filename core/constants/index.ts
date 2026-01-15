@@ -1,6 +1,6 @@
 import { VisualizerMode, Region, Position, SmartPreset } from '../types';
 
-export const APP_VERSION = '0.6.1';
+export const APP_VERSION = '0.6.5';
 export const GEMINI_MODEL = 'gemini-3-flash-preview';
 
 export const VISUALIZER_PRESETS = {
@@ -8,10 +8,8 @@ export const VISUALIZER_PRESETS = {
   [VisualizerMode.BARS]: { name: 'Frequency Bars', description: 'Classic spectrum analyzer' },
   [VisualizerMode.PARTICLES]: { name: 'Starfield', description: 'Particles accelerated by treble' },
   [VisualizerMode.TUNNEL]: { name: 'Geometric Tunnel', description: '3D deep space tunnel' },
-  [VisualizerMode.SHAPES]: { name: 'Abstract Shapes', description: 'Dancing geometric primitives' },
   [VisualizerMode.RINGS]: { name: 'Neon Rings', description: 'Concentric circles reactive to mids' },
   [VisualizerMode.NEBULA]: { name: 'Deep Nebula', description: 'Dense, swirling clouds of color' },
-  [VisualizerMode.KALEIDOSCOPE]: { name: 'Kaleidoscope', description: 'Psychedelic mandala patterns' },
   [VisualizerMode.LASERS]: { name: 'Concert Lasers', description: 'Converging sweeping light beams' },
   [VisualizerMode.FLUID_CURVES]: { name: 'Aura Waves', description: 'Ethereal flowing gradients' },
   [VisualizerMode.MACRO_BUBBLES]: { name: 'Macro Bubbles', description: 'Organic liquid cellular patterns' },
@@ -88,18 +86,6 @@ export const SMART_PRESETS: Record<string, SmartPreset> = {
       glow: true,
       trails: false,
       smoothing: 0.6,
-    }
-  },
-  psychedelic: {
-    nameKey: 'psychedelic',
-    settings: {
-      mode: VisualizerMode.KALEIDOSCOPE,
-      colorTheme: COLOR_THEMES[29],
-      speed: 1.2,
-      sensitivity: 1.8,
-      glow: true,
-      trails: true,
-      smoothing: 0.8,
     }
   },
   ambient: {

@@ -12,10 +12,8 @@ export enum VisualizerMode {
   PLASMA = 'PLASMA',
   PARTICLES = 'PARTICLES',
   TUNNEL = 'TUNNEL',
-  SHAPES = 'SHAPES',
   RINGS = 'RINGS',
   NEBULA = 'NEBULA', 
-  KALEIDOSCOPE = 'KALEIDOSCOPE',
   LASERS = 'LASERS',
   FLUID_CURVES = 'FLUID_CURVES',
   MACRO_BUBBLES = 'MACRO_BUBBLES',
@@ -112,7 +110,13 @@ export interface AudioDevice {
   label: string;
 }
 
+// Ensure React Three Fiber intrinsic elements are available in both React and global namespaces
 declare global {
+  namespace React {
+    namespace JSX {
+      interface IntrinsicElements extends ThreeElements {}
+    }
+  }
   namespace JSX {
     interface IntrinsicElements extends ThreeElements {}
   }

@@ -70,7 +70,7 @@ export const VisualSettingsPanel: React.FC = () => {
                       <span className="text-xs font-black uppercase text-white/70 tracking-wider whitespace-nowrap">{t?.quality || "Quality"}</span>
                       <div className="flex bg-white/[0.04] rounded-lg p-0.5 border border-white/5 max-w-[180px]">
                       {(['low', 'med', 'high'] as const).map(q => (
-                          <button key={q} onClick={() => setSettings({...settings, quality: q})} aria-pressed={settings.quality === q} className={`flex-1 py-1.5 rounded text-[10px] font-bold uppercase tracking-widest transition-all ${settings.quality === q ? 'bg-white/20 text-white' : 'text-white/30 hover:text-white/70'}`}>{qualities[q] || q}</button>
+                          <button key={q} onClick={() => setSettings(prev => ({...prev, quality: q}))} aria-pressed={settings.quality === q} className={`flex-1 py-1.5 rounded text-[10px] font-bold uppercase tracking-widest transition-all ${settings.quality === q ? 'bg-white/20 text-white' : 'text-white/30 hover:text-white/70'}`}>{qualities[q] || q}</button>
                       ))}
                       </div>
                  </div>
@@ -83,23 +83,23 @@ export const VisualSettingsPanel: React.FC = () => {
       <div className="flex flex-col p-4 h-full pt-6 overflow-hidden">
         <div className="space-y-4 flex-grow overflow-y-auto custom-scrollbar pr-2">
           <div className="space-y-4">
-            <Slider label={t?.speed || "Speed"} hintText={hints?.speed} value={settings.speed} min={0.1} max={3.0} step={0.1} onChange={(v: number) => setSettings({...settings, speed: v})} />
-            <Slider label={t?.sensitivity || "Sensitivity"} hintText={hints?.sensitivity} value={settings.sensitivity} min={0.5} max={4.0} step={0.1} onChange={(v: number) => setSettings({...settings, sensitivity: v})} />
+            <Slider label={t?.speed || "Speed"} hintText={hints?.speed} value={settings.speed} min={0.1} max={3.0} step={0.1} onChange={(v: number) => setSettings(prev => ({...prev, speed: v}))} />
+            <Slider label={t?.sensitivity || "Sensitivity"} hintText={hints?.sensitivity} value={settings.sensitivity} min={0.5} max={4.0} step={0.1} onChange={(v: number) => setSettings(prev => ({...prev, sensitivity: v}))} />
           </div>
           <div className="space-y-3 pt-3 border-t border-white/5">
               <span className="text-xs font-bold uppercase text-white/50 tracking-[0.25em] block ml-1 mb-2">{visualPanel.effects || "Effects"}</span>
               <div className="grid grid-cols-2 gap-2">
-                  <SettingsToggle label={t?.glow || "Glow"} value={settings.glow} onChange={() => setSettings({...settings, glow: !settings.glow})} hintText={`${hints?.glow || "Glow"} [G]`} />
-                  <SettingsToggle label={t?.trails || "Trails"} value={settings.trails} onChange={() => setSettings({...settings, trails: !settings.trails})} hintText={`${hints?.trails || "Trails"} [T]`} />
+                  <SettingsToggle label={t?.glow || "Glow"} value={settings.glow} onChange={() => setSettings(prev => ({...prev, glow: !prev.glow}))} hintText={`${hints?.glow || "Glow"} [G]`} />
+                  <SettingsToggle label={t?.trails || "Trails"} value={settings.trails} onChange={() => setSettings(prev => ({...prev, trails: !prev.trails}))} hintText={`${hints?.trails || "Trails"} [T]`} />
               </div>
           </div>
           <div className="space-y-3 pt-3 border-t border-white/5">
             <span className="text-xs font-bold uppercase text-white/50 tracking-[0.25em] block ml-1">{visualPanel.automation || "Automation"}</span>
-            <SettingsToggle label={t?.autoRotate || "Auto Rotate"} value={settings.autoRotate} onChange={() => setSettings({...settings, autoRotate: !settings.autoRotate})} hintText={hints?.autoRotate}><Slider label={t?.rotateInterval || "Interval"} value={settings.rotateInterval} min={10} max={120} step={5} unit="s" onChange={(v: number) => setSettings({...settings, rotateInterval: v})} /></SettingsToggle>
-            <SettingsToggle label={t?.cycleColors || "Cycle Colors"} value={settings.cycleColors} onChange={() => setSettings({...settings, cycleColors: !settings.cycleColors})} hintText={hints?.cycleColors}><Slider label={t?.colorInterval || "Interval"} value={settings.colorInterval} min={5} max={60} step={5} unit="s" onChange={(v: number) => setSettings({...settings, colorInterval: v})} /></SettingsToggle>
+            <SettingsToggle label={t?.autoRotate || "Auto Rotate"} value={settings.autoRotate} onChange={() => setSettings(prev => ({...prev, autoRotate: !prev.autoRotate}))} hintText={hints?.autoRotate}><Slider label={t?.rotateInterval || "Interval"} value={settings.rotateInterval} min={10} max={120} step={5} unit="s" onChange={(v: number) => setSettings(prev => ({...prev, rotateInterval: v}))} /></SettingsToggle>
+            <SettingsToggle label={t?.cycleColors || "Cycle Colors"} value={settings.cycleColors} onChange={() => setSettings(prev => ({...prev, cycleColors: !prev.cycleColors}))} hintText={hints?.cycleColors}><Slider label={t?.colorInterval || "Interval"} value={settings.colorInterval} min={5} max={60} step={5} unit="s" onChange={(v: number) => setSettings(prev => ({...prev, colorInterval: v}))} /></SettingsToggle>
           </div>
           <div className="space-y-3 pt-3 border-t border-white/5">
-             <SettingsToggle label={t?.hideCursor || "Hide Cursor"} value={settings.hideCursor} onChange={() => setSettings({...settings, hideCursor: !settings.hideCursor})} hintText={hints?.hideCursor} />
+             <SettingsToggle label={t?.hideCursor || "Hide Cursor"} value={settings.hideCursor} onChange={() => setSettings(prev => ({...prev, hideCursor: !prev.hideCursor}))} hintText={hints?.hideCursor} />
           </div>
         </div>
         <div className="mt-auto pt-4">

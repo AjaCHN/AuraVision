@@ -10,17 +10,15 @@ interface SceneProps {
   settings: VisualizerSettings;
 }
 
-// 自定义星空组件，支持独立闪烁和漂移
+// 自定义星空组件
 const DynamicStarfield = ({ treble, speed }: { treble: number; speed: number }) => {
   const pointsRef = useRef<THREE.Points>(null);
-  const { viewport } = useThree();
   
   const count = 6000;
   const [positions, seeds] = useMemo(() => {
     const pos = new Float32Array(count * 3);
     const s = new Float32Array(count);
     for (let i = 0; i < count; i++) {
-      // 在一个巨大的球体内随机分布
       const r = 100 + Math.random() * 100;
       const theta = Math.random() * Math.PI * 2;
       const phi = Math.acos(2 * Math.random() - 1);
@@ -29,7 +27,7 @@ const DynamicStarfield = ({ treble, speed }: { treble: number; speed: number }) 
       pos[i * 3 + 1] = r * Math.sin(phi) * Math.sin(theta);
       pos[i * 3 + 2] = r * Math.cos(phi);
       
-      s[i] = Math.random() * 1000; // 随机种子用于闪烁相位
+      s[i] = Math.random() * 1000;
     }
     return [pos, s];
   }, []);
@@ -43,12 +41,8 @@ const DynamicStarfield = ({ treble, speed }: { treble: number; speed: number }) 
   useFrame((state) => {
     const t = state.clock.getElapsedTime();
     if (pointsRef.current) {
-      // 整体随机漂移与缓慢旋转
       pointsRef.current.rotation.y = t * 0.02 * speed;
       pointsRef.current.rotation.x = Math.sin(t * 0.1) * 0.05;
-      pointsRef.current.position.x = Math.sin(t * 0.2) * 2;
-      
-      // 更新着色器参数
       (pointsRef.current.material as THREE.ShaderMaterial).uniforms.uTime.value = t;
       (pointsRef.current.material as THREE.ShaderMaterial).uniforms.uTreble.value = treble;
     }
@@ -71,10 +65,8 @@ const DynamicStarfield = ({ treble, speed }: { treble: number; speed: number }) 
           uniform float uTime;
           uniform float uTreble;
           void main() {
-            // 计算独立闪烁：基础频率 + 随高音变化的动态频率
             float twinkle = sin(uTime * (1.5 + uTreble * 5.0) + seed) * 0.5 + 0.5;
             vTwinkle = twinkle;
-            
             vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
             gl_PointSize = (2.0 + vTwinkle * 2.0) * (300.0 / -mvPosition.z);
             gl_Position = projectionMatrix * mvPosition;
@@ -84,10 +76,8 @@ const DynamicStarfield = ({ treble, speed }: { treble: number; speed: number }) 
           varying float vTwinkle;
           uniform vec3 uColor;
           void main() {
-            // 柔和的圆形粒子
             float dist = distance(gl_PointCoord, vec2(0.5));
             if (dist > 0.5) discard;
-            
             float alpha = smoothstep(0.5, 0.2, dist) * (0.3 + vTwinkle * 0.7);
             gl_FragColor = vec4(uColor, alpha);
           }
@@ -130,18 +120,23 @@ export const LowPolyTerrainScene: React.FC<SceneProps> = ({ analyser, colors, se
      if (!meshRef.current) return;
      const positions = meshRef.current.geometry.attributes.position as THREE.BufferAttribute;
 
+     // 强化音频联动：采用非线性幂函数增加起伏波动
+     const audioImpact = Math.pow(bass, 1.6) * 7.5;
+     const trebleRipple = treble * 2.0;
+
      for(let i=0; i<positions.count; i++) {
          const x = positions.getX(i);
          const y = positions.getY(i);
 
-         const y_moved = y + time * 10;
+         const y_moved = y + time * 15;
          const noise1 = Math.sin(x * 0.1 + y_moved * 0.05) * 2.0;
          const noise2 = Math.sin(x * 0.3 + y_moved * 0.2) * 0.8;
-         const noise3 = settings.quality === 'high' ? Math.sin(x * 0.8 + y_moved * 0.6) * 0.3 : 0;
+         const noise3 = Math.sin(x * 0.7 + y_moved * 0.5) * 0.3;
          
-         const height = noise1 + noise2 + noise3;
-         const audioH = height * (1 + bass * 1.5);
-         positions.setZ(i, audioH);
+         const baseHeight = noise1 + noise2 + (settings.quality === 'high' ? noise3 : 0);
+         // 修复穿模：通过 Math.max 确保地形不会下陷到摄像机之后 (-2 基准)
+         const finalHeight = Math.max(-1.5, baseHeight * (1 + audioImpact) + trebleRipple * Math.cos(x * 0.5));
+         positions.setZ(i, finalHeight);
      }
      positions.needsUpdate = true;
      meshRef.current.geometry.computeVertexNormals();
@@ -150,30 +145,25 @@ export const LowPolyTerrainScene: React.FC<SceneProps> = ({ analyser, colors, se
   return (
       <>
         <color attach="background" args={[c2.getStyle()]} /> 
-        <fog ref={fogRef} attach="fog" args={[c2.getStyle(), 10, 40]} />
-        
-        {/* 使用增强版的动态星空 */}
+        <fog ref={fogRef} attach="fog" args={[c2.getStyle(), 10, 50]} />
         <DynamicStarfield treble={treble} speed={settings.speed} />
-        
-        <mesh ref={sunRef} position={[0, 10, -30]}>
+        <mesh ref={sunRef} position={[0, 10, -35]}>
             <circleGeometry args={[8, 32]} />
             <meshBasicMaterial color={c0} toneMapped={false} />
         </mesh>
-        
-        <mesh ref={meshRef} rotation={[-Math.PI/2.2, 0, 0]} position={[0, -5, 0]}>
+        <mesh ref={meshRef} rotation={[-Math.PI/2.5, 0, 0]} position={[0, -1, 0]}>
             <primitive object={geometry} attach="geometry" />
             <meshStandardMaterial 
                 ref={materialRef}
                 flatShading={true} 
-                roughness={0.9}
-                metalness={0.1}
+                roughness={0.8}
+                metalness={0.2}
             />
         </mesh>
-        
-        <ambientLight intensity={0.6} color={c1} />
+        <ambientLight intensity={0.4} color={c1} />
         <directionalLight 
             color={c0} 
-            intensity={2.5} 
+            intensity={2.0} 
             position={[10, 20, -20]}
         />
       </>

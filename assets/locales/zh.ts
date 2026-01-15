@@ -121,7 +121,6 @@ export const zh = {
     select: '选择一种心境...',
     calm: '催眠舒缓',
     party: '动感派对',
-    psychedelic: '迷幻电子',
     ambient: '静谧氛围'
   },
   recognitionSource: 'AI 识别源',
@@ -178,10 +177,8 @@ export const zh = {
     [VisualizerMode.BARS]: '镜像频谱分析',
     [VisualizerMode.PARTICLES]: '速激星空',
     [VisualizerMode.TUNNEL]: '几何时空隧道',
-    [VisualizerMode.SHAPES]: '抽象几何演化',
     [VisualizerMode.RINGS]: '霓虹共振环',
     [VisualizerMode.NEBULA]: '深空星云',
-    [VisualizerMode.KALEIDOSCOPE]: '迷幻万花筒',
     [VisualizerMode.LASERS]: '舞台激光矩阵',
     [VisualizerMode.FLUID_CURVES]: '极光之舞',
     [VisualizerMode.MACRO_BUBBLES]: '微观液泡',
@@ -233,7 +230,7 @@ export const zh = {
       fftSize: '决定了频谱分析的颗粒度，即频段采样数量。'
     },
     projectInfoTitle: '项目简介',
-    projectInfoText: '由 Google Gemini 3 Flash 模型、React 19 以及硬件加速的 WebGL 技术栈强力驱动。',
+    projectInfoText: '由 Google Gemini 3 Flash 模型、React 18 以及硬件加速的 WebGL 技术栈强力驱动。',
     privacyTitle: '隐私与安全',
     privacyText: '音频分析完全在本地完成。仅在识别歌曲时，会将加密的频率特征临时发送至云端，绝不存储或上传任何原始录音数据。',
     version: '版本号'

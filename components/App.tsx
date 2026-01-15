@@ -6,7 +6,6 @@ import SongOverlay from './ui/SongOverlay';
 import CustomTextOverlay from './ui/CustomTextOverlay';
 import LyricsOverlay from './ui/LyricsOverlay';
 import { OnboardingOverlay } from './ui/OnboardingOverlay'; 
-import { VisualizerMode } from '../core/types';
 import { AppProvider, useAppContext } from './AppContext';
 import { APP_VERSION } from '../core/constants';
 
@@ -53,27 +52,49 @@ const AppContent: React.FC = () => {
   }
 
   return (
-    <div className={`h-[100dvh] bg-black overflow-hidden relative ${settings.hideCursor ? 'cursor-none' : ''}`}>
-      {errorMessage && (
-        <div className="fixed top-24 left-1/2 -translate-x-1/2 z-[150] bg-red-900/90 text-white px-6 py-4 rounded-xl border border-red-500/50 animate-fade-in-up flex flex-col sm:flex-row items-center gap-4 shadow-2xl max-w-[90vw]">
-            <div className="flex-1 text-xs font-medium">{errorMessage}</div>
-            <div className="flex items-center gap-3">
-               <button onClick={startDemoMode} className="whitespace-nowrap px-4 py-2 bg-white/20 hover:bg-white/30 rounded-lg text-xs font-bold transition-colors">{t?.errors?.tryDemo || "Demo Mode"}</button>
-               <button onClick={() => setErrorMessage(null)} className="p-2 hover:bg-white/10 rounded-full"><svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg></button>
+    <div className="h-[100dvh] bg-black overflow-hidden relative">
+      {/* 渲染画布层：仅在此层级隐藏鼠标 */}
+      <div className={`absolute inset-0 z-0 ${settings.hideCursor ? 'cursor-none' : ''}`}>
+        {isThreeMode ? (
+          <ThreeVisualizer analyser={analyser} mode={mode} colors={colorTheme} settings={settings} />
+        ) : (
+          <VisualizerCanvas analyser={analyser} mode={mode} colors={colorTheme} settings={settings} />
+        )}
+      </div>
+
+      {/* UI 交互层：始终保持默认指针 */}
+      <div className="relative z-10 w-full h-full pointer-events-none">
+        {errorMessage && (
+          <div className="pointer-events-auto cursor-default fixed top-24 left-1/2 -translate-x-1/2 z-[150] bg-red-900/90 text-white px-6 py-4 rounded-xl border border-red-500/50 animate-fade-in-up flex flex-col sm:flex-row items-center gap-4 shadow-2xl max-w-[90vw]">
+              <div className="flex-1 text-xs font-medium">{errorMessage}</div>
+              <div className="flex items-center gap-3">
+                 <button onClick={startDemoMode} className="whitespace-nowrap px-4 py-2 bg-white/20 hover:bg-white/30 rounded-lg text-xs font-bold transition-colors">{t?.errors?.tryDemo || "Demo Mode"}</button>
+                 <button onClick={() => setErrorMessage(null)} className="p-2 hover:bg-white/10 rounded-full"><svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg></button>
+              </div>
+          </div>
+        )}
+        {isSimulating && (
+          <div className="fixed top-8 left-1/2 -translate-x-1/2 z-[140] bg-blue-600/20 backdrop-blur-md border border-blue-500/30 px-4 py-1.5 rounded-full flex items-center gap-2 pointer-events-none">
+              <div className="w-1.5 h-1.5 bg-blue-400 rounded-full animate-pulse"/>
+              <span className="text-[10px] font-bold uppercase tracking-widest text-blue-200">Demo Mode</span>
+          </div>
+        )}
+        
+        {/* Overlays Wrapper: Overlays are pointer-events-none to let interactions fall through to controls */}
+        <div className="absolute inset-0 z-10 pointer-events-none">
+            <CustomTextOverlay settings={settings} analyser={analyser} />
+            <LyricsOverlay settings={settings} song={currentSong} showLyrics={showLyrics} lyricsStyle={lyricsStyle} analyser={analyser} />
+        </div>
+
+        {/* Interactive UI Wrapper: Ensure pointer shows up here */}
+        <div className="absolute inset-0 z-20 pointer-events-none">
+            <div className="pointer-events-auto cursor-default">
+              <SongOverlay song={currentSong} showLyrics={showLyrics} language={language} onRetry={() => mediaStream && performIdentification(mediaStream)} onClose={() => setCurrentSong(null)} analyser={analyser} sensitivity={settings.sensitivity} />
+              <Controls />
             </div>
         </div>
-      )}
-      {isSimulating && (
-        <div className="fixed top-8 left-1/2 -translate-x-1/2 z-[140] bg-blue-600/20 backdrop-blur-md border border-blue-500/30 px-4 py-1.5 rounded-full flex items-center gap-2 pointer-events-none">
-            <div className="w-1.5 h-1.5 bg-blue-400 rounded-full animate-pulse"/>
-            <span className="text-[10px] font-bold uppercase tracking-widest text-blue-200">Demo Mode</span>
-        </div>
-      )}
-      {isThreeMode ? <ThreeVisualizer analyser={analyser} mode={mode} colors={colorTheme} settings={settings} /> : <VisualizerCanvas analyser={analyser} mode={mode} colors={colorTheme} settings={settings} />}
-      <CustomTextOverlay settings={settings} analyser={analyser} />
-      <LyricsOverlay settings={settings} song={currentSong} showLyrics={showLyrics} lyricsStyle={lyricsStyle} analyser={analyser} />
-      <SongOverlay song={currentSong} showLyrics={showLyrics} language={language} onRetry={() => mediaStream && performIdentification(mediaStream)} onClose={() => setCurrentSong(null)} analyser={analyser} sensitivity={settings.sensitivity} />
-      <Controls />
+      </div>
+
       <div className="fixed bottom-4 right-4 z-50 pointer-events-none text-white/20 text-[10px] font-mono uppercase tracking-widest">
         AURA VISION v{APP_VERSION}
       </div>

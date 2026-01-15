@@ -9,26 +9,26 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@google/genai": "^1.36.0",
-    "@react-three/drei": "^10.7.7",
-    "@react-three/fiber": "^9.5.0",
-    "@react-three/postprocessing": "^3.0.4",
-    "postprocessing": "^6.35.0",
+    "@google/genai": "1.36.0",
+    "@react-three/drei": "9.121.4",
+    "@react-three/fiber": "8.17.10",
+    "@react-three/postprocessing": "2.16.0",
+    "postprocessing": "6.35.0",
     "react": "18.3.1",
     "react-dom": "18.3.1",
-    "three": "^0.182.0",
-    "uuid": "^9.0.1"
+    "three": "0.151.3",
+    "uuid": "9.0.1"
   },
   "devDependencies": {
-    "@types/react": "^18.3.1",
-    "@types/react-dom": "^18.3.1",
-    "@types/three": "^0.164.0",
-    "@types/uuid": "^9.0.8",
-    "@vitejs/plugin-react": "^4.2.1",
-    "autoprefixer": "^10.4.19",
-    "postcss": "^8.4.38",
-    "tailwindcss": "^3.4.3",
-    "typescript": "^5.4.5",
-    "vite": "^5.2.0"
+    "@types/react": "18.3.1",
+    "@types/react-dom": "18.3.1",
+    "@types/three": "0.151.3",
+    "@types/uuid": "9.0.8",
+    "@vitejs/plugin-react": "4.2.1",
+    "autoprefixer": "10.4.19",
+    "postcss": "8.4.38",
+    "tailwindcss": "3.4.3",
+    "typescript": "5.4.5",
+    "vite": "5.2.0"
   }
 }

@@ -178,10 +178,8 @@ export const es = {
     [VisualizerMode.BARS]: 'Barras de Frecuencia',
     [VisualizerMode.PARTICLES]: 'Campo Estelar',
     [VisualizerMode.TUNNEL]: 'Túnel Geométrico',
-    [VisualizerMode.SHAPES]: 'Formas Abstractas',
     [VisualizerMode.RINGS]: 'Anillos de Neón',
     [VisualizerMode.NEBULA]: 'Nebulosa Profunda',
-    [VisualizerMode.KALEIDOSCOPE]: 'Caleidoscopio',
     [VisualizerMode.LASERS]: 'Láseres de Concierto',
     [VisualizerMode.FLUID_CURVES]: 'Ondas de Seda',
     [VisualizerMode.MACRO_BUBBLES]: 'Burbujas Macro',
@@ -222,7 +220,7 @@ export const es = {
       'Cada 30-45 segundos, la IA captura audio para identificar la canción.'
     ],
     projectInfoTitle: 'Sobre el Proyecto',
-    projectInfoText: 'Impulsado por Google Gemini 3, React 19 y WebGL para una experiencia visual de alto rendimiento.',
+    projectInfoText: 'Impulsado por Google Gemini 3, React 19 e WebGL para una experiencia visual de alto rendimiento.',
     privacyTitle: 'Privacidad',
     privacyText: 'El análisis de audio es local. Solo se envían firmas digitales anónimas a Gemini para la identificación de música.',
     version: 'Lanzamiento'

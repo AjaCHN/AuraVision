@@ -1,4 +1,4 @@
-import { useRef, useMemo } from 'react';
+import React, { useRef, useMemo } from 'react';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 import { VisualizerSettings } from '../../../core/types';
@@ -96,6 +96,7 @@ export const SilkWavesScene: React.FC<SceneProps> = ({ analyser, colors, setting
 
   return (
     <>
+      {/* color, pointLight, spotLight, ambientLight, and mesh are standard React Three Fiber intrinsic elements defined in core/types/index.ts */}
       <color attach="background" args={['#020205']} /> 
       <pointLight ref={light1Ref} position={[0, 20, 25]} intensity={8.0} distance={150} />
       <pointLight ref={light2Ref} position={[0, 20, 25]} intensity={5.0} distance={150} />
