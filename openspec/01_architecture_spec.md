@@ -1,4 +1,3 @@
-
 # OpenSpec: 系统架构规范
 
 ## 1. 核心技术栈
@@ -10,7 +9,7 @@
   - **Compatibility Fix:** 预览环境采用 HTML `<link>` 标签引入原生 CSS，并结合 Tailwind Play CDN 进行实时解析。
 - **Engine:** 
   - 2D: Canvas 2D API (策略模式封装)
-  - 3D: Three.js (r164) / @react-three/fiber / @react-three/postprocessing
+  - 3D: Three.js (r160) / @react-three/fiber / @react-three/postprocessing
 - **Intelligence:** Google Gemini 3 (Flash Preview)
 - **Audio:** Web Audio API (实时分析)
 
@@ -37,5 +36,9 @@
    - 采样: 每帧通过 `getByteFrequencyData` 获取频域数据。
    - 渲染: 数据注入当前活动的渲染策略 (2D) 或传参给 Three.js 组件 (3D)。
 
+## 4. 容错与稳定性 (v0.7.5 更新)
+- **Error Boundary:** 全局错误拦截器必须显式声明 `state` 和 `props` 成员属性，以确保在严格型 TypeScript 环境下对 `React.Component` 的继承行为符合预期。
+- **Auto-Recovery:** 捕获渲染引擎异常后，提供“出厂重置 (Factory Reset)”选项以清除可能导致崩溃的 LocalStorage 脏数据。
+
 ---
-*Aura Vision Architecture - Version 0.6.8*
+*Aura Vision Architecture - Version 0.7.5*

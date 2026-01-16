@@ -1,4 +1,11 @@
 
+/**
+ * File: core/hooks/useAudio.ts
+ * Version: 0.7.2
+ * Author: Aura Vision Team
+ * Copyright (c) 2024 Aura Vision. All rights reserved.
+ */
+
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { AudioDevice, VisualizerSettings, Language } from '../types';
 import { TRANSLATIONS } from '../i18n';
@@ -37,6 +44,28 @@ export const useAudio = ({ settings, language }: UseAudioProps) => {
     setMediaStream(null);
   }, []);
 
+  // Resilience: Monitor AudioContext state changes (especially for mobile focus loss)
+  const attemptResume = useCallback(async () => {
+    if (audioContextRef.current && audioContextRef.current.state === 'suspended') {
+      try {
+        await audioContextRef.current.resume();
+        console.log("[Audio] Context resumed successfully.");
+      } catch (e) {
+        console.warn("[Audio] Resume failed:", e);
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible' && isListening) {
+        attemptResume();
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
+  }, [isListening, attemptResume]);
+
 
   const updateAudioDevices = useCallback(async () => {
     if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) return;
@@ -48,7 +77,6 @@ export const useAudio = ({ settings, language }: UseAudioProps) => {
     }
   }, []);
   
-  // Listen for device changes to update the list dynamically
   useEffect(() => {
     navigator.mediaDevices?.addEventListener('devicechange', updateAudioDevices);
     return () => navigator.mediaDevices?.removeEventListener('devicechange', updateAudioDevices);
@@ -69,7 +97,6 @@ export const useAudio = ({ settings, language }: UseAudioProps) => {
       });
       streamRef.current = stream;
 
-      // Handle cases where the device is disconnected or permissions are revoked
       const audioTrack = stream.getAudioTracks()[0];
       if (audioTrack) {
           audioTrack.onended = () => {
@@ -79,6 +106,15 @@ export const useAudio = ({ settings, language }: UseAudioProps) => {
       }
       
       const context = new (window.AudioContext || (window as any).webkitAudioContext)();
+      
+      // Monitor state for debugging and recovery
+      context.onstatechange = () => {
+          console.log(`[Audio] State changed: ${context.state}`);
+          if (context.state === 'suspended' && isListening) {
+              // Potential recovery trigger could go here
+          }
+      };
+
       if (context.state === 'suspended') await context.resume();
 
       const node = context.createAnalyser();

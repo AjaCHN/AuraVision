@@ -45,14 +45,23 @@ export const HelpModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 };
 
 const GuideContent: React.FC<{ h: any; guideSteps: string[] }> = ({ h, guideSteps }) => (
-    <div className="space-y-6">
+    <div className="space-y-8">
+        <div className="bg-blue-600/10 border border-blue-500/20 p-4 rounded-2xl">
+            <p className="text-sm text-blue-100/70 leading-relaxed italic">
+                {h.intro || "Experience high-fidelity generative art driven by your music."}
+            </p>
+        </div>
         <div>
-            <h4 className="text-sm font-black text-purple-400 uppercase tracking-[0.2em] mb-3">{h?.howItWorksTitle || "User Guide"}</h4>
-            <div className="flex flex-col gap-2">
+            <h4 className="text-sm font-black text-purple-400 uppercase tracking-[0.2em] mb-5 px-1">{h?.howItWorksTitle || "How to Use"}</h4>
+            <div className="flex flex-col gap-3">
                 {guideSteps.map((step: string, idx: number) => (
-                  <div key={idx} className="flex gap-3 items-start bg-white/[0.02] p-3 rounded-xl">
-                     <span className="shrink-0 w-5 h-5 rounded-full bg-purple-500/20 text-purple-400 flex items-center justify-center text-[10px] font-black">{idx + 1}</span>
-                     <p className="text-sm text-white/60 leading-relaxed">{step}</p>
+                  <div key={idx} className="flex gap-4 items-start bg-white/[0.03] p-4 rounded-2xl border border-white/5 hover:border-white/10 transition-colors">
+                     <span className="shrink-0 w-6 h-6 rounded-full bg-gradient-to-br from-purple-500 to-blue-500 text-white flex items-center justify-center text-[10px] font-black shadow-lg">
+                        {idx + 1}
+                     </span>
+                     <p className="text-sm text-white/80 leading-relaxed font-medium">
+                        {step.startsWith(`${idx + 1}. `) ? step.substring(3) : step}
+                     </p>
                   </div>
                 ))}
              </div>
@@ -62,7 +71,7 @@ const GuideContent: React.FC<{ h: any; guideSteps: string[] }> = ({ h, guideStep
 
 const ShortcutsContent: React.FC<{ h: any; s: any }> = ({ h, s }) => (
     <div>
-        <h4 className="text-sm font-black text-orange-400 uppercase tracking-[0.2em] mb-4">{h?.shortcutsTitle || "Keyboard Shortcuts"}</h4>
+        <h4 className="text-sm font-black text-orange-400 uppercase tracking-[0.2em] mb-4 px-1">{h?.shortcutsTitle || "Keyboard Shortcuts"}</h4>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <ShortcutItem label={s?.toggleMic || "Mic"} k="Space" />
             <ShortcutItem label={s?.fullscreen || "Fullscreen"} k="F" />
@@ -78,20 +87,18 @@ const ShortcutsContent: React.FC<{ h: any; s: any }> = ({ h, s }) => (
 
 const AboutContent: React.FC<{ h: any; t: any }> = ({ h, t }) => (
     <div className="space-y-6">
-        <div className="bg-white/[0.03] p-4 rounded-xl">
-           <h4 className="text-[10px] font-black text-blue-400 uppercase tracking-widest mb-2 flex items-center gap-2">
-             <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+        <div className="bg-white/[0.03] p-5 rounded-2xl border border-white/5">
+           <h4 className="text-[10px] font-black text-blue-400 uppercase tracking-widest mb-3 flex items-center gap-2">
+             <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
              {h?.projectInfoTitle || "About Aura"}
            </h4>
            <p className="text-sm text-white/50 leading-relaxed font-medium">
-             {t?.language === 'zh' 
-               ? '沉浸式 AI 视听套件。适用于直播背景、现场 VJ、氛围装饰及专注陪伴场景。' 
-               : 'Immersive AI visualizer for Streamers, VJs, Ambient decor, and Focus sessions.'}
+             {h?.aboutDescription || "Immersive AI visualizer for Streamers, VJs, Ambient decor, and Focus sessions."}
            </p>
         </div>
-        <div className="bg-white/[0.03] p-4 rounded-xl">
-           <h4 className="text-[10px] font-black text-green-400 uppercase tracking-widest mb-2 flex items-center gap-2">
-             <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
+        <div className="bg-white/[0.03] p-5 rounded-2xl border border-white/5">
+           <h4 className="text-[10px] font-black text-green-400 uppercase tracking-widest mb-3 flex items-center gap-2">
+             <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
              {h?.privacyTitle || "Privacy"}
            </h4>
            <p className="text-sm text-white/50 leading-relaxed font-medium">{h?.privacyText || "Local analysis only."}</p>
@@ -100,8 +107,8 @@ const AboutContent: React.FC<{ h: any; t: any }> = ({ h, t }) => (
 );
 
 const ShortcutItem = ({ label, k }: { label: string, k: string }) => (
-  <div className="bg-white/[0.02] p-3 rounded-lg border border-white/5 flex justify-between items-center group hover:bg-white/5 transition-colors">
-     <span className="text-xs text-white/60 group-hover:text-white/80 transition-colors truncate pr-2 font-bold uppercase">{label}</span>
-     <kbd className="text-xs font-mono bg-white/10 px-2.5 py-1 rounded text-white/80 border border-white/10 min-w-[24px] text-center shadow-sm">{k}</kbd>
+  <div className="bg-white/[0.02] p-4 rounded-2xl border border-white/5 flex justify-between items-center group hover:bg-white/5 transition-all">
+     <span className="text-xs text-white/60 group-hover:text-white/80 transition-colors truncate pr-2 font-bold uppercase tracking-wider">{label}</span>
+     <kbd className="text-xs font-mono bg-white/10 px-3 py-1 rounded-lg text-white border border-white/10 min-w-[24px] text-center shadow-md">{k}</kbd>
   </div>
 );

@@ -1,4 +1,3 @@
-
 # OpenSpec: 音频引擎规范
 
 ## 1. 采集规范
@@ -37,4 +36,4 @@
 - **流程:** 快照 -> Base64 -> Offline Context 解码 -> FFT 扫描 -> 特征 Set。
 
 ---
-*Aura Vision Audio Engine - Version 0.6.6*
+*Aura Vision Audio Engine - Version 0.7.5*

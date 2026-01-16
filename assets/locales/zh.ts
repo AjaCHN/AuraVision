@@ -1,4 +1,3 @@
-
 import { VisualizerMode, LyricsStyle } from '../../core/types';
 
 export const zh = {
@@ -75,10 +74,10 @@ export const zh = {
   listening: '监听中',
   identifying: 'AI 正在解析曲目...',
   startExperience: '开启视听盛宴',
-  welcomeTitle: 'Aura Vision',
-  welcomeText: '将声波转化为数字艺术。通过实时频域分析与 AI 语义识别，开启前所未有的视听交互体验。',
+  welcomeTitle: 'Aura Vision | 灵动视界',
+  welcomeText: '将旋律凝炼为极光，让节奏跃然屏上。融合 Gemini AI 实时曲目识别，为您开启感官交响的全新维度。',
   unsupportedTitle: '浏览器不受支持',
-  unsupportedText: 'Aura Vision 需要现代浏览器功能（例如麦克风访问权限）才能运行，您当前的浏览器不支持这些功能。请更新到最新版本的 Chrome、Firefox 或 Safari。',
+  unsupportedText: 'Aura Vision 需要现代浏览器功能（例如麦克风访问权限）才能运行。请更新到最新版本的 Chrome、Edge 或 Safari。',
   hideOptions: '收起',
   showOptions: '显示设置',
   reset: '重置全局设置',
@@ -94,7 +93,7 @@ export const zh = {
   wrongSong: '识别有误？点击重试',
   hideCursor: '隐藏鼠标指针',
   customColor: '文字颜色',
-  randomizeTooltip: '随机视觉设置 (快捷鍵: R)',
+  randomizeTooltip: '随机视觉设置 (快捷键: R)',
   smoothing: '动态平滑度',
   fftSize: '频域分辨率 (FFT)',
   appInfo: '关于应用',
@@ -141,7 +140,10 @@ export const zh = {
     select: '选择一种心境...',
     calm: '催眠舒缓',
     party: '动感派对',
-    ambient: '静谧氛围'
+    ambient: '静谧氛围',
+    cyberpunk: '赛博朋克',
+    retrowave: '复古夕阳',
+    vocal: '人声专注'
   },
   recognitionSource: 'AI 识别源',
   lyricsPosition: '歌词显示位置',
@@ -195,13 +197,13 @@ export const zh = {
   modes: {
     [VisualizerMode.PLASMA]: '流体等离子',
     [VisualizerMode.BARS]: '镜像频谱分析',
-    [VisualizerMode.PARTICLES]: '星际穿越', // Updated from '速激星空'
+    [VisualizerMode.PARTICLES]: '星际穿越', 
     [VisualizerMode.TUNNEL]: '几何时空隧道',
     [VisualizerMode.RINGS]: '霓虹共振环',
     [VisualizerMode.NEBULA]: '深空星云',
     [VisualizerMode.LASERS]: '舞台激光矩阵',
     [VisualizerMode.FLUID_CURVES]: '极光之舞',
-    [VisualizerMode.MACRO_BUBBLES]: '微观液泡 (景深)', // Added DoF hint
+    [VisualizerMode.MACRO_BUBBLES]: '微观液泡 (景深)', 
     [VisualizerMode.SILK]: '流光绸缎 (WebGL)',
     [VisualizerMode.LIQUID]: '液态星球 (WebGL)',
     [VisualizerMode.TERRAIN]: '低多边形山脈 (WebGL)'
@@ -231,14 +233,12 @@ export const zh = {
       changeMode: '切换模式',
       changeTheme: '切换配色'
     },
-    howItWorksTitle: '使用说明',
+    howItWorksTitle: '使用指南',
     howItWorksSteps: [
-      '1. 点击底部麦克风图标或按 [Space] 键授权麦克风权限。',
-      '2. 在输入设备附近播放高保真音频（推荐 EDM、古典或摇滚）。',
-      '3. 使用 [H] 键展开控制面板，尝试不同的“智能预设”来寻找最佳氛围。',
-      '4. 若要识别当前播放的歌曲，按 [L] 开启 AI 识别。系统每隔 30 秒会自动抓取音频特征进行分析。',
-      '5. 点击顶部标签栏切换“视觉”、“文字”或“AI”面板进行深度定制。',
-      '6. 双击屏幕或按 [F] 键进入全屏沉浸模式。'
+      '1. 授权权限：点击“开启体验”并允许浏览器访问麦克风。',
+      '2. 播放音乐：在设备附近播放音乐，视觉效果将根据实时采样跳动。',
+      '3. 探索模式：打开设置面板 (按 H) 切换 12+ 种视觉引擎。',
+      '4. AI 识别：按 L 键开启“AI 曲目识别”以分析当前歌曲及其情绪。'
     ],
     settingsTitle: '核心参数指南',
     settingsDesc: {
@@ -250,37 +250,37 @@ export const zh = {
       fftSize: '决定了频谱分析的颗粒度，即频段采样数量。'
     },
     projectInfoTitle: '项目简介',
-    projectInfoText: '由 Google Gemini 3 Flash 模型、React 18 以及硬件加速的 WebGL 技术栈强力驱动。',
+    aboutDescription: '下一代通感交互体验。Aura Vision 融合了高精度实时频谱分析与 Google Gemini 3 多模态人工智能，将无形的声波转化为有生命的动态光影艺术。适用于 VJ 演出、直播背景、专注陪伴及空间氛围装饰。',
     privacyTitle: '隐私与安全',
     privacyText: '音频分析完全在本地完成。仅在识别歌曲时，会将加密的频率特征临时发送至云端，绝不存储或上传任何原始录音数据。',
     version: '版本号'
   },
   onboarding: {
-    welcome: '欢迎使用 Aura Vision',
-    subtitle: '下一代 AI 音乐可视化引擎',
-    selectLanguage: '选择语言',
-    next: '下一步',
+    welcome: '欢迎体验 Aura Vision',
+    subtitle: '新一代 AI 音乐通感引擎',
+    selectLanguage: '选择您的语言',
+    next: '继续',
     back: '返回',
     skip: '跳过',
-    finish: '开始体验',
+    finish: '立即开启',
     features: {
       title: '核心特性',
       visuals: {
-        title: '沉浸式视觉',
-        desc: '8+ 种基于 Three.js 开发的 WebGL 物理渲染引擎。'
+        title: '生成式艺术杰作',
+        desc: '12+ 种基于 WebGL 的数学动力学引擎，将声波具象化。'
       },
       ai: {
-        title: 'Gemini AI 智能',
-        desc: '由 Google Gemini 3 驱动的实时曲目识别与情绪分析。'
+        title: 'Gemini AI 智能大脑',
+        desc: '实时识别曲目元数据与视觉情绪，由 Google Gemini 3 提供支持。'
       },
       privacy: {
-        title: '隐私优先',
-        desc: '本地频谱分析。音频数据绝不上传至任何服务器。'
+        title: '隐私安全保障',
+        desc: '音频分析完全在本地运行，我们绝不记录或存储您的私人声音数据。'
       }
     },
     shortcuts: {
-      title: '快捷操作',
-      desc: '使用以下按键快速掌控全局体验。'
+      title: '极速交互',
+      desc: '通过以下快捷键，像指挥家一样掌控全场。'
     }
   }
 };

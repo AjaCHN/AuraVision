@@ -1,14 +1,13 @@
-
 /**
  * File: core/constants/index.ts
- * Version: 0.7.0
+ * Version: 0.7.5
  * Author: Aura Vision Team
  * Copyright (c) 2024 Aura Vision. All rights reserved.
  */
 
 import { VisualizerMode, Region, Position, SmartPreset } from '../types';
 
-export const APP_VERSION = '0.7.0';
+export const APP_VERSION = '0.7.5';
 export const GEMINI_MODEL = 'gemini-3-flash-preview';
 
 export const VISUALIZER_PRESETS = {
@@ -76,36 +75,78 @@ export const SMART_PRESETS: Record<string, SmartPreset> = {
     nameKey: 'calm',
     settings: {
       mode: VisualizerMode.SILK,
-      colorTheme: COLOR_THEMES[22],
-      speed: 0.5,
-      sensitivity: 1.2,
+      colorTheme: COLOR_THEMES[22], // White/Pastel
+      speed: 0.4,
+      sensitivity: 1.1,
       glow: true,
       trails: true,
-      smoothing: 0.9,
+      smoothing: 0.92, // High smoothing for liquid feel
+      fftSize: 2048
     }
   },
   party: {
     nameKey: 'party',
     settings: {
       mode: VisualizerMode.LASERS,
-      colorTheme: COLOR_THEMES[28],
+      colorTheme: COLOR_THEMES[28], // Prismatic
       speed: 1.8,
-      sensitivity: 2.5,
+      sensitivity: 2.2,
       glow: true,
+      trails: false, // Sharp movements
+      smoothing: 0.5, // Low smoothing for snappy hits
+      fftSize: 1024
+    }
+  },
+  cyberpunk: {
+    nameKey: 'cyberpunk',
+    settings: {
+      mode: VisualizerMode.TUNNEL,
+      colorTheme: COLOR_THEMES[27], // CMYK Cyber
+      speed: 2.5,
+      sensitivity: 1.8,
+      glow: true,
+      trails: true,
+      smoothing: 0.7,
+      fftSize: 512
+    }
+  },
+  retrowave: {
+    nameKey: 'retrowave',
+    settings: {
+      mode: VisualizerMode.TERRAIN,
+      colorTheme: COLOR_THEMES[6], // Purple/Orange
+      speed: 1.2,
+      sensitivity: 1.5,
+      glow: true,
+      trails: true,
+      smoothing: 0.8,
+      fftSize: 1024
+    }
+  },
+  vocal: {
+    nameKey: 'vocal',
+    settings: {
+      mode: VisualizerMode.RINGS,
+      colorTheme: COLOR_THEMES[10], // Pink/White
+      speed: 0.8,
+      sensitivity: 1.4,
+      glow: false,
       trails: false,
-      smoothing: 0.6,
+      smoothing: 0.85,
+      fftSize: 4096 // High res for voice details
     }
   },
   ambient: {
     nameKey: 'ambient',
     settings: {
       mode: VisualizerMode.NEBULA,
-      colorTheme: COLOR_THEMES[18],
-      speed: 0.3,
-      sensitivity: 1.5,
+      colorTheme: COLOR_THEMES[18], // Deep Ocean
+      speed: 0.2,
+      sensitivity: 1.3,
       glow: true,
       trails: true,
-      smoothing: 0.85,
+      smoothing: 0.95, // Max smoothing
+      fftSize: 2048
     }
   }
 };

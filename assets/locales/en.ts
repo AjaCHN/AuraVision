@@ -1,4 +1,3 @@
-
 import { VisualizerMode, LyricsStyle } from '../../core/types';
 
 export const en = {
@@ -74,10 +73,10 @@ export const en = {
   listening: 'Active',
   identifying: 'AI Analyzing...',
   startExperience: 'Launch Experience',
-  welcomeTitle: 'Aura Vision',
-  welcomeText: 'Translate audio into generative art. Experience real-time music identification and immersive visualization.',
-  unsupportedTitle: 'Browser Not Supported',
-  unsupportedText: 'Aura Vision requires modern features (like microphone access) that are not available. Please update to a recent version of Chrome, Firefox, or Safari.',
+  welcomeTitle: 'Aura Vision | The Sound of Light',
+  welcomeText: 'Transmute every vibration into generative masterpieces. Powered by Gemini AI for real-time recognition, experience the ultimate synesthetic journey.',
+  unsupportedTitle: 'Incompatible Browser',
+  unsupportedText: 'Aura Vision requires modern Web Audio and Media features. Please switch to a recent version of Chrome, Edge, or Safari to continue.',
   hideOptions: 'Collapse',
   showOptions: 'Expand Options',
   reset: 'Reset System',
@@ -139,7 +138,10 @@ export const en = {
     select: 'Select a mood...',
     calm: 'Hypnotic & Calm',
     party: 'Energetic Party',
-    ambient: 'Ambient Focus'
+    ambient: 'Ambient Focus',
+    cyberpunk: 'Cyberpunk Rush',
+    retrowave: 'Retro Sunset',
+    vocal: 'Vocal Focus'
   },
   recognitionSource: 'AI Provider',
   lyricsPosition: 'Lyrics Position',
@@ -229,54 +231,54 @@ export const en = {
       changeMode: 'Cycle Modes',
       changeTheme: 'Cycle Themes'
     },
-    howItWorksTitle: 'Getting Started',
+    howItWorksTitle: 'How to Use',
     howItWorksSteps: [
-      '1. Authorize microphone access to begin analysis.',
-      '2. Play high-fidelity audio near the sensor.',
-      '3. Visuals respond in real-time to specific frequencies.',
-      '4. Every 30s, AI snapshots audio to identify metadata.'
+      '1. Grant Permissions: Click "Start" and allow the browser to access your audio input.',
+      '2. Play Music: Play audio near your device. The visuals react to the microphone in real-time.',
+      '3. Explore Modes: Open the Options panel (or press H) to switch visual engines.',
+      '4. AI Recognition: Press L to identify the current song and its aesthetic mood.'
     ],
     settingsTitle: 'Parameter Guide',
     settingsDesc: {
       sensitivity: 'Gain control for audio-reactive elements.',
       speed: 'Temporal frequency of the generative patterns.',
-      glow: 'Intensidad del resplandor de post-procesamiento.',
+      glow: 'Bloom intensity for atmospheric depth.',
       trails: 'Temporal accumulation for fluid movement.',
       smoothing: 'Temporal damping of the frequency data.',
       fftSize: 'Sub-band count for spectral resolution.'
     },
     projectInfoTitle: 'Project Description',
-    projectInfoText: 'Powered by Google Gemini 3 Flash, React 18 and hardware-accelerated WebGL.',
+    aboutDescription: 'A next-generation synesthetic experience. Aura Vision fuses high-precision Web Audio spectral analysis with Google\'s Gemini 3 AI to transform sound into living, reactive light. Designed for VJs, Streamers, and immersive environments.',
     privacyTitle: 'Privacy Policy',
     privacyText: 'Audio is analyzed locally. Temporary high-frequency snapshots are sent to Gemini solely for identification.',
     version: 'Release'
   },
   onboarding: {
     welcome: 'Welcome to Aura Vision',
-    subtitle: 'Next-Gen AI Music Visualization',
-    selectLanguage: 'Select Language',
-    next: 'Next',
-    back: 'Back',
+    subtitle: 'Next-Gen AI Synesthesia Engine',
+    selectLanguage: 'Choose your language',
+    next: 'Proceed',
+    back: 'Previous',
     skip: 'Skip',
-    finish: 'Get Started',
+    finish: 'Launch App',
     features: {
-      title: 'Core Features',
+      title: 'Experience Features',
       visuals: {
-        title: 'Immersive Visuals',
-        desc: '8+ Physics-based WebGL engines powered by Three.js.'
+        title: 'Generative Masterpieces',
+        desc: '12+ reactive engines powered by WebGL and math-driven procedural art.'
       },
       ai: {
         title: 'Gemini AI Intelligence',
-        desc: 'Real-time song identification and mood detection powered by Google Gemini 3.'
+        desc: 'Instant recognition of tracks and aesthetic mood through advanced AI grounding.'
       },
       privacy: {
-        title: 'Privacy First',
-        desc: 'Local spectral analysis. Audio is never stored on servers.'
+        title: 'Secure & Private',
+        desc: 'Processing stays local. We never record or store your private audio data.'
       }
     },
     shortcuts: {
-      title: 'Quick Controls',
-      desc: 'Master the experience with these keys.'
+      title: 'Dynamic Controls',
+      desc: 'Master your environment with these keys.'
     }
   }
 };

@@ -13,7 +13,8 @@ interface OnboardingOverlayProps {
 const LANGUAGES: { value: Language; label: string }[] = [
   { value: 'en', label: 'English' }, { value: 'zh', label: '简体中文' }, { value: 'tw', label: '繁體中文' },
   { value: 'ja', label: '日本語' }, { value: 'es', label: 'Español' }, { value: 'ko', label: '한국어' },
-  { value: 'de', label: 'Deutsch' }, { value: 'fr', label: 'Français' },
+  { value: 'de', label: 'Deutsch' }, { value: 'fr', label: 'Français' }, { value: 'ru', label: 'Русский' }, 
+  { value: 'ar', label: 'العربية' }
 ];
 
 export const OnboardingOverlay: React.FC<OnboardingOverlayProps> = ({ language, setLanguage, onComplete }) => {

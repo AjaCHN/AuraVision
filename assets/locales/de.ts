@@ -1,4 +1,3 @@
-
 import { VisualizerMode, LyricsStyle } from '../../core/types';
 
 export const de = {
@@ -21,7 +20,7 @@ export const de = {
   hints: {
     mode: 'Wählen Sie den mathematischen Kern für die Generation von Visuals.',
     theme: 'Wenden Sie eine kuratierte Farbpalette auf die Szene an.',
-    speed: 'Zeit-Multiplikator. Niedrige Werte sind hypnotisch; hohe Werte are energetisch.',
+    speed: 'Zeit-Multiplikator. Niedrige Werte sind hypnotisch; hohe Werte energetisch.',
     glow: 'Aktiviert Post-Processing-Bloom. Deaktivieren für bessere Leistung.',
     trails: 'Steuert die Pixel-Persistenz. Hohe Werte erzeugen flüssige, malerische Bewegungen.',
     sensitivity: 'Steuert die Audioverstärkung. Höhere Werte erzeugen explosive Reaktionen auf leise Geräusche.',
@@ -43,51 +42,56 @@ export const de = {
     mic: 'Mikrofoneingang aktivieren oder stummschalten.',
     device: 'Wählen Sie die Hardware-Audioeingangsquelle.',
     monitor: 'Audioeingang auf Lautsprecher leiten (Vorsicht: Rückkopplungsgefahr).',
-    wakeLock: 'Verhindert, dass der Bildschirm ausgeschaltet oder gedimmt wird, während der Visualizer aktiv ist.'
+    wakeLock: 'Verhindert, dass der Bildschirm ausgeschaltet oder gedimmt wird, während der Visualizer aktiv ist.',
+    showFps: 'Echtzeit-Anzeige der Bilder pro Sekunde.',
+    showTooltips: 'Hilfreiche Hinweise beim Überfahren von Steuerelementen.',
+    doubleClickFullscreen: 'Doppelklick zum Umschalten des Vollbildmodus.',
+    autoHideUi: 'Bedienfeld bei Inaktivität automatisch ausblenden.',
+    mirrorDisplay: 'Visualisierung horizontal spiegeln (nützlich für Rückprojektionen).'
   },
   visualizerMode: 'Visualizer-Modus',
   styleTheme: 'Visuelles Thema',
   settings: 'Erweitert',
   sensitivity: 'Reaktionsempfindlichkeit',
-  speed: 'Animationsgeschwindigkeit',
+  speed: 'Evolutionsgeschwindigkeit',
   glow: 'Neon-Glühen',
   trails: 'Bewegungsspuren',
   autoRotate: 'Modus-Zyklus',
   rotateInterval: 'Intervall (s)',
   cycleColors: 'Farb-Zyklus',
   colorInterval: 'Intervall (s)',
-  monitorAudio: 'Audio überwachen',
+  cycleSpeed: 'Zyklusdauer (s)',
+  monitorAudio: 'Monitoring',
   audioInput: 'Eingabegerät',
-  lyrics: 'Songtexte',
-  showLyrics: 'KI aktivieren',
+  lyrics: 'KI-Erkennung',
+  showLyrics: 'Erkennung aktivieren',
   displaySettings: 'Anzeige',
   language: 'Sprache',
   region: 'Zielmarkt',
-  startMic: 'Audio aktivieren',
-  stopMic: 'Audio deaktivieren',
+  startMic: 'Capture Starten',
+  stopMic: 'Capture Stoppen',
   listening: 'Aktiv',
-  identifying: 'KI analysiert...',
-  startExperience: 'Erlebnis starten',
-  welcomeTitle: 'Aura Vision',
-  welcomeText: 'Verwandeln Sie Audio in generative Kunst. Erleben Sie Echtzeit-Musikidentifikation und immersive Visualisierung.',
+  identifying: 'KI analysiert Track...',
+  startExperience: 'Erlebnis Starten',
+  welcomeTitle: 'Aura Vision | Der Klang des Lichts',
+  welcomeText: 'Verwandeln Sie jede Schwingung in ein generatives Meisterwerk. Angetrieben von Gemini AI für Echtzeit-Erkennung – erleben Sie die ultimative synästhetische Reise.',
   unsupportedTitle: 'Browser nicht unterstützt',
-  unsupportedText: 'Aura Vision erfordert moderne Funktionen (wie Mikrofonzugriff), die in Ihrem Browser nicht verfügbar sind. Bitte aktualisieren Sie auf eine aktuelle Version von Chrome, Firefox oder Safari.',
+  unsupportedText: 'Aura Vision erfordert moderne Web Audio Funktionen. Bitte nutzen Sie eine aktuelle Version von Chrome, Edge oder Safari.',
   hideOptions: 'Einklappen',
-  showOptions: 'Optionen',
+  showOptions: 'Optionen anzeigen',
   reset: 'System zurücksetzen',
-  confirmReset: 'Zurücksetzen bestätigen?',
   resetVisual: 'Ästhetik zurücksetzen',
   resetText: 'Text zurücksetzen',
   resetAudio: 'Audio zurücksetzen',
   resetAi: 'KI zurücksetzen',
-  randomize: 'Smart Random',
-  help: 'Hilfe',
+  randomize: 'Intelligenter Zufall',
+  help: 'Hilfe & Guide',
   close: 'Schließen',
-  betaDisclaimer: 'Die KI-Erkennung befindet sich derzeit in der Beta-Phase.',
-  wrongSong: 'Falscher Song?',
+  betaDisclaimer: 'KI-Erkennung befindet sich in der Beta-Phase.',
+  wrongSong: 'Falscher Song? Erneut versuchen',
   hideCursor: 'Mauszeiger verbergen',
-  customColor: 'Benutzerdefiniert',
-  randomizeTooltip: 'Alle visuellen Einstellungen randomisieren',
+  customColor: 'Textfarbe',
+  randomizeTooltip: 'Alle Einstellungen randomisieren (R)',
   smoothing: 'Glättung',
   fftSize: 'Auflösung (FFT)',
   appInfo: 'Über die App',
@@ -104,7 +108,7 @@ export const de = {
   textFont: 'Schriftart',
   textOpacity: 'Deckkraft',
   textPosition: 'Position',
-  quality: 'Qualität',
+  quality: 'Renderqualität',
   qualities: {
     low: 'Niedrig',
     med: 'Mittel',
@@ -116,7 +120,7 @@ export const de = {
     display: 'Anzeige'
   },
   audioPanel: {
-    info: 'Passen Sie Empfindlichkeit und Glättung an, um die Reaktion des Visualizers auf die Audiodynamik anzupassen. Höhere FFT-Größen bieten mehr spektrale Details, verbrauchen aber mehr CPU.'
+    info: 'Passen Sie Empfindlichkeit und Glättung an, um die Reaktion auf die Audiodynamik zu optimieren. Höhere FFT-Werte bieten mehr Details, belasten aber die CPU.'
   },
   systemPanel: {
     interface: 'Oberfläche',
@@ -126,35 +130,37 @@ export const de = {
   showFps: 'FPS anzeigen',
   showTooltips: 'Tooltips anzeigen',
   doubleClickFullscreen: 'Doppelklick Vollbild',
-  autoHideUi: 'UI automatisch ausblenden',
-  mirrorDisplay: 'Anzeige spiegeln',
+  autoHideUi: 'Auto-Hide UI',
+  mirrorDisplay: 'Spiegeln',
   presets: {
-    title: 'Intelligente Presets',
-    hint: 'Wenden Sie eine professionell kuratierte ästhetische Kombination mit einem Klick an.',
-    select: 'Wählen Sie eine Stimmung...',
+    title: 'Smart Presets',
+    hint: 'Wenden Sie kuratierte ästhetische Kombinationen mit einem Klick an.',
+    select: 'Stimmung wählen...',
     calm: 'Hypnotisch & Ruhig',
     party: 'Energetische Party',
-    psychedelic: 'Psychedelischer Trip',
-    ambient: 'Umgebungsfokus'
+    ambient: 'Ambient Fokus',
+    cyberpunk: 'Cyberpunk Rush',
+    retrowave: 'Retro Sunset',
+    vocal: 'Vocal Fokus'
   },
   recognitionSource: 'KI-Anbieter',
-  lyricsPosition: 'Textposition',
-  lyricsFont: 'Schriftfamilie',
-  lyricsFontSize: 'Schriftgröße',
-  simulatedDemo: 'Simuliert (Demo)',
+  lyricsPosition: 'Position',
+  lyricsFont: 'Schriftart',
+  lyricsFontSize: 'Größe',
+  simulatedDemo: 'Simulation (Demo)',
   positions: {
       top: 'Oben',
       center: 'Mitte',
       bottom: 'Unten',
-      tl: 'Oben links',
-      tc: 'Oben mittig',
-      tr: 'Oben rechts',
-      ml: 'Mitte links',
-      mc: 'Zentriert',
-      mr: 'Mitte rechts',
-      bl: 'Unten links',
-      bc: 'Unten mittig',
-      br: 'Unten rechts'
+      tl: 'Oben Links',
+      tc: 'Oben Mitte',
+      tr: 'Oben Rechts',
+      ml: 'Mitte Links',
+      mc: 'Zentrum',
+      mr: 'Mitte Rechts',
+      bl: 'Unten Links',
+      bc: 'Unten Mitte',
+      br: 'Unten Rechts'
   },
   wakeLock: 'Wach bleiben',
   system: {
@@ -167,15 +173,15 @@ export const de = {
   },
   errors: {
     title: 'Audio-Fehler',
-    accessDenied: 'Zugriff verweigert. Bitte überprüfen Sie Ihre Browser-Berechtigungen.',
-    noDevice: 'Kein Audio-Eingabegerät gefunden.',
-    deviceBusy: 'Audiogerät ist beschäftigt oder ungültig.',
-    general: 'Zugriff auf Audiogerät nicht möglich.',
-    tryDemo: 'Demo-Modus versuchen (Kein Audio)'
+    accessDenied: 'Zugriff verweigert. Bitte überprüfen Sie die Mikrofonberechtigungen.',
+    noDevice: 'Kein Gerät gefunden.',
+    deviceBusy: 'Gerät belegt oder ungültig.',
+    general: 'Zugriff auf Audio fehlgeschlagen.',
+    tryDemo: 'Demo-Modus (Kein Audio)'
   },
   aiState: {
-    active: 'Erkennung aktiv',
-    enable: 'Erkennung aktivieren'
+    active: 'Erkennung Aktiv',
+    enable: 'KI-Erkennung starten'
   },
   regions: {
     global: 'Global',
@@ -187,83 +193,92 @@ export const de = {
     LATAM: 'Lateinamerika'
   },
   modes: {
-    [VisualizerMode.PLASMA]: 'Plasma-Fluss',
+    [VisualizerMode.PLASMA]: 'Fluid-Plasma',
     [VisualizerMode.BARS]: 'Frequenzbalken',
     [VisualizerMode.PARTICLES]: 'Sternenfeld',
     [VisualizerMode.TUNNEL]: 'Geometrischer Tunnel',
     [VisualizerMode.RINGS]: 'Neon-Ringe',
-    [VisualizerMode.NEBULA]: 'Tiefer Nebel',
+    [VisualizerMode.NEBULA]: 'Deep Nebula',
     [VisualizerMode.LASERS]: 'Konzert-Laser',
-    [VisualizerMode.FLUID_CURVES]: 'Tanz der Polarlichter',
-    [VisualizerMode.MACRO_BUBBLES]: 'Mikro-Vakuolen',
-    [VisualizerMode.SILK]: 'Seidenwellen',
-    [VisualizerMode.LIQUID]: 'Flüssige Sphäre',
-    [VisualizerMode.TERRAIN]: 'Low-Poly Terrain'
+    [VisualizerMode.FLUID_CURVES]: 'Aura-Wellen',
+    [VisualizerMode.MACRO_BUBBLES]: 'Makro-Blasen (DoF)',
+    [VisualizerMode.SILK]: 'Seidenwellen (WebGL)',
+    [VisualizerMode.LIQUID]: 'Flüssige Sphäre (WebGL)',
+    [VisualizerMode.TERRAIN]: 'Low-Poly Terrain (WebGL)'
   },
   lyricsStyles: {
-    [LyricsStyle.STANDARD]: 'Standard',
-    [LyricsStyle.KARAOKE]: 'Karaoke',
+    [LyricsStyle.STANDARD]: 'Standard Layout',
+    [LyricsStyle.KARAOKE]: 'Dynamisch',
     [LyricsStyle.MINIMAL]: 'Minimalistisch'
   },
   helpModal: {
-    title: 'Aura Vision Anleitung',
+    title: 'Aura Vision Guide',
     tabs: {
         guide: 'Anleitung',
         shortcuts: 'Kürzel',
         about: 'Über'
     },
-    intro: 'Aura Vision verwandelt Ihren Mikrofoneingang mithilfe fortschrittlicher Spektralanalyse in reaktionsschnelle, generative digitale Kunst.',
-    shortcutsTitle: 'Tastaturkürzel',
+    intro: 'Aura Vision verwandelt Mikrofon-Input basierend auf Echtzeit-Spektralanalyse in mathematisch generierte digitale Kunst.',
+    shortcutsTitle: 'Tastatur-Steuerung',
     shortcutItems: {
-      toggleMic: 'Audio-Eingang',
-      fullscreen: 'Vollbild',
-      randomize: 'Zufall',
-      lyrics: 'Song-Info',
-      hideUi: 'Bedienfeld',
-      glow: 'Leuchten',
-      trails: 'Spuren',
-      changeMode: 'Modus ändern',
-      changeTheme: 'Thema ändern'
+      toggleMic: 'Audio Ein/Aus',
+      fullscreen: 'Vollbild umschalten',
+      randomize: 'Ästhetik-Zufall',
+      lyrics: 'Track-Info umschalten',
+      hideUi: 'Panel ein/ausblenden',
+      glow: 'Glüheffekt umschalten',
+      trails: 'Spureneffekt umschalten',
+      changeMode: 'Modus wechseln',
+      changeTheme: 'Thema wechseln'
     },
-    howItWorksTitle: 'Erste Schritte',
+    howItWorksTitle: 'Verwendung',
     howItWorksSteps: [
-      'Erlauben Sie den Mikrofonzugriff, um die Analyse zu starten.',
-      'Spielen Sie High-Fidelity-Audio in der Nähe des Sensors ab.',
-      'Visuals reagieren in Echtzeit auf bestimmte Frequenzen.',
-      'Alle 30-45 Sekunden erstellt die KI einen Schnappschuss zur Identifikation.'
+      '1. Berechtigungen: Klicken Sie auf "Start" und erlauben Sie den Mikrofonzugriff.',
+      '2. Musik abspielen: Die Visuals reagieren sofort auf Klänge in Ihrer Nähe.',
+      '3. Modi erkunden: Öffnen Sie das Panel (H), um zwischen 12+ Engines zu wählen.',
+      '4. KI-Erkennung: Drücken Sie L, um den aktuellen Song und die Stimmung zu analysieren.'
     ],
-    projectInfoTitle: 'Über Aura Vision',
-    projectInfoText: 'Dieses Projekt kombiniert Echtzeit-Spektralanalyse mit der Leistungsfähigkeit von Google Gemini 3, React 19 und WebGL für ein immersives Erlebnis.',
-    privacyTitle: 'Privatsphäre',
-    privacyText: 'Die Audioanalyse erfolgt ausschließlich lokal in Ihrem Browser. Nur zur Songerkennung werden verschlüsselte Frequenzmerkmale an Gemini gesendet.',
+    settingsTitle: 'Parameter Guide',
+    settingsDesc: {
+      sensitivity: 'Verstärkung für die visuelle Reaktivität.',
+      speed: 'Zeitliche Evolutionsrate der Algorithmen.',
+      glow: 'Intensität der atmosphärischen Beleuchtung.',
+      trails: 'Akkumulation für flüssige Bewegungen.',
+      smoothing: 'Zeitliche Dämpfung der Frequenzdaten.',
+      fftSize: 'Präzision der Spektralanalyse.'
+    },
+    projectInfoTitle: 'Über das Projekt',
+    aboutDescription: 'Synästhetisches Erlebnis der nächsten Generation. Aura Vision fusioniert Präzisions-Analyse mit Google Gemini 3, um Schall in lebendiges Licht zu wandeln. Ideal für VJs, Streamer und Rauminszenierungen.',
+    privacyTitle: 'Datenschutz & Sicherheit',
+    privacyText: 'Die Audioanalyse erfolgt lokal. Nur verschlüsselte Merkmale werden zur Songerkennung an Gemini gesendet; es werden keine Aufnahmen gespeichert.',
     version: 'Release'
   },
   onboarding: {
     welcome: 'Willkommen bei Aura Vision',
-    subtitle: 'KI-Musikvisualisierung der nächsten Generation',
+    subtitle: 'Nächste Generation der KI-Synästhesie',
     selectLanguage: 'Sprache wählen',
     next: 'Weiter',
     back: 'Zurück',
     skip: 'Überspringen',
-    finish: 'Starten',
+    finish: 'App Starten',
     features: {
-      title: 'Hauptfunktionen',
+      title: 'Kernfunktionen',
       visuals: {
-        title: 'Immersive Visuals',
-        desc: '8+ physikbasierte WebGL-Engines, betrieben von Three.js.'
+        title: 'Generative Kunst',
+        desc: '12+ WebGL-basierte Engines, die Schallwellen materialisieren.'
       },
       ai: {
-        title: 'Gemini KI',
-        desc: 'Echtzeit-Songidentifikation und Stimmungserkennung powered by Google Gemini 3.'
+        title: 'Gemini KI Intelligenz',
+        desc: 'Sofortige Erkennung von Tracks und Stimmung durch Google Gemini 3.'
       },
       privacy: {
-        title: 'Datenschutz',
-        desc: 'Lokale Spektralanalyse. Audiodaten werden niemals auf Servern gespeichert.'
+        title: 'Sicher & Privat',
+        desc: 'Die Verarbeitung bleibt lokal. Wir speichern niemals Ihre privaten Audiodaten.'
       }
     },
     shortcuts: {
-      title: 'Schnellsteuerung',
-      desc: 'Meistern Sie das Erlebnis mit diesen Tasten.'
+      title: 'Dynamische Steuerung',
+      desc: 'Beherrschen Sie das Licht mit Ihren Tasten.'
     }
   }
 };

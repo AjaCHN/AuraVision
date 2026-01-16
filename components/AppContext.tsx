@@ -1,7 +1,6 @@
-
 /**
  * File: components/AppContext.tsx
- * Version: 0.7.0
+ * Version: 0.7.5
  * Author: Aura Vision Team
  * Copyright (c) 2024 Aura Vision. All rights reserved.
  */
@@ -26,6 +25,8 @@ interface AppContextType {
   region: Region; setRegion: React.Dispatch<React.SetStateAction<Region>>;
   selectedDeviceId: string; onDeviceChange: React.Dispatch<React.SetStateAction<string>>;
   
+  activePreset: string; setActivePreset: React.Dispatch<React.SetStateAction<string>>;
+
   isListening: boolean; isSimulating: boolean; isIdentifying: boolean;
   analyser: AnalyserNode | null; mediaStream: MediaStream | null; audioDevices: AudioDevice[];
   currentSong: SongInfo | null; setCurrentSong: React.Dispatch<React.SetStateAction<SongInfo | null>>;
@@ -63,13 +64,14 @@ export const useAppContext = () => {
 
 // --- Constants & Defaults ---
 
+// Fix: Removed 'aiApiKey' from DEFAULT_SETTINGS as it is not defined in the VisualizerSettings type definition.
 const DEFAULT_SETTINGS: VisualizerSettings = {
   sensitivity: 1.5, speed: 1.0, glow: false, trails: true, autoRotate: false, rotateInterval: 30,
   cycleColors: false, colorInterval: 10, hideCursor: false, smoothing: 0.8, fftSize: 512, 
   quality: 'high', monitor: false, wakeLock: false, customText: 'AURA', showCustomText: false,
   textPulse: true, customTextRotation: 0, customTextSize: 12, customTextFont: 'Inter, sans-serif',
   customTextOpacity: 0.35, customTextColor: '#ffffff', customTextPosition: 'mc', customTextCycleColor: false, customTextCycleInterval: 5,
-  lyricsPosition: 'mc', recognitionProvider: 'GEMINI', lyricsFont: 'Inter, sans-serif', lyricsFontSize: 4, aiApiKey: '',
+  lyricsPosition: 'mc', recognitionProvider: 'GEMINI', lyricsFont: 'Inter, sans-serif', lyricsFontSize: 4,
   // System Defaults
   showFps: false, showTooltips: true, doubleClickFullscreen: true, autoHideUi: true, mirrorDisplay: false
 };
@@ -90,7 +92,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   } = useAppState();
   
   const { 
-    mode, setMode, colorTheme, setColorTheme, settings, setSettings, 
+    mode, setMode, colorTheme, setColorTheme, settings, setSettings, activePreset, setActivePreset,
     randomizeSettings, resetVisualSettings, applyPreset
   } = useVisualsState(hasStarted, initialSettings);
 
@@ -153,7 +155,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     language, setLanguage, region, setRegion, selectedDeviceId, onDeviceChange: setSelectedDeviceId, isListening,
     isSimulating, isIdentifying, analyser, mediaStream, audioDevices, currentSong, setCurrentSong, errorMessage, setErrorMessage,
     startMicrophone, toggleMicrophone, startDemoMode, performIdentification, randomizeSettings, resetSettings,
-    resetVisualSettings, resetTextSettings, resetAudioSettings, resetAiSettings, applyPreset, t,
+    resetVisualSettings, resetTextSettings, resetAudioSettings, resetAiSettings, applyPreset, activePreset, setActivePreset, t,
     hasStarted, setHasStarted, isUnsupported, showOnboarding, isThreeMode, handleOnboardingComplete, toggleFullscreen
   };
 

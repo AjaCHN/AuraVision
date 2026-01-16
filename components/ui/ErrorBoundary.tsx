@@ -1,8 +1,14 @@
+/**
+ * File: components/ui/ErrorBoundary.tsx
+ * Version: 0.7.3
+ * Author: Aura Vision Team
+ * Copyright (c) 2024 Aura Vision. All rights reserved.
+ */
 
-import React, { Component, ErrorInfo, ReactNode } from 'react';
+import React, { ErrorInfo, ReactNode } from 'react';
 
 interface Props {
-  children: ReactNode;
+  children?: ReactNode;
 }
 
 interface State {
@@ -10,11 +16,20 @@ interface State {
   error: Error | null;
 }
 
-export class ErrorBoundary extends Component<Props, State> {
-  public state: State = {
-    hasError: false,
-    error: null,
-  };
+// Fixed: Using React.Component explicitly to resolve TypeScript property identification issues for state and props.
+export class ErrorBoundary extends React.Component<Props, State> {
+  // Explicitly declare state and props to fix compiler identification issues on the inherited class
+  public state: State;
+  public props: Props;
+
+  constructor(props: Props) {
+    super(props);
+    // Initialize the explicitly declared state property
+    this.state = {
+      hasError: false,
+      error: null,
+    };
+  }
 
   public static getDerivedStateFromError(error: Error): State {
     return { hasError: true, error };
@@ -24,7 +39,15 @@ export class ErrorBoundary extends Component<Props, State> {
     console.error('Uncaught error:', error, errorInfo);
   }
 
+  private handleFactoryReset = () => {
+    if (window.confirm("This will clear all settings and custom text. Continue?")) {
+      localStorage.clear();
+      window.location.reload();
+    }
+  }
+
   public render() {
+    // Accessed 'state' via the explicit class property declaration
     if (this.state.hasError) {
       return (
         <div className="min-h-screen bg-black flex items-center justify-center p-6 text-center text-white">
@@ -40,6 +63,7 @@ export class ErrorBoundary extends Component<Props, State> {
                 The visual engine encountered an unexpected state.
               </p>
             </div>
+            {/* Accessing error property from the explicitly declared state object */}
             {this.state.error && (
               <div className="text-left bg-black/40 p-4 rounded-xl border border-white/5 overflow-auto max-h-32">
                 <code className="text-[10px] font-mono text-red-300/80 block whitespace-pre-wrap break-all">
@@ -47,17 +71,26 @@ export class ErrorBoundary extends Component<Props, State> {
                 </code>
               </div>
             )}
-            <button
-              onClick={() => window.location.reload()}
-              className="w-full py-4 bg-white text-black font-bold rounded-xl hover:bg-gray-200 transition-colors uppercase tracking-[0.2em] text-xs shadow-lg shadow-white/10"
-            >
-              Reload Application
-            </button>
+            <div className="flex flex-col gap-3">
+              <button
+                onClick={() => window.location.reload()}
+                className="w-full py-4 bg-white text-black font-bold rounded-xl hover:bg-gray-200 transition-colors uppercase tracking-[0.2em] text-xs shadow-lg shadow-white/10"
+              >
+                Reload Application
+              </button>
+              <button
+                onClick={this.handleFactoryReset}
+                className="w-full py-3 bg-red-500/10 text-red-400 font-bold rounded-xl hover:bg-red-500/20 transition-colors uppercase tracking-widest text-[10px]"
+              >
+                Factory Reset Settings
+              </button>
+            </div>
           </div>
         </div>
       );
     }
 
+    // Accessed 'props' via the explicit class property declaration
     return this.props.children;
   }
 }

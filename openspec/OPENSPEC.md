@@ -1,4 +1,3 @@
-
 # Aura Vision - OpenSpec 规范主文档
 
 本项目严格遵循 **OpenSpec** 标准进行架构设计与文档编写。Aura Vision 是一项融合了高性能实时频谱分析与 Google Gemini 3 系列生成式 AI 的沉浸式视听交互实验。
@@ -23,4 +22,4 @@
     *   API 配置、构建流程、多平台托管与生产安全。
 
 ---
-*Aura Vision Project Specification - Version 0.7.0*
+*Aura Vision Project Specification - Version 0.7.5*

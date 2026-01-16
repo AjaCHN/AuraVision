@@ -1,15 +1,13 @@
-
 /**
  * File: core/types/index.ts
- * Version: 0.7.0
+ * Version: 0.7.5
  * Author: Aura Vision Team
  * Copyright (c) 2024 Aura Vision. All rights reserved.
  */
 
 import * as React from 'react';
-import { ThreeElements } from '@react-three/fiber';
 
-export type Language = 'en' | 'zh' | 'tw' | 'ja' | 'es' | 'ko' | 'de' | 'fr';
+export type Language = 'en' | 'zh' | 'tw' | 'ja' | 'es' | 'ko' | 'de' | 'fr' | 'ar' | 'ru';
 
 export type Region = 'global' | 'US' | 'CN' | 'JP' | 'KR' | 'EU' | 'LATAM';
 
@@ -62,13 +60,7 @@ export interface VisualizerSettings {
   quality: 'low' | 'med' | 'high';
   monitor: boolean;
   wakeLock: boolean;
-  // System Settings
-  showFps: boolean;
-  showTooltips: boolean;
-  doubleClickFullscreen: boolean;
-  autoHideUi: boolean;
-  mirrorDisplay: boolean;
-  
+  // Overlay Settings
   customText: string;
   showCustomText: boolean;
   textPulse: boolean;
@@ -79,14 +71,19 @@ export interface VisualizerSettings {
   customTextColor: string;
   customTextPosition: Position;
   customTextCycleColor: boolean;
-  customTextCycleInterval: number; // Controls the speed of the rainbow cycle in seconds
+  customTextCycleInterval: number;
   lyricsPosition: Position;
   recognitionProvider: 'GEMINI' | 'MOCK' | 'OPENAI' | 'CLAUDE' | 'GROK' | 'DEEPSEEK' | 'QWEN';
-  aiApiKey?: string;
   lyricsStyle?: LyricsStyle;
   lyricsFont?: string;
   lyricsFontSize?: number;
   region?: Region;
+  // System Settings
+  showFps: boolean;
+  showTooltips: boolean;
+  doubleClickFullscreen: boolean;
+  autoHideUi: boolean;
+  mirrorDisplay: boolean;
 }
 
 export interface VisualizerConfig {
@@ -105,6 +102,7 @@ export interface SmartPreset {
     glow: boolean;
     trails: boolean;
     smoothing: number;
+    fftSize?: number;
   };
 }
 
@@ -125,11 +123,4 @@ export interface IVisualizerRenderer {
 export interface AudioDevice {
   deviceId: string;
   label: string;
-}
-
-// Correctly extend global JSX namespace for React Three Fiber
-declare global {
-  namespace JSX {
-    interface IntrinsicElements extends ThreeElements {}
-  }
 }

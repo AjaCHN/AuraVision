@@ -6,7 +6,7 @@ import { useAppContext } from '../../AppContext';
 export const AudioSettingsPanel: React.FC = () => {
   const { 
     settings, setSettings, audioDevices, selectedDeviceId, 
-    onDeviceChange, toggleMicrophone, isListening, resetAudioSettings, t 
+    onDeviceChange, toggleMicrophone, isListening, resetAudioSettings, setActivePreset, t 
   } = useAppContext();
   
   const hints = t?.hints || {};
@@ -21,6 +21,11 @@ export const AudioSettingsPanel: React.FC = () => {
     { value: '', label: t?.defaultMic || "Default Microphone" },
     ...audioDevices.map(d => ({ value: d.deviceId, label: d.label }))
   ];
+
+  const handleAudioSettingChange = (key: keyof typeof settings, value: any) => {
+    setSettings(prev => ({ ...prev, [key]: value }));
+    setActivePreset('');
+  };
 
   return (
     <>
@@ -41,8 +46,8 @@ export const AudioSettingsPanel: React.FC = () => {
       {/* Col 2: Core Processing Parameters */}
       <div className="p-4 pt-6 h-full flex flex-col border-b lg:border-b-0 lg:border-r border-white/5">
         <div className="space-y-6 flex-grow overflow-y-auto custom-scrollbar pr-2">
-          <SteppedSlider label={t?.sensitivity || "Sensitivity"} hintText={hints?.sensitivity} options={[{value:settings.sensitivity, label:settings.sensitivity.toFixed(1)}]} value={settings.sensitivity} min={0.5} max={4.0} step={0.1} onChange={(v: number) => setSettings({...settings, sensitivity: v})} />
-          <SteppedSlider label={t?.smoothing || "Smoothing"} hintText={hints?.smoothing} options={[{value:settings.smoothing, label:settings.smoothing.toFixed(2)}]} value={settings.smoothing} min={0} max={0.95} step={0.01} onChange={(v: number) => setSettings({...settings, smoothing: v})} />
+          <SteppedSlider label={t?.sensitivity || "Sensitivity"} hintText={hints?.sensitivity} options={[{value:settings.sensitivity, label:settings.sensitivity.toFixed(1)}]} value={settings.sensitivity} min={0.5} max={4.0} step={0.1} onChange={(v: number) => handleAudioSettingChange('sensitivity', v)} />
+          <SteppedSlider label={t?.smoothing || "Smoothing"} hintText={hints?.smoothing} options={[{value:settings.smoothing, label:settings.smoothing.toFixed(2)}]} value={settings.smoothing} min={0} max={0.95} step={0.01} onChange={(v: number) => handleAudioSettingChange('smoothing', v)} />
           
           <div className="pt-4 border-t border-white/5">
             <SteppedSlider
@@ -53,7 +58,7 @@ export const AudioSettingsPanel: React.FC = () => {
                 min={512}
                 max={4096}
                 step={512}
-                onChange={(val) => setSettings({...settings, fftSize: val})}
+                onChange={(val) => handleAudioSettingChange('fftSize', val)}
             />
           </div>
         </div>

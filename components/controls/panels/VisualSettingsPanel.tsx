@@ -7,12 +7,26 @@ import { VisualizerPreview } from './VisualizerPreview';
 import { useAppContext } from '../../AppContext';
 
 export const VisualSettingsPanel: React.FC = () => {
-  const { mode: currentMode, setMode, colorTheme, setColorTheme, settings, setSettings, resetVisualSettings, applyPreset, t } = useAppContext();
+  const { 
+    mode: currentMode, setMode, 
+    colorTheme, setColorTheme, 
+    settings, setSettings, 
+    resetVisualSettings, 
+    applyPreset, 
+    activePreset, setActivePreset,
+    t 
+  } = useAppContext();
+  
   const hints = t?.hints || {};
   const modes = t?.modes || {};
   const qualities = t?.qualities || {};
   const presets = t?.presets || {};
   const visualPanel = t?.visualPanel || {};
+
+  const handleVisualSettingChange = (key: keyof typeof settings, value: any) => {
+    setSettings(prev => ({ ...prev, [key]: value }));
+    setActivePreset('');
+  };
 
   return (
     <>
@@ -38,10 +52,10 @@ export const VisualSettingsPanel: React.FC = () => {
             <div className="mb-2">
               <CustomSelect 
                 label={presets.title || 'Smart Presets'}
-                value={''}
+                value={activePreset}
                 hintText={presets.hint || 'Apply a curated aesthetic'}
                 options={[
-                  { value: '', label: presets.select || 'Select a mood...' },
+                  { value: '', label: activePreset ? (presets.custom || 'Custom / Modified') : (presets.select || 'Select a mood...') },
                   ...Object.keys(SMART_PRESETS).map(key => ({
                     value: key,
                     label: presets[key] || SMART_PRESETS[key].nameKey,
@@ -50,6 +64,8 @@ export const VisualSettingsPanel: React.FC = () => {
                 onChange={(val) => {
                   if (val && SMART_PRESETS[val]) {
                     applyPreset(SMART_PRESETS[val]);
+                  } else {
+                    setActivePreset('');
                   }
                 }}
               />
@@ -83,26 +99,26 @@ export const VisualSettingsPanel: React.FC = () => {
       <div className="flex flex-col p-4 h-full pt-6 overflow-hidden">
         <div className="space-y-4 flex-grow overflow-y-auto custom-scrollbar pr-2">
           <div className="space-y-4">
-            <Slider label={t?.speed || "Speed"} hintText={hints?.speed} value={settings.speed} min={0.1} max={3.0} step={0.1} onChange={(v: number) => setSettings(prev => ({...prev, speed: v}))} />
-            <Slider label={t?.sensitivity || "Sensitivity"} hintText={hints?.sensitivity} value={settings.sensitivity} min={0.5} max={4.0} step={0.1} onChange={(v: number) => setSettings(prev => ({...prev, sensitivity: v}))} />
+            <Slider label={t?.speed || "Speed"} hintText={hints?.speed} value={settings.speed} min={0.1} max={3.0} step={0.1} onChange={(v: number) => handleVisualSettingChange('speed', v)} />
+            <Slider label={t?.sensitivity || "Sensitivity"} hintText={hints?.sensitivity} value={settings.sensitivity} min={0.5} max={4.0} step={0.1} onChange={(v: number) => handleVisualSettingChange('sensitivity', v)} />
           </div>
           <div className="space-y-3 pt-3 border-t border-white/5">
               <span className="text-xs font-bold uppercase text-white/50 tracking-[0.25em] block ml-1 mb-2">{visualPanel.effects || "Effects"}</span>
               <div className="grid grid-cols-2 gap-2">
-                  <SettingsToggle label={t?.glow || "Glow"} value={settings.glow} onChange={() => setSettings(prev => ({...prev, glow: !prev.glow}))} hintText={`${hints?.glow || "Glow"} [G]`} />
-                  <SettingsToggle label={t?.trails || "Trails"} value={settings.trails} onChange={() => setSettings(prev => ({...prev, trails: !prev.trails}))} hintText={`${hints?.trails || "Trails"} [T]`} />
+                  <SettingsToggle label={t?.glow || "Glow"} value={settings.glow} onChange={() => handleVisualSettingChange('glow', !settings.glow)} hintText={`${hints?.glow || "Glow"} [G]`} />
+                  <SettingsToggle label={t?.trails || "Trails"} value={settings.trails} onChange={() => handleVisualSettingChange('trails', !settings.trails)} hintText={`${hints?.trails || "Trails"} [T]`} />
               </div>
           </div>
           <div className="space-y-2 pt-3 border-t border-white/5">
             <span className="text-xs font-bold uppercase text-white/50 tracking-[0.25em] block ml-1 mb-2">{visualPanel.automation || "Automation"}</span>
-            <SettingsToggle label={t?.autoRotate || "Auto Rotate"} value={settings.autoRotate} onChange={() => setSettings(prev => ({...prev, autoRotate: !prev.autoRotate}))} hintText={hints?.autoRotate}>
+            <SettingsToggle label={t?.autoRotate || "Auto Rotate"} value={settings.autoRotate} onChange={() => handleVisualSettingChange('autoRotate', !settings.autoRotate)} hintText={hints?.autoRotate}>
                 <div className="pt-1">
-                    <Slider label={t?.rotateInterval || "Interval"} value={settings.rotateInterval} min={10} max={120} step={5} unit="s" onChange={(v: number) => setSettings(prev => ({...prev, rotateInterval: v}))} />
+                    <Slider label={t?.rotateInterval || "Interval"} value={settings.rotateInterval} min={10} max={120} step={5} unit="s" onChange={(v: number) => handleVisualSettingChange('rotateInterval', v)} />
                 </div>
             </SettingsToggle>
-            <SettingsToggle label={t?.cycleColors || "Cycle Colors"} value={settings.cycleColors} onChange={() => setSettings(prev => ({...prev, cycleColors: !prev.cycleColors}))} hintText={hints?.cycleColors}>
+            <SettingsToggle label={t?.cycleColors || "Cycle Colors"} value={settings.cycleColors} onChange={() => handleVisualSettingChange('cycleColors', !settings.cycleColors)} hintText={hints?.cycleColors}>
                 <div className="pt-1">
-                    <Slider label={t?.colorInterval || "Interval"} value={settings.colorInterval} min={5} max={60} step={5} unit="s" onChange={(v: number) => setSettings(prev => ({...prev, colorInterval: v}))} />
+                    <Slider label={t?.colorInterval || "Interval"} value={settings.colorInterval} min={5} max={60} step={5} unit="s" onChange={(v: number) => handleVisualSettingChange('colorInterval', v)} />
                 </div>
             </SettingsToggle>
           </div>

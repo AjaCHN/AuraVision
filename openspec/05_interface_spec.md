@@ -1,4 +1,3 @@
-
 # OpenSpec: UI/UX 与交互规范
 
 ## 1. 视觉层级 (Z-Index)
@@ -20,34 +19,14 @@
 - **标签页顺序 (Tabs Order):** `Visual` (视觉), `Text` (文字), `AI` (识别), `Audio` (音频), `System` (系统)。
 - **排版统一:** 所有设置项标题字号统一为 `text-xs` (12px)，保持视觉一致性。
 
-所有扩展设置面板在 `lg` 屏幕下遵循三列式网格布局 (`grid-cols-3`)，`系统`面板除外。
+## 4. 帮助模态框内容规范 (Help Modal Content)
+- **Guide Tab (使用指南):** 必须包含以下四个标准步骤，确保与 README 一致：
+  1. **Grant Permissions (授权权限):** 引导用户点击“开始”并允许麦克风访问。
+  2. **Play Music (播放音乐):** 提示视觉效果将实时响应设备附近的音频。
+  3. **Explore Modes (探索模式):** 指引用户通过快捷键 [H] 切换不同的渲染引擎。
+  4. **AI Recognition (AI 识别):** 指引用户通过快捷键 [L] 识别曲目与情绪。
 
-### 3.1 视觉面板 (Visual Panel)
-1.  **智能预设 (Smart Presets):** 顶部设有下拉菜单，一键应用模式、主题、速度、光效。
-2.  **视觉模式 (Visualizer Mode):** 采用卡片式预览布局。
-3.  **渲染画质:** 位于第二栏底部，提供 `[低, 中, 高]` 切换。
-4.  **特效与自动化:** 第三栏集中管理光晕、拖尾、自动旋转等。
-
-### 3.2 自定义文字面板 (Custom Text Panel)
-1.  **第一列 (Content & Type):** 
-    - 文字开关与输入框。
-    - 字体样式、大小、旋转角度、不透明度控制。
-2.  **第二列 (Color & Cycle):** 
-    - 颜色循环开关与**循环速度 (Interval)** 滑块。
-    - 颜色选择器与预设色块。
-3.  **第三列 (Layout):** 位置九宫格选择器，底部对齐“重置”按钮。
-
-### 3.3 AI 识别面板 (AI Panel)
-1.  **第一列 (Core):** 识别开关、AI 供应商 (Gemini/Grok/DeepSeek等)、区域选择、API Key 输入（如需）。
-2.  **第二列 (Style):** 歌词展示风格主题、字体家族与大小。
-3.  **第三列 (Position):** 歌词位置九宫格，底部对齐“重置”按钮。
-
-### 3.4 音频面板 (Audio Panel)
-1.  **输入源 (Input Source):** 设备选择与启/停按钮。
-2.  **核心参数 (Processing):** 包含 `灵敏度`、`平滑度` 及 `频域分辨率 (FFT)`。
-3.  **高级信息:** 第三栏提供 FFT 性能提示，底部对齐“重置”按钮。
-
-## 4. 键盘映射
+## 5. 键盘映射
 - `Space`: `toggleMicrophone`
 - `R`: `randomizeSettings`
 - `F`: `toggleFullscreen`
@@ -57,4 +36,4 @@
 - `T`: `toggleTrails`
 
 ---
-*Aura Vision Interface - Version 0.6.6*
+*Aura Vision Interface - Version 0.7.5*

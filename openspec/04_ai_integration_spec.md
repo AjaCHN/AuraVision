@@ -1,10 +1,12 @@
-
 # OpenSpec: AI 集成规范
 
 ## 1. 模型与工具配置
 - **模型:** `gemini-3-flash-preview`。
 - **工具:** `googleSearch`（用于实时验证歌曲元数据）。
-- **指令系统:** `SystemInstruction` 强制要求返回 JSON。
+- **参数精调 (v0.7.5):** 
+  - `temperature: 0.15` (极低随机性，确保识别一致性)。
+  - `topP: 0.8`, `topK: 20`。
+  - `timeout: 20000ms`。
 
 ## 2. 结构化输出 (Response Schema)
 AI 必须返回格式如下的 JSON：
@@ -18,21 +20,15 @@ AI 必须返回格式如下的 JSON：
 }
 ```
 
-## 3. 区域感知策略 (Region Awareness)
-为了提高在非英语市场的识别准确率，Gemini 的 Prompt 必须包含明确的区域上下文指令：
-- **Context Injection:** "The user is in the '${regionName}' market."
-- **Bias:** 优先匹配该区域的热门歌曲或本地数据库。
-- **Localization:** 
-  - 对于 CJK (中日韩) 市场，要求返回**原文脚本** (如 Kanji/Hangul)，除非该歌曲的英文译名在全球范围内更具辨识度。
-  - 对于 Global 市场，优先返回英文或罗马音。
+## 3. 噪声鲁棒性与区域感知
+- **采样策略:** 录制 6 秒高质量 WebM/Opus 音频片段，确保包含足够的旋律特征。
+- **品牌化指令 (v0.7.5):** 指令集中必须明确引擎定位为 **"AI Synesthesia Engine" (AI 通感引擎)**，强调声光转化的艺术性。
+- **Linguistic Policy:** 针对全球化市场（中、日、韩、西、德、法、俄、阿），要求返回对应的原文脚本（如 漢字、한글）并匹配对应的语言风格。
 
-## 4. 歌曲识别与解析流程
-1. **本地优先 (Local First):** 使用当前音频片段生成声学指纹，并在本地缓存库中进行 Jaccard 相似度匹配。若匹配成功，则直接返回缓存结果。
-2. **采样:** 若本地无匹配，则录制 5-7 秒 WebM 音频片段。
-3. **AI 请求:** 发送音频 Base64 数据至 Gemini API。利用 `responseMimeType: "application/json"` 及 `responseSchema` 强制模型返回结构化、干净的 JSON 数据。
-4. **解析:** 直接使用 `JSON.parse` 解析 AI 返回的纯净 JSON 字符串。不再需要复杂的边界提取或容错处理。
-5. **重试机制:** 若请求失败或解析异常，系统将自动触发一次重试（Max Retries: 1）。
-6. **缓存写入 (Cache Write):** 若 AI 识别成功，则将结果与音频指纹一同写入本地缓存，供未来快速检索。
+## 4. 歌曲识别流程
+1. **本地优先 (Local First):** 提取声学指纹并在本地缓存中进行 Jaccard 相似度匹配 (阈值 0.25)。
+2. **云端识别:** 若本地无匹配，发送音频 Base64 至 Gemini。
+3. **情绪分析:** 模型需返回 2-3 个词的情绪标签（如 "Cyberpunk Phonk", "Ethereal Ambient"）。
 
 ---
-*Aura Vision AI Integration - Version 0.6.6*
+*Aura Vision AI Integration - Version 0.7.5*

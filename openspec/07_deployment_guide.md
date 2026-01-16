@@ -1,4 +1,3 @@
-
 # OpenSpec: 部署与环境规范
 
 ## 1. 运行环境要求
@@ -57,4 +56,4 @@ npm run build
 - **休眠锁**: 应用已集成 `WakeLock API`，但需确保在部署环境的权限策略中未禁用该功能。
 
 ---
-*Aura Vision Deployment Guide - Version 0.6.6*
+*Aura Vision Deployment Guide - Version 0.7.5*

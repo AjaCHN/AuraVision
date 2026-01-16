@@ -1,4 +1,3 @@
-
 import { VisualizerMode, LyricsStyle } from '../../core/types';
 
 export const tw = {
@@ -74,10 +73,10 @@ export const tw = {
   listening: '監聽中',
   identifying: 'AI 正在解析曲目...',
   startExperience: '開啟視聽盛宴',
-  welcomeTitle: 'Aura Vision',
-  welcomeText: '將聲波轉化為數位藝術。透過即時頻域分析與 AI 語意辨識，開啟前所未有的視聽互動體驗。',
+  welcomeTitle: 'Aura Vision | 靈動視界',
+  welcomeText: '將律動凝煉為藝術，讓節奏躍然屏上。融合 Gemini AI 實時曲目識別，為您開啟感官交響的全新維度。',
   unsupportedTitle: '瀏覽器不受支援',
-  unsupportedText: 'Aura Vision 需要現代瀏覽器功能（例如麥克風存取權限）才能運作，您目前的瀏覽器不支援這些功能。請更新至最新版本的 Chrome、Firefox 或 Safari。',
+  unsupportedText: 'Aura Vision 需要現代瀏覽器功能（例如麥克風存取權限）才能運作。請更新至最新版本的 Chrome、Firefox 或 Safari。',
   hideOptions: '收起',
   showOptions: '顯示設定',
   reset: '重置全域設定',
@@ -140,8 +139,10 @@ export const tw = {
     select: '選擇一種心境...',
     calm: '催眠舒緩',
     party: '動感派對',
-    psychedelic: '迷幻電子',
-    ambient: '靜謐氛圍'
+    ambient: '靜謐氛圍',
+    cyberpunk: '賽博龐克',
+    retrowave: '復古夕陽',
+    vocal: '人聲專注'
   },
   recognitionSource: 'AI 辨識源',
   lyricsPosition: '歌詞顯示位置',
@@ -195,13 +196,13 @@ export const tw = {
   modes: {
     [VisualizerMode.PLASMA]: '流體電漿',
     [VisualizerMode.BARS]: '鏡像頻譜分析',
-    [VisualizerMode.PARTICLES]: '星際穿越', // Updated from '速激星空'
+    [VisualizerMode.PARTICLES]: '星際穿越', 
     [VisualizerMode.TUNNEL]: '幾何時空隧道',
     [VisualizerMode.RINGS]: '霓虹共振環',
     [VisualizerMode.NEBULA]: '深空星云',
     [VisualizerMode.LASERS]: '舞台雷射矩陣',
     [VisualizerMode.FLUID_CURVES]: '極光之舞',
-    [VisualizerMode.MACRO_BUBBLES]: '微觀液泡 (景深)', // Added DoF hint
+    [VisualizerMode.MACRO_BUBBLES]: '微觀液泡 (景深)', 
     [VisualizerMode.SILK]: '流光綢緞 (WebGL)',
     [VisualizerMode.LIQUID]: '液態星球 (WebGL)',
     [VisualizerMode.TERRAIN]: '低多邊形山脈 (WebGL)'
@@ -221,64 +222,64 @@ export const tw = {
     intro: 'Aura Vision 是一款沉浸式的視聽互動工具，它利用高精度麥克風取樣，將音訊訊號即時轉化為數學生成的數位藝術。',
     shortcutsTitle: '控制快捷鍵',
     shortcutItems: {
-      toggleMic: '開啟/關閉 音訊採集',
-      fullscreen: '切換全螢幕模式',
-      randomize: '隨機生成美學方案',
-      lyrics: '顯示/隱藏 辨識資訊',
-      hideUi: '顯示/隱藏 控制面板',
-      glow: '開關霓虹光暈',
-      trails: '開關動態殘影',
-      changeMode: '順序切換視覺化模式',
-      changeTheme: '順序切換顏色主題'
+      toggleMic: '麥克風',
+      fullscreen: '全螢幕',
+      randomize: '隨機',
+      lyrics: '曲目辨識',
+      hideUi: '顯示/隱藏面板',
+      glow: '霓虹光暈',
+      trails: '動態殘影',
+      changeMode: '切換模式',
+      changeTheme: '切換配色'
     },
     howItWorksTitle: '使用流程',
     howItWorksSteps: [
-      '1. 授權麥克風權限以開啟頻域分析。',
-      '2. 在感應器附近播放高保真音訊。',
-      '3. 視覺引擎將針對不同頻段（低音/中音/高音）做出即時反應。',
-      '4. AI 每隔約 30 秒會抓取一段特徵碼，聯網辨識歌曲並同步元資料。'
+      '1. 授權權限：點擊「開啟體驗」並允許瀏覽器訪問麥克風。',
+      '2. 播放音樂：在設備附近播放音樂，視覺效果將根據實時採樣跳動。',
+      '3. 探索模式：打開設置面板 (按 H) 切換 12+ 種視覺引擎。',
+      '4. AI 辨識：按 L 鍵開啟「AI 曲目辨識」以分析當前歌曲及其情緒。'
     ],
-    settingsTitle: '參數定義',
+    settingsTitle: '核心參數指南',
     settingsDesc: {
       sensitivity: '控制視覺元素對振幅反應的增益。',
       speed: '調節生成演算法在時間維度上的演化速率。',
-      glow: '基於螢幕空間的後期泛光強度。',
-      trails: '控制像素在畫面上的停留時間，產生殘影。',
-      smoothing: '音訊資料的阻尼係數，越高則過渡越圓滑。',
-      fftSize: '決定了頻譜分析的顆粒度，即評段數量。'
+      glow: '後期處理中的全域泛光強度，增強氛圍感。',
+      trails: '控制像素在畫面上的停留時間，產生運動模糊效果。',
+      smoothing: '音訊資料的平滑係數，越高則過渡越圓滑。',
+      fftSize: '決定了頻譜分析的顆粒度，即頻段採樣數量。'
     },
     projectInfoTitle: '專案簡介',
-    projectInfoText: '由 Google Gemini 3 Flash 專案、React 19 以及硬體加速的 WebGL 技術棧強力驅動。',
+    aboutDescription: '下一代通感互動體驗。Aura Vision 融合了高精度即時頻譜分析與 Google Gemini 3 多模態人工智慧，將無形的聲波轉化為有生命的動態光影藝術。適用於 VJ 演出、直播背景、專注陪伴及空間氛圍裝飾。',
     privacyTitle: '隱私與安全',
-    privacyText: '音訊分析完全在本地完成。僅在辨識歌曲時，會將加密的頻率特徵臨時發送至雲端，絕不儲存任何原始錄音。',
-    version: '發布版本'
+    privacyText: '音訊分析完全在本地完成。僅在辨識歌曲時，會將加密的頻率特徵臨時發送至雲端，絕不存儲或上傳任何原始錄音數據。',
+    version: '版本號'
   },
   onboarding: {
-    welcome: '歡迎使用 Aura Vision',
-    subtitle: '下一代 AI 音樂視覺化引擎',
-    selectLanguage: '選擇語言',
-    next: '下一步',
+    welcome: '歡迎體驗 Aura Vision',
+    subtitle: '新一代 AI 音樂通感引擎',
+    selectLanguage: '選擇您的語言',
+    next: '繼續',
     back: '返回',
     skip: '跳過',
-    finish: '開始體驗',
+    finish: '立即開啟',
     features: {
       title: '核心特性',
       visuals: {
-        title: '沉浸式視覺',
-        desc: '8+ 種基於 Three.js 開發的 WebGL 物理渲染引擎。'
+        title: '生成式藝術傑作',
+        desc: '12+ 種基於 WebGL 的數學動力學引擎，將聲波具象化。'
       },
       ai: {
-        title: 'Gemini AI 智慧',
-        desc: '由 Google Gemini 3 驅動的即時曲目辨識與情緒分析。'
+        title: 'Gemini AI 智能大腦',
+        desc: '實時識別曲目元數據與視覺情緒，由 Google Gemini 3 提供支持。'
       },
       privacy: {
-        title: '隱私優先',
-        desc: '本地頻譜分析。音訊資料絕不傳送至任何伺服器。'
+        title: '隱私安全保障',
+        desc: '音訊分析完全在本地運行，我們絕不記錄或存儲您的私人聲音數據。'
       }
     },
     shortcuts: {
-      title: '快捷操作',
-      desc: '使用以下按鍵快速掌控全域體驗。'
+      title: '極速交互',
+      desc: '通過以下快捷鍵，像指揮家一樣掌控全場。'
     }
   }
 };

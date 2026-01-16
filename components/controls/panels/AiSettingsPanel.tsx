@@ -2,7 +2,7 @@
 import React, { useRef } from 'react';
 import { LyricsStyle, Region, Position } from '../../../core/types';
 import { REGION_NAMES, getPositionOptions, AVAILABLE_FONTS } from '../../../core/constants';
-import { CustomSelect, SettingsToggle, Slider, PositionSelector, TooltipArea } from '../ControlWidgets';
+import { CustomSelect, SettingsToggle, Slider, PositionSelector } from '../ControlWidgets';
 import { useAppContext } from '../../AppContext';
 
 const BetaBadge = ({ label }: { label?: string }) => (
@@ -43,8 +43,6 @@ export const AiSettingsPanel: React.FC = () => {
     }
   };
 
-  const showApiKeyInput = settings.recognitionProvider !== 'GEMINI' && settings.recognitionProvider !== 'MOCK';
-
   return (
     <>
       {/* Col 1: Core AI Settings */}
@@ -72,21 +70,6 @@ export const AiSettingsPanel: React.FC = () => {
                  onChange={(val) => setSettings({...settings, recognitionProvider: val})} 
                />
                
-               {showApiKeyInput && (
-                 <div className="space-y-2 animate-fade-in-up">
-                   <TooltipArea text="Enter your API Key for the selected provider">
-                     <span className="text-[10px] font-black uppercase text-white/50 tracking-[0.15em] block ml-1">API Key</span>
-                   </TooltipArea>
-                   <input 
-                     type="password" 
-                     value={settings.aiApiKey || ''} 
-                     onChange={(e) => setSettings({...settings, aiApiKey: e.target.value})}
-                     placeholder="sk-..."
-                     className="w-full bg-white/[0.04] border border-white/10 rounded-xl px-3 py-2 text-xs font-bold text-white tracking-widest focus:outline-none focus:border-blue-500/50 transition-all placeholder-white/20"
-                   />
-                 </div>
-               )}
-
                <CustomSelect label={t?.region || "Region"} value={settings.region || 'global'} hintText={hints?.region} options={Object.keys(REGION_NAMES).map(r => ({ value: r, label: regions[r] || r }))} onChange={(val) => setSettings({...settings, region: val as Region})} />
             </div>
         </div>

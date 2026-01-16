@@ -1,4 +1,12 @@
-import React, { Suspense } from 'react';
+
+/**
+ * File: components/visualizers/ThreeVisualizer.tsx
+ * Version: 0.7.2
+ * Author: Aura Vision Team
+ * Copyright (c) 2024 Aura Vision. All rights reserved.
+ */
+
+import React, { Suspense, useCallback } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { EffectComposer, Bloom, ChromaticAberration, TiltShift } from '@react-three/postprocessing';
 import * as THREE from 'three';
@@ -14,6 +22,16 @@ interface ThreeVisualizerProps {
 
 const ThreeVisualizer: React.FC<ThreeVisualizerProps> = ({ analyser, colors, settings, mode }) => {
   if (!analyser) return null;
+
+  const handleContextLost = useCallback((event: any) => {
+    event.preventDefault();
+    console.warn("[WebGL] Context lost! High GPU pressure detected.");
+    // The ErrorBoundary will catch any resulting render errors if they persist
+  }, []);
+
+  const handleContextRestored = useCallback(() => {
+    console.log("[WebGL] Context restored. Re-initializing engine...");
+  }, []);
 
   const renderScene = () => {
     switch (mode) {
@@ -39,7 +57,6 @@ const ThreeVisualizer: React.FC<ThreeVisualizerProps> = ({ analyser, colors, set
   
   return (
     <div className="w-full h-full">
-      {/* 这里的 key={settings.quality} 确保画质切换时强制重绘 Canvas 实例，从而应用新的 antialias 和 powerPreference 设置 */}
       <Canvas 
         key={settings.quality}
         camera={{ position: [0, 2, 16], fov: 55 }} 
@@ -55,6 +72,10 @@ const ThreeVisualizer: React.FC<ThreeVisualizerProps> = ({ analyser, colors, set
         }}
         onCreated={({ gl }) => {
           gl.setClearColor('#000000');
+          // Attach listeners to the underlying canvas element for robustness
+          const canvas = gl.domElement;
+          canvas.addEventListener('webglcontextlost', handleContextLost, false);
+          canvas.addEventListener('webglcontextrestored', handleContextRestored, false);
         }}
       >
         <Suspense fallback={null}>
