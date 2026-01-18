@@ -1,9 +1,11 @@
 /**
  * File: core/types/index.ts
- * Version: 0.8.1
+ * Version: 0.8.2
  * Author: Aura Vision Team
  * Copyright (c) 2024 Aura Vision. All rights reserved.
  */
+
+import React from 'react';
 
 export type Language = 'en' | 'zh' | 'tw' | 'ja' | 'es' | 'ko' | 'de' | 'fr' | 'ar' | 'ru';
 
@@ -116,7 +118,7 @@ export interface IVisualizerRenderer {
     height: number, 
     colors: string[], 
     settings: VisualizerSettings,
-    rotation: number,
+    rotation: number, 
     beat: boolean
   ): void;
   cleanup?(): void;
@@ -133,3 +135,37 @@ export type WorkerMessage =
   | { type: 'RESIZE'; width: number; height: number }
   | { type: 'FRAME'; data: Uint8Array }
   | { type: 'CONFIG'; mode: VisualizerMode; settings: VisualizerSettings; colors: string[] };
+
+// Define the interface for R3F elements
+interface ReactThreeFiberElements {
+  mesh: any;
+  pointLight: any;
+  spotLight: any;
+  ambientLight: any;
+  group: any;
+  primitive: any;
+  meshPhysicalMaterial: any;
+  meshStandardMaterial: any;
+  rectAreaLight: any;
+  color: any;
+  fog: any;
+  directionalLight: any;
+  points: any;
+  bufferGeometry: any;
+  bufferAttribute: any;
+  shaderMaterial: any;
+}
+
+// Global augmentation for React Three Fiber elements
+declare global {
+  namespace JSX {
+    interface IntrinsicElements extends ReactThreeFiberElements {}
+  }
+}
+
+// Augment React JSX namespace (needed for React 18+ and newer TS versions)
+declare module 'react' {
+  namespace JSX {
+    interface IntrinsicElements extends ReactThreeFiberElements {}
+  }
+}

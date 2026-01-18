@@ -1,12 +1,12 @@
 
 /**
  * File: components/visualizers/ThreeVisualizer.tsx
- * Version: 0.7.2
+ * Version: 0.7.3
  * Author: Aura Vision Team
  * Copyright (c) 2024 Aura Vision. All rights reserved.
  */
 
-import React, { Suspense, useCallback } from 'react';
+import React, { Suspense, useCallback, useEffect, useRef } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { EffectComposer, Bloom, ChromaticAberration, TiltShift } from '@react-three/postprocessing';
 import * as THREE from 'three';
@@ -21,17 +21,32 @@ interface ThreeVisualizerProps {
 }
 
 const ThreeVisualizer: React.FC<ThreeVisualizerProps> = ({ analyser, colors, settings, mode }) => {
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+
   if (!analyser) return null;
 
-  const handleContextLost = useCallback((event: any) => {
+  const handleContextLost = useCallback((event: Event) => {
     event.preventDefault();
-    console.warn("[WebGL] Context lost! High GPU pressure detected.");
-    // The ErrorBoundary will catch any resulting render errors if they persist
+    console.warn("[WebGL] Context lost! High GPU pressure detected. Attempting to restore...");
   }, []);
 
   const handleContextRestored = useCallback(() => {
     console.log("[WebGL] Context restored. Re-initializing engine...");
   }, []);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (canvas) {
+        canvas.addEventListener('webglcontextlost', handleContextLost, false);
+        canvas.addEventListener('webglcontextrestored', handleContextRestored, false);
+    }
+    return () => {
+        if (canvas) {
+            canvas.removeEventListener('webglcontextlost', handleContextLost);
+            canvas.removeEventListener('webglcontextrestored', handleContextRestored);
+        }
+    };
+  }, [handleContextLost, handleContextRestored]);
 
   const renderScene = () => {
     switch (mode) {
@@ -52,13 +67,18 @@ const ThreeVisualizer: React.FC<ThreeVisualizerProps> = ({ analyser, colors, set
       return 1.5;
   };
 
-  const dpr = settings.quality === 'low' ? 0.8 : settings.quality === 'med' ? 1.2 : Math.min(window.devicePixelRatio, 2);
+  // Optimization: Reduce DPR cap to 1.5 for mid/high to save fill-rate on high-res screens
+  const dpr = settings.quality === 'low' ? 0.8 : settings.quality === 'med' ? 1.0 : Math.min(window.devicePixelRatio, 1.5);
   const enableTiltShift = settings.quality === 'high' && (mode === VisualizerMode.LIQUID || mode === VisualizerMode.SILK);
   
+  // Optimization: Cap multisampling at 4 (or 0 for performance). 8 is often unstable on WebGL.
+  const multisampling = settings.quality === 'high' ? 4 : 0;
+
   return (
     <div className="w-full h-full">
       <Canvas 
-        key={settings.quality}
+        key={settings.quality} // Remount on quality change to reset context with new settings
+        ref={canvasRef}
         camera={{ position: [0, 2, 16], fov: 55 }} 
         dpr={dpr} 
         shadows={false}
@@ -67,15 +87,14 @@ const ThreeVisualizer: React.FC<ThreeVisualizerProps> = ({ analyser, colors, set
             alpha: false,
             stencil: false,
             depth: true,
-            powerPreference: "high-performance",
-            preserveDrawingBuffer: false
+            powerPreference: "default", // Changed from high-performance to default to be nicer to GPU
+            preserveDrawingBuffer: false,
+            failIfMajorPerformanceCaveat: true
         }}
         onCreated={({ gl }) => {
           gl.setClearColor('#000000');
-          // Attach listeners to the underlying canvas element for robustness
-          const canvas = gl.domElement;
-          canvas.addEventListener('webglcontextlost', handleContextLost, false);
-          canvas.addEventListener('webglcontextrestored', handleContextRestored, false);
+          // Update ref for the effect cleanup
+          canvasRef.current = gl.domElement;
         }}
       >
         <Suspense fallback={null}>
@@ -84,7 +103,7 @@ const ThreeVisualizer: React.FC<ThreeVisualizerProps> = ({ analyser, colors, set
         
         {settings.glow && (
             <EffectComposer 
-              multisampling={settings.quality === 'high' ? 8 : 0}
+              multisampling={multisampling}
               enableNormalPass={false}
             >
                 <Bloom 
